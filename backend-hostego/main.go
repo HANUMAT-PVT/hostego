@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v3"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -30,42 +29,9 @@ type Address struct {
 	OtherDetails string `json:"other_details"`
 }
 
-// Connect to PostgreSQL
-func connectDatabase() {
-	dsn := "host=localhost user=hostego_user_dev password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
-	var err error
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
-	if err != nil {
-		log.Fatal("Failed to connect to database", err)
-	}
-
-	db.AutoMigrate(&User{}, &Address{})
-
-	
-}
-
-
-func CreateUser(c fiber.Ctx) error {
-	var user User
-	if err := c.JSON(&user); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
-	}
-
-	// Insert user into database
-	db.Create(&user)
-	return c.Status(201).JSON(user)
-}
-
-func GetUsers(c fiber.Ctx) error {
-	var users []User
-	db.Find(&users)
-	return c.Status(200).JSON(users)
-}
-
-// API Handlers
 func main() {
-	// connectDatabase()
+
 
 	app := fiber.New()
 
@@ -74,9 +40,6 @@ func main() {
 		return c.JSON(fiber.Map{"message":"Welcome to the server"})
 	})
 
-	// app.Post("/users", CreateUser)
-
-	// app.Get("/users", GetUsers)
 	
 	
 
