@@ -65,7 +65,7 @@ func GetUsers(c fiber.Ctx) error {
 
 // API Handlers
 func main() {
-	connectDatabase()
+	// connectDatabase()
 
 	app := fiber.New()
 
@@ -74,9 +74,9 @@ func main() {
 		return c.JSON(fiber.Map{"message":"Welcome to the server"})
 	})
 
-	app.Post("/users", CreateUser)
+	// app.Post("/users", CreateUser)
 
-	app.Get("/users", GetUsers)
+	// app.Get("/users", GetUsers)
 	
 	
 
