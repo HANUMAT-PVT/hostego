@@ -37,7 +37,7 @@ func main() {
 
 	// Fetch all users
 	app.Get("/", func(c fiber.Ctx) error {
-		return c.JSON(fiber.Map{"message":"Welcome to the server"})
+		return c.JSON(fiber.Map{"message":"Welcome to the server Backend"})
 	})
 
 	
