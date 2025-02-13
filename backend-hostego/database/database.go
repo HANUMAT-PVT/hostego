@@ -32,15 +32,6 @@ func ConnectDataBase() {
 	err = db.AutoMigrate(&models.Role{})
 	err = db.AutoMigrate(&models.UserRole{})
 
-	role := models.Role{
-		RoleName: "user",
-	}
-	
-	if err := db.Create(&role).Error; err != nil {
-		log.Fatal("Failed to create role:", err)
-	}
-	
-	log.Println("New Role ID:", role.RoleId)
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
 	}
