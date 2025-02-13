@@ -35,6 +35,7 @@ func (u *User) AfterCreate(tx *gorm.DB) (err error) {
 	if err := tx.Create(&wallet).Error; err != nil {
 		return err
 	}
+	
 	return nil
 
 }
