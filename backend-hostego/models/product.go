@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 // Food Category Structure
@@ -32,12 +31,6 @@ type Product struct {
 	CreatedAt       time.Time    `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt       time.Time    `gorm:"autoUpdateTime" json:"updated_at"`
 	PreparationTime string       `gorm:"type:varchar(255);not null" json:"preparation_time"`
-	ShopId          string       `gorm:"type:uuid;index;not null" json:"shop_id"`
-	Shop            Shop         `gorm:"foreignKey:shop_id;references:Shop" json:"shop"`
-}
-
-// BeforeCreate hook to generate UUID before inserting a new product
-func (p *Product) BeforeCreate(tx *gorm.DB) (err error) {
-	p.ProductId = uuid.New().String()
-	return nil
+	ShopId          uuid.UUID    `gorm:"type:uuid;not null;index" json:"shop_id"`
+	Shop            Shop         `gorm:"foreignKey:ShopId;references:ShopId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"shop"`
 }
