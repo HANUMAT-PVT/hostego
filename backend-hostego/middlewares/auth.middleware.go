@@ -27,3 +27,6 @@ func VerifyUserAuthCookie(c fiber.Ctx) (string, error) {
 	}
 	return "", fmt.Errorf("invalid token")
 }
+
+
+// test
