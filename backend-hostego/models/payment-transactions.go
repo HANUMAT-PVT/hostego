@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 //	Payment  PaymentTransactions Schema{
 //	  "payment_PaymentTransaction_id": "txn_123456",
@@ -22,7 +26,7 @@ const (
 )
 
 type PaymentTransaction struct {
-	PaymentTransactionId string                       `gorm:"type:primaryKey;not null;unique;uuid;default:gen_random_uuid()" json:"payment_PaymentTransaction_id"`
+	PaymentTransactionId uuid.UUID                    `gorm:"type:uuid;primaryKey;not null;unique;uuid;default:gen_random_uuid()" json:"payment_PaymentTransaction_id"`
 	OrderId              string                       `gorm:"type:uuid;not null;" json:"order_id"`
 	UserId               string                       `gorm:"type:uuid;not null;" json:"user_id"`
 	Amount               float64                      `gorm:"type:double precision;not null;" json:"amount"`

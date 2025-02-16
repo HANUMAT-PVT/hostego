@@ -4,6 +4,7 @@ import (
 	// "backend-hostego/config"
 	"backend-hostego/database"
 	"backend-hostego/models"
+
 	// "context"
 	"time"
 
@@ -19,18 +20,14 @@ func Signup(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Bad Request"})
 	}
 
-
-
 	// ctx := context.Background()
 	// authClient, err := config.FireBaseApp.Auth(ctx)
 	// if err != nil {
 	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Firebase auth failed"})
 	// }
 
-
-
 	var user models.User
-	if err := database.DB.Where(`mobile_number = ?`, req.MobileNumber).First(&user); err == nil {
+	if err := database.DB.Where(`mobile_number = ?`, req.MobileNumber).First(&user).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"error": "User Already Exists"})
 	}
 	user = models.User{
@@ -71,6 +68,5 @@ func generateJWT(user models.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(jwtSecret)
 }
-
 
 //test commit

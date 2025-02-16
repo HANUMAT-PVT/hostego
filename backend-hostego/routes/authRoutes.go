@@ -7,6 +7,6 @@ import (
 )
 
 func AuthRoutes(app *fiber.App){
-	auth:=app.Group("/auth")
+	auth:=app.Group("/api/auth")
 	auth.Post("/signup",controllers.Signup);
 }

@@ -16,6 +16,6 @@ func SetupRoutes(app *fiber.App) {
 
 	api.Patch("/user/me", controllers.UpdateUserById)
 
-	api.Post("/users", controllers.CreateUser)
+	// api.Post("/users", controllers.CreateUser)
 
 }

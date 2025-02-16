@@ -4,6 +4,7 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/middlewares"
 	"backend-hostego/models"
+	"encoding/json"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
@@ -17,22 +18,26 @@ func CreateNewOrder(c fiber.Ctx) error {
 	var cartItems []models.CartItem
 
 	var order models.Order
-	if err := database.DB.Preload("Product").Where("user_id=?", user_id).Find(&cartItems).Error; err != nil {
+	if err := database.DB.Preload("ProductItem.Shop").Where("user_id=?", user_id).Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	if err := c.Bind().JSON(&order).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	// if err := c.Bind().JSON(&order); err != nil {
+	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	// }
+	jsonCartItems, err := json.Marshal(cartItems)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to serialize cart items"})
 	}
-
-	order.OrderItems = cartItems
+	order.OrderItems = jsonCartItems
+	order.UserId = user_id
 	totalCharges := CalculateFinalOrderValue(cartItems)
 	order.PlatformFee = totalCharges.PlatformFee
 	order.ShippingFee = totalCharges.ShippingFee
 	order.FinalOrderValue = totalCharges.FinalOrderValue
 	order.DeliveryPartnerFee = totalCharges.DeliveryPartnerShare
-
-	if err := database.DB.Create(&order).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	order.OrderStatus = "pending"
+	if err := database.DB.Preload("User").Create(&order).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"order": order, "message": "Order created successfully !"})
@@ -100,4 +105,15 @@ func MarkOrderAsDelivered(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"order": order, "message": "Order is delivered succesfully!"})
+}
+
+func FetchOrderById(c fiber.Ctx) error {
+	order_id := c.Params("id")
+	var order models.Order
+
+	if err := database.DB.Preload("User").Preload("PaymentTransaction").Where("order_id=?", order_id).First(&order).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"order": order})
 }
