@@ -9,4 +9,5 @@ type Shop struct {
 	Address         string       `gorm:"type:varchar(255);" json:"address"`
 	PreparationTime string       `gorm:"type:varchar(20);"  json:"preparation_time"`
 	FoodCategory    FoodCategory `gorm:"embedded" json:"food_category"`
+	ShopStatus      int          `gorm:"type:int;default:1;index;" json:"shop_status"`
 }
