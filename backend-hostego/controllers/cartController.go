@@ -43,8 +43,8 @@ func UpdateProductInUserCart(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	var user models.User;
-	var cartItem models.CartItem;
+	var user models.User
+	var cartItem models.CartItem
 
 	if err := c.Bind().JSON(&cartItem).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
@@ -57,4 +57,19 @@ func UpdateProductInUserCart(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Cart updated successfully !"})
+}
+
+func FetchUserCart(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	var cartItems []models.CartItem
+
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	if err := database.DB.Where("user_id=?", user_id).Find(&cartItems).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	cartValue := CalculateFinalOrderValue(cartItems)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"cart_items": cartItems, "cart_value": cartValue})
 }

@@ -82,3 +82,14 @@ func VerifyWalletTransactionById(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Wallet transaction verified successfully"})
 }
 
+func FetchUserWallet(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	var wallet models.Wallet
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	if err := database.DB.Where("user_id = ?", user_id).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"wallet": wallet})
+}
