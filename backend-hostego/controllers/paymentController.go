@@ -21,6 +21,8 @@ func InitiatePayment(c fiber.Ctx) error {
 
 	var request OrderRequest
 
+	var cartItem models.CartItem
+
 	if err := c.Bind().JSON(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
@@ -52,7 +54,7 @@ func InitiatePayment(c fiber.Ctx) error {
 
 	walletTransaction.Amount = totalAmountToDeduct
 	walletTransaction.TransactionType = "debit"
-	walletTransaction.UserID = userId
+	walletTransaction.UserId = userId
 	walletTransaction.TransactionStatus = "success"
 
 	var paymentTransaction models.PaymentTransaction
@@ -74,12 +76,35 @@ func InitiatePayment(c fiber.Ctx) error {
 	}
 
 	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
-	if err := tx.Where("order_id=?", request.OrderID).Save(&order).Error; err != nil {
+	if err := tx.Where("user_id=?", userId).Save(&wallet).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	if err := tx.Preload("User").Where("order_id=?", request.OrderID).Save(&order).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	if err := tx.Where("user_id = ?", userId).Delete(&cartItem).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove cart items"})
 	}
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Payment Completed", "payment_transaction": paymentTransaction, "order": order, "wallet_transaction": walletTransaction})
+}
+
+func FetchUserPaymentTransactions(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+
+	var payment_transactions []models.PaymentTransaction
+
+	if err := database.DB.Find(&payment_transactions, "user_id=?", user_id).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(payment_transactions)
 }

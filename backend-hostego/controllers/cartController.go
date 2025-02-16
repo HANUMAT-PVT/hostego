@@ -4,6 +4,7 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/middlewares"
 	"backend-hostego/models"
+	"fmt"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -17,19 +18,20 @@ func AddProductInUserCart(c fiber.Ctx) error {
 	var cartItem models.CartItem
 	var product models.Product
 
-	if err := c.Bind().JSON(&cartItem).Error; err != nil {
+	if err := c.Bind().JSON(&cartItem); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
-	if err := database.DB.First(&user, "where user_id = ?", user_id).Error; err != nil {
+	if err := database.DB.First(&user, "user_id = ?", user_id).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found !"})
 	}
-	if err := database.DB.First(&product, "where product_id = ?", cartItem.ProductId).Error; err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found !"})
+	fmt.Println(cartItem.ProductId)
+	if err := database.DB.First(&product, "product_id = ?", cartItem.ProductId).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found !"})
 	}
 
 	cartItem.UserId = user_id
-	cartItem.SubTotal = cartItem.Quantity * product.FoodPrice
+	cartItem.SubTotal = (float64(cartItem.Quantity)) * product.FoodPrice
 
 	if err := database.DB.Create(&cartItem).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -66,7 +68,7 @@ func FetchUserCart(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if err := database.DB.Where("user_id=?", user_id).Find(&cartItems).Error; err != nil {
+	if err := database.DB.Preload("ProductItem.Shop").Where("user_id=?", user_id).Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 	cartValue := CalculateFinalOrderValue(cartItems)
