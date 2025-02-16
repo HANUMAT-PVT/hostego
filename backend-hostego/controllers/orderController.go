@@ -101,3 +101,14 @@ func MarkOrderAsDelivered(c fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"order": order, "message": "Order is delivered succesfully!"})
 }
+
+func FetchOrderById(c fiber.Ctx) error {
+	order_id := c.Params("id")
+	var order models.Order
+
+	if err := database.DB.Where("order_id=?", order_id).First(&order).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"order": order})
+}
