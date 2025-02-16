@@ -10,7 +10,7 @@ type Documents struct {
 }
 
 type DeliveryPartner struct {
-	DeliveryPartnerId  uuid.UUID `gorm:"type:uuid;not null;default:gen_random_uuid();" json:"delivery_partner_id"`
+	DeliveryPartnerId  uuid.UUID `gorm:"type:uuid;primaryKey;not null;default:gen_random_uuid();" json:"delivery_partner_id"`
 	UserId             uuid.UUID `gorm:"type:uuid;not null;" json:"user_id"`
 	User               User      `gorm:"foreignKey:UserId;references:UserId;" json:"user"`
 	AvailabilityStatus int       `gorm:"type:int;not null;default:0;" json:"availability_status"`
