@@ -14,13 +14,11 @@ type Rating struct {
 	Rating     int       `gorm:"type:int;not null;check:rating BETWEEN 1 AND 5" json:"rating"`
 	ReviewText string    `gorm:"type:text" json:"review_text"`
 	CreatedAt  time.Time `gorm:"autoCreateTime" json:"created_at"`
-	Product    Product   `gorm:"type:uuid;foreignKey:product_id;refrences:Product" json:"product"`
-	User       User      `gorm:"type:uuid;foreignKey:user_id;refrences:User" json:"user"`
+	Product    Product   `gorm:"type:uuid;foreignKey:product_id;references:Product" json:"product"`
+	User       User      `gorm:"type:uuid;foreignKey:user_id;references:User" json:"user"`
 }
 
-func (r *Rating) BeforeCreate(trx *gorm.DB) (err error){
-	r.RatingId=uuid.New().String();
-	return nil;
+func (r *Rating) BeforeCreate(trx *gorm.DB) (err error) {
+	r.RatingId = uuid.New().String()
+	return nil
 }
-
-

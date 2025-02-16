@@ -11,7 +11,7 @@ func CreateShop(c fiber.Ctx) error {
 
 	var shop models.Shop
 
-	if err := c.Bind().JSON(&shop); err!= nil {
+	if err := c.Bind().JSON(&shop); err != nil {
 		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
 	}
 	database.DB.Create(&shop)
@@ -21,13 +21,15 @@ func CreateShop(c fiber.Ctx) error {
 }
 
 func FetchShopById(c fiber.Ctx) error {
-
-	shop_id := c.Params("shop_id")
+	var products []models.Product
+	shop_id := c.Params("id")
 	var shop models.Shop
 
-	database.DB.First(&shop, `where shop_id=?`, shop_id)
+	database.DB.Where("shop_id = ?", shop_id).First(&shop)
 
-	return c.Status(fiber.StatusOK).JSON(shop)
+	database.DB.Where("shop_id = ?", shop_id).Find(&products)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"shop": shop, "products": products})
 }
 
 func FetchShops(c fiber.Ctx) error {
@@ -37,4 +39,24 @@ func FetchShops(c fiber.Ctx) error {
 	database.DB.Find(&shops)
 
 	return c.Status(fiber.StatusOK).JSON(shops)
+}
+
+func UpdateShopById(c fiber.Ctx) error {
+
+	var shop models.Shop
+	shop_id := c.Params("id")
+
+	if err := database.DB.First(&shop, "where shop_id= ?", shop_id).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": "Shop not found!"})
+
+	}
+	if err := c.Bind().JSON(&shop).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	if err := database.DB.Save(&shop).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Shop updated succesfully", "shop": shop})
+
 }
