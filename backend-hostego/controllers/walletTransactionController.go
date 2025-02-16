@@ -12,18 +12,27 @@ func CreditWalletTransaction(c fiber.Ctx) error {
 	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
 	var user models.User
 	var wallet_transaction models.WalletTransaction
+	var requestData struct {
+		Amount float64 `json:"amount"`
+	}
 
+	if err := c.Bind().JSON(&requestData); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
+	}
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if err := c.Bind().JSON(&wallet_transaction).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
+	// if err := c.Bind().JSON(&wallet_transaction).Error; err != nil {
+	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	// }
 	if err := database.DB.First(&user).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
-	wallet_transaction.UserID = user_id
+	wallet_transaction.UserId = user_id
+	wallet_transaction.TransactionType = "credit"
+	wallet_transaction.TransactionStatus = models.TransactionPending
+	wallet_transaction.Amount = requestData.Amount
 	if err := database.DB.Create(&wallet_transaction).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
@@ -54,7 +63,7 @@ func VerifyWalletTransactionById(c fiber.Ctx) error {
 	}
 
 	var wallet models.Wallet
-	if err := tx.First(&wallet, "user_id = ?", walletTransaction.UserID).Error; err != nil {
+	if err := tx.First(&wallet, "user_id = ?", walletTransaction.UserId).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Wallet not found"})
 	}
@@ -88,8 +97,22 @@ func FetchUserWallet(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if err := database.DB.Where("user_id = ?", user_id).Error; err != nil {
+	if err := database.DB.Preload("User").Where("user_id = ?", user_id).Find(&wallet).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"wallet": wallet})
+}
+
+func FetchUserWalletTransactions(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+
+	var wallet_transactions []models.WalletTransaction
+
+	if err := database.DB.Find(&wallet_transactions, "user_id=?", user_id).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(wallet_transactions)
 }

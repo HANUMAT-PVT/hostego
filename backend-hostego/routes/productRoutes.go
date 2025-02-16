@@ -11,6 +11,8 @@ func ProductRoutes(app *fiber.App) error {
 
 	productRoutes.Get("/all", controllers.FetchProducts)
 
+	productRoutes.Get("/:id", controllers.FetchProductById)
+
 	productRoutes.Post("/", controllers.CreateNewProduct)
 
 	return nil

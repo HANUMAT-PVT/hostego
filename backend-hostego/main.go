@@ -24,6 +24,9 @@ func main() {
 	routes.ShopRoutes(app)
 	routes.ProductRoutes(app)
 	routes.OrderRoutes(app)
+	routes.CartRoutes(app)
+	routes.WalletRoutes(app)
+	routes.PaymentRoutes(app)
 	// Fetch all users
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "Welcome to the server Backend"})

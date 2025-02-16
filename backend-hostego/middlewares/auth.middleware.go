@@ -8,7 +8,8 @@ import (
 )
 
 func VerifyUserAuthCookie(c fiber.Ctx) (string, error) {
-	cookie := c.Cookies("auth_token")
+	cookie := c.Get("auth_token")
+	
 	if cookie == "" {
 		return "", fmt.Errorf("no auth token found")
 	}

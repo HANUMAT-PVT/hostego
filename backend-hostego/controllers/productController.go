@@ -100,3 +100,13 @@ func UpdateProductById(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Product updated succesfully", "product": product})
 
 }
+
+func FetchProductById(c fiber.Ctx) error {
+	product_id := c.Params("id")
+	var product models.Product
+
+	if err := database.DB.First(&product, "product_id=?", product_id).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"erorr": err})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"product": product})
+}
