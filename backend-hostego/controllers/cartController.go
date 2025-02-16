@@ -24,7 +24,7 @@ func AddProductInUserCart(c fiber.Ctx) error {
 	if err := database.DB.First(&user, "where user_id = ?", user_id).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found !"})
 	}
-	if err := database.DB.First(&product, "where product_id = ?", cartItem.ProductItemID).Error; err != nil {
+	if err := database.DB.First(&product, "where product_id = ?", cartItem.ProductId).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found !"})
 	}
 
