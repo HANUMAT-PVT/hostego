@@ -43,3 +43,6 @@ func ConnectDataBase() {
 	log.Println("Connected to Database !")
 
 }
+
+
+// -- Switch to your database
