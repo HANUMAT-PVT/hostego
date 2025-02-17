@@ -5,7 +5,7 @@ import HostegoButton from "../../components/HostegoButton";
 const Page = () => {
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center">
-      <div className="flex flex-col absolute justify-between bg-white h-[80vh] bottom-0 max-w-[400px] px-6 py-6 rounded-t-2xl">
+      <div className="flex flex-col absolute justify-between bg-white h-[70vh] bottom-0 max-w-[400px] px-6 py-6 rounded-t-2xl">
         <div className="flex flex-col gap-6 ">
           <p className="text-black font-semibold text-xl">Enter your number</p>
           <div className="relative ">
