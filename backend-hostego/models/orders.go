@@ -10,12 +10,13 @@ import (
 type OrderStatusType string
 
 const (
-	PendingOrderStatus   = "PENDING"
-	PackedOrderStatus    = "PACKED"
-	CookingOrderStatus   = "COOKING"
-	DeliveredOrderStatus = "DELIVERED"
-	CanceledOrderStatus  = "CANCELED"
-	PickedOrderStatus    = "PICKED"
+	PendingOrderStatus   = "pending"
+	PackedOrderStatus    = "packed"
+	CookingOrderStatus   = "cooking"
+	DeliveredOrderStatus = "delivered"
+	CanceledOrderStatus  = "cancelled"
+	PickedOrderStatus    = "picked"
+
 )
 
 type Order struct {
@@ -32,7 +33,7 @@ type Order struct {
 	PaymentTransactionId uuid.UUID          `gorm:"type:uuid" json:"payment_transaction_id"`
 	PaymentTransaction   PaymentTransaction `gorm:"foreignKey:PaymentTransactionId;references:PaymentTransactionId" json:"payment_transaction"`
 	OrderStatus          OrderStatusType    `gorm:"type:varchar(20);default:pending" json:"order_status"`
-	DeliveryPartnerId    datatypes.JSON     `gorm:"type:jsonb" json:"delivery_partner_id"`
+	DeliveryPartner    datatypes.JSON     `gorm:"type:jsonb" json:"delivery_partner_id"`
 
 	DeliveredAt time.Time `json:"delivered_at"`
 }

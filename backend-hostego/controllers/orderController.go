@@ -91,6 +91,13 @@ func CalculateFinalOrderValue(cartItems []models.CartItem) FinalOrderValueType {
 }
 
 func MarkOrderAsDelivered(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	if user_id == "" {
+
+	}
 	orderId := c.Params("id")
 	var order models.Order
 	if err := database.DB.First(&order, "order_id = ?", orderId).Error; err != nil {
@@ -108,6 +115,13 @@ func MarkOrderAsDelivered(c fiber.Ctx) error {
 }
 
 func FetchOrderById(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	if user_id == "" {
+
+	}
 	order_id := c.Params("id")
 	var order models.Order
 
@@ -116,4 +130,65 @@ func FetchOrderById(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"order": order})
+}
+
+func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+
+	type requestAssignOrder struct {
+		DeliveryPartnerId string `json:"delivery_partner_id"`
+		OrderId           string `json:"order_id"`
+	}
+	var request_assign requestAssignOrder
+
+	var order models.Order
+
+	var delivery_partner models.DeliveryPartner
+
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	if user_id == "" {
+
+	}
+	if err := c.Bind().JSON(&request_assign); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if err := database.DB.Where("order_id=?", request_assign.OrderId).Find(&order).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	if err := database.DB.Preload("User").Where("delivery_partner_id=?", request_assign.DeliveryPartnerId).Find(&delivery_partner).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	jsonDeliveryPartner, err := json.Marshal(delivery_partner)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	order.DeliveryPartner = jsonDeliveryPartner
+	if err := database.DB.Where("order_id=?", request_assign.OrderId).Save(&order).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order assigned succefully to" + " " + delivery_partner.User.FirstName})
+
+}
+
+func UpdateOrderById(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	var order models.Order
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	if user_id == "" {
+
+	}
+	order_id := c.Params("id")
+	if err := c.Bind().JSON(&order); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	if err := database.DB.Where("order_id=?", order_id).Save(&order).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order Updated successfully!"})
 }
