@@ -9,7 +9,7 @@ import (
 
 func VerifyUserAuthCookie(c fiber.Ctx) (string, error) {
 	cookie := c.Get("auth_token")
-	
+	fmt.Print("cookie", cookie)
 	if cookie == "" {
 		return "", fmt.Errorf("no auth token found")
 	}
@@ -26,9 +26,8 @@ func VerifyUserAuthCookie(c fiber.Ctx) (string, error) {
 		}
 		return user_id, nil
 	}
-	
+
 	return "", fmt.Errorf("invalid token")
 }
-
 
 // test
