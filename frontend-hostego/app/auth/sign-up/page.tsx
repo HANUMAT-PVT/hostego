@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 
-import PhoneEmailAuthButton from "../../components/SignupButton"
+import PhoneEmailAuthButton from "../../components/PhoneEmailAuth"
 const Page = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
 
