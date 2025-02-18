@@ -21,3 +21,16 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+#btn_ph_login {
+  width: 100%;
+}
+
+.home-page-top-bar-section {
+  height: 100px;
+  width: 100%;
+  background: url("https://i.pinimg.com/originals/d0/b1/7b/d0b17ba77ac4040b809d914843e17ac8.gif");
+  background-size: cover; /* Ensures it covers the entire div */
+  background-position: center; /* Centers the image */
+  background-repeat: no-repeat;
+}

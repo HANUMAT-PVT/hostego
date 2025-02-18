@@ -27,7 +27,7 @@ const PhoneEmailAuth = () => {
     }, []);
 
     return (
-        <div data-hide-name="true" className="pe_signin_button text-center rounded-lg bg-[#655df0] text-white text-center font-bold text-lg hover:bg-[#655df0] transition duration-200 ease-in-out shadow-md"
+        <div data-hide-name="true" className="pe_signin_button flex items-center text-center rounded-lg bg-[#655df0] text-white text-center font-bold text-lg hover:bg-[#655df0] transition duration-200 ease-in-out shadow-md"
             data-client-id="13074759073192539427">
         </div>
     );
