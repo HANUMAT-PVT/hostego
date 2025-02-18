@@ -9,7 +9,7 @@ import {
   Wallet,
 } from "lucide-react";
 import BackNavigationButton from "../components/BackNavigationButton";
-import AnimatedGif from "../components/AnimatedGif";
+
 
 const page = () => {
   return (
