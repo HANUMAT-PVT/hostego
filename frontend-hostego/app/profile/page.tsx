@@ -6,6 +6,7 @@ import {
   NotebookTabs,
   Package,
   ScrollText,
+  Search,
   Wallet,
 } from "lucide-react";
 import BackNavigationButton from "../components/BackNavigationButton";
@@ -25,6 +26,19 @@ const page = () => {
           <p className="text-xl font-medium">My account </p>
           <p className="text-sm font-normal">8264121428</p>
         </div>
+        <div className="relative w-full max-w-lg mx-auto">
+      <div className="flex items-center bg-white border-2 gray-400 rounded-lg px-2 py-2 transition-all ">
+        <Search className="text-gray-800 mr-2 text-bold" size={20} />
+        <input
+          type="text"
+           value={'Search "samosa"'}
+          onChange={() =>{}}
+          placeholder={"Search"}
+          className="w-full bg-transparent outline-none text-sm  font-normal text-gray-600"
+        />
+      </div>
+    </div>
+
         {/* Suggestion Box */}
         <div className=" bg-[#eae8ff]  flex gap-4 justify-between py-4 px-8 rounded-lg">
           <div className="flex flex-col gap-2 items-center text-center ">
@@ -36,6 +50,7 @@ const page = () => {
             <p className="text-sm font-normal">Payments</p>
           </div>
         </div>
+
         {/* Pesonal Information like orders addres  */}
         <div className="flex flex-col gap-3">
           <p className="text-sm font-normal text-gray-600">YOUR INFORMATION</p>
