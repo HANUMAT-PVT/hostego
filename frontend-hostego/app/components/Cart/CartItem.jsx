@@ -23,9 +23,9 @@ const CartItem = () => {
 
             <div className='flex flex-col gap-2 text-right '>
 
-                <div className=' bg-green-700 h-[30px] flex gap-2 text-white text-xs font-semibold px-2 py-1 rounded-md '>
+                <div className=' bg-green-700 h-[30px]  text-sm flex gap-2 text-white text-xs font-semibold px-3 py-1 rounded-md '>
                     <button disabled={cartItemQuantity === 1} onClick={() => setCartItemQuantity(cartItemQuantity - 1)}>-</button>
-                    <button className='w-[15px]'>{cartItemQuantity}</button>
+                    <button className='w-[15px] text-sm'>{cartItemQuantity}</button>
                     <button onClick={() => setCartItemQuantity(cartItemQuantity + 1)}>+</button>
                 </div>
                 <p className='text-xs font-semibold'>₹{cartItemQuantity * 20}</p>
