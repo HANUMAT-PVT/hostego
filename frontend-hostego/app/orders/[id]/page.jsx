@@ -9,51 +9,62 @@ const page = () => {
                     <p className='font-bold text-lg'>Order Summary</p>
                     <p className='text-gray-500 text-xs font-normal'>Arrived at 8:35 pm</p>
                 </div>
-                <p className='font-semibold text-sm mb-2'>3 items in this order</p>
+                <p className='font-semibold text-sm mb-4 '>3 items in this order</p>
                 <div className='flex flex-col gap-3'>
-                    <div className='flex gap-5  items-center '>
-                        <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
-                            <img className='w-[50px]'
-                                src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
-                                alt={'Uncle chips'}
-                            />
+                    <div className='flex gap-5 justify-between items-center '>
+                        <div className='flex gap-5 '>
+                            <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
+                                <img className=' min-w-[50px] max-w-[50px] '
+                                    src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
+                                    alt={'Uncle chips'}
+                                />
+                            </div>
+                            <div>
+                                <p className='text-xs'>Lay's India's Magic Masala Potato Chips</p>
+                                <p className='text-[11px] text-gray-500 font-light'>48 g x 1</p>
+                            </div>
                         </div>
                         <div className='flex flex-col gap-2'>
-                            <p className='text-sm'>Lay's India's Magic Masala Potato Chips</p>
-                            <div className='flex justify-between gap-2'>
-                                <p className='text-[11px] text-gray-500 font-light'>48 g x 1</p>
-                                <p className='text-xs font-semibold'>₹20</p>
-                            </div>
+
+                            <p className='text-xs font-semibold'>₹20</p>
+
                         </div>
                     </div>
-                    <div className='flex gap-5  items-center '>
-                        <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
-                            <img className='w-[50px]'
-                                src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
-                                alt={'Uncle chips'}
-                            />
-                        </div>
-                        <div className='flex flex-col gap-2'>
-                            <p className='text-sm'>Lay's India's Magic Masala Potato Chips</p>
-                            <div className='flex justify-between gap-2'>
+                    <div className='flex gap-5 justify-between items-center '>
+                        <div className='flex gap-5 '>
+                            <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
+                                <img className=' min-w-[50px] max-w-[50px] '
+                                    src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
+                                    alt={'Uncle chips'}
+                                />
+                            </div>
+                            <div>
+                                <p className='text-xs'>Lay's India's Magic Masala Potato Chips</p>
                                 <p className='text-[11px] text-gray-500 font-light'>48 g x 1</p>
-                                <p className='text-xs font-semibold'>₹20</p>
                             </div>
                         </div>
-                    </div>
-                    <div className='flex gap-5  items-center '>
-                        <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
-                            <img className='w-[50px]'
-                                src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
-                                alt={'Uncle chips'}
-                            />
+                        <div className='flex flex-col gap-2'>
+
+                            <p className='text-xs font-semibold'>₹20</p>
+
+                        </div>
+                    </div> <div className='flex gap-5 justify-between items-center '>
+                        <div className='flex gap-5 '>
+                            <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
+                                <img className=' min-w-[50px] max-w-[50px]'
+                                    src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
+                                    alt={'Uncle chips'}
+                                />
+                            </div>
+                            <div>
+                                <p className='text-xs'>Lay's India's Magic Masala Potato Chips</p>
+                                <p className='text-[11px] text-gray-500 font-light'>48 g x 1</p>
+                            </div>
                         </div>
                         <div className='flex flex-col gap-2'>
-                            <p className='text-sm'>Lay's India's Magic Masala Potato Chips</p>
-                            <div className='flex justify-between gap-2'>
-                                <p className='text-[11px] text-gray-500 font-light'>48 g x 1</p>
-                                <p className='text-xs font-semibold'>₹20</p>
-                            </div>
+
+                            <p className='text-xs font-semibold'>₹20</p>
+
                         </div>
                     </div>
                 </div>
@@ -77,7 +88,7 @@ const page = () => {
                     <p className='font-semibold'>Bill total</p>
                     <p className='font-semibold'>₹254</p>
                 </div>
-                
+
             </div>
             {/* ORrder details */}
             <div className=' flex flex-col gap-2 bg-white px-4 py-2'>
@@ -98,8 +109,8 @@ const page = () => {
                     <p>Order placed</p>
                     <p className='font-semibold'>placed on Fri, 14 Feb'25, 8:12 PM</p>
                 </div>
-               
-                
+
+
             </div>
         </div>
     )

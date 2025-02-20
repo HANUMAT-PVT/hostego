@@ -6,34 +6,24 @@ import {
   NotebookTabs,
   Package,
   ScrollText,
-  Search,
+
   Wallet,
 } from "lucide-react";
 import BackNavigationButton from "../components/BackNavigationButton";
+import { useRouter } from "next/navigation";
 
-
-const page = () => {
+const Profile = () => {
+  const router = useRouter();
   return (
     <>
       <BackNavigationButton title={"Profile"} />
-     
+
       <div className="p-4 mt-3 flex flex-col gap-5">
         <div className="flex flex-col gap-3">
           <p className="text-xl font-medium">My account </p>
           <p className="text-sm font-normal">8264121428</p>
         </div>
-        <div className="relative w-full max-w-lg mx-auto">
-      <div className="flex items-center bg-white border-2 gray-400 rounded-lg px-2 py-2 transition-all ">
-        <Search className="text-gray-800 mr-2 text-bold" size={20} />
-        <input
-          type="text"
-           value={'Search "samosa"'}
-          onChange={() =>{}}
-          placeholder={"Search"}
-          className="w-full bg-transparent outline-none text-sm  font-normal text-gray-600"
-        />
-      </div>
-    </div>
+        <div className="relative w-full max-w-lg mx-auto"></div>
 
         {/* Suggestion Box */}
         <div className=" bg-[#eae8ff]  flex gap-4 justify-between py-4 px-8 rounded-lg">
@@ -51,12 +41,17 @@ const page = () => {
         <div className="flex flex-col gap-3">
           <p className="text-sm font-normal text-gray-600">YOUR INFORMATION</p>
           {/* Your Orders */}
-          <div className="nav-account-bar flex items-center justify-between ">
+          <div  onClick={() => router.push("/orders")} className="nav-account-bar flex items-center justify-between ">
             <div className="flex items-center gap-3">
               <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
                 <Package size={14} className="text-gray-500" />
               </div>
-              <p className="text-sm font-normal">Your orders</p>
+              <p
+                
+                className="text-sm font-normal"
+              >
+                Your orders
+              </p>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
@@ -113,4 +108,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Profile;
