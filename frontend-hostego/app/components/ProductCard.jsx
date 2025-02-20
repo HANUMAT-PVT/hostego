@@ -1,7 +1,10 @@
+'use client'
 import React from 'react'
 
 const ProductCard = ({ img, src,myKey }) => {
+    
     const productTags = [{ id: 1, title: "48g" }, { id: 2, title: "Spicy Treat" }]
+
     return (
         <div key={myKey} className='product-item flex flex-col gap-2  w-[140px] '>
             <div className='relative  p-2 flex flex-col items-center'>

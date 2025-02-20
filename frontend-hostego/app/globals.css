@@ -6,6 +6,7 @@
 :root {
   --primary-color: #655df0;
   --bottom-nav-gradient: linear-gradient(to bottom right, #3b82f6, #9333ea);
+  --bg-page-color:#F4F6FB
 }
 
 body {
