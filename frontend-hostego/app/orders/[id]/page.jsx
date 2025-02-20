@@ -4,14 +4,14 @@ const page = () => {
     return (
         <div className='bg-[var(--bg-page-color)]' >
             <BackNavigationButton />
-            <div className='p-2 bg-white mb-2 '>
-                <div className='mb-4'>
+            <div className='px-4 py-2 bg-white mb-2 '>
+                <div className='mb-4 '>
                     <p className='font-bold text-lg'>Order Summary</p>
                     <p className='text-gray-500 text-xs font-normal'>Arrived at 8:35 pm</p>
                 </div>
                 <p className='font-semibold text-sm mb-2'>3 items in this order</p>
                 <div className='flex flex-col gap-3'>
-                    <div className='flex gap-5 p-2 items-center '>
+                    <div className='flex gap-5  items-center '>
                         <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
                             <img className='w-[50px]'
                                 src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
@@ -26,7 +26,7 @@ const page = () => {
                             </div>
                         </div>
                     </div>
-                    <div className='flex gap-5 p-2 items-center '>
+                    <div className='flex gap-5  items-center '>
                         <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
                             <img className='w-[50px]'
                                 src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
@@ -41,7 +41,7 @@ const page = () => {
                             </div>
                         </div>
                     </div>
-                    <div className='flex gap-5 p-2 items-center '>
+                    <div className='flex gap-5  items-center '>
                         <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
                             <img className='w-[50px]'
                                 src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
@@ -59,7 +59,7 @@ const page = () => {
                 </div>
             </div>
             {/* Bill Details */}
-            <div className=' flex flex-col gap-2 bg-white p-2 mb-2'>
+            <div className=' flex flex-col gap-2 bg-white px-4 py-2 mb-2'>
                 <p className='font-semibold text-sm pb-1 border-b   '>Bill details</p>
                 <div className='flex justify-between text-xs font-light text-gray-900'>
                     <p>MRP</p>
@@ -80,7 +80,7 @@ const page = () => {
                 
             </div>
             {/* ORrder details */}
-            <div className=' flex flex-col gap-2 bg-white p-2'>
+            <div className=' flex flex-col gap-2 bg-white px-4 py-2'>
                 <p className='font-semibold text-sm pb-1 border-b   '>Order details</p>
                 <div className='flex flex-col gap-2 text-xs font-light text-gray-900'>
                     <p>order id</p>
