@@ -7,7 +7,7 @@ const OrderPreviewCard = ({ myKey }) => {
     const router = useRouter()
     return (
         <div onClick={() => router.push("/orders/test")} key={myKey} className='rounded-lg bg-white p-2 rounded-md border  '>
-            <div className='flex gap-4 items-center   py-2 p-2 '>
+            <div className='flex gap-4 items-center   py-2 p-2 border-b mb-2  '>
                 <div className='bg-green-100 p-2 flex items-center w-[30px] h-[30px] rounded-md'>
                     <Check className='text-green-900 font-bold' size={20} />
                 </div>
@@ -17,18 +17,24 @@ const OrderPreviewCard = ({ myKey }) => {
                 </div>
             </div>
             <div className='flex gap-4 p-2'>
-                <img className='w-[40px]'
-                    src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
-                    alt={'Uncle chips'}
-                />
-                <img className='w-[40px]'
-                    src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
-                    alt={'Uncle chips'}
-                />
-                <img className='w-[40px]'
-                    src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
-                    alt={'Uncle chips'}
-                />
+                <div className='bg-[var(--bg-page-color)] p-1 rounded-md'>
+                    <img className='w-[30px]'
+                        src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
+                        alt={'Uncle chips'}
+                    />
+                </div>
+                <div className='bg-[var(--bg-page-color)] p-1 rounded-md'>
+                    <img className='w-[30px]'
+                        src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
+                        alt={'Uncle chips'}
+                    />
+                </div>
+                <div className='bg-[var(--bg-page-color)] p-1 rounded-md'>
+                    <img className='w-[30px]'
+                        src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
+                        alt={'Uncle chips'}
+                    />
+                </div>
             </div>
         </div>
     )
