@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import SearchComponent from '../components/SearchComponent'
-import CartFloatingButton from '../components/CartFloatingButton'
+import CartFloatingButton from '../components/Cart/CartFloatingButton'
 
 const page = () => {
     return (
