@@ -3,6 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-color: #655df0;
+  --bottom-nav-gradient: linear-gradient(to bottom right, #3b82f6, #9333ea);
+}
+
 body {
   font-family: "Poppins", sans-serif;
 }
@@ -33,4 +38,9 @@ input[type="number"] {
   background-size: cover; /* Ensures it covers the entire div */
   background-position: center; /* Centers the image */
   background-repeat: no-repeat;
+}
+
+
+.gradient-background{
+  background: linear-gradient(to bottom right, #9333ea,#3b82f6);;
 }
