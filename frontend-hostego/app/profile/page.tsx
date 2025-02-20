@@ -16,11 +16,7 @@ const page = () => {
   return (
     <>
       <BackNavigationButton />
-      <div className="home-page-top-bar-section text-white p-4 flex flex-col items-left gap-1">
-      <p className="text-xs font-bold">Hostego in</p>
-      <p className="text-2xl font-bold">15 minutes </p>
-      <p className="text-sm font-medium">Zakir A,Changiarh University</p>
-      </div>
+     
       <div className="p-4 mt-3 flex flex-col gap-5">
         <div className="flex flex-col gap-3">
           <p className="text-xl font-medium">My account </p>
