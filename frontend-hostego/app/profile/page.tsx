@@ -25,7 +25,8 @@ const Profile = () => {
         </div>
         <div className="relative w-full max-w-lg mx-auto"></div>
 
-        {/* Suggestion Box */}
+        {/* Suggestion Box done */}
+
         <div className=" bg-[#eae8ff]  flex gap-4 justify-between py-4 px-8 rounded-lg">
           <div className="flex flex-col gap-2 items-center text-center ">
             <Wallet size={20} />
