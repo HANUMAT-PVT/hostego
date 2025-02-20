@@ -15,7 +15,7 @@ import BackNavigationButton from "../components/BackNavigationButton";
 const page = () => {
   return (
     <>
-      <BackNavigationButton />
+      <BackNavigationButton title={"Profile"} />
      
       <div className="p-4 mt-3 flex flex-col gap-5">
         <div className="flex flex-col gap-3">

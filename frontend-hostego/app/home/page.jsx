@@ -3,8 +3,10 @@ import React, { useState } from 'react'
 import BottomNavigationBar from '../components/BottomNavigationBar'
 import ProductCard from '../components/ProductCard'
 import SearchComponent from '../components/SearchComponent'
+import CartFloatingButton from "../components/Cart/CartFloatingButton"
 import { CircleUserRound, House, Package, Search, ShoppingBag, ShoppingBagIcon, ShoppingBasket, User, UtensilsCrossed } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+
 
 const navItems = [
     { name: 'All', icon: ShoppingBasket },
@@ -14,7 +16,7 @@ const navItems = [
 
 ]
 const page = () => {
-    const router=useRouter()
+    const router = useRouter()
     const [activeIndex, setActiveIndex] = useState(0)
 
     return (
@@ -26,11 +28,11 @@ const page = () => {
                         <p className="text-2xl font-bold">15 minutes </p>
                         <p className="text-sm font-medium">Zakir A,Changiarh University</p>
                     </div>
-                    <div onClick={()=>router.push("/profile")} className='bg-white rounded-full p-1'>
+                    <div onClick={() => router.push("/profile")} className='bg-white rounded-full p-1'>
                         <User color='black' className='rounded-full' size={22} />
                     </div>
                 </div>
-               <SearchComponent viewOnly={true}/>
+                <SearchComponent viewOnly={true} />
                 <div className="  w-full bg-white sticky top-0  flex gap-4 items-center px-4 mt-3 overflow-auto justify-between   ">
                     {navItems.map((item, index) => {
                         const Icon = item.icon
@@ -49,13 +51,14 @@ const page = () => {
 
             </div>
             <div className=' overflow-auto flex gap-3 flex-wrap justify-between p-4 '>
-                 <ProductCard  myKey={1}/>
+                <ProductCard myKey={1} />
                 <ProductCard myKey={2} />
                 <ProductCard myKey={3} />
                 <ProductCard myKey={4} />
                 <ProductCard myKey={5} />
-                </div>
+            </div>
             <BottomNavigationBar />
+            <CartFloatingButton/>
         </div>
     )
 }
