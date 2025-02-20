@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import BottomNavigationBar from '../components/BottomNavigationBar'
 import ProductCard from '../components/ProductCard'
+import SearchComponent from '../components/SearchComponent'
 import { CircleUserRound, House, Package, Search, ShoppingBag, ShoppingBagIcon, ShoppingBasket, User, UtensilsCrossed } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -29,16 +30,7 @@ const page = () => {
                         <User color='black' className='rounded-full' size={22} />
                     </div>
                 </div>
-                <div className="flex items-center w-[90vw] bg-white m-auto border-2 gray-400 rounded-lg px-2 py-2 transition-all ">
-                    <Search className="text-gray-800 mr-2 text-bold" size={20} />
-                    <input
-                        type="text"
-                        value={'Search "samosa"'}
-                        onChange={() => { }}
-                        placeholder={"Search"}
-                        className="w-full bg-transparent outline-none text-sm  font-normal text-gray-600"
-                    />
-                </div>
+               <SearchComponent viewOnly={true}/>
                 <div className="  w-full bg-white sticky top-0  flex gap-4 items-center px-4 mt-3 overflow-auto justify-between   ">
                     {navItems.map((item, index) => {
                         const Icon = item.icon
