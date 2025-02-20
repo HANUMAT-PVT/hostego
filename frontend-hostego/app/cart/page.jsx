@@ -13,7 +13,7 @@ const page = () => {
         <div className='bg-[var(--bg-page-color)]'>
             <BackNavigationButton title={"Checkout"} />
             <div className='bg-white px-4 py-2'>
-                <p className='font-semibold text-md pb-1 '>Delivery in 15 minutes</p>
+                <p className='font-semibold text-lg pb-1 '>Delivery in 15 minutes</p>
                 <p className='text-[12px] text-gray-600'>Shipment of 3 items</p>
             </div>
             <div className='p-2 flex flex-col rounded-lg '>
@@ -53,7 +53,7 @@ const page = () => {
 
                 </div>
                 {<div className="fixed bottom-0 w-full p-2  bg-white z-2 flex justify-center items-center px-4 shadow-2xl  ">
-                    {!selectedAddress && <button onClick={() => setOpenAddressList(!openAddressList)} className='bg-green-700 text-white w-[85vw] text-sm px-4 py-2 rounded-md font-normal '>Choose address at next step</button>}
+                    {!selectedAddress && <button onClick={() => setOpenAddressList(!openAddressList)} className='bg-green-700 text-white w-[85vw] text-md px-4 py-2 rounded-md font-normal '>Choose address at next step</button>}
                     {selectedAddress && <div className='w-full'>
                         <div onClick={() => { }} className='address-item flex items-center  gap-4 pb-2 rounded-md  cursor-pointer bg-white  '>
                             <div className='bg-[var(--bg-page-color)] p-2 w-[30px] h-[30px]  flex justify-center items-center rounded-full '>
