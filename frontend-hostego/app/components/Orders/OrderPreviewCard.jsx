@@ -12,7 +12,7 @@ const OrderPreviewCard = ({ myKey }) => {
                     <Check className='text-green-900 font-bold' size={20} />
                 </div>
                 <div className=''>
-                    <p className='font-bold text-lg'>Arrived in 23 Minutes</p>
+                    <p className='font-semibold text-lg'>Arrived in 23 Minutes</p>
                     <p className='text-xs text-gray-600'>₹112 {" "} 14 Feb, 8:12 pm</p>
                 </div>
             </div>

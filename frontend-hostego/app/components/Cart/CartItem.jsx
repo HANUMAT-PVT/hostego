@@ -4,12 +4,15 @@ const CartItem = () => {
     const [cartItemQuantity, setCartItemQuantity] = useState(1)
     return (
 
-        <div className='flex  gap-5 p-2 items-center border-b  bg-white '>
+        <div className='w-full flex  gap-5 p-2 items-center  border-b  bg-white '>
+           
+            <div>
             <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
                 <img className='min-w-[50px] max-w-[50px]'
                     src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
                     alt={'Uncle chips'}
                 />
+            </div>
             </div>
             <div className='flex flex-col gap-2'>
                 <div className='flex gap-7 '>
