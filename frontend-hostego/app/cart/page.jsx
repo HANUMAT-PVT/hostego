@@ -7,6 +7,7 @@ import AddressList from '../components/Address/AddressList'
 import { Home } from 'lucide-react'
 
 const page = () => {
+    // Hostego – Simplify Your Hostel Life"
     const [openAddressList, setOpenAddressList] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState(false)
     return (

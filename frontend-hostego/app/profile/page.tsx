@@ -6,7 +6,6 @@ import {
   NotebookTabs,
   Package,
   ScrollText,
-
   Wallet,
 } from "lucide-react";
 import BackNavigationButton from "../components/BackNavigationButton";
@@ -23,12 +22,13 @@ const Profile = () => {
           <p className="text-xl font-medium">My account </p>
           <p className="text-sm font-normal">8264121428</p>
         </div>
-        <div className="relative w-full max-w-lg mx-auto"></div>
-
         {/* Suggestion Box done */}
 
         <div className=" bg-[#eae8ff]  flex gap-4 justify-between py-4 px-8 rounded-lg">
-          <div className="flex flex-col gap-2 items-center text-center ">
+          <div
+            onClick={() => router.push("/wallet")}
+            className="flex flex-col gap-2 items-center text-center "
+          >
             <Wallet size={20} />
             <p className="text-sm font-normal  ">Wallet</p>
           </div>
@@ -42,17 +42,15 @@ const Profile = () => {
         <div className="flex flex-col gap-3">
           <p className="text-sm font-normal text-gray-600">YOUR INFORMATION</p>
           {/* Your Orders */}
-          <div  onClick={() => router.push("/orders")} className="nav-account-bar flex items-center justify-between ">
+          <div
+            onClick={() => router.push("/orders")}
+            className="nav-account-bar flex items-center justify-between "
+          >
             <div className="flex items-center gap-3">
               <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
                 <Package size={14} className="text-gray-500" />
               </div>
-              <p
-                
-                className="text-sm font-normal"
-              >
-                Your orders
-              </p>
+              <p className="text-sm font-normal">Your orders</p>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
@@ -76,7 +74,7 @@ const Profile = () => {
           {/* Your Wallet */}
           <div className="nav-account-bar flex items-center justify-between ">
             <div className="flex items-center gap-3">
-              <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
+              <div onClick={()=>router.push("/wallet")} className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
                 <Wallet size={14} className="text-gray-500" />
               </div>
               <p className="text-sm font-normal">Wallet</p>
