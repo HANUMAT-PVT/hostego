@@ -1,11 +1,19 @@
-import React from 'react'
+import React from 'react';
+import { Loader2 } from 'lucide-react';
 
-const HostegoButton = ({ text, onClick }) => {
-    return (
-        <button onClick={()=>onClick()} className='bg-[#655df0] w-full p-4 rounded-lg' >
-            <p className="font-bold text-xl">{text}</p>
-        </button>
-    )
+const HostegoButton = ({ text, onClick, isLoading, type = "button" }) => {
+  return (
+    <button 
+      type={type}
+      onClick={!isLoading ? onClick : undefined} 
+      className={`w-full text-md font-normal bg-[var(--primary-color)] text-white rounded-full p-2 flex justify-center items-center transition ${
+        isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-opacity-90"
+      }`}
+      disabled={isLoading}
+    >
+      {isLoading ? <Loader2 className="animate-spin" size={18} /> : text}
+    </button>
+  );
 }
 
-export default HostegoButton
+export default HostegoButton;
