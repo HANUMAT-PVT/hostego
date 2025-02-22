@@ -72,9 +72,12 @@ const Profile = () => {
             PAYMENTS AND TRANSACTIONS
           </p>
           {/* Your Wallet */}
-          <div className="nav-account-bar flex items-center justify-between ">
+          <div  onClick={() => router.push("/wallet")} className="nav-account-bar flex items-center justify-between ">
             <div className="flex items-center gap-3">
-              <div onClick={()=>router.push("/wallet")} className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
+              <div
+               
+                className="nav-account-item-icon bg-gray-200 p-2 rounded-full "
+              >
                 <Wallet size={14} className="text-gray-500" />
               </div>
               <p className="text-sm font-normal">Wallet</p>
@@ -92,12 +95,35 @@ const Profile = () => {
             <ChevronRight size={20} className="text-gray-400" />
           </div>
           {/* Transactions */}
-          <div className="nav-account-bar flex items-center justify-between ">
+          <div
+            onClick={() => router.push("/transactions")}
+            className="nav-account-bar flex items-center justify-between "
+          >
             <div className="flex items-center gap-3">
               <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
                 <ScrollText size={14} className="text-gray-500" />
               </div>
               <p className="text-sm font-normal"> Transactions</p>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
+        </div>
+        {/* SECTION 3 */}
+        <div className="flex flex-col gap-3">
+          <p className="text-sm font-normal text-gray-600">OTHERS</p>
+          {/* Your Delivery Partner */}
+          <div
+            onClick={() => router.push("/delivery-partner")}
+            className="nav-account-bar flex items-center justify-between "
+          >
+            <div className="flex items-center gap-3">
+              <div
+              
+                className="nav-account-item-icon bg-gray-200 p-2 rounded-full "
+              >
+                <Wallet size={14} className="text-gray-500" />
+              </div>
+              <p className="text-sm font-normal">Join as Delivery Partner</p>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
