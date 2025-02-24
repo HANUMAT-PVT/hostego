@@ -6,7 +6,7 @@ import { Info, Landmark, ShoppingBag, Clock, Upload } from "lucide-react";
 import HostegoButton from "../components/HostegoButton"
 import { uploadToS3Bucket } from '../lib/aws'
 import axiosClient from "../utils/axiosClient"
-
+import MaintainOrderStatusForDeliveryPartner from "../components/Delivery-Partner/MaintainOrderStatusForDeliveryPartner"
 
 const ordersData = [
     {
@@ -57,7 +57,8 @@ const page = () => {
                 await uploadToS3Bucket(deliveryParnterDetails?.aadhaar_back_img),
                 await uploadToS3Bucket(deliveryParnterDetails?.bank_details_img)
             )
-
+            console.log(a_front_img_url)
+            return
             let { data } = await axiosClient.post("/users",
                 {
                     ...deliveryParnterDetails,
@@ -178,7 +179,7 @@ const page = () => {
                                         className="flex items-center justify-between w-full cursor-pointer"
                                     >
                                         <span className="text-gray-500">
-                                        {deliveryParnterDetails?.aadhaar_back_img ? deliveryParnterDetails?.aadhaar_back_img.name : "Aadhar Back "}
+                                            {deliveryParnterDetails?.aadhaar_back_img ? deliveryParnterDetails?.aadhaar_back_img.name : "Aadhar Back "}
                                         </span>
                                         <Upload className="text-[#655df0]" />
                                     </label>
@@ -203,7 +204,7 @@ const page = () => {
                                         className="flex items-center justify-between w-full cursor-pointer"
                                     >
                                         <span className="text-gray-500">
-                                        {deliveryParnterDetails?.bank_details_img ? deliveryParnterDetails?.bank_details_img.name : "Bank Details "}
+                                            {deliveryParnterDetails?.bank_details_img ? deliveryParnterDetails?.bank_details_img.name : "Bank Details "}
                                         </span>
                                         <Upload className="text-[#655df0]" />
                                     </label>
@@ -266,7 +267,7 @@ const page = () => {
                 ))}
             </div>
 
-
+            <MaintainOrderStatusForDeliveryPartner />
         </div>
     );
 };

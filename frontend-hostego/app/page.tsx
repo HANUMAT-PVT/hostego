@@ -1,4 +1,8 @@
+"use client"
+import { useRouter } from "next/navigation";
+
 export default function Home() {
+  const router = useRouter();
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 text-white p-8 sm:p-20">
       {/* Background Blurs */}
@@ -8,7 +12,7 @@ export default function Home() {
       {/* Main Content */}
       <main className="relative flex flex-col items-center text-center gap-6">
         {/* Logo */}
-    
+        
 
         {/* Headline */}
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl">
@@ -19,7 +23,7 @@ export default function Home() {
 
    
         {/* CTA Button */}
-        <button className="mt-4 px-6 py-3 text-lg font-medium text-black bg-yellow-300 rounded-xl shadow-lg hover:scale-105 transition-transform">
+        <button onClick={() => router.push("/home")} className="mt-4 px-6 py-3 text-lg font-medium text-black bg-yellow-300 rounded-xl shadow-lg hover:scale-105 transition-transform">
           Join the Waitlist 🚀
         </button>
       </main>
