@@ -32,9 +32,9 @@ const Profile = () => {
             <Wallet size={20} />
             <p className="text-sm font-normal  ">Wallet</p>
           </div>
-          <div className="flex flex-col gap-2 items-center text-center ">
+          <div   onClick={() => router.push("/transactions")}className="flex flex-col gap-2 items-center text-center ">
             <CreditCard size={20} />
-            <p className="text-sm font-normal">Payments</p>
+            <p className="text-sm font-normal">Transactions</p>
           </div>
         </div>
 
@@ -69,7 +69,7 @@ const Profile = () => {
         {/* SECTION 2 */}
         <div className="flex flex-col gap-3">
           <p className="text-sm font-normal text-gray-600">
-            PAYMENTS AND TRANSACTIONS
+            Wallet AND TRANSACTIONS
           </p>
           {/* Your Wallet */}
           <div  onClick={() => router.push("/wallet")} className="nav-account-bar flex items-center justify-between ">
@@ -84,16 +84,7 @@ const Profile = () => {
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
-          {/* Payments */}
-          <div className="nav-account-bar flex items-center justify-between ">
-            <div className="flex items-center gap-3">
-              <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
-                <CreditCard size={14} className="text-gray-500" />
-              </div>
-              <p className="text-sm font-normal">Payments</p>
-            </div>
-            <ChevronRight size={20} className="text-gray-400" />
-          </div>
+         
           {/* Transactions */}
           <div
             onClick={() => router.push("/transactions")}

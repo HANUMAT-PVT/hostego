@@ -1,14 +1,14 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export const uploadToS3Bucket = async (file) => {
-  console.log(process.env);
+  console.log(process.env.NEXT_APP_AWS_ACCESS_KEY, "file is the new s3", process.env.NEXT_APP_AWS_SECRET_KEY);
   console.log(file, "file is the new s3", process.env.NEXT_APP_ACCESS_KEY);
 
   const s3Client = new S3Client({
     region: "us-east-1", // specify your region
     credentials: {
-      accessKeyId: "sdaf",
-      secretAccessKey: "j",
+      accessKeyId: process.env.NEXT_APP_AWS_ACCESS_KEY,
+      secretAccessKey: process.env.NEXT_APP_AWS_SECRET_KEY,
     },
   });
   const params = {
