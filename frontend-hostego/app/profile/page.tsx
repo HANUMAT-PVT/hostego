@@ -19,8 +19,8 @@ const Profile = () => {
 
       <div className="p-4 mt-3 flex flex-col gap-5">
         <div className="flex flex-col gap-3">
-          <p className="text-xl font-medium">My account </p>
-          <p className="text-sm font-normal">8264121428</p>
+          <p className="text-2xl font-medium">My account </p>
+          <p className="text-md font-normal">8264121428</p>
         </div>
         {/* Suggestion Box done */}
 
@@ -30,17 +30,17 @@ const Profile = () => {
             className="flex flex-col gap-2 items-center text-center "
           >
             <Wallet size={20} />
-            <p className="text-sm font-normal  ">Wallet</p>
+            <p className="text-md font-normal  ">Wallet</p>
           </div>
           <div   onClick={() => router.push("/transactions")}className="flex flex-col gap-2 items-center text-center ">
             <CreditCard size={20} />
-            <p className="text-sm font-normal">Transactions</p>
+            <p className="text-md font-normal">Transactions</p>
           </div>
         </div>
 
         {/* Pesonal Information like orders addres  */}
         <div className="flex flex-col gap-3">
-          <p className="text-sm font-normal text-gray-600">YOUR INFORMATION</p>
+          <p className="text-md font-normal text-gray-600">YOUR INFORMATION</p>
           {/* Your Orders */}
           <div
             onClick={() => router.push("/orders")}
@@ -50,7 +50,7 @@ const Profile = () => {
               <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
                 <Package size={14} className="text-gray-500" />
               </div>
-              <p className="text-sm font-normal">Your orders</p>
+              <p className="text-md font-normal">Your orders</p>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
@@ -60,7 +60,7 @@ const Profile = () => {
               <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
                 <NotebookTabs size={14} className="text-gray-500" />
               </div>
-              <p className="text-sm font-normal">Address</p>
+              <p className="text-md font-normal">Address</p>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
@@ -68,7 +68,7 @@ const Profile = () => {
 
         {/* SECTION 2 */}
         <div className="flex flex-col gap-3">
-          <p className="text-sm font-normal text-gray-600">
+          <p className="text-md font-normal text-gray-600">
             Wallet AND TRANSACTIONS
           </p>
           {/* Your Wallet */}
@@ -80,7 +80,7 @@ const Profile = () => {
               >
                 <Wallet size={14} className="text-gray-500" />
               </div>
-              <p className="text-sm font-normal">Wallet</p>
+              <p className="text-md font-normal">Wallet</p>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
@@ -94,14 +94,14 @@ const Profile = () => {
               <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
                 <ScrollText size={14} className="text-gray-500" />
               </div>
-              <p className="text-sm font-normal"> Transactions</p>
+              <p className="text-md font-normal"> Transactions</p>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
         </div>
         {/* SECTION 3 */}
         <div className="flex flex-col gap-3">
-          <p className="text-sm font-normal text-gray-600">OTHERS</p>
+          <p className="text-md font-normal text-gray-600">OTHERS</p>
           {/* Your Delivery Partner */}
           <div
             onClick={() => router.push("/delivery-partner")}
@@ -114,7 +114,7 @@ const Profile = () => {
               >
                 <Wallet size={14} className="text-gray-500" />
               </div>
-              <p className="text-sm font-normal">Join as Delivery Partner</p>
+              <p className="text-md font-normal">Join as Delivery Partner</p>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>

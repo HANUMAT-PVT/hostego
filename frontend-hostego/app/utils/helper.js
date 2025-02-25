@@ -123,7 +123,6 @@ export const data = {
 };
 
 export const transformOrder = (order) => {
- 
   const shopWiseOrders = {};
 
   order.order_items.forEach((item) => {
