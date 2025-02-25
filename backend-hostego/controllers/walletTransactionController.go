@@ -13,7 +13,9 @@ func CreditWalletTransaction(c fiber.Ctx) error {
 	var user models.User
 	var wallet_transaction models.WalletTransaction
 	var requestData struct {
-		Amount float64 `json:"amount"`
+		Amount                  float64 `json:"amount"`
+		PaymentScreenShotImgUrl string  `json:"payment_screen_shot_img_url"`
+		UniqueTransactionID     string  `json:"unique_transaction_id"`
 	}
 
 	if err := c.Bind().JSON(&requestData); err != nil {
@@ -33,6 +35,9 @@ func CreditWalletTransaction(c fiber.Ctx) error {
 	wallet_transaction.TransactionType = "credit"
 	wallet_transaction.TransactionStatus = models.TransactionPending
 	wallet_transaction.Amount = requestData.Amount
+	wallet_transaction.PaymentMethod.PaymentScreenShotImgUrl = requestData.PaymentScreenShotImgUrl
+	wallet_transaction.PaymentMethod.UniqueTransactionID = requestData.UniqueTransactionID
+
 	if err := database.DB.Create(&wallet_transaction).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}

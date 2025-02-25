@@ -7,6 +7,7 @@ import (
 	"backend-hostego/routes"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 	"gorm.io/gorm"
 )
 
@@ -16,6 +17,14 @@ var db *gorm.DB
 func main() {
 
 	app := fiber.New()
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000", "https://hostego.in"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+		ExposeHeaders:    []string{"Authorization"},
+	}))
 
 	database.ConnectDataBase()
 

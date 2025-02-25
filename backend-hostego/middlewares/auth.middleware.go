@@ -2,18 +2,25 @@ package middlewares
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 func VerifyUserAuthCookie(c fiber.Ctx) (string, error) {
-	cookie := c.Cookies("auth_token")
-	fmt.Print("cookie", cookie)
-	if cookie == "" {
+	authHeader := c.Get("Authorization")
+	fmt.Print("cookie", authHeader)
+	if authHeader == "" {
 		return "", fmt.Errorf("no auth token found")
 	}
-	token, err := jwt.Parse(cookie, func(t *jwt.Token) (interface{}, error) {
+	// 2️⃣ Extract the token (format: "Bearer <token>")
+	splitToken := strings.Split(authHeader, "Bearer ")
+	if len(splitToken) != 2 {
+		return "", fmt.Errorf("invalid Authorization token format")
+	}
+	tokenString := splitToken[1]
+	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
 		return []byte("hanumat"), nil
 	})
 	if err != nil {
