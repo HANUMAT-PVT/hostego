@@ -16,6 +16,5 @@ type DeliveryPartner struct {
 	AvailabilityStatus int       `gorm:"type:int;not null;default:0;" json:"availability_status"`
 	Address            string    `gorm:"type:varchar(255);" json:"address"`
 	AccountStatus      int       `gorm:"type:int;default:0;" json:"account_status"`
-	PartnerImgUrl      string    `gorm:"type:varchar(255);" json:"partner_img_url"`
 	Documents          Documents `gorm:"embedded" json:"documents"`
 }
