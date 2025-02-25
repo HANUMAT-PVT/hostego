@@ -5,6 +5,7 @@ import { Phone, Navigation, Clock, Check, ChevronDown, ChevronUp, ShoppingBag, A
 import { transformOrder } from '../../utils/helper'
 import SliderStatusTracker from "./SliderStatusTracker"
 import StatusTimeLine from '../Orders/StatusTimeLine';
+
 export const ORDER_STATUSES = [
   {
     id: 'pending',
@@ -188,7 +189,7 @@ const MaintainOrderStatusForDeliveryPartner = () => {
     return ORDER_STATUSES[getStatusStep(order.order_status) + 1];
   };
 
-  console.log(activeOrder, "active order from maintain")
+ 
 
   return (
     <div className="min-h-screen bg-[#F4F6FB]">

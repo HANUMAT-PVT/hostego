@@ -1,7 +1,7 @@
 import React from 'react'
 
 const StatusTimeLine = ({ ORDER_STATUSES, activeOrder }) => {
-   
+  
     const getStatusStep = (status) => {
         return ORDER_STATUSES.findIndex(s => s.id === status);
     }

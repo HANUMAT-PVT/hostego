@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import axios from "axios";
 
 const axiosClient = axios.create({
@@ -13,10 +13,13 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   (config) => {
     // Retrieve token from localStorage or cookies (if applicable)
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const auth_response =
+      typeof window !== "undefined"
+        ? JSON.parse(localStorage.getItem("auth-response"))
+        : null;
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (auth_response) {
+      config.headers.Authorization = `Bearer ${auth_response?.token}`;
     }
 
     return config;
