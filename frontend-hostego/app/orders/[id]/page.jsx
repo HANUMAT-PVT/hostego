@@ -1,6 +1,16 @@
+'use client'
 import React from 'react'
 import BackNavigationButton from '../../components/BackNavigationButton'
-const page = () => {
+import StatusTimeLine from '../../components/Orders/StatusTimeLine'
+
+import {transformOrder,data} from "../../utils/helper"
+
+import {ORDER_STATUSES} from "../../components/Delivery-Partner/MaintainOrderStatusForDeliveryPartner"
+
+
+const page = () => {    
+
+
     return (
         <div className='bg-[var(--bg-page-color)]' >
             <BackNavigationButton />
@@ -84,12 +94,13 @@ const page = () => {
                     <p>Platform fee</p>
                     <p>+₹1</p>
                 </div>
-                <div className='flex justify-between text-md font-light text-gray-900'>
+                <div className='flex justify-between text-xl border-t pt-2 font-light text-gray-900'>
                     <p className='font-semibold'>Bill total</p>
                     <p className='font-semibold'>₹254</p>
                 </div>
 
             </div>
+            <StatusTimeLine ORDER_STATUSES={ORDER_STATUSES} activeOrder={transformOrder(data)} />
             {/* ORrder details */}
             <div className=' flex flex-col gap-2 bg-white px-4 py-2 mt-2'>
                 <p className='font-semibold text-md pb-1 border-b   '>Order details</p>

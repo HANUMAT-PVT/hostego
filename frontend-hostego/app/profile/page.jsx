@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ChevronRight,
   CreditCard,
@@ -10,9 +10,26 @@ import {
 } from "lucide-react";
 import BackNavigationButton from "../components/BackNavigationButton";
 import { useRouter } from "next/navigation";
+import axiosClient from "../utils/axiosClient";
 
 const Profile = () => {
+  const [userAccount, setUserAccount] = useState({});
   const router = useRouter();
+
+  useEffect(() => {
+    fetchUserAccount();
+  }, []);
+
+  const fetchUserAccount = async () => {
+    try {
+      const { data } = await axiosClient.get("/api/user/me");
+      console.log(data, "data from teh user ");
+      setUserAccount(data)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <BackNavigationButton title={"Profile"} />
@@ -20,7 +37,7 @@ const Profile = () => {
       <div className="p-4 mt-3 flex flex-col gap-5">
         <div className="flex flex-col gap-3">
           <p className="text-2xl font-medium">My account </p>
-          <p className="text-md font-normal">8264121428</p>
+          <p className="text-md font-normal">{userAccount?.mobile_number}</p>
         </div>
         {/* Suggestion Box done */}
 
@@ -32,7 +49,10 @@ const Profile = () => {
             <Wallet size={20} />
             <p className="text-md font-normal  ">Wallet</p>
           </div>
-          <div   onClick={() => router.push("/transactions")}className="flex flex-col gap-2 items-center text-center ">
+          <div
+            onClick={() => router.push("/transactions")}
+            className="flex flex-col gap-2 items-center text-center "
+          >
             <CreditCard size={20} />
             <p className="text-md font-normal">Transactions</p>
           </div>
@@ -72,19 +92,19 @@ const Profile = () => {
             Wallet AND TRANSACTIONS
           </p>
           {/* Your Wallet */}
-          <div  onClick={() => router.push("/wallet")} className="nav-account-bar flex items-center justify-between ">
+          <div
+            onClick={() => router.push("/wallet")}
+            className="nav-account-bar flex items-center justify-between "
+          >
             <div className="flex items-center gap-3">
-              <div
-               
-                className="nav-account-item-icon bg-gray-200 p-2 rounded-full "
-              >
+              <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
                 <Wallet size={14} className="text-gray-500" />
               </div>
               <p className="text-md font-normal">Wallet</p>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
-         
+
           {/* Transactions */}
           <div
             onClick={() => router.push("/transactions")}
@@ -108,10 +128,7 @@ const Profile = () => {
             className="nav-account-bar flex items-center justify-between "
           >
             <div className="flex items-center gap-3">
-              <div
-              
-                className="nav-account-item-icon bg-gray-200 p-2 rounded-full "
-              >
+              <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
                 <Wallet size={14} className="text-gray-500" />
               </div>
               <p className="text-md font-normal">Join as Delivery Partner</p>

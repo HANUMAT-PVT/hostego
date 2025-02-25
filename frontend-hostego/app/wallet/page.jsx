@@ -1,37 +1,66 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Upload } from "lucide-react"
 import BackNavigationButton from '../components/BackNavigationButton'
 import { uploadToS3Bucket } from '../lib/aws'
+import HostegoButton from "../components/HostegoButton"
+
+import axiosClient from '../utils/axiosClient'
+
 
 const Page = () => {
-    const [amount, setamount] = useState(500);
-    const [utrId, setUtrId] = useState("");
-    const [selectedFile, setSelectedFile] = useState(null)
-    const [screenshot, setScreenshot] = useState(null);
+    const defaultWalletDetails = {
+        amount: 0,
+        unique_transaction_id: "",
+        payment_screenshot_img_url: ""
+    }
+    const [walletDetails, setWalletDetails] = useState(defaultWalletDetails)
+    const [userWallet, setUserWallet] = useState({ amount: 0 });
+    const [walletTransactionCreationLoading, setWalletTransactionCreationLoading] = useState(false)
+    const [paymentScreenShotImgUrl, setPaymentScreenShotImgUrl] = useState(null);
 
+    useEffect(() => {
+        fetchUserWallet()
+    }, [])
+
+    const fetchUserWallet = async () => {
+        try {
+            let { data } = await axiosClient.get("/api/wallet")
+            setUserWallet(wallet)
+        } catch (error) {
+
+        }
+    }
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        setScreenshot(file)
-
-
-        if (file) {
-            const url = URL.createObjectURL(file)
-            setSelectedFile(url);
-        }
+        setPaymentScreenShotImgUrl(file)
     };
 
 
     const handleWalletTransactionSubmit = async (e) => {
         try {
+            setWalletTransactionCreationLoading(true)
             e.preventDefault()
-            if (!selectedFile) return
-            const imageUrl = await uploadToS3Bucket(screenshot);
-            console.log(imageUrl, "image_url")
-            alert("Upload successs")
-            setScreenshot(imageUrl)
+            if (walletDetails?.amount < 100) {
+                alert("Minimum amount to add is 100");
+                return;
+            }
+            if (!paymentScreenShotImgUrl) return
+            const imageUrl = await uploadToS3Bucket(paymentScreenShotImgUrl);
+
+            await axiosClient.post('/api/wallet/credit', {
+                ...walletDetails,
+                payment_screenshot_img_url: imageUrl,
+            })
+            setPaymentScreenShotImgUrl(null)
+            setWalletDetails(defaultWalletDetails)
+            alert("Money add request added successfully")
         } catch (error) {
+            console.log(error)
             alert("error")
+        }
+        finally {
+            setWalletTransactionCreationLoading(false)
         }
     }
 
@@ -41,7 +70,17 @@ const Page = () => {
             <div className='p-4 flex flex-col gap-4'>
                 <div className='bg-white rounded-md w-full p-2 '>
                     <p className='mb-2 text-sm'>Balance</p>
-                    <p className='font-normal text-2xl'>₹2560</p>
+                    <p className='font-normal text-2xl'>₹ {userWallet?.amount}</p>
+                </div>
+                {/* QR Code Section */}
+                <div className="bg-white p-4 rounded-md flex flex-col items-center">
+                    <p className="text-black font-normal text-lg mb-2">Scan QR to Pay</p>
+                    <img
+                        src="/hostego_payment_qr.jpg"
+                        alt="Payment QR Code"
+                        className="w-[300px] h-[300px] object-cover"
+                    />
+                    <p className="text-sm text-gray-500 mt-2">Scan the QR code to make a payment</p>
                 </div>
 
                 <div className='bg-white p-2 rounded-md'>
@@ -58,8 +97,11 @@ const Page = () => {
                                     <input
                                         type="number"
                                         placeholder="500"
-                                        value={amount}
-                                        onChange={(e) => setamount(e.target.value)}
+                                        value={walletDetails?.amount}
+                                        onChange={(e) => {
+                                            const value = e.target.value ? Number(e.target.value) : "";
+                                            setWalletDetails({ ...walletDetails, amount: value });
+                                        }}
                                         className="ml-2 outline-none bg-transparent cursor-pointer w-full"
                                     />
                                 </div>
@@ -74,8 +116,8 @@ const Page = () => {
                                     <input
                                         type="text"
                                         placeholder="Enter UTR e.g. #12121Ddfs"
-                                        value={utrId}
-                                        onChange={(e) => setUtrId(e.target.value)}
+                                        value={walletDetails?.unique_transaction_id}
+                                        onChange={(e) => setWalletDetails({ ...walletDetails, unique_transaction_id: e.target.value })}
                                         className="ml-2 outline-none bg-transparent cursor-pointer w-full"
                                     />
                                 </div>
@@ -100,7 +142,7 @@ const Page = () => {
                                         className="flex items-center justify-between w-full cursor-pointer"
                                     >
                                         <span className="text-gray-500">
-                                            {screenshot ? screenshot.name : "Payment screenshot "}
+                                            {paymentScreenShotImgUrl ? paymentScreenShotImgUrl.name : "Payment screenshot "}
                                         </span>
                                         <Upload className="text-[#655df0]" />
                                     </label>
@@ -108,9 +150,7 @@ const Page = () => {
                             </div>
 
                             {/* Submit Button */}
-                            <button type='submit' className=' font-normal  w-full bg-[var(--primary-color)] text-sm rounded-full p-2 text-white'>
-                                Add ₹{amount}
-                            </button>
+                            <HostegoButton isLoading={walletTransactionCreationLoading} onClick={handleWalletTransactionSubmit} text={`Add ₹${walletDetails?.amount}`} />
                         </form>
                     </div>
                 </div>

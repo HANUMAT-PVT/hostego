@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/components/Delivery-Partner/AppleSlider.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/components/Delivery-Partner/AppleSlider.jsx", "app/profile/page.jsx"],
   "exclude": ["node_modules"]
 }
