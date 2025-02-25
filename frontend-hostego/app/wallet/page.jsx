@@ -28,9 +28,10 @@ const Page = () => {
             if (!selectedFile) return
             const imageUrl = await uploadToS3Bucket(screenshot);
             console.log(imageUrl, "image_url")
+            alert("Upload successs")
             setScreenshot(imageUrl)
         } catch (error) {
-
+            alert("error")
         }
     }
 
