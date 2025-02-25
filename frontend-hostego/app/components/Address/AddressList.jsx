@@ -54,11 +54,11 @@ export default function AddresList({ openAddressList, setOpenAddressList, sendSe
               {/* Content inside the modal */}
               <div className="flex h-full flex-col overflow-y-auto py-6 bg-[var(--bg-page-color)]">
                 <div className="px-4 sm:px-6">
-                  <DialogTitle className="text-base font-semibold text-gray-900">Select delivery location</DialogTitle>
+                  <DialogTitle className="text-xl font-semibold text-gray-900">Select delivery location</DialogTitle>
                 </div>
-                <div className="relative mt-6 flex-1 px-4 sm:px-6">
+                <div className="relative mt-6 flex-1 px-4 ">
                   {/* Add your content here */}
-                  <p className='text-xs text-gray-500 '>Your saved addresses</p>
+                  <p className='text-md text-gray-500 '>Your saved addresses</p>
                   <div className="flex flex-col gap-4 mt-4">
                     {/* Address Ist */}
                     {
@@ -67,8 +67,8 @@ export default function AddresList({ openAddressList, setOpenAddressList, sendSe
                           <Home size={20} className='text-[var(--primary-color)]' />
                         </div>
                         <div className=''>
-                          <p className='text-sm font-semibold'>{el?.heading}</p>
-                          <p className='text-xs '>{el?.street}</p>
+                          <p className='text-md font-semibold'>{el?.heading}</p>
+                          <p className='text-sm '>{el?.street}</p>
                         </div>
                       </div>)
                     }
