@@ -1,40 +1,40 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MapPin, Phone, Navigation, Clock, Package, Check, ChevronDown, ChevronUp, ShoppingBag, ArrowRight } from 'react-feather';
+import { Phone, Navigation, Clock, Check, ChevronDown, ChevronUp, ShoppingBag, ArrowRight } from 'react-feather';
 import { transformOrder } from '../../utils/helper'
 import SliderStatusTracker from "./SliderStatusTracker"
-
-const ORDER_STATUSES = [
+import StatusTimeLine from '../Orders/StatusTimeLine';
+export const ORDER_STATUSES = [
   {
-    id: 'new',
-    label: 'Accept Order',
-    icon: Package,
+    id: 'pending',
+    label: 'Order Placed',
+    icon: Check,
     color: 'var(--primary-color)'
   },
   {
     id: 'reached_shop',
     label: 'Reached Restaurant',
-    icon: MapPin,
-    color: '#FF6B6B'
+    icon: Check,
+    color: 'var(--primary-color)'
   },
   {
     id: 'picked_up',
     label: 'Picked Up',
-    icon: Package,
-    color: '#4ECDC4'
+    icon: Check,
+    color: 'var(--primary-color)'
   },
   {
     id: 'on_the_way',
     label: 'On The Way',
-    icon: Navigation,
-    color: '#45B7D1'
+    icon: Check,
+    color: 'var(--primary-color)'
   },
   {
     id: 'delivered',
     label: 'Delivered',
     icon: Check,
-    color: '#2ECC71'
+    color: 'var(--primary-color)'
   }
 ];
 
@@ -188,6 +188,8 @@ const MaintainOrderStatusForDeliveryPartner = () => {
     return ORDER_STATUSES[getStatusStep(order.order_status) + 1];
   };
 
+  console.log(activeOrder, "active order from maintain")
+
   return (
     <div className="min-h-screen bg-[#F4F6FB]">
       {/* Main Content */}
@@ -306,75 +308,8 @@ const MaintainOrderStatusForDeliveryPartner = () => {
         </div >
 
         {/* Status Timeline */}
-        <div div className="bg-white rounded-xl shadow-sm p-4 mb-20" >
-          <h4 className="font-semibold mb-4">Order Progress</h4>
-          <div className="relative">
-            {/* Background Vertical Line */}
-            <div
-              className="absolute left-[15px] top-[24px] w-[2px] bg-gray-100"
-              style={{
-                height: `${(ORDER_STATUSES.length - 1) * 56}px`  // Adjusted height calculation
-              }}
-            />
+        <StatusTimeLine ORDER_STATUSES={ORDER_STATUSES} activeOrder={activeOrder} />
 
-            {/* Colored Progress Line */}
-            <div
-              className="absolute left-[15px] top-[24px] w-[2px] transition-all duration-300"
-              style={{
-                height: `${getStatusStep(activeOrder.order_status) * 56}px`,
-                backgroundColor: 'var(--primary-color)'
-              }}
-            />
-
-            {/* Status Points */}
-            <div className="relative">
-              {ORDER_STATUSES.map((status, index) => {
-                const isCompleted = getStatusStep(activeOrder.order_status) >= index;
-                const isCurrent = getStatusStep(activeOrder.order_status) === index;
-                const StatusIcon = status.icon;
-
-                return (
-                  <div
-                    key={status.id}
-                    className="flex items-center gap-4 relative h-14" // Fixed height for each status
-
-                    style={{ cursor: 'pointer' }}
-                  >
-                    {/* Status Circle */}
-                    <div
-                      style={{
-                        backgroundColor: isCompleted ? status.color : '#fff',
-                        borderColor: isCompleted ? status.color : '#e5e7eb',
-                      }}
-                      className={`
-                        w-8 h-8 rounded-full flex items-center justify-center 
-                        border-2 relative z-10 bg-white transition-all duration-300
-                      `}
-                    >
-                      <StatusIcon
-                        className={`w-4 h-4 ${isCompleted ? 'text-white' : 'text-gray-400'
-                          }`}
-                      />
-                    </div>
-
-                    {/* Status Text */}
-                    <div className="flex flex-col">
-                      <span className={`font-medium ${isCompleted ? 'text-gray-900' : 'text-gray-400'
-                        }`}>
-                        {status.label}
-                      </span>
-                      {isCurrent && (
-                        <span className="text-sm text-[var(--primary-color)]">
-                          Current
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Bottom Action Bar */}
