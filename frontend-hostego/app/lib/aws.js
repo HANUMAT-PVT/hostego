@@ -1,11 +1,26 @@
 import AWS from "aws-sdk";
 
+// Only log in development
+if (process.env.NODE_ENV !== "production") {
+  console.log("AWS Environment Variables:", {
+    region: process.env.NEXT_PUBLIC_AWS_REGION,
+    accessKey: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY,
+    secretKey: process.env.NEXT_PUBLIC_AWS_SECRET_KEY,
+    bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
+  });
+}
+
 // Configure AWS SDK
-AWS.config.update({
-  region: process.env.NEXT_PUBLIC_AWS_REGION || "us-east-1",
-  accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY,
-  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_KEY,
-});
+const awsConfig = {
+  region: process.env.NEXT_PUBLIC_AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY,
+    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_KEY,
+  },
+};
+
+// Initialize AWS with configuration
+AWS.config.update(awsConfig);
 
 // Create S3 service object
 const s3 = new AWS.S3();
@@ -19,7 +34,7 @@ export const uploadToS3Bucket = async (file) => {
 
     // Set up the upload parameters
     const params = {
-      Bucket: "hostego-aws-bucket",
+      Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
       Key: uniqueFileName,
       Body: file,
       ContentType: file.type,
@@ -29,7 +44,10 @@ export const uploadToS3Bucket = async (file) => {
     const { Location } = await s3.upload(params).promise();
     return Location;
   } catch (error) {
-    console.error("S3 Upload Error:", error);
+    // More detailed error logging in development
+    if (process.env.NODE_ENV !== "production") {
+      console.error("S3 Upload Error:", error);
+    }
     throw new Error("Failed to upload file to S3");
   }
 };
