@@ -2,9 +2,11 @@
 import axios from "axios";
 import { useEffect } from "react";
 import axiosClient from "../utils/axiosClient"
+import { useRouter } from "next/router";
 
 
 const PhoneEmailAuth = () => {
+    const router = useRouter()
 
     useEffect(() => {
         // Dynamically load the Phone.Email script
@@ -35,16 +37,17 @@ const PhoneEmailAuth = () => {
 
 
     const handleUserAccountCreation = async (jsonUrl) => {
-        console.log(jsonUrl, "handled account creaetion")
+      
         try {
             let { data } = await axios.get(jsonUrl);
-            console.log(data, "data from the user")
+
             let response = await axiosClient.post("/api/auth/signup", {
                 mobile_number: data?.user_country_code + data?.user_phone_number
             })
-            console.log(response, "api response")
+
             localStorage.setItem("auth-response", JSON.stringify(response.data))
             alert("Signup successfull")
+            router.push("/home")
 
         } catch (error) {
             console.log(error, "error")

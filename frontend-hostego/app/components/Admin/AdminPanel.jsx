@@ -64,7 +64,7 @@ export default function AdminPanel() {
                 {currentPage === "dashboard" && <h1 className="text-2xl font-bold">📊 Dashboard</h1>}
                 {currentPage === "order-assign" && <OrderAssignment />}
                 {currentPage === "partners" && <h1 className="text-2xl font-bold">👥 Delivery Partners</h1>}
-                {currentPage === "settings" && <h1 className="text-2xl font-bold">⚙️ Settings</h1>}
+                {currentPage === "tr" && <h1 className="text-2xl font-bold">⚙️ Settings</h1>}
                 {currentPage === "orders" && <OrdersList />}
             </main>
         </div>
