@@ -165,8 +165,8 @@ const DUMMY_ORDERS = {
 
 
 
-const MaintainOrderStatusForDeliveryPartner = () => {
-  const [orders, setOrders] = useState(transformOrder(DUMMY_ORDERS));
+const MaintainOrderStatusForDeliveryPartner = ({ order }) => {
+  const [orders, setOrders] = useState(transformOrder(order));
 
   const [activeOrder, setActiveOrder] = useState(orders);
   const [isItemsExpanded, setIsItemsExpanded] = useState(false);
@@ -189,7 +189,7 @@ const MaintainOrderStatusForDeliveryPartner = () => {
     return ORDER_STATUSES[getStatusStep(order.order_status) + 1];
   };
 
- 
+
 
   return (
     <div className="min-h-screen bg-[#F4F6FB]">

@@ -1,11 +1,13 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import BottomNavigationBar from '../components/BottomNavigationBar'
 import ProductCard from '../components/ProductCard'
 import SearchComponent from '../components/SearchComponent'
 import CartFloatingButton from "../components/Cart/CartFloatingButton"
 import { CircleUserRound, House, Package, Search, ShoppingBag, ShoppingBagIcon, ShoppingBasket, User, UtensilsCrossed } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import axiosClient from '../utils/axiosClient'
+import ProductCardSkeleton from '../components/ProductCardSkeleton'
 
 
 const navItems = [
@@ -18,6 +20,25 @@ const navItems = [
 const page = () => {
     const router = useRouter()
     const [activeIndex, setActiveIndex] = useState(0)
+    const [products, setProducts] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        fetchProducts()
+    }, [])
+
+    const fetchProducts = async () => {
+        try {
+            setIsLoading(true)
+            const { data } = await axiosClient.get("/api/products/all")
+            setProducts(data)
+        } catch (error) {
+            console.error('Error fetching products:', error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
 
     return (
         <div>
@@ -50,15 +71,23 @@ const page = () => {
                 </div>
 
             </div>
-            <div className=' overflow-auto flex gap-3 flex-wrap justify-between p-4 '>
-                <ProductCard myKey={1} />
+            <div className=' overflow-auto flex gap-2 flex-wrap justify-between p-4 '>
+                {isLoading ? (
+                    // Show 6 skeleton cards while loading
+                    [...Array(6)].map((_, index) => (
+                        <ProductCardSkeleton key={index} />
+                    ))
+                ) : (
+                    products?.map((prd) => <ProductCard {...prd} key={prd?.product_id} />)
+                )}
+                {/* <ProductCard myKey={1} />
                 <ProductCard myKey={2} />
                 <ProductCard myKey={3} />
                 <ProductCard myKey={4} />
-                <ProductCard myKey={5} />
+                <ProductCard myKey={5} /> */}
             </div>
             <BottomNavigationBar />
-            <CartFloatingButton/>
+            <CartFloatingButton />
         </div>
     )
 }

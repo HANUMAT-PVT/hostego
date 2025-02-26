@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, TransitionChild } from '@headlessui/react'
 import { CrossIcon, Home, X } from 'lucide-react'
-
+import axiosClient from '../../utils/axiosClient'
+import { useEffect } from 'react'
 
 export default function AddresList({ openAddressList, setOpenAddressList, sendSelectedAddress }) {
   const [open, setOpen] = useState(false)
@@ -19,6 +20,17 @@ export default function AddresList({ openAddressList, setOpenAddressList, sendSe
       street: 'Room no. 1118,Zakir-A,Chandigarh University'
     }
   ]
+
+  const [address, setAddress] = useState([])
+
+  useEffect(() => {
+    fetchAddress()
+  }, [])
+
+  const fetchAddress = async () => {
+    const { data } = await axiosClient.get('/api/address')
+    setAddress(data)
+  }
 
   return (
     <Dialog open={openAddressList} onClose={() => setOpenAddressList(!openAddressList)} className="relative z-10 ">
@@ -62,13 +74,13 @@ export default function AddresList({ openAddressList, setOpenAddressList, sendSe
                   <div className="flex flex-col gap-4 mt-4">
                     {/* Address Ist */}
                     {
-                      userAddress?.map((el) => <div key={el?.id} onClick={() => { sendSelectedAddress(el), setOpenAddressList(!openAddressList) }} className='address-item flex items-center rounded-md  gap-4 cursor-pointer p-2 bg-white '>
+                      address?.map((el) => <div key={el?.id} onClick={() => { sendSelectedAddress(el), setOpenAddressList(!openAddressList) }} className='address-item flex items-center rounded-md  gap-4 cursor-pointer p-2 bg-white '>
                         <div className='bg-[var(--bg-page-color)] p-2 w-[40px] h-[40px]  flex justify-center items-center rounded-full '>
                           <Home size={20} className='text-[var(--primary-color)]' />
                         </div>
                         <div className=''>
-                          <p className='text-md font-semibold'>{el?.heading}</p>
-                          <p className='text-sm '>{el?.street}</p>
+                          <p className='text-md font-semibold'>{el?.address_type}</p>
+                          <p className='text-sm '>{el?.address_line_1}</p>
                         </div>
                       </div>)
                     }

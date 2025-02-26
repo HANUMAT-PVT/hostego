@@ -1,92 +1,177 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import BackNavigationButton from '../components/BackNavigationButton'
 import CartItem from '../components/Cart/CartItem'
 import AddressList from '../components/Address/AddressList'
-import { Home } from 'lucide-react'
+import { Home, Clock, Truck, CreditCard } from 'lucide-react'
 import HostegoButton from '../components/HostegoButton'
+import axiosClient from '../utils/axiosClient'
+import HostegoLoader from '../components/HostegoLoader'
+import PaymentStatus from '../components/PaymentStatus'
+import { useRouter } from 'next/navigation'
 
 const page = () => {
     // Hostego – Simplify Your Hostel Life"
     const [openAddressList, setOpenAddressList] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState(false)
+    const [cartData, setCartData] = useState({})
+    const [isPageLoading, setIsPageLoading] = useState(true)
+    const [paymentStatus, setPaymentStatus] = useState(null)
+    const router = useRouter()
+
+    useEffect(() => {
+        fetchCartItems()
+    }, [])
+
+    const fetchCartItems = async () => {
+        try {
+            setIsPageLoading(true)
+            const { data } = await axiosClient.get('/api/cart/')
+            setCartData(data)
+            console.log(data)
+        } catch (error) {
+            console.error('Error fetching cart:', error)
+        } finally {
+            setIsPageLoading(false)
+        }
+    }
+
+    if (isPageLoading) {
+        return <HostegoLoader />
+    }
+
+    const handleCreateOrder = async () => {
+        try {
+            setPaymentStatus('processing')
+            const { data } = await axiosClient.post('/api/order', {
+                address_id: selectedAddress?.address_id
+            })
+
+            const response = await axiosClient.get(`/api/payment`, {
+                order_id: data?.order_id
+            })
+
+            // Simulate payment processing time
+            await new Promise(resolve => setTimeout(resolve, 2000))
+
+            setPaymentStatus('success')
+            // Redirect after success
+            setTimeout(() => {
+                router.push('/orders')
+            }, 2000)
+
+        } catch (error) {
+            console.error('Error creating order:', error)
+            setPaymentStatus('failed')
+            // Reset status after error
+            setTimeout(() => {
+                setPaymentStatus(null)
+            }, 3000)
+        }
+    }
     return (
-        <div className='bg-[var(--bg-page-color)]'>
-            <BackNavigationButton title={"Checkout"} />
-            <div className='bg-white px-4 py-2'>
-                <p className='font-semibold text-xl pb-1 '>Delivery in 15 minutes</p>
-                <p className='text-md text-gray-600'>Shipment of 3 items</p>
+        <div className='min-h-screen bg-[var(--bg-page-color)]'>
+            <BackNavigationButton title="Checkout" />
+
+            {/* Delivery Info Card */}
+            <div className='bg-white m-2 rounded-xl overflow-hidden shadow-sm'>
+                <div className='bg-gradient-to-r from-[var(--primary-color)] to-purple-500 px-4 py-3 text-white'>
+                    <div className='flex items-center gap-2'>
+                        <Clock className="w-5 h-5" />
+                        <p className='font-medium'>Express Delivery</p>
+                    </div>
+                    <p className='text-sm opacity-90 mt-1'>Estimated delivery in 15-20 minutes</p>
+                </div>
+                <div className='p-4'>
+                    <p className='text-sm text-gray-600'>Order Summary • {cartData?.cart_items?.length || 0} items</p>
+                </div>
             </div>
-            <div className='p-2 flex flex-col rounded-lg '>
-                <CartItem />
-                <CartItem />
-                <CartItem />
 
-
-                {/* Bill Details */}
-                <div className=' flex flex-col gap-2 bg-white p-2 mb-2 mt-2'>
-                    <p className='font-semibold text-md pb-1 border-b   '>Bill details</p>
-                    <div className='flex justify-between  font-normalmd  text-gray-900'>
-                        <p>Items total</p>
-                        <p>₹230</p>
-                    </div>
-                    <div className='flex justify-between font-normal text-sm  text-gray-900'>
-                        <p className=''>Delivery charge</p>
-                        <p>₹23</p>
-                    </div>
-                    <div className='flex justify-between font-normal text-sm  text-gray-900 border-b pb-2'>
-                        <p>Platform fee</p>
-                        <p>+₹1</p>
-                    </div>
-                    <div className='flex justify-between text-sm font-light text-gray-900'>
-                        <p className='font-semibold text-xl '>Grand total</p>
-                        <p className='font-semibold text-xl '>₹254</p>
-                    </div>
-
-                </div>
-                {/* Cancellation Policy */}
-                <div className=' flex flex-col gap-2 bg-white p-2 mb-8 rounded-md mt-4'>
-                    <p className='font-semibold text-md pb-1 border-b   '>Cancellation Policy</p>
-                    <p className='text-sm text-gray-500'>Orders cannot be cancelled once packed for delivery.
-                        In case of unexpected delays, a refund will be provided, if applicable.</p>
-                </div>
-                <div className='h-[150px]'>
-
-                </div>
-                {<div className="fixed bottom-0 w-full p-2  bg-white z-2 flex justify-center items-center px-4 shadow-2xl  ">
-                    {!selectedAddress && <HostegoButton text={'Choose address at next step'} onClick={() => setOpenAddressList(!openAddressList)} ></HostegoButton>}
-                    {selectedAddress && <div className='w-full'>
-                        <div onClick={() => { }} className='address-item flex items-center  gap-4 pb-2 rounded-md  cursor-pointer bg-white  '>
-                            <div className='bg-[var(--bg-page-color)] p-2 w-[30px] h-[30px]  flex justify-center items-center rounded-full '>
-                                <Home size={20} className='text-[var(--primary-color)]' />
-                            </div>
-                            <div className='w-full flex items-center justify-between mb-2 '>
-                                <div>
-                                    <p className='text-md font-semibold'>Delivering to {selectedAddress?.heading}</p>
-                                    <p className='text-sm w-[200px]  whitespace-nowrap overflow-hidden text-ellipsis  '>{selectedAddress?.street}</p>
-                                </div>
-                                <p className='text-md  text-green-700' onClick={() => setOpenAddressList(!openAddressList)}>Change</p>
-                            </div>
-                        </div>
-                        {/*Payment Option  */}
-                        <div className='flex gap-2 justify-between items-center'>
-                            <div>
-                                <p className='text-md  text-gray-500'>PAY USING</p>
-                                <p className='text-md'>Wallet</p>
-                            </div>
-                            <div className='bg-green-700 text-white min-w-[180px] px-3 py-1 h-fit flex justify-between rounded-md items-center '>
-                                <div className='flex flex-col items-center  '>
-                                    <p className='font-semibold text-md'>₹254</p>
-                                    <p className='font-normal text-xs'>TOTAL</p>
-                                </div>
-                                <p className='text-md'>Place Order</p>
-                            </div>
-                        </div>
-                    </div>}
-                </div>}
+            {/* Cart Items */}
+            <div className='space-y-2 mb-4'>
+                {cartData?.cart_items?.map((el) => (
+                    <CartItem
+                        fetchCartAgain={fetchCartItems}
+                        {...el}
+                        key={el?.cart_item_id}
+                    />
+                ))}
             </div>
-            <AddressList sendSelectedAddress={(e) => setSelectedAddress(e)} openAddressList={openAddressList} setOpenAddressList={(e) => setOpenAddressList(e)} />
+
+            {/* Delivery Address */}
+            <div className='bg-white mx-2 rounded-xl p-4 shadow-sm'>
+                <div className='flex items-center justify-between mb-3'>
+                    <div className='flex items-center gap-2'>
+                        <Truck className='w-5 h-5 text-[var(--primary-color)]' />
+                        <p className='font-medium'>Delivery Address</p>
+                    </div>
+                    <button
+                        onClick={() => setOpenAddressList(true)}
+                        className='text-sm text-[var(--primary-color)] font-medium'
+                    >
+                        {selectedAddress ? 'Change' : 'Add'}
+                    </button>
+                </div>
+
+                {selectedAddress ? (
+                    <div className='flex items-start gap-3'>
+                        <div className='bg-[var(--bg-page-color)] p-2 rounded-full'>
+                            <Home className='w-5 h-5 text-[var(--primary-color)]' />
+                        </div>
+                        <div>
+                            <p className='font-medium'>{selectedAddress?.address_type}</p>
+                            <p className='text-sm text-gray-600'>{selectedAddress?.address_line_1}</p>
+                        </div>
+                    </div>
+                ) : (
+                    <p className='text-sm text-gray-500'>Please select a delivery address</p>
+                )}
+            </div>
+
+            {/* Bill Details */}
+            <div className='bg-white mx-2 mt-4 rounded-xl p-4 shadow-sm'>
+                <div className='flex items-center gap-2 mb-3'>
+                    <CreditCard className='w-5 h-5 text-[var(--primary-color)]' />
+                    <p className='font-medium text-md'>Bill Details</p>
+                </div>
+                <div className='space-y-2 text-md '>
+                    <div className='flex justify-between font-normal'>
+                        <span className='text-gray-800 '>Item Total</span>
+                        <span>+ ₹{cartData?.cart_value.subtotal}</span>
+                    </div>
+                    <div className='flex justify-between  font-normal'>
+                        <span className='text-gray-800'>Delivery Fee</span>
+                        <span>+ ₹{cartData?.cart_value.shipping_fee}</span>
+                    </div>
+
+                    <div className='flex justify-between pt-2 border-t mt-2 font-semibold text-xl'>
+                        <span>Total Amount</span>
+                        <span>₹{(cartData?.cart_value.final_order_value)}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Place Order Button */}
+            <div className='fixed bottom-0 left-0 right-0 p-4 bg-white border-t'>
+                <HostegoButton
+                    onClick={handleCreateOrder}
+                    text={`Place Order • ₹${cartData?.cart_value?.final_order_value}`}
+                    className='w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium'
+                    disabled={!selectedAddress}
+                />
+            </div>
+
+            <AddressList
+                sendSelectedAddress={setSelectedAddress}
+                openAddressList={openAddressList}
+                setOpenAddressList={setOpenAddressList}
+            />
+
+            {/* Bottom Spacing */}
+            <div className='h-24'></div>
+
+            {paymentStatus && <PaymentStatus status={paymentStatus} />}
         </div>
     )
 }
