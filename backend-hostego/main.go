@@ -20,7 +20,7 @@ func main() {
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000", "https://hostego.in"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH"},
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,
 		ExposeHeaders:    []string{"Authorization"},
@@ -42,7 +42,6 @@ func main() {
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "Welcome to the server Backend"})
 	})
-
 
 	log.Fatal(app.Listen("0.0.0.0:8080"))
 }
