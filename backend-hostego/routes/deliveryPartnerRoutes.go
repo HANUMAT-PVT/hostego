@@ -9,5 +9,6 @@ import (
 func DeliveryPartnerRoutes(app *fiber.App) {
 	deliveryPartnerRoutes := app.Group("/api/delivery-partner")
 	deliveryPartnerRoutes.Post("/", controllers.CreateNewDeliveryPartner)
-	deliveryPartnerRoutes.Get("/:id", controllers.FetchDeliveryPartnerById)
+	deliveryPartnerRoutes.Get("/find", controllers.FetchDeliveryPartnerByUserId)
+	deliveryPartnerRoutes.Patch("/:id", controllers.UpdateDeliveryPartner)
 }

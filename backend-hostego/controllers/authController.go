@@ -20,16 +20,28 @@ func Signup(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Bad Request"})
 	}
 
-	// ctx := context.Background()
-	// authClient, err := config.FireBaseApp.Auth(ctx)
-	// if err != nil {
-	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Firebase auth failed"})
-	// }
-
 	var user models.User
-	if err := database.DB.Where(`mobile_number = ?`, req.MobileNumber).First(&user).Error; err == nil {
-		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"error": "User Already Exists"})
+	// Check if user already exists
+	if err := database.DB.Where("mobile_number = ?", req.MobileNumber).First(&user).Error; err == nil {
+		// ✅ If user exists, generate and return a token instead of creating a new user
+		token, err := generateJWT(user)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "JWT generation failed"})
+		}
+
+		// Set cookie
+		c.Cookie(&fiber.Cookie{
+			Name:     "auth_token",
+			Value:    token,
+			Expires:  time.Now().Add(24 * 30 * time.Hour),
+			HTTPOnly: false,
+			Secure:   false,
+		})
+
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User already exists", "token": token})
 	}
+
+	// 🆕 If user doesn't exist, create a new user
 	user = models.User{
 		FirstName:           req.FirstName,
 		LastName:            req.LastName,
@@ -39,13 +51,16 @@ func Signup(c fiber.Ctx) error {
 		CreatedAt:           time.Now(),
 		LastLoginTimestamp:  time.Now(),
 	}
+
 	database.DB.Create(&user)
 
+	// Generate JWT token for the new user
 	token, err := generateJWT(user)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "JWT generation failed"})
 	}
 
+	// Set cookie
 	c.Cookie(&fiber.Cookie{
 		Name:     "auth_token",
 		Value:    token,
@@ -53,8 +68,8 @@ func Signup(c fiber.Ctx) error {
 		HTTPOnly: false,
 		Secure:   false,
 	})
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"messsage": "Signup Succesfull", "token": token})
 
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Signup Successful", "token": token})
 }
 
 func generateJWT(user models.User) (string, error) {
