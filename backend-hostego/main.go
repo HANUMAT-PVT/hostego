@@ -19,11 +19,11 @@ func main() {
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins:     []string{""},
 		AllowMethods:     []string{"GET,POST,HEAD,PUT,DELETE,PATCH"},
 		AllowHeaders:     []string{"Origin, Content-Type, Accept, Authorization, X-Requested-With"},
 		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
+		AllowCredentials: false,
 		MaxAge:           300,
 	}))
 
