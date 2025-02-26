@@ -2,8 +2,8 @@
 import axios from "axios";
 import { useEffect } from "react";
 import axiosClient from "../utils/axiosClient"
-import { useRouter } from "next/router";
 
+import {useRouter} from "next/navigation"
 
 const PhoneEmailAuth = () => {
     const router = useRouter()
