@@ -7,6 +7,7 @@ import {
   Package,
   ScrollText,
   Wallet,
+  LogOutIcon
 } from "lucide-react";
 import BackNavigationButton from "../components/BackNavigationButton";
 import { useRouter } from "next/navigation";
@@ -23,12 +24,22 @@ const Profile = () => {
   const fetchUserAccount = async () => {
     try {
       const { data } = await axiosClient.get("/api/user/me");
-      console.log(data, "data from teh user ");
+
       setUserAccount(data)
     } catch (error) {
       console.log(error);
     }
   };
+
+  const handleUserLogout = () => {
+    try {
+      localStorage.removeItem("auth-response")
+      router.push('/auth/sign-up')
+      window.location.href = "/auth/sign-up"
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <>
@@ -132,6 +143,19 @@ const Profile = () => {
                 <Wallet size={14} className="text-gray-500" />
               </div>
               <p className="text-md font-normal">Join as Delivery Partner</p>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
+          {/* Logout */}
+          <div
+            onClick={() => handleUserLogout()}
+            className="nav-account-bar flex items-center justify-between  cursor-pointer"
+          >
+            <div className="flex items-center gap-3 ">
+              <div className="nav-account-item-icon bg-red-500 p-2 rounded-full ">
+                <LogOutIcon size={14} className="text-white" />
+              </div>
+              <p className="text-md font-normal">Logout</p>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>

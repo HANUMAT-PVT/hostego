@@ -1,5 +1,5 @@
+"use client";
 import AWS from "aws-sdk";
-
 // Only log in development
 if (process.env.NODE_ENV !== "production") {
   console.log("AWS Environment Variables:", {
