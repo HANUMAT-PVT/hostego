@@ -10,7 +10,7 @@ import (
 
 func VerifyUserAuthCookie(c fiber.Ctx) (string, error) {
 	authHeader := c.Get("Authorization")
-	fmt.Print("cookie", authHeader)
+	
 	if authHeader == "" {
 		return "", fmt.Errorf("no auth token found")
 	}
