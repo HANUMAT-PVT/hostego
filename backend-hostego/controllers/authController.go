@@ -29,15 +29,6 @@ func Signup(c fiber.Ctx) error {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "JWT generation failed"})
 		}
 
-		// Set cookie
-		c.Cookie(&fiber.Cookie{
-			Name:     "auth_token",
-			Value:    token,
-			Expires:  time.Now().Add(24 * 30 * time.Hour),
-			HTTPOnly: false,
-			Secure:   false,
-		})
-
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User already exists", "token": token})
 	}
 
@@ -59,16 +50,6 @@ func Signup(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "JWT generation failed"})
 	}
-
-	// Set cookie
-	c.Cookie(&fiber.Cookie{
-		Name:     "auth_token",
-		Value:    token,
-		Expires:  time.Now().Add(24 * 30 * time.Hour),
-		HTTPOnly: false,
-		Secure:   false,
-	})
-
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Signup Successful", "token": token})
 }
 

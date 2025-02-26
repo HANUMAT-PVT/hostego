@@ -35,4 +35,5 @@ type Product struct {
 	ShopId          uuid.UUID      `gorm:"type:uuid;not null;index" json:"shop_id"`
 	Shop            Shop           `gorm:"foreignKey:ShopId;references:ShopId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"shop"`
 	Tags            datatypes.JSON `gorm:"type:jsonB;" json:"tags"`
+	Weight          string         `gorm:"type:varchar(255);" json:"weight"`
 }

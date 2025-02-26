@@ -14,9 +14,9 @@ func CreateNewDeliveryPartner(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if err:=database.DB.Where("user_id=?",user_id).Find(&delivery_partner).Error;err!=nil{
+	if err := database.DB.Where("user_id=?", user_id).Find(&delivery_partner).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
-	}	
+	}
 	delivery_partner.UserId = user_id
 	if err := c.Bind().JSON(&delivery_partner); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
@@ -35,12 +35,26 @@ func UpdateDeliveryPartner(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if err := database.DB.Where("delivery_partner_id=?,user_id=?", delivery_partner_id, user_id).Save(&delivery_partner).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
+
+	// First find the existing delivery partner
+	if err := database.DB.Where("delivery_partner_id = ? AND user_id = ?", delivery_partner_id, user_id).First(&delivery_partner).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Delivery partner not found"})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"delivery_partner": delivery_partner, "message": "Delivery Partner Updated succesfully"})
+	// Bind the updated data
+	if err := c.Bind().JSON(&delivery_partner); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
 
+	// Save the updates
+	if err := database.DB.Save(&delivery_partner).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"delivery_partner": delivery_partner,
+		"message":          "Delivery Partner Updated successfully",
+	})
 }
 
 func FetchDeliveryPartnerByUserId(c fiber.Ctx) error {

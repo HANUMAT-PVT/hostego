@@ -57,9 +57,9 @@ func CalculateFinalOrderValue(cartItems []models.CartItem) FinalOrderValueType {
 
 	// Calculate the subtotal of all cart items
 	for _, item := range cartItems {
-		totalItemSubTotal = item.SubTotal
+		totalItemSubTotal = item.SubTotal + totalItemSubTotal
 	}
-
+	println(cartItems)
 	// Calculate charges
 	var deliveryCharge float64
 	if totalItemSubTotal <= 150.0 {
@@ -80,7 +80,7 @@ func CalculateFinalOrderValue(cartItems []models.CartItem) FinalOrderValueType {
 	deliveryPartnerShare := deliveryCharge * 0.70
 
 	// Final order value including charges
-	finalOrderValue := totalItemSubTotal + deliveryCharge + platformFee
+	finalOrderValue := totalItemSubTotal + deliveryCharge
 
 	return FinalOrderValueType{
 		SubTotal:             totalItemSubTotal,
@@ -129,7 +129,7 @@ func FetchOrderById(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"order": order})
+	return c.Status(fiber.StatusOK).JSON(order)
 }
 
 func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
@@ -191,4 +191,58 @@ func UpdateOrderById(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order Updated successfully!"})
+}
+
+func CreateOrder(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	var cartItems []models.CartItem
+
+	var order models.Order
+	if err := c.Bind().JSON(&order); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	// Make sure AddressId is set in the request
+	if order.AddressId == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Address ID is required"})
+	}
+
+	if err := database.DB.Preload("ProductItem.Shop").Where("user_id=?", user_id).Find(&cartItems).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	jsonCartItems, err := json.Marshal(cartItems)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to serialize cart items"})
+	}
+	order.OrderItems = jsonCartItems
+	order.UserId = user_id
+	totalCharges := CalculateFinalOrderValue(cartItems)
+	order.PlatformFee = totalCharges.PlatformFee
+	order.ShippingFee = totalCharges.ShippingFee
+	order.FinalOrderValue = totalCharges.FinalOrderValue
+	order.DeliveryPartnerFee = totalCharges.DeliveryPartnerShare
+	order.OrderStatus = "pending"
+	if err := database.DB.Preload("User").Create(&order).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"order": order, "message": "Order created successfully !"})
+}
+
+func FetchAllUserOrders(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	if user_id == "" {
+
+	}
+	var orders []models.Order
+	if err := database.DB.Preload("User").Where("user_id=?", user_id).Find(&orders).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(orders)
 }
