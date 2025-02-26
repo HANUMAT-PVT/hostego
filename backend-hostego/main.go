@@ -19,12 +19,11 @@ func main() {
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{""},
-		AllowMethods:     []string{"GET,POST,HEAD,PUT,DELETE,PATCH"},
-		AllowHeaders:     []string{"Origin, Content-Type, Accept, Authorization, X-Requested-With"},
-		ExposeHeaders:    []string{"Content-Length"},
+		AllowOrigins:     []string{"http://localhost:3000", "https://hostego.in"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowCredentials: false,
-		MaxAge:           300,
+		ExposeHeaders:    []string{"Authorization"},
 	}))
 
 	database.ConnectDataBase()
