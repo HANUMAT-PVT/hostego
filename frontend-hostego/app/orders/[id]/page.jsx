@@ -1,130 +1,202 @@
 'use client'
-import React from 'react'
-import BackNavigationButton from '../../components/BackNavigationButton'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import BackNavigationButton from '@/app/components/BackNavigationButton'
+import { formatDate } from '@/app/utils/helper'
+import { Package, MapPin, Clock, CheckCircle2, Truck, AlertCircle, IndianRupee } from 'lucide-react'
+import axiosClient from '@/app/utils/axiosClient'
+import HostegoLoader from '@/app/components/HostegoLoader'
 import StatusTimeLine from '../../components/Orders/StatusTimeLine'
+import { transformOrder } from '../../utils/helper'
+import { ORDER_STATUSES } from '../../components/Delivery-Partner/MaintainOrderStatusForDeliveryPartner'
 
-import {transformOrder,data} from "../../utils/helper"
+const OrderDetailsPage = () => {
+    const { id } = useParams()
+    const [order, setOrder] = useState(null)
+    const [isLoading, setIsLoading] = useState(true)
 
-import {ORDER_STATUSES} from "../../components/Delivery-Partner/MaintainOrderStatusForDeliveryPartner"
+    const statusConfig = {
+        pending: {
+            icon: Clock,
+            color: 'text-orange-500',
+            bgColor: 'bg-orange-50',
+            label: 'Order Pending'
+        },
+        confirmed: {
+            icon: Package,
+            color: 'text-blue-500',
+            bgColor: 'bg-blue-50',
+            label: 'Order Confirmed'
+        },
+        preparing: {
+            icon: Package,
+            color: 'text-[var(--primary-color)]',
+            bgColor: 'bg-[var(--primary-color)]/10',
+            label: 'Preparing Order'
+        },
+        out_for_delivery: {
+            icon: Truck,
+            color: 'text-purple-500',
+            bgColor: 'bg-purple-50',
+            label: 'Out for Delivery'
+        },
+        delivered: {
+            icon: CheckCircle2,
+            color: 'text-green-500',
+            bgColor: 'bg-green-50',
+            label: 'Delivered'
+        },
+        cancelled: {
+            icon: AlertCircle,
+            color: 'text-red-500',
+            bgColor: 'bg-red-50',
+            label: 'Cancelled'
+        }
+    }
 
+    useEffect(() => {
+        fetchOrder()
+    }, [id])
 
-const page = () => {    
+    const fetchOrder = async () => {
+        try {
+            setIsLoading(true)
+            const { data } = await axiosClient.get(`/api/order/${id}`)
+            console.log(data, "order")
+            setOrder(data)
+        } catch (error) {
+            console.error('Error fetching order:', error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
+    if (isLoading) return <HostegoLoader />
+    if (!order) return <div>Order not found</div>
+
+    const status = statusConfig[order?.order_status] || statusConfig.pending
+    const StatusIcon = status.icon
 
     return (
-        <div className='bg-[var(--bg-page-color)]' >
-            <BackNavigationButton />
-            <div className='px-4 py-2 bg-white mb-2 '>
-                <div className='mb-4 '>
-                    <p className='font-bold text-xl'>Order Summary</p>
-                    <p className='text-gray-500 text-md font-normal'>Arrived at 8:35 pm</p>
-                </div>
-                <p className='font-semibold text-md mb-4 '>3 items in this order</p>
-                <div className='flex flex-col gap-3'>
-                    <div className='flex gap-5 justify-between items-center '>
-                        <div className='flex gap-5 '>
-                            <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
-                                <img className=' min-w-[40px] max-w-[40px] '
-                                    src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
-                                    alt={'Uncle chips'}
-                                />
-                            </div>
-                            <div>
-                                <p className='text-md'>Lay's India's Magic Masala Potato Chips</p>
-                                <p className='text-sm text-gray-500 font-normal'>48 g x 1</p>
-                            </div>
-                        </div>
-                        <div className='flex flex-col gap-2'>
+        <div className="min-h-screen bg-[var(--bg-page-color)]">
+            <BackNavigationButton title="Order Details" />
 
-                            <p className='text-md font-semibold'>₹20</p>
-
-                        </div>
+            {/* Order Status Card */}
+            <div className={`mx-2 mt-2 rounded-xl overflow-hidden bg-white shadow-sm`}>
+                <div className={`p-4 ${status.bgColor} border-b`}>
+                    <div className="flex items-center gap-3 mb-2">
+                        <StatusIcon className={`w-6 h-6 ${status?.color}`} />
+                        <h2 className={`text-lg font-semibold ${status?.color}`}>
+                            {status?.label}
+                        </h2>
                     </div>
-                    <div className='flex gap-5 justify-between items-center '>
-                        <div className='flex gap-5 '>
-                            <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
-                                <img className=' min-w-[40px] max-w-[40px] '
-                                    src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
-                                    alt={'Uncle chips'}
+                    <p className="text-sm text-gray-600">
+                        Ordered on {formatDate(order?.created_at)}
+                    </p>
+                </div>
+
+                {/* Order Items */}
+                <div className="p-4">
+                    <h3 className="font-medium mb-3">Order Items</h3>
+                    <div className="space-y-3">
+                        {order?.order_items?.map((item) => (
+                            <div key={item?.cart_item_id}
+                                className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                                <img
+                                    src={item?.product_item?.product_img_url}
+                                    alt={item?.product_item?.product_name}
+                                    className="w-16 h-16 rounded-lg object-cover"
                                 />
+                                <div className="flex-1">
+                                    <h4 className="font-medium text-sm">
+                                        {item?.product_item?.product_name}
+                                    </h4>
+                                    <p className="text-sm text-gray-600">
+                                        {item?.product_item?.weight}
+                                    </p>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <span className="text-sm">₹{item?.product_item?.food_price}</span>
+                                        <span className="text-gray-400">×</span>
+                                        <span className="text-sm">{item?.quantity}</span>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <p className="font-medium">₹{item?.sub_total}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className='text-md'>Lay's India's Magic Masala Potato Chips</p>
-                                <p className='text-sm text-gray-500 font-normal'>48 g x 1</p>
-                            </div>
-                        </div>
-                        <div className='flex flex-col gap-2'>
-
-                            <p className='text-md font-semibold'>₹20</p>
-
-                        </div>
-                    </div> <div className='flex gap-5 justify-between items-center '>
-                        <div className='flex gap-5 '>
-                            <div className='bg-[var(--bg-page-color)] rounded-md p-1'>
-                                <img className=' min-w-[40px] max-w-[40px]'
-                                    src={"https://www.bigbasket.com/media/uploads/p/l/40015993_11-uncle-chips-spicy-treat.jpg"}
-                                    alt={'Uncle chips'}
-                                />
-                            </div>
-                            <div>
-                                <p className='text-md'>Lay's India's Magic Masala Potato Chips</p>
-                                <p className='text-sm text-gray-500 font-normal'>48 g x 1</p>
-                            </div>
-                        </div>
-                        <div className='flex flex-col gap-2'>
-
-                            <p className='text-md font-semibold'>₹20</p>
-
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>
+
+            {/* Delivery Address */}
+            <div className="bg-white mx-2 mt-3 rounded-xl p-4 shadow-sm">
+                <div className="flex items-center gap-2 mb-3">
+                    <MapPin className="w-5 h-5 text-[var(--primary-color)]" />
+                    <h3 className="font-medium">Delivery Address</h3>
+                </div>
+                <div className="text-sm text-gray-600">
+                    <p className="font-medium text-gray-900">{order?.address?.address_type}</p>
+                    <p>{order?.address?.address_line_1}</p>
+                    <p>{order?.address?.city}, {order?.address?.postal_code}</p>
+                </div>
+            </div>
+
             {/* Bill Details */}
-            <div className=' flex flex-col gap-2 bg-white px-4 py-2 mb-2 mt-2'>
-                <p className='font-semibold text-md pb-1 border-b   '>Bill details</p>
-                <div className='flex justify-between text-md font-light text-gray-900'>
-                    <p>MRP</p>
-                    <p>₹230</p>
+            <div className="bg-white mx-2 mt-3 rounded-xl p-4 shadow-sm">
+                <div className="flex items-center gap-2 mb-3">
+                    <IndianRupee className="w-5 h-5 text-[var(--primary-color)]" />
+                    <h3 className="font-medium">Bill Details</h3>
                 </div>
-                <div className='flex justify-between text-md font-light text-gray-900'>
-                    <p>Delivery charge</p>
-                    <p>₹23</p>
+                <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                        <span className="text-gray-600">Item Total</span>
+                        <span>₹{order?.order_items?.reduce((acc, item) => acc + item?.sub_total, 0)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                        <span className="text-gray-600">Delivery Fee</span>
+                        <span>₹{order?.shipping_fee}</span>
+                    </div>
+                    <div className="flex justify-between">
+                        <span className="text-gray-600">Platform Fee</span>
+                        <span>₹{order?.platform_fee}</span>
+                    </div>
+                    <div className="flex justify-between pt-2 border-t font-medium">
+                        <span>Total Amount</span>
+                        <span>₹{order?.final_order_value}</span>
+                    </div>
                 </div>
-                <div className='flex justify-between text-md font-light text-gray-900'>
-                    <p>Platform fee</p>
-                    <p>+₹1</p>
-                </div>
-                <div className='flex justify-between text-xl border-t pt-2 font-light text-gray-900'>
-                    <p className='font-semibold'>Bill total</p>
-                    <p className='font-semibold'>₹254</p>
-                </div>
-
             </div>
-            <StatusTimeLine ORDER_STATUSES={ORDER_STATUSES} activeOrder={transformOrder(data)} />
-            {/* ORrder details */}
-            <div className=' flex flex-col gap-2 bg-white px-4 py-2 mt-2'>
-                <p className='font-semibold text-md pb-1 border-b   '>Order details</p>
-                <div className='flex flex-col gap-2 text-md font-light text-gray-900'>
-                    <p>order id</p>
-                    <p className='font-semibold '>ORD33424213232</p>
-                </div>
-                <div className='flex flex-col gap-2 text-md font-light text-gray-900'>
-                    <p>Payment</p>
-                    <p className='font-semibold'>Paid Online</p>
-                </div>
-                <div className='flex flex-col gap-2 text-md font-light text-gray-900'>
-                    <p>Deliver to</p>
-                    <p className='font-semibold'>Room no. 1115, Zakir-A, Chandigarh University</p>
-                </div>
-                <div className='flex flex-col flex-col gap-2 text-md font-light text-gray-900'>
-                    <p>Order placed</p>
-                    <p className='font-semibold'>placed on Fri, 14 Feb'25, 8:12 PM</p>
-                </div>
 
-
+            {/* Order Info */}
+            <div className="bg-white mx-2 mt-3 mb-4 rounded-xl p-4 shadow-sm">
+                <h3 className="font-medium mb-3">Order Information</h3>
+                <div className="space-y-3 text-sm">
+                    <div>
+                        <p className="text-gray-600">Order ID</p>
+                        <p className="font-medium">{order?.order_id}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-600">Payment Method</p>
+                        <p className="font-medium">
+                            {order?.payment_transaction?.payment_method || 'Online Payment'}
+                        </p>
+                    </div>
+                    {order?.delivered_at && (
+                        <div>
+                            <p className="text-gray-600">Delivered On</p>
+                            <p className="font-medium">{formatDate(order?.delivered_at)}</p>
+                        </div>
+                    )}
+                </div>
             </div>
+            {/* Maintaining order status */}
+            <div className="bg-white mx-2 mt-3 mb-4 rounded-xl p-4 shadow-sm">
+                <StatusTimeLine activeOrder={transformOrder(order)} ORDER_STATUSES={ORDER_STATUSES}  />
+            </div>
+
         </div>
     )
 }
 
-export default page
+export default OrderDetailsPage

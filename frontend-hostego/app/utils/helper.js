@@ -149,3 +149,11 @@ export const transformOrder = (order) => {
     order_items: Object.values(shopWiseOrders), // Replace order_items with grouped shops
   };
 };
+
+
+export const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return date.toLocaleString('en-US', options);
+};
+

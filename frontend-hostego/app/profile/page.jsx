@@ -86,7 +86,7 @@ const Profile = () => {
             <ChevronRight size={20} className="text-gray-400" />
           </div>
           {/* Address */}
-          <div className="nav-account-bar flex items-center justify-between ">
+          <div onClick={() => router.push("/address")} className="nav-account-bar flex items-center justify-between ">
             <div className="flex items-center gap-3">
               <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
                 <NotebookTabs size={14} className="text-gray-500" />
