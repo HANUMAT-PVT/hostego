@@ -26,7 +26,7 @@ const CartFloatingButton = () => {
         setCartTotalItems(totalItems)
     }
     return (
-        <div className='fixed bottom-[80px] left-0 right-0 flex justify-center animate-slide-up'>
+        <div className='fixed bottom-[80px] w-fit m-auto translate-x-1/2 left-0 right-0 flex justify-center animate-slide-up'>
             <div
                 onClick={() => router.push("/cart")}
                 className='z-[1] min-w-[180px] px-2 py-2 flex items-center justify-between rounded-full bg-[var(--primary-color)]'

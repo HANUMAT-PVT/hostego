@@ -5,6 +5,7 @@ import { Home, Package, Users, Settings, PackageOpenIcon } from "lucide-react";
 import OrderAssignment from "../../components/Admin/OrderAssignment";
 import SidebarItem from "../../components/Admin/SidebarItem";
 import OrdersList from "../../components/Admin/OrdersList";
+import WalletPaymentVerfication from "./WalletPaymentVerfication";
 
 export default function AdminPanel() {
     const router = useRouter();
@@ -46,9 +47,9 @@ export default function AdminPanel() {
                     />
                     <SidebarItem
                         icon={<Settings size={20} />}
-                        text="Settings"
-                        isActive={currentPage === "settings"}
-                        onClick={() => updatePage("settings")}
+                        text="Payment Verification"
+                        isActive={currentPage === "wallet_payment_verification"}
+                        onClick={() => updatePage("wallet_payment_verification")}
                     />
                     <SidebarItem
                         icon={<PackageOpenIcon size={20} />}
@@ -64,7 +65,7 @@ export default function AdminPanel() {
                 {currentPage === "dashboard" && <h1 className="text-2xl font-bold">📊 Dashboard</h1>}
                 {currentPage === "order-assign" && <OrderAssignment />}
                 {currentPage === "partners" && <h1 className="text-2xl font-bold">👥 Delivery Partners</h1>}
-                {currentPage === "tr" && <h1 className="text-2xl font-bold">⚙️ Settings</h1>}
+                {currentPage === "wallet_payment_verification" && <WalletPaymentVerfication />}
                 {currentPage === "orders" && <OrdersList />}
             </main>
         </div>

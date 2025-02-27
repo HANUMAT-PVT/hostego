@@ -4,12 +4,58 @@ import React, { useState, useEffect } from 'react'
 import BackNavigationButton from '../components/BackNavigationButton'
 import CartItem from '../components/Cart/CartItem'
 import AddressList from '../components/Address/AddressList'
-import { Home, Clock, Truck, CreditCard } from 'lucide-react'
+import { Home, Clock, Truck, CreditCard, MapPin } from 'lucide-react'
 import HostegoButton from '../components/HostegoButton'
 import axiosClient from '../utils/axiosClient'
 import HostegoLoader from '../components/HostegoLoader'
 import PaymentStatus from '../components/PaymentStatus'
 import { useRouter } from 'next/navigation'
+
+const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
+    return (
+        <div className={`bg-white mx-2 rounded-xl p-4 shadow-sm transition-all duration-200 
+            ${!selectedAddress ? 'border-2 border-red-200 ' : 'border border-gray-100'}`}>
+            <div className='flex items-center justify-between mb-3'>
+                <div className='flex items-center gap-2'>
+                    <Truck className={`w-5 h-5 ${!selectedAddress ? 'text-red-500' : 'text-[var(--primary-color)]'}`} />
+                    <p className='font-medium'>Delivery Address</p>
+                </div>
+                <button
+                    onClick={() => setOpenAddressList(true)}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all
+                        ${!selectedAddress
+                            ? 'bg-red-50 text-red-500 hover:bg-red-100'
+                            : 'bg-[var(--primary-color)]/10 text-[var(--primary-color)] hover:bg-[var(--primary-color)]/20'
+                        }`}
+                >
+                    {selectedAddress ? 'Change' : 'Add Address'}
+                </button>
+            </div>
+
+            {selectedAddress ? (
+                <div className='flex items-start gap-3'>
+                    <div className='bg-[var(--bg-page-color)] p-2 rounded-full'>
+                        <Home className='w-5 h-5 text-[var(--primary-color)]' />
+                    </div>
+                    <div>
+                        <p className='font-medium'>{selectedAddress?.address_type}</p>
+                        <p className='text-sm text-gray-600'>{selectedAddress?.address_line_1}</p>
+                    </div>
+                </div>
+            ) : (
+                <div className='flex items-center gap-3 p-3 bg-red-50 rounded-lg border border-red-100'>
+                    <div className='w-10 h-10 rounded-full bg-red-100 flex items-center justify-center'>
+                        <MapPin className='w-5 h-5 text-red-500' />
+                    </div>
+                    <div>
+                        <p className='font-medium text-red-600'>Delivery Address Required</p>
+                        <p className='text-sm text-red-500'>Please select a delivery address to continue</p>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}
 
 const page = () => {
     // Hostego – Simplify Your Hostel Life"
@@ -47,7 +93,7 @@ const page = () => {
             const { data } = await axiosClient.post('/api/order', {
                 address_id: selectedAddress?.address_id
             })
-
+            console.log(data)
             const response = await axiosClient.post(`/api/payment`, {
                 order_id: data?.order_id
             })
@@ -100,34 +146,10 @@ const page = () => {
             </div>
 
             {/* Delivery Address */}
-            <div className='bg-white mx-2 rounded-xl p-4 shadow-sm'>
-                <div className='flex items-center justify-between mb-3'>
-                    <div className='flex items-center gap-2'>
-                        <Truck className='w-5 h-5 text-[var(--primary-color)]' />
-                        <p className='font-medium'>Delivery Address</p>
-                    </div>
-                    <button
-                        onClick={() => setOpenAddressList(true)}
-                        className='text-sm text-[var(--primary-color)] font-medium'
-                    >
-                        {selectedAddress ? 'Change' : 'Add'}
-                    </button>
-                </div>
-
-                {selectedAddress ? (
-                    <div className='flex items-start gap-3'>
-                        <div className='bg-[var(--bg-page-color)] p-2 rounded-full'>
-                            <Home className='w-5 h-5 text-[var(--primary-color)]' />
-                        </div>
-                        <div>
-                            <p className='font-medium'>{selectedAddress?.address_type}</p>
-                            <p className='text-sm text-gray-600'>{selectedAddress?.address_line_1}</p>
-                        </div>
-                    </div>
-                ) : (
-                    <p className='text-sm text-gray-500'>Please select a delivery address</p>
-                )}
-            </div>
+            <AddressSection
+                selectedAddress={selectedAddress}
+                setOpenAddressList={setOpenAddressList}
+            />
 
             {/* Bill Details */}
             <div className='bg-white mx-2 mt-4 rounded-xl p-4 shadow-sm'>
@@ -154,15 +176,25 @@ const page = () => {
 
             {/* Place Order Button */}
             <div className='fixed bottom-0 left-0 right-0 p-4 bg-white border-t'>
+                {!selectedAddress && (
+                    <div className='text-sm text-red-500 text-center mb-2 '>
+                        ⚠️ Please select a delivery address
+                    </div>
+                )}
                 <HostegoButton
                     onClick={handleCreateOrder}
                     text={`Place Order • ₹${cartData?.cart_value?.final_order_value}`}
-                    className='w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium'
+                    className={`w-full py-3 rounded-xl font-medium transition-all duration-200
+                        ${!selectedAddress
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            : 'bg-[var(--primary-color)] text-white hover:opacity-90'
+                        }`}
                     disabled={!selectedAddress}
                 />
             </div>
 
             <AddressList
+                showAddressButton={false}
                 sendSelectedAddress={setSelectedAddress}
                 openAddressList={openAddressList}
                 setOpenAddressList={setOpenAddressList}

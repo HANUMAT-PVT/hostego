@@ -136,9 +136,8 @@ const OrderDetailsPage = () => {
                     <h3 className="font-medium">Delivery Address</h3>
                 </div>
                 <div className="text-sm text-gray-600">
-                    <p className="font-medium text-gray-900">{order?.address?.address_type}</p>
-                    <p>{order?.address?.address_line_1}</p>
-                    <p>{order?.address?.city}, {order?.address?.postal_code}</p>
+                    <p className="font-medium text-gray-900 ml-6">{order?.address?.address_type}</p>
+                    <p className='ml-6'>{order?.address?.address_line_1}</p>
                 </div>
             </div>
 
@@ -192,7 +191,7 @@ const OrderDetailsPage = () => {
             </div>
             {/* Maintaining order status */}
             <div className="bg-white mx-2 mt-3 mb-4 rounded-xl p-4 shadow-sm">
-                <StatusTimeLine activeOrder={transformOrder(order)} ORDER_STATUSES={ORDER_STATUSES}  />
+                <StatusTimeLine activeOrder={transformOrder(order)} ORDER_STATUSES={ORDER_STATUSES} />
             </div>
 
         </div>

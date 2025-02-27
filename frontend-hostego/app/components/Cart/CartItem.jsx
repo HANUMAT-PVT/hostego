@@ -20,7 +20,7 @@ const CartItem = ({ product_item, quantity, cart_item_id, fetchCartAgain }) => {
     )
 
     const updateCartItemQuantity = (cart_item_id, quantity) => {
-        if (quantity < 1) return
+        
         setCartItemQuantity(quantity)
         debouncedUpdateQuantity(cart_item_id, quantity)
     }
@@ -63,7 +63,7 @@ const CartItem = ({ product_item, quantity, cart_item_id, fetchCartAgain }) => {
                             className='w-7 h-7 flex items-center justify-center rounded-md  bg-[var(--primary-color)] 
                                       hover:text-white transition-colors duration-200 text-white
                                      active:scale-95 transform'
-                            disabled={cartItemQuantity <= 1}
+                            
                         >
                             <Minus size={16} />
                         </button>
