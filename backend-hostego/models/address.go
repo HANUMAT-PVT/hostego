@@ -3,8 +3,8 @@ package models
 import "time"
 
 type Address struct {
-	AddressID    string    `gorm:"type:string;unique;not null;primaryKey;default:gen_random_uuid()" json:"address_id"`
-	UserId       string    `gorm:"type:uuid;not null; index;" json:"user_id"`
+	AddressID    string    `gorm:"type:uuid;primaryKey;not null;default:gen_random_uuid()" json:"address_id"`
+	UserId       string    `gorm:"type:uuid;not null;index;" json:"user_id"`
 	User         User      `gorm:"foreignKey:UserId;constraint:OnDelete:CASCADE" json:"user"`
 	AddressType  string    `gorm:"type:varchar(255)" json:"address_type"`
 	City         string    `gorm:"type:varchar(255)" json:"city"`

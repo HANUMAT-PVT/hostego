@@ -12,4 +12,5 @@ func WalletRoutes(app *fiber.App) {
 	walletRoutes.Post("/credit", controllers.CreditWalletTransaction)
 	walletRoutes.Post("/verifiy-wallet-transaction/:id", controllers.VerifyWalletTransactionById)
 	walletRoutes.Get("/transactions", controllers.FetchUserWalletTransactions)
+	walletRoutes.Get("/all-transactions", controllers.FetchAllWalletTransactions)
 }
