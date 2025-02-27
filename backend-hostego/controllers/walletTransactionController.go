@@ -14,7 +14,7 @@ func CreditWalletTransaction(c fiber.Ctx) error {
 	var wallet_transaction models.WalletTransaction
 	var requestData struct {
 		Amount                  float64 `json:"amount"`
-		PaymentScreenShotImgUrl string  `json:"payment_screen_shot_img_url"`
+		PaymentScreenShotImgUrl string  `json:"payment_screenshot_img_url"`
 		UniqueTransactionID     string  `json:"unique_transaction_id"`
 	}
 
@@ -105,7 +105,7 @@ func FetchUserWallet(c fiber.Ctx) error {
 	if err := database.DB.Preload("User").Where("user_id = ?", user_id).Find(&wallet).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"wallet": wallet})
+	return c.Status(fiber.StatusOK).JSON(wallet)
 }
 
 func FetchUserWalletTransactions(c fiber.Ctx) error {
@@ -117,6 +117,30 @@ func FetchUserWalletTransactions(c fiber.Ctx) error {
 	var wallet_transactions []models.WalletTransaction
 
 	if err := database.DB.Find(&wallet_transactions, "user_id=?", user_id).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(wallet_transactions)
+}
+
+func FetchAllWalletTransactions(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+
+	dbQuery := database.DB
+
+	status := c.Query("status")
+	// tagsQuery := c.Query("tags")
+
+	if status != "" {
+		dbQuery = dbQuery.Where("transaction_status = ?", status)
+	}
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	if user_id != "admin" {
+		// return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+	var wallet_transactions []models.WalletTransaction
+	if err := dbQuery.Find(&wallet_transactions).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(wallet_transactions)

@@ -30,7 +30,7 @@ func AddProductInUserCart(c fiber.Ctx) error {
 	// Check if item already exists in cart
 	var existingItem models.CartItem
 	result := database.DB.Where("user_id = ? AND product_id = ?", user_id, cartItem.ProductId).First(&existingItem)
-	
+
 	if result.Error == nil {
 		// Item exists, update quantity
 		existingItem.Quantity += cartItem.Quantity
@@ -41,7 +41,7 @@ func AddProductInUserCart(c fiber.Ctx) error {
 		}
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
 			"message": "Cart item quantity updated!",
-			"cart":   existingItem,
+			"cart":    existingItem,
 		})
 	}
 
@@ -78,8 +78,8 @@ func UpdateProductInUserCart(c fiber.Ctx) error {
 	}
 
 	// Delete cart item if quantity is 0
-	if cartItem.Quantity == 0 {
-		if err := database.DB.Delete(&cartItem).Error; err != nil {
+	if cartItem.Quantity <= 0 {
+		if err := database.DB.Where("cart_item_id = ? AND user_id = ?", cart_item_id, user_id).Delete(&cartItem).Error; err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 		}
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -112,11 +112,17 @@ func FetchUserCart(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if err := database.DB.Preload("ProductItem.Shop").Where("user_id=?", user_id).Find(&cartItems).Error; err != nil {
+	if err := database.DB.Preload("ProductItem.Shop").
+		Where("user_id = ?", user_id).
+		Order("created_at asc").
+		Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	cartValue := CalculateFinalOrderValue(cartItems)
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"cart_items": cartItems, "cart_value": cartValue})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"cart_items": cartItems,
+		"cart_value": cartValue,
+	})
 }

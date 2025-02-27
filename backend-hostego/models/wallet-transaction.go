@@ -8,7 +8,7 @@ import (
 type PaymentMethod struct {
 	Type                    string `gorm:"type:varchar(50);" json:"type"` // e.g., "UPI", "Card", "NetBanking"
 	UniqueTransactionID     string `gorm:"type:varchar(100);" json:"unique_transaction_id"`
-	PaymentScreenShotImgUrl string `gorm:"type:varchar(100);" json:"payment_screenshot_img_url"`
+	PaymentScreenShotImgUrl string `gorm:"type:varchar(255);" json:"payment_screenshot_img_url"`
 	PaymentVerifiedByAdmin  string `gorm:"type:text" json:"payment_verified_by_admin"`
 }
 type TransactionStatusType string
