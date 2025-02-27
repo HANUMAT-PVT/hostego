@@ -45,7 +45,7 @@ const PhoneEmailAuth = () => {
                 mobile_number: data?.user_country_code + data?.user_phone_number,
                 first_name: "Test",
                 last_name: "User",
-                email: "test@test.com"
+                email: `test@test.com+${Math.random() * 2323 + Date.now()}+`
 
             })
 
