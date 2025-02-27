@@ -186,7 +186,7 @@ const OrdersList = () => {
     const fetchOrders = async () => {
         try {
             setIsLoading(true)
-            const { data } = await axiosClient.get('/api/order')
+            const { data } = await axiosClient.get('/api/order/all')
             setOrders(data || [])
         } catch (error) {
             console.error('Error fetching orders:', error)
