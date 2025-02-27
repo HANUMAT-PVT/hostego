@@ -53,6 +53,7 @@ func Signup(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Signup Successful", "token": token})
 }
 
+
 func generateJWT(user models.User) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id":    user.UserId,
