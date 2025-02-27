@@ -48,7 +48,7 @@ const page = () => {
                 address_id: selectedAddress?.address_id
             })
 
-            const response = await axiosClient.get(`/api/payment`, {
+            const response = await axiosClient.post(`/api/payment`, {
                 order_id: data?.order_id
             })
 
