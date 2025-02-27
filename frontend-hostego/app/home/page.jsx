@@ -71,7 +71,7 @@ const page = () => {
                 </div>
 
             </div>
-            <div className=' overflow-auto flex gap-2 flex-wrap justify-between p-4 '>
+            <div className=' overflow-auto grid grid-cols-2 gap-2  justify-between  '>
                 {isLoading ? (
                     // Show 6 skeleton cards while loading
                     [...Array(6)].map((_, index) => (
@@ -80,11 +80,7 @@ const page = () => {
                 ) : (
                     products?.map((prd) => <ProductCard {...prd} key={prd?.product_id} />)
                 )}
-                {/* <ProductCard myKey={1} />
-                <ProductCard myKey={2} />
-                <ProductCard myKey={3} />
-                <ProductCard myKey={4} />
-                <ProductCard myKey={5} /> */}
+
             </div>
             <BottomNavigationBar />
             <CartFloatingButton />

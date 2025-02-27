@@ -1,9 +1,9 @@
 const ProductCardSkeleton = () => {
   return (
-    <div className='product-item flex flex-col gap-2 w-[120px] h-[180px] animate-pulse'>
+    <div className='product-item flex flex-col gap-2   h-[180px] animate-pulse p-2 rounded-md'>
       <div className='relative p-2 flex flex-col items-center'>
         {/* Image skeleton */}
-        <div className='w-[80px] h-[80px] bg-gray-200 rounded-lg' />
+        <div className='w-[60px] h-[60px] bg-gray-200 rounded-md' />
         {/* Add button skeleton */}
         
       </div>
@@ -17,7 +17,7 @@ const ProductCardSkeleton = () => {
       <div className='w-full h-[15px] bg-gray-200 rounded' />
 
       {/* Price skeleton */}
-      <div className='w-[40px] h-[15px] bg-gray-200 rounded' />
+      <div className='w-[30px] h-[10px] bg-gray-200 rounded' />
     </div>
   )
 }
