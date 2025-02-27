@@ -20,7 +20,7 @@ func main() {
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000", "https://hostego.in"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH","OPTIONS"},
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowCredentials: false,
 		ExposeHeaders:    []string{"Authorization"},
