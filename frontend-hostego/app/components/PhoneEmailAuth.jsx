@@ -31,7 +31,7 @@ const PhoneEmailAuth = () => {
 
             handleUserAccountCreation(userJsonUrl)
 
-            alert(`Phone Verification Successful!\nFetch user data from:\n${userJsonUrl}`);
+            // alert(`Phone Verification Successful!\nFetch user data from:\n${userJsonUrl}`);
         };
     }, []);
 
@@ -43,14 +43,14 @@ const PhoneEmailAuth = () => {
 
             let response = await axiosClient.post("/api/auth/signup", {
                 mobile_number: data?.user_country_code + data?.user_phone_number,
-                first_name: "",
-                last_name: "",
-                email: ""
+                first_name: "Test",
+                last_name: "User",
+                email: "test@test.com"
 
             })
 
             localStorage.setItem("auth-response", JSON.stringify(response.data))
-            alert("Signup successfull")
+            // alert("Signup successfull")
             router.push("/home")
 
         } catch (error) {
