@@ -222,3 +222,33 @@ func FetchAllUserOrders(c fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(orders)
 }
+
+func FetchAllOrders(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	if user_id == "" {
+
+	}
+	var orders []models.Order
+	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Order("created_at desc").Find(&orders).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(orders)
+}
+
+func FetchAllOrdersByDeliveryPartner(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	if user_id == "" {
+
+	}
+	var orders []models.Order
+	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("delivery_partner_id=?", user_id).Order("created_at desc").Find(&orders).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(orders)
+}
