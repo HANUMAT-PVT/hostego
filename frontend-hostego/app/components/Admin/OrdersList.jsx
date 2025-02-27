@@ -6,6 +6,7 @@ import axiosClient from '@/app/utils/axiosClient'
 import HostegoLoader from '../HostegoLoader'
 
 const OrderStatusBadge = ({ status }) => {
+    
     const statusConfig = {
         pending: {
             color: 'bg-yellow-100 text-yellow-700',
