@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import axiosClient from "../utils/axiosClient"
 
-import {useRouter} from "next/navigation"
+import { useRouter } from "next/navigation"
 
 const PhoneEmailAuth = () => {
     const router = useRouter()
@@ -37,12 +37,16 @@ const PhoneEmailAuth = () => {
 
 
     const handleUserAccountCreation = async (jsonUrl) => {
-      
+
         try {
             let { data } = await axios.get(jsonUrl);
 
             let response = await axiosClient.post("/api/auth/signup", {
-                mobile_number: data?.user_country_code + data?.user_phone_number
+                mobile_number: data?.user_country_code + data?.user_phone_number,
+                first_name: "",
+                last_name: "",
+                email: ""
+
             })
 
             localStorage.setItem("auth-response", JSON.stringify(response.data))
