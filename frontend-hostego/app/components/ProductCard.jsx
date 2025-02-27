@@ -21,7 +21,7 @@ const ProductCard = ({ product_img_url, product_name, myKey, tags, food_price, w
     }
 
     return (
-        <div key={myKey} className='product-item flex flex-col gap-2 w-[140px] px-2 min-w-[165px]'>
+        <div key={myKey} className='product-item flex flex-col gap-2 w-[140px] px-2'>
             <div className='relative p-2 flex flex-col items-center group'>
                 <img className='w-[90px] h-[90px]'
                     src={product_img_url}
