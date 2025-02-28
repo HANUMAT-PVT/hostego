@@ -36,9 +36,11 @@ func UpdateDeliveryPartner(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
+	if user_id == "" {
 
+	}
 	// First find the existing delivery partner
-	if err := database.DB.Where("delivery_partner_id = ? AND user_id = ?", delivery_partner_id, user_id).First(&delivery_partner).Error; err != nil {
+	if err := database.DB.Where("delivery_partner_id =?", delivery_partner_id).First(&delivery_partner).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Delivery partner not found"})
 	}
 
