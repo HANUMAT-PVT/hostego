@@ -7,6 +7,7 @@ import HostegoButton from "../components/HostegoButton"
 import { uploadToS3Bucket } from '../lib/aws'
 import axiosClient from "../utils/axiosClient"
 import MaintainOrderStatusForDeliveryPartner from "../components/Delivery-Partner/MaintainOrderStatusForDeliveryPartner"
+import { transformDeliveryPartnerOrderEarnings, transformOrdersByDate } from "../utils/helper";
 
 const ordersData = [
     {
@@ -100,10 +101,16 @@ const VerificationStatus = ({ deliveryPartner }) => {
     );
 };
 
+
+
 const Page = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isOnline, setIsOnline] = useState(false);
     const [deliveryPartnerOrders, setDeliveryPartnerOrders] = useState([]);
+    const [deliveryPartner, setDeliveryPartner] = useState({});
+    const [formSubmitingLoading, setFormSubmitingLoading] = useState(false);
+    const [deliveryPartnerEarnings, setDeliveryPartnerEarnings] = useState(0);
+
     const [deliveryPartnerVerificationData, setDeliveryPartnerVerificationData] = useState({
         address: "",
         aadhaar_front_img: "",
@@ -111,16 +118,19 @@ const Page = () => {
         upi_id: "",
         bank_details_img: "",
     });
-    const [deliveryPartner, setDeliveryPartner] = useState({});
-    const [formSubmitingLoading, setFormSubmitingLoading] = useState(false);
 
     useEffect(() => {
         fetchDeliveryPartner();
     }, []);
 
     useEffect(() => {
-        fetchDeliveryPartnerOrders();
-    }, []);
+        if (deliveryPartner?.delivery_partner_id) {
+            fetchDeliveryPartnerOrders();
+            fetchDeliveryPartnerEarnings();
+        }
+    }, [deliveryPartner]);
+
+
 
     const fetchDeliveryPartner = async () => {
         try {
@@ -138,19 +148,39 @@ const Page = () => {
     const updateDeliveryPartnerAvailabilityStatus = async (newStatus) => {
         try {
             let { data } = await axiosClient.patch(`/api/delivery-partner/${deliveryPartner?.delivery_partner_id}`, {
-                availability_status: newStatus?1:0
+                availability_status: newStatus ? 1 : 0
             });
-            // setDeliveryPartner(data);
+
             setIsOnline(newStatus)
         } catch (error) {
             console.log(error)
         }
     }
 
-    const totalEarnings = ordersData.reduce(
-        (sum, day) => sum + day?.orders?.reduce((daySum, order) => daySum + order?.earning, 0),
-        0
-    );
+
+    const updateOrderStatus = async (orderId, newStatus) => {
+        console.log(orderId, newStatus)
+        try {
+            let { data } = await axiosClient.patch(`/api/order/${orderId}`, {
+                order_status: newStatus
+            })
+            fetchDeliveryPartnerOrders()
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const fetchDeliveryPartnerEarnings = async () => {
+        try {
+            let { data } = await axiosClient.get(`/api/delivery-partner/earnings/${deliveryPartner?.delivery_partner_id}`)
+            const earnings = transformOrdersByDate(data?.daily_earnings	)
+            console.log(earnings,"earnings")
+            setDeliveryPartnerEarnings({...data,earnings})
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     const handleDeliveryPartnerRegistration = async (e) => {
         e.preventDefault()
@@ -190,12 +220,14 @@ const Page = () => {
 
     const fetchDeliveryPartnerOrders = async () => {
         try {
-            let { data } = await axiosClient.get(`/api/order/delivery-partner/all`)
-            setDeliveryPartnerOrders(data)
+            let { data } = await axiosClient.get(`/api/order/delivery-partner/${deliveryPartner?.delivery_partner_id}`)
+            setDeliveryPartnerOrders(data?.orders)
         } catch (error) {
             console.log(error)
         }
     }
+
+
 
     if (isLoading) {
         return (
@@ -242,7 +274,7 @@ const Page = () => {
         );
     }
 
-    console.log(deliveryPartnerOrders)
+
     return (
         <div className="bg-[var(--bg-page-color)]">
             <div className="sticky top-0 z-30">
@@ -398,14 +430,14 @@ const Page = () => {
                     <p className="text-gray-600 font-normal text-md border-b pb-2">MY PROGRESS</p>
                     <div className="flex justify-between mt-3">
                         <div className="flex flex-col items-center gap-1 px-4">
-                            <p className="font-semibold text-xl">₹ {totalEarnings}</p>
+                            <p className="font-semibold text-xl">₹ {deliveryPartnerEarnings?.summary?.total_earnings}</p>
                             <div className="flex gap-2 items-center">
                                 <Landmark size={14} />
                                 <p className="text-xs">Total earnings</p>
                             </div>
                         </div>
                         <div className="flex flex-col items-center gap-1 px-4">
-                            <p className="font-semibold text-xl">5</p>
+                            <p className="font-semibold text-xl">{deliveryPartnerEarnings?.summary?. total_orders}</p>
                             <div className="flex gap-2 items-center">
                                 <ShoppingBag size={14} />
                                 <p className="text-xs">Orders</p>
@@ -416,7 +448,7 @@ const Page = () => {
 
                 {/* Order History Section */}
                 <div className="mt-6 px-4 ">
-                    {ordersData.map((day, index) => (
+                    {deliveryPartnerEarnings?.earnings_by_date?.orders?.map((day, index) => (
                         <div key={index} className="mb-6 mt-6">
                             <p className="text-lg font-semibold mb-2">{day?.date}</p>
                             <div className="bg-white p-4 rounded-md shadow-md">
@@ -442,7 +474,7 @@ const Page = () => {
             </div>
 
             {deliveryPartnerOrders?.map((order) => (
-                <MaintainOrderStatusForDeliveryPartner key={order?.order_id} order={order} />
+                <MaintainOrderStatusForDeliveryPartner onUpdateOrderStatus={updateOrderStatus} key={order?.order_id} order={order} />
             ))}
         </div>
     );
