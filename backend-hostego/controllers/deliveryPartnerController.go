@@ -74,3 +74,37 @@ func FetchDeliveryPartnerByUserId(c fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(delivery_partner)
 }
+
+func FetchAllDeliveryPartners(c fiber.Ctx) error {
+	var delivery_partners []models.DeliveryPartner
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	if user_id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "You are not Authenticated !"})
+	}
+	dbQuery := database.DB
+
+
+	availability := c.Query("availability")
+	account_status := c.Query("account_status")
+	verification_status := c.Query("verification_status")
+
+	if availability != "" {
+		dbQuery = dbQuery.Where("availability_status=?", availability)
+	}
+	if account_status != "" {
+		dbQuery = dbQuery.Where("account_status=?", account_status)
+	}
+	if verification_status != "" {
+		dbQuery = dbQuery.Where("verification_status=?", verification_status)
+	}
+
+	if err := dbQuery.Preload("User").Find(&delivery_partners).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(delivery_partners)
+}
+
+

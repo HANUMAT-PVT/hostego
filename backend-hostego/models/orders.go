@@ -15,6 +15,8 @@ const (
 	DeliveredOrderStatus = "delivered"
 	CanceledOrderStatus  = "cancelled"
 	PickedOrderStatus    = "picked"
+	PlacedOrderStatus    = "placed"
+	AssignedOrderStatus  = "assigned"
 )
 
 type Order struct {
@@ -31,7 +33,8 @@ type Order struct {
 	PaymentTransactionId string             `gorm:"type:string" json:"payment_transaction_id"`
 	PaymentTransaction   PaymentTransaction `gorm:"foreignKey:PaymentTransactionId;references:PaymentTransactionId" json:"payment_transaction"`
 	OrderStatus          OrderStatusType    `gorm:"type:varchar(20);default:pending" json:"order_status"`
-	DeliveryPartner      datatypes.JSON     `gorm:"type:jsonb" json:"delivery_partner_id"`
+	DeliveryPartner      datatypes.JSON     `gorm:"type:jsonb" json:"delivery_partner"`
+	DeliveryPartnerId    string             `gorm:"type:string" json:"delivery_partner_id"`
 	AddressID            string             `gorm:"type:string;not null" json:"address_id"`
 	Address              Address            `gorm:"foreignKey:AddressID;references:AddressID" json:"address"`
 	DeliveredAt          time.Time          `json:"delivered_at"`

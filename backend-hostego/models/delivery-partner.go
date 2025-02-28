@@ -1,6 +1,10 @@
 package models
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Documents struct {
 	AadhaarFrontImg string `json:"aadhaar_front_img"` // Link to Aadhaar front image
@@ -10,7 +14,7 @@ type Documents struct {
 }
 
 type DeliveryPartner struct {
-	DeliveryPartnerId  uuid.UUID `gorm:"type:uuid;primaryKey;not null;default:gen_random_uuid();" json:"delivery_partner_id"`
+	DeliveryPartnerID  uuid.UUID `gorm:"type:uuid;primaryKey;not null;default:gen_random_uuid();" json:"delivery_partner_id"`
 	UserId             string    `gorm:"type:string;not null;unique;" json:"user_id"`
 	User               User      `gorm:"foreignKey:UserId;references:UserId;" json:"user"`
 	AvailabilityStatus int       `gorm:"type:int;not null;default:0;" json:"availability_status"`
@@ -18,4 +22,6 @@ type DeliveryPartner struct {
 	AccountStatus      int       `gorm:"type:int;default:0;" json:"account_status"`
 	Documents          Documents `gorm:"embedded" json:"documents"`
 	VerificationStatus int       `gorm:"type:int;default:0;" json:"verification_status"`
+	CreatedAt          time.Time `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt          time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }
