@@ -75,7 +75,7 @@ export default function AddresList({ openAddressList, setOpenAddressList, sendSe
                               sendSelectedAddress(el)
                               setOpenAddressList(false)
                             }}
-                            className='address-item flex items-center rounded-md gap-4 cursor-pointer p-4 bg-white hover:bg-gray-50 transition-colors'
+                            className='address-item flex itemse-center rounded-md gap-4 cursor-pointer p-4 bg-white hover:bg-gray-50 transition-colors'
                           >
                             <div className='bg-[var(--bg-page-color)] p-2 w-[40px] h-[40px] flex justify-center items-center rounded-full'>
                               <Home size={20} className='text-[var(--primary-color)]' />

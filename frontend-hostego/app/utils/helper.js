@@ -125,18 +125,18 @@ export const data = {
 export const transformOrder = (order) => {
   const shopWiseOrders = {};
 
-  order.order_items.forEach((item) => {
-    const shop = item.product_item.shop;
-    const shopId = shop.shop_id;
+  order?.order_items?.forEach((item) => {
+    const shop = item?.product_item?.shop;
+    const shopId = shop?.shop_id;
 
     if (!shopWiseOrders[shopId]) {
       shopWiseOrders[shopId] = {
-        shop_name: shop.shop_name,
+        shop_name: shop?.shop_name,
         shop_id: shopId,
-        address: shop.address,
-        shop_img: shop.shop_img,
-        shop_status: shop.shop_status,
-        preparation_time: shop.preparation_time,
+        address: shop?.address,
+        shop_img: shop?.shop_img,
+        shop_status: shop?.shop_status,
+        preparation_time: shop?.preparation_time,
         shop_products: [],
       };
     }
