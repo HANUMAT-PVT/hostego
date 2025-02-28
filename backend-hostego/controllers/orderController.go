@@ -6,6 +6,8 @@ import (
 	"backend-hostego/models"
 	"encoding/json"
 
+	"math"
+
 	"time"
 
 	"github.com/gofiber/fiber/v3"
@@ -82,7 +84,7 @@ func CalculateFinalOrderValue(cartItems []models.CartItem) FinalOrderValueType {
 		if charge > 30.0 {
 			deliveryCharge = 30.0
 		} else {
-			deliveryCharge = charge
+			deliveryCharge = math.Round(charge*100) / 100 // Round to 2 decimal places
 		}
 	}
 
@@ -90,17 +92,18 @@ func CalculateFinalOrderValue(cartItems []models.CartItem) FinalOrderValueType {
 	platformFee := 1.0
 
 	// Distribution of charge (70% for delivery partner, 30% for company)
-	deliveryPartnerShare := deliveryCharge * 0.70
+	deliveryPartnerShare := math.Round((deliveryCharge*0.70)*100) / 100
 
 	// Final order value including charges
-	finalOrderValue := totalItemSubTotal + deliveryCharge
+	finalOrderValue := math.Round((totalItemSubTotal+deliveryCharge)*100) / 100
 
 	return FinalOrderValueType{
-		SubTotal:             totalItemSubTotal,
+		SubTotal:             math.Round(totalItemSubTotal*100) / 100,
 		ShippingFee:          deliveryCharge,
 		PlatformFee:          platformFee,
 		DeliveryPartnerShare: deliveryPartnerShare,
-		FinalOrderValue:      finalOrderValue}
+		FinalOrderValue:      finalOrderValue,
+	}
 }
 
 func MarkOrderAsDelivered(c fiber.Ctx) error {
@@ -192,21 +195,37 @@ func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
 
 func UpdateOrderById(c fiber.Ctx) error {
 	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	var order models.Order
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
 	if user_id == "" {
-
 	}
 	order_id := c.Params("id")
-	if err := c.Bind().JSON(&order); err != nil {
+
+	var existingOrder models.Order
+	if err := database.DB.Where("order_id = ?", order_id).First(&existingOrder).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Order not found"})
+	}
+
+	var updateData struct {
+		OrderStatus models.OrderStatusType `json:"order_status"`
+	}
+	if err := c.Bind().JSON(&updateData); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	if err := database.DB.Where("order_id=?", order_id).Save(&order).Error; err != nil {
+
+	// Update only the status
+	existingOrder.OrderStatus = updateData.OrderStatus
+
+	// Save the changes
+	if err := database.DB.Save(&existingOrder).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order Updated successfully!"})
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Order status updated successfully!",
+		"order":   existingOrder,
+	})
 }
 
 func FetchAllUserOrders(c fiber.Ctx) error {
@@ -263,12 +282,45 @@ func FetchAllOrdersByDeliveryPartner(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if user_id == "" {
 
+	if user_id == "" {
 	}
+	// Get delivery partner ID from params
+	delivery_partner_id := c.Params("id")
+
+	// Initialize query with preloads
+	dbQuery := database.DB.Preload("User").
+		Preload("PaymentTransaction").
+		Preload("Address")
+
+	// Get query parameters for filtering
+	status := c.Query("status")
+	searchQuery := c.Query("search")
+
+	// Base query for delivery partner's orders
+	dbQuery = dbQuery.Where("delivery_partner_id = ?", delivery_partner_id)
+
+	// Add status filter if provided
+	if status != "" {
+		dbQuery = dbQuery.Where("order_status = ?", status)
+	}
+
+	// Add search functionality
+	if searchQuery != "" {
+		dbQuery = dbQuery.Where(
+			"order_id LIKE ? OR user_id IN (SELECT user_id FROM users WHERE mobile_number LIKE ?)",
+			"%"+searchQuery+"%",
+			"%"+searchQuery+"%",
+		)
+	}
+
 	var orders []models.Order
-	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("delivery_partner_id=?", user_id).Order("created_at desc").Find(&orders).Error; err != nil {
+	if err := dbQuery.Order("created_at desc").Find(&orders).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	return c.Status(fiber.StatusOK).JSON(orders)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"orders": orders,
+		"count":  len(orders),
+	})
 }

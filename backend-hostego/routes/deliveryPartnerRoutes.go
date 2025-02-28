@@ -12,4 +12,5 @@ func DeliveryPartnerRoutes(app *fiber.App) {
 	deliveryPartnerRoutes.Post("/", controllers.CreateNewDeliveryPartner)
 	deliveryPartnerRoutes.Get("/find", controllers.FetchDeliveryPartnerByUserId)
 	deliveryPartnerRoutes.Patch("/:id", controllers.UpdateDeliveryPartner)
+	deliveryPartnerRoutes.Get("/earnings/:id", controllers.FetchDeliveryPartnerEarnings)
 }
