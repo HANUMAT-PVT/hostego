@@ -38,6 +38,7 @@ func main() {
 	routes.DeliveryPartnerRoutes(app)
 	routes.CartRoutes(app)
 	routes.AddressRoutes(app)
+	
 	// Fetch all users
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "Welcome to the server Backend"})

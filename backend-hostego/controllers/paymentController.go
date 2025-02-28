@@ -69,6 +69,9 @@ func InitiatePayment(c fiber.Ctx) error {
 	paymentTransaction.Amount = totalAmountToDeduct
 	paymentTransaction.PaymentStatus = "success"
 	paymentTransaction.PaymentMethod = "wallet"
+	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
+	order.OrderStatus = "placed"
+
 
 	if err := tx.Create(&paymentTransaction).Error; err != nil {
 		tx.Rollback()

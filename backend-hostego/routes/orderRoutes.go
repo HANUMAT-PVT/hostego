@@ -8,11 +8,12 @@ import (
 
 func OrderRoutes(app *fiber.App) {
 	orderRoutes := app.Group("/api/order")
+	orderRoutes.Get("/all", controllers.FetchAllOrders)
 	orderRoutes.Post("/", controllers.CreateNewOrder)
 	orderRoutes.Get("/", controllers.FetchAllUserOrders)
-	orderRoutes.Get("/all", controllers.FetchAllOrders)
 	orderRoutes.Get("/:id", controllers.FetchOrderById)
 	orderRoutes.Patch("/:id", controllers.UpdateOrderById)
 	orderRoutes.Post("/mark-order-delivered", controllers.MarkOrderAsDelivered)
 	orderRoutes.Post("/assign-order-delivery", controllers.AssignOrderToDeliveryPartner)
+	orderRoutes.Get("/delivery-partner/all", controllers.FetchAllOrdersByDeliveryPartner)
 }
