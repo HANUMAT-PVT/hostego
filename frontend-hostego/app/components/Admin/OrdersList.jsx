@@ -1,12 +1,13 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Package, User, MapPin, IndianRupee, Clock, ChevronDown, ChevronUp, Phone, CheckCircle2, AlertCircle, Search, Filter } from 'lucide-react'
 import { formatDate } from '@/app/utils/helper'
 import axiosClient from '@/app/utils/axiosClient'
 import HostegoLoader from '../HostegoLoader'
+import debounce from 'lodash/debounce'
 
 const OrderStatusBadge = ({ status }) => {
-    
+
     const statusConfig = {
         pending: {
             color: 'bg-yellow-100 text-yellow-700',
@@ -177,16 +178,32 @@ const OrdersList = () => {
     const [orders, setOrders] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
-    const [statusFilter, setStatusFilter] = useState('all')
+    const [statusFilter, setStatusFilter] = useState('placed')
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+
+    // Create a debounced search function
+    const debouncedSearch = useCallback(
+        debounce((searchValue) => {
+            setDebouncedSearchTerm(searchValue)
+        }, 500), // 500ms delay
+        []
+    )
+
+    // Handle search input change
+    const handleSearchChange = (e) => {
+        const value = e.target.value
+        setSearchTerm(value)
+        debouncedSearch(value)
+    }
 
     useEffect(() => {
         fetchOrders()
-    }, [])
+    }, [statusFilter, debouncedSearchTerm]) // Use debouncedSearchTerm instead of searchTerm
 
     const fetchOrders = async () => {
         try {
             setIsLoading(true)
-            const { data } = await axiosClient.get('/api/order/all')
+            const { data } = await axiosClient.get(`/api/order/all?filter=${statusFilter}&search=${debouncedSearchTerm}`)
             setOrders(data || [])
         } catch (error) {
             console.error('Error fetching orders:', error)
@@ -197,12 +214,19 @@ const OrdersList = () => {
 
     const filteredOrders = orders
         .filter(order => {
-            const matchesSearch = order.order_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                order.user.mobile_number.includes(searchTerm)
+            const matchesSearch = order?.order_id.toLowerCase()?.includes(debouncedSearchTerm.toLowerCase()) ||
+                order.user.mobile_number.includes(debouncedSearchTerm)
             const matchesStatus = statusFilter === 'all' || order.order_status === statusFilter
             return matchesSearch && matchesStatus
         })
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+
+    // Cleanup debounce on unmount
+    useEffect(() => {
+        return () => {
+            debouncedSearch.cancel()
+        }
+    }, [debouncedSearch])
 
     if (isLoading) {
         return <HostegoLoader />
@@ -222,7 +246,7 @@ const OrdersList = () => {
                             type="text"
                             placeholder="Search by order ID or phone number"
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={handleSearchChange}
                             className="w-full pl-10 pr-4 py-2 rounded-lg border-2 border-gray-100 focus:border-[var(--primary-color)] outline-none"
                         />
                     </div>
@@ -233,7 +257,8 @@ const OrdersList = () => {
                     >
                         <option value="all">All Orders</option>
                         <option value="pending">Pending</option>
-                        <option value="confirmed">Confirmed</option>
+                        <option value="placed">Placed</option>
+                        <option value="assigned">Assigned</option>
                         <option value="preparing">Preparing</option>
                         <option value="out_for_delivery">Out for Delivery</option>
                         <option value="delivered">Delivered</option>

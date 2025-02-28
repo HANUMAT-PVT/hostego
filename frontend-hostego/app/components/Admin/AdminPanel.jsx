@@ -6,6 +6,7 @@ import OrderAssignment from "../../components/Admin/OrderAssignment";
 import SidebarItem from "../../components/Admin/SidebarItem";
 import OrdersList from "../../components/Admin/OrdersList";
 import WalletPaymentVerfication from "./WalletPaymentVerfication";
+import DeliveryPartnerManagement from "./DeliveryPartnerManagement";
 
 export default function AdminPanel() {
     const router = useRouter();
@@ -64,7 +65,7 @@ export default function AdminPanel() {
             <main className="flex-1 p-6">
                 {currentPage === "dashboard" && <h1 className="text-2xl font-bold">📊 Dashboard</h1>}
                 {currentPage === "order-assign" && <OrderAssignment />}
-                {currentPage === "partners" && <h1 className="text-2xl font-bold">👥 Delivery Partners</h1>}
+                {currentPage === "partners" && <DeliveryPartnerManagement />}
                 {currentPage === "wallet_payment_verification" && <WalletPaymentVerfication />}
                 {currentPage === "orders" && <OrdersList />}
             </main>

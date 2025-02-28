@@ -22,7 +22,7 @@ const OrderDetailsPage = () => {
             bgColor: 'bg-orange-50',
             label: 'Order Pending'
         },
-        confirmed: {
+        placed: {
             icon: Package,
             color: 'text-blue-500',
             bgColor: 'bg-blue-50',

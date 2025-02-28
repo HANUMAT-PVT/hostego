@@ -103,6 +103,7 @@ const VerificationStatus = ({ deliveryPartner }) => {
 const Page = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isOnline, setIsOnline] = useState(false);
+    const [deliveryPartnerOrders, setDeliveryPartnerOrders] = useState([]);
     const [deliveryPartnerVerificationData, setDeliveryPartnerVerificationData] = useState({
         address: "",
         aadhaar_front_img: "",
@@ -117,17 +118,34 @@ const Page = () => {
         fetchDeliveryPartner();
     }, []);
 
+    useEffect(() => {
+        fetchDeliveryPartnerOrders();
+    }, []);
+
     const fetchDeliveryPartner = async () => {
         try {
             setIsLoading(true);
             let { data } = await axiosClient.get("/api/delivery-partner/find");
             setDeliveryPartner(data);
+            setIsOnline(!!data?.availability_status)
         } catch (error) {
             console.log(error);
         } finally {
             setIsLoading(false);
         }
     };
+
+    const updateDeliveryPartnerAvailabilityStatus = async (newStatus) => {
+        try {
+            let { data } = await axiosClient.patch(`/api/delivery-partner/${deliveryPartner?.delivery_partner_id}`, {
+                availability_status: newStatus?1:0
+            });
+            // setDeliveryPartner(data);
+            setIsOnline(newStatus)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const totalEarnings = ordersData.reduce(
         (sum, day) => sum + day?.orders?.reduce((daySum, order) => daySum + order?.earning, 0),
@@ -158,15 +176,24 @@ const Page = () => {
             }
 
             let { data } = await axiosClient.post("/api/delivery-partner", {
-                  address: deliveryPartnerVerificationData.address,
-                  documents: requestBody 
-                });
+                address: deliveryPartnerVerificationData.address,
+                documents: requestBody
+            });
             fetchDeliveryPartner(data)
 
         } catch (error) {
             console.log(error)
         } finally {
             setFormSubmitingLoading(false)
+        }
+    }
+
+    const fetchDeliveryPartnerOrders = async () => {
+        try {
+            let { data } = await axiosClient.get(`/api/order/delivery-partner/all`)
+            setDeliveryPartnerOrders(data)
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -215,6 +242,7 @@ const Page = () => {
         );
     }
 
+    console.log(deliveryPartnerOrders)
     return (
         <div className="bg-[var(--bg-page-color)]">
             <div className="sticky top-0 z-30">
@@ -223,7 +251,7 @@ const Page = () => {
                 {!!deliveryPartner?.verification_status && <div className="bg-white  px-4 py-4 rounded-md flex justify-between items-center shadow-md ">
                     <div
                         className={`relative w-24 h-8 rounded-full cursor-pointer transition flex items-center ${isOnline ? "bg-green-500" : "bg-gray-400"}`}
-                        onClick={() => setIsOnline(!isOnline)}
+                        onClick={() => updateDeliveryPartnerAvailabilityStatus(!isOnline)}
                     >
                         <span
                             className={`absolute w-full text-center text-xs ${isOnline ? "-ml-3" : "ml-3"} font-bold text-white`}
@@ -413,7 +441,9 @@ const Page = () => {
                 </div>
             </div>
 
-            {!!deliveryPartner?.verification_status && <MaintainOrderStatusForDeliveryPartner />}
+            {deliveryPartnerOrders?.map((order) => (
+                <MaintainOrderStatusForDeliveryPartner key={order?.order_id} order={order} />
+            ))}
         </div>
     );
 };
