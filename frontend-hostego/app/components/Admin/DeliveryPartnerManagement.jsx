@@ -116,6 +116,26 @@ const DeliveryPartnerProfileCard = ({ partner, onUpdate }) => {
                     </button>
                   </div>
                 </div>
+                <div className="px-4 py-2 border-b">
+                  <p className="text-xs text-gray-500 mb-2">Availability Status</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleStatusUpdate('availability_status', 1)}
+                      className="px-2 py-1 text-xs rounded bg-green-50 text-green-600 hover:bg-green-100"
+                      disabled={partner.availability_status === 1}
+                    >
+                      Online
+                    </button>
+
+                    <button
+                      onClick={() => handleStatusUpdate('availability_status', 0)}
+                      className="px-2 py-1 text-xs rounded bg-red-50 text-red-600 hover:bg-red-100"
+                      disabled={partner.availability_status === 0}
+                    >
+                      Offline
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>
