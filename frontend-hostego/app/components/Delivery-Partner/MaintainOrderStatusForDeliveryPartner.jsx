@@ -14,13 +14,19 @@ export const ORDER_STATUSES = [
     color: 'var(--primary-color)'
   },
   {
-    id: 'reached_shop',
-    label: 'Reached Restaurant',
+    id: 'assigned',
+    label: 'Order Assigned',
     icon: Check,
     color: 'var(--primary-color)'
   },
   {
-    id: 'picked_up',
+    id: 'reached',
+    label: 'Reached Shop',
+    icon: Check,
+    color: 'var(--primary-color)'
+  },
+  {
+    id: 'picked',
     label: 'Picked Up',
     icon: Check,
     color: 'var(--primary-color)'
@@ -43,20 +49,14 @@ export const ORDER_STATUSES = [
 
 
 
-const MaintainOrderStatusForDeliveryPartner = ({ order }) => {
-  const [orders, setOrders] = useState(transformOrder(order));
+const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) => {
+  const [activeOrder, setActiveOrder] = useState(transformOrder(order));
 
-  const [activeOrder, setActiveOrder] = useState(orders);
   const [isItemsExpanded, setIsItemsExpanded] = useState(false);
 
-  const updateOrderStatus = async (orderId, newStatus) => {
-
-    const updatedOrders = { ...activeOrder }
-    updatedOrders.order_status = newStatus
-
-    setOrders(updatedOrders);
-    setActiveOrder(updatedOrders)
-  };
+  useEffect(() => {
+    setActiveOrder(transformOrder(order))
+  }, [order])
 
   const getStatusStep = (status) => {
     const index = ORDER_STATUSES.findIndex(s => s.id === status);
@@ -64,7 +64,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order }) => {
   };
 
   const getNextStatus = (order) => {
-    return ORDER_STATUSES[getStatusStep(order.order_status) + 1];
+    return ORDER_STATUSES[getStatusStep(order?.order_status) + 1];
   };
 
 
@@ -175,7 +175,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order }) => {
 
 
           <div className="p-4 flex gap-3">
-            <button className="flex-1 py-3 px-4 rounded-lg border-2 border-[var(--primary-color)] text-[var(--primary-color)] font-medium flex items-center justify-center gap-2">
+            <button onClick={() => window.location.href = `tel:${activeOrder?.user?.mobile_number}`} className="flex-1 py-3 px-4 rounded-lg border-2 border-[var(--primary-color)] text-[var(--primary-color)] font-medium flex items-center justify-center gap-2">
               <Phone className="w-4 h-4" />
               Call
             </button>
@@ -194,12 +194,12 @@ const MaintainOrderStatusForDeliveryPartner = ({ order }) => {
       {/* Bottom Action Bar */}
       <div className="z-10 fixed bottom-0 left-0 right-0 bg-white border-t p-4">
         <div className="max-w-md mx-auto">
-          {getStatusStep(activeOrder.order_status) < ORDER_STATUSES.length - 1 && (
+          {getStatusStep(activeOrder?.order_status) < ORDER_STATUSES.length - 1 && (
             <SliderStatusTracker
               text={`Slide to ${ORDER_STATUSES[getStatusStep(activeOrder.order_status) + 1].label}`}
               onConfirm={() => {
                 const nextStatus = getNextStatus(activeOrder);
-                if (nextStatus) updateOrderStatus(activeOrder.order_id, nextStatus.id);
+                if (nextStatus) onUpdateOrderStatus(activeOrder?.order_id, nextStatus?.id);
               }}
             />
           )}

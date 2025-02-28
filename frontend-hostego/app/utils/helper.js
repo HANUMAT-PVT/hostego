@@ -150,6 +150,14 @@ export const transformOrder = (order) => {
   };
 };
 
+export const transformDeliveryPartnerOrderEarnings = (orders) => {
+  const earnings = orders.reduce((acc, order) => {
+    return acc + order.final_order_value;
+  }, 0);
+  return earnings;
+}
+
+
 
 export const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -157,3 +165,16 @@ export const formatDate = (dateString) => {
   return date.toLocaleString('en-US', options);
 };
 
+
+export const transformOrdersByDate = (orders) => {
+  return orders.reduce((acc, order) => {
+    const orderDate = new Date(order.created_at).toISOString().split('T')[0]; // Extract YYYY-MM-DD
+    
+    if (!acc[orderDate]) {
+      acc[orderDate] = [];
+    }
+    
+    acc[orderDate].push(order);
+    return acc;
+  }, {});
+};

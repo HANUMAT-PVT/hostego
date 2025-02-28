@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import BackNavigationButton from '@/app/components/BackNavigationButton'
 import { formatDate } from '@/app/utils/helper'
-import { Package, MapPin, Clock, CheckCircle2, Truck, AlertCircle, IndianRupee } from 'lucide-react'
+import { Package, MapPin, Clock, CheckCircle2, Truck, Check, AlertCircle, IndianRupee } from 'lucide-react'
 import axiosClient from '@/app/utils/axiosClient'
 import HostegoLoader from '@/app/components/HostegoLoader'
 import StatusTimeLine from '../../components/Orders/StatusTimeLine'
@@ -26,20 +26,34 @@ const OrderDetailsPage = () => {
             icon: Package,
             color: 'text-blue-500',
             bgColor: 'bg-blue-50',
-            label: 'Order Confirmed'
+            label: 'Order Placed'
         },
-        preparing: {
+        assigned: {
             icon: Package,
             color: 'text-[var(--primary-color)]',
             bgColor: 'bg-[var(--primary-color)]/10',
-            label: 'Preparing Order'
+            label: 'Asssigned'
         },
-        out_for_delivery: {
-            icon: Truck,
+
+        reached: {
+            icon: Check,
             color: 'text-purple-500',
             bgColor: 'bg-purple-50',
-            label: 'Out for Delivery'
+            label: 'Reached Shop'
         },
+        picked: {
+            icon: Check,
+            color: 'text-purple-500',
+            bgColor: 'bg-purple-50',
+            label: 'Picked Up'
+        },
+        on_the_way: {
+            icon: Check,
+            color: 'text-purple-500',
+            bgColor: 'bg-purple-50',
+            label: 'On The Way'
+        },
+
         delivered: {
             icon: CheckCircle2,
             color: 'text-green-500',
@@ -55,14 +69,19 @@ const OrderDetailsPage = () => {
     }
 
     useEffect(() => {
+
+        console.log("fetching order")
         fetchOrder()
+
     }, [id])
+
+
+
 
     const fetchOrder = async () => {
         try {
             setIsLoading(true)
             const { data } = await axiosClient.get(`/api/order/${id}`)
-            console.log(data, "order")
             setOrder(data)
         } catch (error) {
             console.error('Error fetching order:', error)
