@@ -10,13 +10,15 @@ type OrderStatusType string
 
 const (
 	PendingOrderStatus   = "pending"
-	PackedOrderStatus    = "packed"
-	CookingOrderStatus   = "cooking"
-	DeliveredOrderStatus = "delivered"
-	CanceledOrderStatus  = "cancelled"
-	PickedOrderStatus    = "picked"
 	PlacedOrderStatus    = "placed"
 	AssignedOrderStatus  = "assigned"
+	PackedOrderStatus    = "packed"
+	ReachedOrderStatus   = "reached"
+	PickedOrderStatus    = "picked"
+	OnTheWayOrderStatus  = "on_the_way"
+	DeliveredOrderStatus = "delivered"
+	CookingOrderStatus   = "cooking"
+	CanceledOrderStatus  = "cancelled"
 )
 
 type Order struct {

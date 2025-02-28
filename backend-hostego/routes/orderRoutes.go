@@ -15,5 +15,5 @@ func OrderRoutes(app *fiber.App) {
 	orderRoutes.Patch("/:id", controllers.UpdateOrderById)
 	orderRoutes.Post("/mark-order-delivered", controllers.MarkOrderAsDelivered)
 	orderRoutes.Post("/assign-order-delivery", controllers.AssignOrderToDeliveryPartner)
-	orderRoutes.Get("/delivery-partner/all", controllers.FetchAllOrdersByDeliveryPartner)
+	orderRoutes.Get("/delivery-partner/:id", controllers.FetchAllOrdersByDeliveryPartner)
 }
