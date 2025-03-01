@@ -53,13 +53,19 @@ const OrderCard = ({ order, onRefresh }) => {
 
     const handleStatusUpdate = async (newStatus) => {
         try {
-            if (newStatus === 'cancelled') {
+            if(newStatus=="cancelled"){
                 setIsUpdating(true)
-                await axiosClient.patch(`/api/payment/refund`, {
+                await axiosClient.post(`/api/payment/refund`, {
                     order_id: order?.order_id
                 })
                 onRefresh(true) // Refresh the list after update
             }
+            setIsUpdating(true)
+            await axiosClient.patch(`/api/order/${order.order_id}`, {
+                order_status: newStatus,
+                delivery_partner_id: "" // Reset delivery partner ID
+            })
+            onRefresh(true) // Refresh the list after update
         } catch (error) {
             console.error('Error updating order status:', error)
         } finally {
