@@ -119,7 +119,6 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 	}
 	type OrderRequest struct {
 		OrderID string `json:"order_id"`
-		UserId  string `json:"user_id"`
 	}
 
 	var request OrderRequest
@@ -147,7 +146,7 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	if err := tx.Where("user_id=?", request.UserId).First(&wallet).Error; err != nil {
+	if err := tx.Where("user_id=?", order.UserId).First(&wallet).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -164,7 +163,7 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	if err := tx.Where("user_id=?", request.UserId).First(&wallet).Error; err != nil {
+	if err := tx.Where("user_id=?", order.UserId).First(&wallet).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -172,14 +171,14 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 	walletTransaction.Amount = order.FinalOrderValue
 	walletTransaction.TransactionType = models.TransactionCustomType(models.TransactionRefund)
 	walletTransaction.TransactionStatus = models.TransactionStatusType(models.TransactionSuccess)
-	walletTransaction.UserId = request.UserId
+	walletTransaction.UserId = order.UserId
 	wallet.Balance += order.FinalOrderValue
 
 	if err := tx.Create(&walletTransaction).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	if err := tx.Where("user_id=?", request.UserId).Save(&wallet).Error; err != nil {
+	if err := tx.Where("user_id=?", order.UserId).Save(&wallet).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
