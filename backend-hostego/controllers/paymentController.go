@@ -4,6 +4,7 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/middlewares"
 	"backend-hostego/models"
+	"time"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -72,7 +73,6 @@ func InitiatePayment(c fiber.Ctx) error {
 	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
 	order.OrderStatus = "placed"
 
-
 	if err := tx.Create(&paymentTransaction).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
@@ -110,4 +110,81 @@ func FetchUserPaymentTransactions(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(payment_transactions)
+}
+
+func InitiateRefundPayment(c fiber.Ctx) error {
+	current_user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	type OrderRequest struct {
+		OrderID string `json:"order_id"`
+		UserId  string `json:"user_id"`
+	}
+
+	var request OrderRequest
+
+	if err := c.Bind().JSON(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+	if current_user_id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+	}
+
+	var order models.Order
+	var wallet models.Wallet
+	var walletTransaction models.WalletTransaction
+
+	tx := database.DB.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := database.DB.Where("order_id = ?", request.OrderID).First(&order).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if err := tx.Where("user_id=?", request.UserId).First(&wallet).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	order.OrderStatus = models.OrderStatusType(models.CanceledOrderStatus)
+	order.Refunded = true
+	order.RefundedAt = time.Now()
+	order.RefundInitiator = current_user_id
+	order.DeliveryPartnerId = ""
+	order.DeliveryPartner = nil
+
+	if err := tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if err := tx.Where("user_id=?", request.UserId).First(&wallet).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	walletTransaction.Amount = order.FinalOrderValue
+	walletTransaction.TransactionType = models.TransactionCustomType(models.TransactionRefund)
+	walletTransaction.TransactionStatus = models.TransactionStatusType(models.TransactionSuccess)
+	walletTransaction.UserId = request.UserId
+	wallet.Balance += order.FinalOrderValue
+
+	if err := tx.Create(&walletTransaction).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	if err := tx.Where("user_id=?", request.UserId).Save(&wallet).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	if err := tx.Commit().Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Refund Completed", "wallet_transaction": walletTransaction, "wallet": wallet})
 }

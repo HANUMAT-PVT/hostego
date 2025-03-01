@@ -40,4 +40,8 @@ type Order struct {
 	AddressID            string             `gorm:"type:string;not null" json:"address_id"`
 	Address              Address            `gorm:"foreignKey:AddressID;references:AddressID" json:"address"`
 	DeliveredAt          time.Time          `json:"delivered_at"`
+	RefundedAt           time.Time          `json:"refunded_at"`
+	Refunded             bool               `gorm:"type:boolean;default:false" json:"refunded"`
+	RefundInitiator      string             `gorm:"type:string" json:"refund_initiator"`
+	FreeDelivery         bool               `gorm:"type:boolean;default:false" json:"free_delivery"`
 }
