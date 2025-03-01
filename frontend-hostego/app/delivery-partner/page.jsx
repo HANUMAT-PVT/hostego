@@ -7,7 +7,7 @@ import HostegoButton from "../components/HostegoButton"
 import { uploadToS3Bucket } from '../lib/aws'
 import axiosClient from "../utils/axiosClient"
 import MaintainOrderStatusForDeliveryPartner from "../components/Delivery-Partner/MaintainOrderStatusForDeliveryPartner"
-import { transformDeliveryPartnerOrderEarnings, transformOrdersByDate } from "../utils/helper";
+import { formatDate, transformDeliveryPartnerOrderEarnings, transformOrdersByDate } from "../utils/helper";
 
 const ordersData = [
     {
@@ -159,7 +159,7 @@ const Page = () => {
 
 
     const updateOrderStatus = async (orderId, newStatus) => {
-        console.log(orderId, newStatus)
+      
         try {
             let { data } = await axiosClient.patch(`/api/order/${orderId}`, {
                 order_status: newStatus
@@ -173,9 +173,9 @@ const Page = () => {
     const fetchDeliveryPartnerEarnings = async () => {
         try {
             let { data } = await axiosClient.get(`/api/delivery-partner/earnings/${deliveryPartner?.delivery_partner_id}`)
-            const earnings = transformOrdersByDate(data?.daily_earnings	)
-            console.log(earnings,"earnings")
-            setDeliveryPartnerEarnings({...data,earnings})
+            const earnings = transformOrdersByDate(data?.daily_earnings)
+
+            setDeliveryPartnerEarnings({ ...data, earnings })
         } catch (error) {
             console.log(error)
         }
@@ -273,7 +273,7 @@ const Page = () => {
             </div>
         );
     }
-
+   
 
     return (
         <div className="bg-[var(--bg-page-color)]">
@@ -437,7 +437,7 @@ const Page = () => {
                             </div>
                         </div>
                         <div className="flex flex-col items-center gap-1 px-4">
-                            <p className="font-semibold text-xl">{deliveryPartnerEarnings?.summary?. total_orders}</p>
+                            <p className="font-semibold text-xl">{deliveryPartnerEarnings?.summary?.total_orders}</p>
                             <div className="flex gap-2 items-center">
                                 <ShoppingBag size={14} />
                                 <p className="text-xs">Orders</p>
@@ -448,23 +448,28 @@ const Page = () => {
 
                 {/* Order History Section */}
                 <div className="mt-6 px-4 ">
-                    {deliveryPartnerEarnings?.earnings_by_date?.orders?.map((day, index) => (
+                    {deliveryPartnerEarnings?.earnings?.map((day, index) => (
                         <div key={index} className="mb-6 mt-6">
                             <p className="text-lg font-semibold mb-2">{day?.date}</p>
-                            <div className="bg-white p-4 rounded-md shadow-md">
-                                {day.orders.map((order, idx) => (
+                            <div className="bg-white p-4 rounded-md shadow-md flex flex-col gap-2">
+                                {day?.orders?.map((order, idx) => (
                                     <div
                                         key={idx}
                                         className="flex justify-between items-center border-b last:border-none py-2"
                                     >
                                         <div className="flex flex-col gap-2">
-                                            <p className="text-md font-normal">Order ID: {order?.id}</p>
+                                            <div className="flex items-center gap-2">
+                                                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                                                    Order #{order?.order_id?.slice(-6)}
+                                                </span>
+
+                                            </div>
                                             <p className="text-sm text-gray-500 flex items-center gap-1">
                                                 <Clock size={14} />
-                                                {order.time}
+                                                {formatDate(order?.created_at)}
                                             </p>
                                         </div>
-                                        <p className="font-semibold text-green-600">₹ {order.earning}</p>
+                                        <p className="font-semibold text-green-600">₹ {(order?.delivery_partner_fee).toFixed(1)}</p>
                                     </div>
                                 ))}
                             </div>

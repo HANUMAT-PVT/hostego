@@ -4,12 +4,13 @@ import React, { useState, useEffect } from 'react'
 import BackNavigationButton from '../components/BackNavigationButton'
 import CartItem from '../components/Cart/CartItem'
 import AddressList from '../components/Address/AddressList'
-import { Home, Clock, Truck, CreditCard, MapPin } from 'lucide-react'
+import { Home, Clock, Truck, CreditCard, MapPin, Timer, AlertCircle, TicketCheck } from 'lucide-react'
 import HostegoButton from '../components/HostegoButton'
 import axiosClient from '../utils/axiosClient'
 import HostegoLoader from '../components/HostegoLoader'
 import PaymentStatus from '../components/PaymentStatus'
 import { useRouter } from 'next/navigation'
+import HostegoToast from '../components/HostegoToast'
 
 const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
     return (
@@ -64,11 +65,27 @@ const page = () => {
     const [cartData, setCartData] = useState({})
     const [isPageLoading, setIsPageLoading] = useState(true)
     const [paymentStatus, setPaymentStatus] = useState(null)
+    const [orderTimer, setOrderTimer] = useState(30)
+    const [isTimerRunning, setIsTimerRunning] = useState(false)
+    const [isToastVisible, setIsToastVisible] = useState(false)
     const router = useRouter()
 
     useEffect(() => {
         fetchCartItems()
     }, [])
+
+    useEffect(() => {
+        let interval
+        if (isTimerRunning && orderTimer > 0) {
+            interval = setInterval(() => {
+                setOrderTimer((prev) => prev - 1)
+            }, 1000)
+        } else if (orderTimer === 0) {
+            handleCreateOrder()
+        }
+
+        return () => clearInterval(interval)
+    }, [isTimerRunning, orderTimer])
 
     const fetchCartItems = async () => {
         try {
@@ -83,42 +100,99 @@ const page = () => {
         }
     }
 
-    if (isPageLoading) {
-        return <HostegoLoader />
+    const startOrderTimer = () => {
+        try {
+
+            if (!selectedAddress) {
+                setIsToastVisible(true)
+                return
+            }
+            setIsTimerRunning(true)
+        } catch (error) {
+            console.error('Error starting order timer:', error)
+        }
+    }
+
+    const cancelOrder = () => {
+        setIsTimerRunning(false)
+        setOrderTimer(30)
     }
 
     const handleCreateOrder = async () => {
         try {
+
             setPaymentStatus('processing')
             const { data } = await axiosClient.post('/api/order', {
                 address_id: selectedAddress?.address_id
             })
-            console.log(data)
+
             const response = await axiosClient.post(`/api/payment`, {
                 order_id: data?.order_id
             })
 
-            // Simulate payment processing time
-            await new Promise(resolve => setTimeout(resolve, 2000))
-
-            setPaymentStatus('success')
-            // Redirect after success
-            setTimeout(() => {
-                router.push('/orders')
-            }, 2000)
-
+            if (response.data) {
+                setPaymentStatus('success')
+                setTimeout(() => {
+                    router.push('/orders')
+                }, 2000)
+            } else {
+                setPaymentStatus('failed')
+            }
         } catch (error) {
-            console.error('Error creating order:', error)
+            console.error('Error processing order:', error)
             setPaymentStatus('failed')
-            // Reset status after error
-            setTimeout(() => {
-                setPaymentStatus(null)
-            }, 3000)
+        } finally {
+            setIsTimerRunning(false)
+            setOrderTimer(30)
         }
     }
+
+    if (isPageLoading) {
+        return <HostegoLoader />
+    }
+
     return (
         <div className='min-h-screen bg-[var(--bg-page-color)]'>
             <BackNavigationButton title="Checkout" />
+            <HostegoToast message="Please select a delivery address" variant="error" show={isToastVisible} onClose={() => setIsToastVisible(false)} />
+            {/* Timer Banner - shows when timer is running */}
+            {isTimerRunning && (
+                <div className="fixed top-16 left-0 right-0 bg-white shadow-md z-10">
+                    <div className="w-fit mx-auto p-4">
+                        <div className="flex items-center flex-col justify-between mb-3 gap-2">
+                            <div className="flex items-center gap-2">
+                                <Timer className="w-5 h-5 text-[var(--primary-color)] animate-pulse" />
+                                <span className="font-medium">
+                                    Order will be placed in {orderTimer} seconds
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={handleCreateOrder}
+                                    className="px-4 py-1.5 bg-green-600 text-white rounded-full text-sm font-medium
+                                             hover:bg-green-700 transition-colors text-nowrap"
+                                >
+                                    Place Now
+                                </button>
+                                <button
+                                    onClick={cancelOrder}
+                                    className="px-3 py-1.5 bg-red-50 text-red-600 rounded-full text-sm font-medium
+                                             hover:bg-red-100 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                        {/* Progress bar */}
+                        <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-[var(--primary-color)] transition-all duration-1000"
+                                style={{ width: `${(orderTimer / 30) * 100}%` }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Delivery Info Card */}
             <div className='bg-white m-2 rounded-xl overflow-hidden shadow-sm'>
@@ -153,23 +227,67 @@ const page = () => {
 
             {/* Bill Details */}
             <div className='bg-white mx-2 mt-4 rounded-xl p-4 shadow-sm'>
-                <div className='flex items-center gap-2 mb-3'>
+                <div className='flex items-center gap-2 mb-4'>
                     <CreditCard className='w-5 h-5 text-[var(--primary-color)]' />
                     <p className='font-medium text-md'>Bill Details</p>
                 </div>
-                <div className='space-y-2 text-md '>
+
+                <div className='space-y-3 text-md'>
+                    {/* Item Total */}
                     <div className='flex justify-between font-normal'>
-                        <span className='text-gray-800 '>Item Total</span>
-                        <span>+ ₹{cartData?.cart_value.subtotal}</span>
-                    </div>
-                    <div className='flex justify-between  font-normal'>
-                        <span className='text-gray-800'>Delivery Fee</span>
-                        <span>+ ₹{cartData?.cart_value.shipping_fee}</span>
+                        <span className='text-gray-800'>Item Total</span>
+                        <span>₹{cartData?.cart_value?.subtotal}</span>
                     </div>
 
-                    <div className='flex justify-between pt-2 border-t mt-2 font-semibold text-xl'>
-                        <span>Total Amount</span>
-                        <span>₹{(cartData?.cart_value.final_order_value)}</span>
+                    {/* Delivery Fee */}
+                    <div className='flex justify-between font-normal items-start'>
+                        <span className='text-gray-800'>Delivery Fee</span>
+                        {cartData?.free_delivery ? (
+                         
+                            <div className='flex items-center gap-2'>
+                                <p className='line-through'>₹{cartData?.cart_value?.actual_shipping_fee}</p>
+                                <div className='bg-gradient-to-r from-[#655df0] to-[#9333ea] text-white px-3  rounded-md'>
+                                    <span className='font-bold tracking-wide'>FREE</span>
+                                </div>
+                               
+                            </div>
+                        ) : (
+                            // Regular Delivery Fee Display
+                            <div className='text-right'>
+                                <div className='flex items-center gap-2'>
+                                    <span>₹{cartData?.cart_value?.actual_shipping_fee}</span>
+                                </div>
+                                
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Additional Savings Banner for Free Delivery */}
+                    {cartData?.free_delivery && (
+                        <div className='bg-gradient-to-r from-[#655df0] to-[#9333ea] p-0.5 rounded-lg mt-2'>
+                            <div className='bg-white rounded-[7px] p-3 flex items-center gap-3'>
+                                <div className='w-10 h-10 rounded-full bg-gradient-to-r from-[#655df0]/10 to-[#9333ea]/10 flex items-center justify-center'>
+                                    <span className='text-[#655df0] font-bold'>₹</span>
+                                </div>
+                                <div>
+                                    <p className='font-medium text-gray-800'>Welcome To HOSTEGO !</p>
+                                    <p className='text-sm text-gray-600'>
+                                        You saved <span className='font-bold'>₹{cartData?.cart_value.actual_shipping_fee}</span> with <span className='font-bold'>FREE DELIVERY </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Total Amount */}
+                    <div className='flex justify-between pt-3 border-t mt-2'>
+                        <div>
+                            <span className='font-semibold text-xl'>Total Amount</span>
+                            <p className='text-xs text-gray-500'>Inclusive of all taxes</p>
+                        </div>
+                        <span className='font-semibold text-xl'>
+                            ₹{cartData?.cart_value?.final_order_value}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -177,19 +295,19 @@ const page = () => {
             {/* Place Order Button */}
             <div className='fixed bottom-0 left-0 right-0 p-4 bg-white border-t'>
                 {!selectedAddress && (
-                    <div className='text-sm text-red-500 text-center mb-2 '>
+                    <div className='text-sm text-red-500 text-center mb-2'>
                         ⚠️ Please select a delivery address
                     </div>
                 )}
                 <HostegoButton
-                    onClick={handleCreateOrder}
+                    onClick={startOrderTimer}
                     text={`Place Order • ₹${cartData?.cart_value?.final_order_value}`}
                     className={`w-full py-3 rounded-xl font-medium transition-all duration-200
                         ${!selectedAddress
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                             : 'bg-[var(--primary-color)] text-white hover:opacity-90'
                         }`}
-                    disabled={!selectedAddress}
+                    disabled={!selectedAddress || isTimerRunning}
                 />
             </div>
 
@@ -209,3 +327,5 @@ const page = () => {
 }
 
 export default page
+
+

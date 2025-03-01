@@ -146,6 +146,59 @@ const Profile = () => {
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
+            {/* About us */}
+            <div
+            onClick={() => router.push("/delivery-partner")}
+            className="nav-account-bar flex items-center justify-between "
+          >
+            <div className="flex items-center gap-3">
+              <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
+                <Wallet size={14} className="text-gray-500" />
+              </div>
+              <p className="text-md font-normal">About us</p>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
+          {/* Support us */}
+          <div
+            onClick={() => router.push("/support")}
+            className="nav-account-bar flex items-center justify-between "
+          >
+            <div className="flex items-center gap-3">
+              <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
+                <Wallet size={14} className="text-gray-500" />
+              </div>
+              <p className="text-md font-normal">Support</p>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
+        
+          {/* Terms & Conditions */}
+          <div
+            onClick={() => router.push("/terms-conditions")}
+            className="nav-account-bar flex items-center justify-between "
+          >
+            <div className="flex items-center gap-3">
+              <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
+                <Wallet size={14} className="text-gray-500" />
+              </div>
+              <p className="text-md font-normal">Terms & Conditions</p>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
+          {/* Privacy Policy */}
+          <div
+            onClick={() => router.push("/privacy-policy")}
+            className="nav-account-bar flex items-center justify-between "
+          >
+            <div className="flex items-center gap-3">
+              <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
+                <Wallet size={14} className="text-gray-500" />
+              </div>
+              <p className="text-md font-normal">Privacy Policy</p>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
           {/* Logout */}
           <div
             onClick={() => handleUserLogout()}

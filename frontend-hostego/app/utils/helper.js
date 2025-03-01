@@ -155,26 +155,46 @@ export const transformDeliveryPartnerOrderEarnings = (orders) => {
     return acc + order.final_order_value;
   }, 0);
   return earnings;
-}
+};
 
-
-
-export const formatDate = (dateString) => {
+export const formatDate = (dateString, withTime = true) => {
   const date = new Date(dateString);
-  const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-  return date.toLocaleString('en-US', options);
+  
+  if (withTime) {
+    return date.toLocaleString("en-US", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true, // Ensures AM/PM format
+    });
+  }
+
+  return date.toLocaleDateString("en-US", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 };
 
 
 export const transformOrdersByDate = (orders) => {
-  return orders.reduce((acc, order) => {
-    const orderDate = new Date(order.created_at).toISOString().split('T')[0]; // Extract YYYY-MM-DD
+  const ordersByDate = {};
+
+  for (let orderItem of orders) {
+    const orderDate = formatDate(orderItem?.created_at,false); // Extract YYYY-MM-DD
     
-    if (!acc[orderDate]) {
-      acc[orderDate] = [];
+    if (!ordersByDate[orderDate]) {
+      ordersByDate[orderDate] = []; // Initialize array if not present
     }
     
-    acc[orderDate].push(order);
-    return acc;
-  }, {});
+    ordersByDate[orderDate].push(orderItem); // Push order into array
+  }
+
+  return Object.keys(ordersByDate).map((date) => ({
+    date,
+    orders: ordersByDate[date],
+  }));
 };
+
