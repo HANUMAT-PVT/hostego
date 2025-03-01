@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import BackNavigationButton from '@/app/components/BackNavigationButton'
 import { formatDate } from '@/app/utils/helper'
-import { Package, MapPin, Clock, CheckCircle2, Truck, Check, AlertCircle, IndianRupee } from 'lucide-react'
+import { Package, MapPin, Clock, CheckCircle2, Truck, Check, AlertCircle, IndianRupee, RefreshCcw } from 'lucide-react'
 import axiosClient from '@/app/utils/axiosClient'
 import HostegoLoader from '@/app/components/HostegoLoader'
 import StatusTimeLine from '../../components/Orders/StatusTimeLine'
@@ -20,7 +20,7 @@ const OrderDetailsPage = () => {
             icon: Clock,
             color: 'text-orange-500',
             bgColor: 'bg-orange-50',
-            label: 'Order Pending'
+            label: 'Payment Pending'
         },
         placed: {
             icon: Package,
@@ -70,7 +70,7 @@ const OrderDetailsPage = () => {
 
     useEffect(() => {
 
-        console.log("fetching order")
+
         fetchOrder()
 
     }, [id])
@@ -102,17 +102,24 @@ const OrderDetailsPage = () => {
 
             {/* Order Status Card */}
             <div className={`mx-2 mt-2 rounded-xl overflow-hidden bg-white shadow-sm`}>
-                <div className={`p-4 ${status.bgColor} border-b`}>
-                    <div className="flex items-center gap-3 mb-2">
-                        <StatusIcon className={`w-6 h-6 ${status?.color}`} />
-                        <h2 className={`text-lg font-semibold ${status?.color}`}>
-                            {status?.label}
-                        </h2>
+                <div className={`p-4 ${status.bgColor} border-b flex justify-between items-center`}>
+                    <div className='flex flex-col '>
+                        <div className="flex items-center gap-3 mb-2">
+                            <StatusIcon className={`w-6 h-6 ${status?.color}`} />
+                            <h2 className={`text-lg font-semibold ${status?.color}`}>
+                                {status?.label}
+                            </h2>
+                        </div>
+
+                        <p className="text-sm text-gray-600">
+                            Ordered on {formatDate(order?.created_at)}
+                        </p>
                     </div>
-                    <p className="text-sm text-gray-600">
-                        Ordered on {formatDate(order?.created_at)}
-                    </p>
+                    <div className='flex items-center justify-end'>
+                        <RefreshCcw onClick={() => fetchOrder()} className="w-4 h-4 text-[var(--primary-color)] cursor-pointer" />
+                    </div>
                 </div>
+
 
                 {/* Order Items */}
                 <div className="p-4">
@@ -175,10 +182,7 @@ const OrderDetailsPage = () => {
                         <span className="text-gray-600">Delivery Fee</span>
                         <span>₹{order?.shipping_fee}</span>
                     </div>
-                    <div className="flex justify-between">
-                        <span className="text-gray-600">Platform Fee</span>
-                        <span>₹{order?.platform_fee}</span>
-                    </div>
+                   
                     <div className="flex justify-between pt-2 border-t font-medium">
                         <span>Total Amount</span>
                         <span>₹{order?.final_order_value}</span>

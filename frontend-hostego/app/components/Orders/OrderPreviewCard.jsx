@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import { formatDate } from '@/app/utils/helper'
-import { Package, Clock, CheckCircle2, Truck, AlertCircle, UserRoundCheck } from 'lucide-react'
+import { Package, Clock, CheckCircle2, Truck, AlertCircle, UserRoundCheck, Check } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 
@@ -21,23 +21,29 @@ const OrderPreviewCard = ({ order }) => {
             bgColor: 'bg-blue-50',
             label: 'Order Placed'
         },
-         assigned: {
+        assigned: {
             icon: UserRoundCheck,
             color: 'text-blue-500',
             bgColor: 'bg-blue-50',
             label: 'Order Assigned'
         },
-        preparing: {
+        on_the_way: {
             icon: Package,
             color: 'text-[var(--primary-color)]',
             bgColor: 'bg-[var(--primary-color)]/10',
-            label: 'Preparing Order'
+            label: 'On the way'
         },
-        out_for_delivery: {
+        picked: {
             icon: Truck,
             color: 'text-purple-500',
             bgColor: 'bg-purple-50',
-            label: 'Out for Delivery'
+            label: 'Order Picked'
+        },
+        reached: {
+            icon: Check,
+            color: 'text-purple-500',
+            bgColor: 'bg-purple-50',
+            label: 'Reached Shop'
         },
         delivered: {
             icon: CheckCircle2,
@@ -55,7 +61,7 @@ const OrderPreviewCard = ({ order }) => {
 
     const status = statusConfig[order.order_status] || statusConfig.pending
     const StatusIcon = status.icon
-    
+
 
     return (
         <div onClick={() => { router.push(`/orders/${order?.order_id}`) }} className="bg-white rounded-xl overflow-hidden shadow-sm m-2 border border-gray-100">
@@ -102,10 +108,7 @@ const OrderPreviewCard = ({ order }) => {
                         <span className="text-gray-600">Delivery Fee</span>
                         <span>₹{order?.shipping_fee}</span>
                     </div>
-                    <div className="flex justify-between">
-                        <span className="text-gray-600">Platform Fee</span>
-                        <span>₹{order?.platform_fee}</span>
-                    </div>
+
                     <div className="flex justify-between pt-2 border-t font-semibold text-lg">
                         <span>Total</span>
                         <span>₹{order?.final_order_value}</span>

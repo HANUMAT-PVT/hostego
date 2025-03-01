@@ -228,6 +228,18 @@ const DeliveryPartnerManagement = () => {
     fetchPartners()
   }, [])
 
+  const handleStatusUpdate = async (partnerId, field, value) => {
+    try {
+      await axiosClient.patch(`/api/delivery-partner/${partnerId}`, {
+        [field]: value
+      })
+      // Refresh the list after update
+      fetchPartners()
+    } catch (error) {
+      console.error('Error updating partner status:', error)
+    }
+  }
+
   const filteredPartners = partners.filter(partner => {
     if (filter === 'verified') return partner.verification_status === 1
     if (filter === 'unverified') return partner.verification_status === 0

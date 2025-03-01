@@ -5,6 +5,7 @@ import { Phone, Navigation, Clock, Check, ChevronDown, ChevronUp, ShoppingBag, A
 import { transformOrder } from '../../utils/helper'
 import SliderStatusTracker from "./SliderStatusTracker"
 import StatusTimeLine from '../Orders/StatusTimeLine';
+import ConfirmationPopup from '../ConfirmationPopup';
 
 export const ORDER_STATUSES = [
   {
@@ -51,7 +52,7 @@ export const ORDER_STATUSES = [
 
 const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) => {
   const [activeOrder, setActiveOrder] = useState(transformOrder(order));
-
+  const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false);
   const [isItemsExpanded, setIsItemsExpanded] = useState(false);
 
   useEffect(() => {
@@ -198,13 +199,26 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
             <SliderStatusTracker
               text={`Slide to ${ORDER_STATUSES[getStatusStep(activeOrder.order_status) + 1].label}`}
               onConfirm={() => {
-                const nextStatus = getNextStatus(activeOrder);
-                if (nextStatus) onUpdateOrderStatus(activeOrder?.order_id, nextStatus?.id);
+                setIsConfirmationPopupOpen(true)
               }}
             />
           )}
         </div>
       </div>
+      <ConfirmationPopup 
+        variant="info"
+        title="Confirm Order Status"
+        isOpen={isConfirmationPopupOpen}
+        message="Are you sure you want to update the order status?"
+        onConfirm={() => {
+          const nextStatus = getNextStatus(activeOrder);
+          if (nextStatus) onUpdateOrderStatus(activeOrder?.order_id, nextStatus?.id);
+          setIsConfirmationPopupOpen(false)
+        }}
+        onCancel={() => {
+          setIsConfirmationPopupOpen(false)
+        }}
+      />
     </div >
   );
 };
