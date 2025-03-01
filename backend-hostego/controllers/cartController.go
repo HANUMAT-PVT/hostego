@@ -108,9 +108,16 @@ func UpdateProductInUserCart(c fiber.Ctx) error {
 func FetchUserCart(c fiber.Ctx) error {
 	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
 	var cartItems []models.CartItem
-
+	var orderItems []models.Order
+	freeDelivery := false
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	if err := database.DB.Where("user_id = ?", user_id).Find(&orderItems).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	if len(orderItems) < 1 {
+		freeDelivery = true
 	}
 	if err := database.DB.Preload("ProductItem.Shop").
 		Where("user_id = ?", user_id).
@@ -119,10 +126,11 @@ func FetchUserCart(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
-	cartValue := CalculateFinalOrderValue(cartItems)
+	cartValue := CalculateFinalOrderValue(cartItems, freeDelivery)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"cart_items": cartItems,
-		"cart_value": cartValue,
+		"cart_value":  cartValue,
+		"free_delivery": freeDelivery,
 	})
 }

@@ -19,6 +19,7 @@ type FinalOrderValueType struct {
 	PlatformFee          float64 `json:"platform_fee"`
 	DeliveryPartnerShare float64 `json:"delivery_partner_fee"`
 	FinalOrderValue      float64 `json:"final_order_value"`
+	ActualShippingFee    float64 `json:"actual_shipping_fee"`
 }
 
 // Move struct definition outside the function
@@ -31,11 +32,22 @@ func CreateNewOrder(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
+	freeDelivery := false
 	var cartItems []models.CartItem
 	var order models.Order
+
+	var order_items []models.Order
+
 	var requestOrder requestCreateOrder // Use the struct here
 	if err := c.Bind().JSON(&requestOrder); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	if err := database.DB.Where("user_id=?", user_id).Find(&order_items).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	if len(order_items) < 1 {
+		freeDelivery = true
 	}
 
 	if requestOrder.AddressId == "" {
@@ -52,13 +64,15 @@ func CreateNewOrder(c fiber.Ctx) error {
 	}
 	order.OrderItems = jsonCartItems
 	order.UserId = user_id
-	totalCharges := CalculateFinalOrderValue(cartItems)
+	totalCharges := CalculateFinalOrderValue(cartItems, freeDelivery)
 	order.PlatformFee = totalCharges.PlatformFee
 	order.ShippingFee = totalCharges.ShippingFee
 	order.FinalOrderValue = totalCharges.FinalOrderValue
 	order.DeliveryPartnerFee = totalCharges.DeliveryPartnerShare
 	order.OrderStatus = "pending"
 	order.AddressID = requestOrder.AddressId
+	order.FreeDelivery = freeDelivery
+
 	if err := database.DB.Preload("User").Create(&order).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -67,7 +81,7 @@ func CreateNewOrder(c fiber.Ctx) error {
 }
 
 // CalculateFinalOrderValue calculates the total order cost including charges
-func CalculateFinalOrderValue(cartItems []models.CartItem) FinalOrderValueType {
+func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) FinalOrderValueType {
 	totalItemSubTotal := 0.0
 
 	// Calculate the subtotal of all cart items
@@ -76,33 +90,44 @@ func CalculateFinalOrderValue(cartItems []models.CartItem) FinalOrderValueType {
 	}
 
 	// Calculate charges
-	var deliveryCharge float64
+	var shippingFee float64
 	if totalItemSubTotal <= 150.0 {
-		deliveryCharge = 15.0
+		shippingFee = 15.0
 	} else {
 		charge := totalItemSubTotal * 0.10
 		if charge > 30.0 {
-			deliveryCharge = 30.0
+			shippingFee = 30.0
 		} else {
-			deliveryCharge = math.Round(charge*100) / 100 // Round to 2 decimal places
+			shippingFee = math.Round(charge*100) / 100 // Round to 2 decimal places
 		}
 	}
 
 	// Platform fee (fixed at ₹1)
 	platformFee := 1.0
+	// Distribution of charge (80% for delivery partner, 20% for company)
+	deliveryPartnerShare := math.Round((shippingFee*0.8)*100) / 100
 
-	// Distribution of charge (70% for delivery partner, 30% for company)
-	deliveryPartnerShare := math.Round((deliveryCharge*0.70)*100) / 100
-
+	shippingFee += platformFee
+	actualShippingFee := shippingFee
+	if freeDelivery {
+		shippingFee = 0
+	}
 	// Final order value including charges
-	finalOrderValue := math.Round((totalItemSubTotal+deliveryCharge)*100) / 100
-
+	finalOrderValue := math.Round((totalItemSubTotal+shippingFee)*100) / 100
+	if totalItemSubTotal == 0 {
+		finalOrderValue = 0
+		shippingFee = 0
+		deliveryPartnerShare = 0
+		platformFee = 0
+		actualShippingFee = 0
+	}
 	return FinalOrderValueType{
 		SubTotal:             math.Round(totalItemSubTotal*100) / 100,
-		ShippingFee:          deliveryCharge,
+		ShippingFee:          shippingFee,
 		PlatformFee:          platformFee,
 		DeliveryPartnerShare: deliveryPartnerShare,
 		FinalOrderValue:      finalOrderValue,
+		ActualShippingFee:    actualShippingFee,
 	}
 }
 
@@ -208,7 +233,8 @@ func UpdateOrderById(c fiber.Ctx) error {
 	}
 
 	var updateData struct {
-		OrderStatus models.OrderStatusType `json:"order_status"`
+		OrderStatus       models.OrderStatusType `json:"order_status"`
+		DeliveryPartnerId string                 `json:"delivery_partner_id"`
 	}
 	if err := c.Bind().JSON(&updateData); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -216,6 +242,9 @@ func UpdateOrderById(c fiber.Ctx) error {
 
 	// Update only the status
 	existingOrder.OrderStatus = updateData.OrderStatus
+	if updateData.DeliveryPartnerId != "" {
+		existingOrder.DeliveryPartnerId = updateData.DeliveryPartnerId
+	}
 
 	// Save the changes
 	if err := database.DB.Save(&existingOrder).Error; err != nil {

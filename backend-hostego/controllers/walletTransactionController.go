@@ -116,7 +116,7 @@ func FetchUserWalletTransactions(c fiber.Ctx) error {
 
 	var wallet_transactions []models.WalletTransaction
 
-	if err := database.DB.Find(&wallet_transactions, "user_id=?", user_id).Error; err != nil {
+	if err := database.DB.Find(&wallet_transactions, "user_id=?", user_id).Order("created_at desc").Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(wallet_transactions)
@@ -140,7 +140,7 @@ func FetchAllWalletTransactions(c fiber.Ctx) error {
 		// return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	var wallet_transactions []models.WalletTransaction
-	if err := dbQuery.Find(&wallet_transactions).Error; err != nil {
+	if err := dbQuery.Find(&wallet_transactions).Order("created_at DESC").Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(wallet_transactions)
