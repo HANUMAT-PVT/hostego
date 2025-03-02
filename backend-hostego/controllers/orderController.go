@@ -73,6 +73,7 @@ func CreateNewOrder(c fiber.Ctx) error {
 	order.OrderStatus = "pending"
 	order.AddressID = requestOrder.AddressId
 	order.FreeDelivery = freeDelivery
+	order.CookingRequests = requestOrder.CookingRequests
 
 	if err := database.DB.Preload("User").Create(&order).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
