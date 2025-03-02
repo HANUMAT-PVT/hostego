@@ -72,12 +72,11 @@ const Page = () => {
         return <HostegoLoader />
     }
     const handlePayment = () => {
-        const upiID = "8264121428@superyes"; // Replace with actual UPI ID
-        const amount = "100"; // Replace with the desired amount
-        const transactionNote = "Payment for services";
-        const transactionID = `TXN${Date.now()}`; // Unique transaction reference
-        const upiURL = `upi://pay?pa=${upiID}&pn=Hanumat Sharan&tr=${transactionID}&tn=${transactionNote}&am=${amount}&cu=INR`;
-        window.location.href = upiURL; // Redirect to UPI apps
+        const upiID = "8264121428@superyes";
+        const amount = "100";
+        const phonePeURL = `https://phon.pe/upi/pay?pa=${upiID}&pn=YourName&am=${amount}&cu=INR`;
+        window.open(phonePeURL, "_blank");
+
     };
     return (
         <div className='min-h-screen bg-[var(--bg-page-color)]'>
