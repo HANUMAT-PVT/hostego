@@ -2,8 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   userAccount: {},
-  cartData: {cart_items: []},
+  cartData: { cart_items: [] },
   fetchCartData: false,
+  useraddresses: [],
 };
 
 export const userSlice = createSlice({
@@ -19,10 +20,14 @@ export const userSlice = createSlice({
     setFetchCartData: (state, { payload }) => {
       state.fetchCartData = payload;
     },
+    setUserAddresses: (state, { payload }) => {
+      state.useraddresses = payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setUserAccount, setCartData,setFetchCartData } = userSlice.actions;
+export const { setUserAccount, setCartData, setFetchCartData, setUserAddresses } =
+  userSlice.actions;
 
 export default userSlice.reducer;

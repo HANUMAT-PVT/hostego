@@ -5,16 +5,16 @@ import { Check, ShoppingCart, Loader2 } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { setFetchCartData } from '../lib/redux/features/user/userSlice'
 
-const ProductCard = ({ product_img_url, product_name, myKey, tags, food_price, weight, product_id }) => {
-    const [isInCart, setIsInCart] = useState(false)
+const ProductCard = ({ product_img_url, product_name, myKey, tags, food_price, weight, product_id, isAlreadyInCart }) => {
+    const [isInCart, setIsInCart] = useState(isAlreadyInCart);
     const [isLoading, setIsLoading] = useState(false)
     const dispatch = useDispatch()
-    
+
     const addProductInTheCart = async () => {
         try {
             setIsLoading(true)
             await axiosClient.post(`/api/cart/`, { product_id, quantity: 1 })
-            
+
             setIsInCart(true)
             dispatch(setFetchCartData(true))
         } catch (error) {

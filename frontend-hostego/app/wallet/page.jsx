@@ -85,7 +85,7 @@ const Page = () => {
     return (
         <div className='min-h-screen bg-[var(--bg-page-color)]'>
             <BackNavigationButton title="Wallet" />
-            <div className='p-2 border-2 border-[var(--primary-color)] rounded-lg' onClick={handlePayment}>DO Payment</div>
+            {/* <div className='p-2 border-2 border-[var(--primary-color)] rounded-lg' onClick={handlePayment}>DO Payment</div> */}
             {/* Balance Card */}
             <div className='p-4'>
                 <div className='bg-gradient-to-r from-[var(--primary-color)] to-purple-600 rounded-xl p-6 text-white mb-6'>

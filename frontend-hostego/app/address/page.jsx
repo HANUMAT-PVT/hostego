@@ -73,7 +73,7 @@ const page = () => {
               value={addressData.address_type}
               onChange={(e) => setAddressData({ ...addressData, address_type: e.target.value })}
               className="w-full px-4 py-2 border-2 border-[var(--primary-color)] rounded-md outline-none  resize-none"
-              placeholder="Enter your  address type"
+              placeholder="Address type eg, Home, Friend, etc."
               required
             />
           </div>
@@ -86,7 +86,7 @@ const page = () => {
               value={addressData?.address_line_1}
               onChange={(e) => setAddressData({ ...addressData, address_line_1: e.target.value })}
               className="w-full px-4 py-3 border-2 border-[var(--primary-color)] rounded-md outline-none min-h-[100px] resize-none"
-              placeholder="Enter your complete address"
+              placeholder="Enter your complete address eg, Room No 1115, Zakir-A"
               required
             />
           </div>
