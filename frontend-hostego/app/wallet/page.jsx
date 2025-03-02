@@ -73,7 +73,7 @@ const Page = () => {
     }
     const handlePayment = () => {
         const upiID = "8264121428@superyes";
-        const amount = "100";
+        const amount = "1";
         const note = "Payment for services";
 
         const gpayURL = `tez://upi/pay?pa=${upiID}&pn=Hanumat Sharan&am=${amount}&tn=${note}&cu=INR`;
