@@ -74,10 +74,14 @@ const Page = () => {
     const handlePayment = () => {
         const upiID = "8264121428@superyes";
         const amount = "100";
-        const phonePeURL = `https://phon.pe/upi/pay?pa=${upiID}&pn=YourName&am=${amount}&cu=INR`;
-        window.open(phonePeURL, "_blank");
+        const note = "Payment for services";
 
+        const gpayURL = `tez://upi/pay?pa=${upiID}&pn=Hanumat Sharan&am=${amount}&tn=${note}&cu=INR`;
+
+        window.location.href = gpayURL; // Open Google Pay
     };
+
+
     return (
         <div className='min-h-screen bg-[var(--bg-page-color)]'>
             <BackNavigationButton title="Wallet" />
