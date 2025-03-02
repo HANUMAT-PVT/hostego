@@ -44,4 +44,5 @@ type Order struct {
 	Refunded             bool               `gorm:"type:boolean;default:false" json:"refunded"`
 	RefundInitiator      string             `gorm:"type:string" json:"refund_initiator"`
 	FreeDelivery         bool               `gorm:"type:boolean;default:false" json:"free_delivery"`
+	CookingRequests      string             `gorm:"type:string" json:"cooking_requests"`
 }

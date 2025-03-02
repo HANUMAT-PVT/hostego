@@ -10,6 +10,9 @@ import (
 
 func CreditWalletTransaction(c fiber.Ctx) error {
 	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if user_id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+	}
 	var user models.User
 	var wallet_transaction models.WalletTransaction
 	var requestData struct {
@@ -46,6 +49,7 @@ func CreditWalletTransaction(c fiber.Ctx) error {
 }
 
 func VerifyWalletTransactionById(c fiber.Ctx) error {
+	
 	userID, middleErr := middlewares.VerifyUserAuthCookie(c)
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})

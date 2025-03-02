@@ -24,7 +24,8 @@ type FinalOrderValueType struct {
 
 // Move struct definition outside the function
 type requestCreateOrder struct {
-	AddressId string `json:"address_id"`
+	AddressId       string `json:"address_id"`
+	CookingRequests string `json:"cooking_requests"`
 }
 
 func CreateNewOrder(c fiber.Ctx) error {
