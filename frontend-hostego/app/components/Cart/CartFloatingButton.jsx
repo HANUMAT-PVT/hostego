@@ -4,27 +4,31 @@ import axiosClient from '@/app/utils/axiosClient'
 import { ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
 
 const CartFloatingButton = () => {
     const router = useRouter()
     const [cartTotalItems, setCartTotalItems] = useState(0)
-    const [cartData, setCartData] = useState(null)
-    useEffect(() => {
+    const dispatch = useDispatch();
 
+    const { cartData } = useSelector((state) => state.user)
+
+    useEffect(() => {
         fetchCartItems()
-    }, [])
+    }, [cartData])
 
 
     const fetchCartItems = async () => {
-        const { data } = await axiosClient.get('/api/cart/')
-      
-        setCartData(data)
+
         let totalItems = 0
-        data?.cart_items?.forEach(item => {
+        cartData?.cart_items?.forEach(item => {
             totalItems += item?.quantity
         })
         setCartTotalItems(totalItems)
     }
+
+    
     return (
         <div className='fixed bottom-[80px] w-fit m-auto translate-x-1/2 left-0 right-0 flex justify-center animate-slide-up'>
             <div

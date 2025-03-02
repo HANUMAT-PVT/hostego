@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import BackNavigationButton from '@/app/components/BackNavigationButton'
 import { formatDate } from '@/app/utils/helper'
-import { Package, MapPin, Clock, CheckCircle2, Truck, Check, AlertCircle, IndianRupee, RefreshCcw } from 'lucide-react'
+import { Package, MapPin, Clock, CheckCircle2, Truck, Check, AlertCircle, IndianRupee, RefreshCcw, Phone, Bike, MessageSquare, Award } from 'lucide-react'
 import axiosClient from '@/app/utils/axiosClient'
 import HostegoLoader from '@/app/components/HostegoLoader'
 import StatusTimeLine from '../../components/Orders/StatusTimeLine'
@@ -154,7 +154,61 @@ const OrderDetailsPage = () => {
                     </div>
                 </div>
             </div>
+            {/* Delivery Partner Contact Section */}
+            {order?.delivery_partner && (
+                <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full bg-[var(--primary-color)]/10 flex items-center justify-center">
+                                <Bike className="w-6 h-6 text-[var(--primary-color)]" />
+                            </div>
+                            <div>
+                                <h3 className="font-medium text-gray-800">
+                                    {order?.delivery_partner?.first_name}
+                                </h3>
+                                <p className="text-sm text-gray-500">Your Delivery Partner</p>
+                            </div>
+                        </div>
+                       
+                    </div>
 
+                    <div className="flex gap-3">
+                        {/* Call Button */}
+                        <button
+                            onClick={() => window.location.href = `tel:${order?.delivery_partner?.mobile_number}`}
+                            className=" border-2 border-[var(--primary-color)] flex-1 py-3.5 px-4 rounded-xl bg-[var(--primary-color)]/10 hover:bg-[var(--primary-color)]/15 
+                                     text-[var(--primary-color)] font-medium flex items-center justify-center gap-2 
+                                     transition-all duration-200 group"
+                        >
+                            <div className="relative">
+                                <Phone className="w-5 h-5" />
+                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                            </div>
+                            <span>Call Partner</span>
+                        </button>
+
+                        {/* Chat Button - Optional */}
+                        
+                    </div>
+
+                    {/* Delivery Info */}
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <Clock className="w-4 h-4" />
+                            <span>Estimated delivery in {order?.estimated_delivery_time || '15-20'} minutes</span>
+                        </div>
+                        
+                    </div>
+
+                    {/* Safety Tip */}
+                    <div className="mt-4 bg-yellow-50 rounded-lg p-3 flex items-start gap-2">
+                        <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                        <p className="text-sm text-yellow-700">
+                            For your safety Please don't share any sensitive information.
+                        </p>
+                    </div>
+                </div>
+            )}
             {/* Delivery Address */}
             <div className="bg-white mx-2 mt-3 rounded-xl p-4 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
@@ -182,7 +236,7 @@ const OrderDetailsPage = () => {
                         <span className="text-gray-600">Delivery Fee</span>
                         <span>₹{order?.shipping_fee}</span>
                     </div>
-                   
+
                     <div className="flex justify-between pt-2 border-t font-medium">
                         <span>Total Amount</span>
                         <span>₹{order?.final_order_value}</span>

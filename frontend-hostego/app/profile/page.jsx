@@ -7,29 +7,20 @@ import {
   Package,
   ScrollText,
   Wallet,
-  LogOutIcon
+  MessageSquareText,
+  LogOutIcon,
 } from "lucide-react";
 import BackNavigationButton from "../components/BackNavigationButton";
 import { useRouter } from "next/navigation";
 import axiosClient from "../utils/axiosClient";
-
+import { useDispatch, useSelector } from "react-redux";
+import { setUserAccount } from "../lib/redux/features/user/userSlice";
+import { ChatIcon } from "lucide-react";
 const Profile = () => {
-  const [userAccount, setUserAccount] = useState({});
+
   const router = useRouter();
-
-  useEffect(() => {
-    fetchUserAccount();
-  }, []);
-
-  const fetchUserAccount = async () => {
-    try {
-      const { data } = await axiosClient.get("/api/user/me");
-
-      setUserAccount(data)
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const dispatch = useDispatch();
+  const { userAccount } = useSelector((state) => state.user)
 
   const handleUserLogout = () => {
     try {
@@ -55,14 +46,21 @@ const Profile = () => {
         <div className=" bg-[#eae8ff]  flex gap-4 justify-between py-4 px-8 rounded-lg">
           <div
             onClick={() => router.push("/wallet")}
-            className="flex flex-col gap-2 items-center text-center "
+            className="flex flex-col gap-2 items-center text-center cursor-pointer "
           >
             <Wallet size={20} />
             <p className="text-md font-normal  ">Wallet</p>
           </div>
           <div
+            onClick={() => router.push("/support")}
+            className="flex flex-col gap-2 items-center text-center cursor-pointer "
+          >
+            <MessageSquareText size={20} />
+            <p className="text-md font-normal  ">Support</p>
+          </div>
+          <div
             onClick={() => router.push("/transactions")}
-            className="flex flex-col gap-2 items-center text-center "
+            className="flex flex-col gap-2 items-center text-center cursor-pointer "
           >
             <CreditCard size={20} />
             <p className="text-md font-normal">Transactions</p>
@@ -146,9 +144,9 @@ const Profile = () => {
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
-            {/* About us */}
-            <div
-            onClick={() => router.push("/delivery-partner")}
+          {/* About us */}
+          <div
+            onClick={() => router.push("/about")}
             className="nav-account-bar flex items-center justify-between "
           >
             <div className="flex items-center gap-3">
@@ -172,7 +170,7 @@ const Profile = () => {
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
-        
+
           {/* Terms & Conditions */}
           <div
             onClick={() => router.push("/terms-conditions")}

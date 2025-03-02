@@ -20,7 +20,8 @@ const CartItem = ({ product_item, quantity, cart_item_id, fetchCartAgain }) => {
     )
 
     const updateCartItemQuantity = (cart_item_id, quantity) => {
-        
+        if (quantity < 0) return
+
         setCartItemQuantity(quantity)
         debouncedUpdateQuantity(cart_item_id, quantity)
     }
@@ -33,7 +34,7 @@ const CartItem = ({ product_item, quantity, cart_item_id, fetchCartAgain }) => {
                     {/* Image Container */}
                     <div className='relative group'>
                         <div className='w-[55px] h-[55px] rounded-lg overflow-hidden bg-[var(--bg-page-color)]'>
-                            <img 
+                            <img
                                 className='w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-200'
                                 src={product_item?.product_img_url}
                                 alt={product_item?.product_name}
@@ -63,7 +64,7 @@ const CartItem = ({ product_item, quantity, cart_item_id, fetchCartAgain }) => {
                             className='w-7 h-7 flex items-center justify-center rounded-md  bg-[var(--primary-color)] 
                                       hover:text-white transition-colors duration-200 text-white
                                      active:scale-95 transform'
-                            
+
                         >
                             <Minus size={16} />
                         </button>
