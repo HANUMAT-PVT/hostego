@@ -50,8 +50,18 @@ func VerifyWalletTransactionById(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-
+	type verifyWalletTransactionRequest struct {
+		TransactionStatus string `json:"transaction_status"`
+	}
+	var requestData verifyWalletTransactionRequest
+	if err := c.Bind().JSON(&requestData); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
 	walletTransactionID := c.Params("id")
+
+	if requestData.TransactionStatus == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Transaction status is required"})
+	}
 
 	// Start a transaction
 	tx := database.DB.Begin()
@@ -74,15 +84,18 @@ func VerifyWalletTransactionById(c fiber.Ctx) error {
 	}
 
 	// Update wallet balance
-	wallet.Balance += walletTransaction.Amount
-	if err := tx.Save(&wallet).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update wallet balance"})
+	if requestData.TransactionStatus == string(models.TransactionSuccess)	 {
+		wallet.Balance += walletTransaction.Amount
+		if err := tx.Save(&wallet).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update wallet balance"})
+		}
 	}
 
 	// Update transaction status
-	walletTransaction.TransactionStatus = models.TransactionSuccess
+	walletTransaction.TransactionStatus = models.TransactionStatusType(requestData.TransactionStatus)
 	walletTransaction.PaymentMethod.PaymentVerifiedByAdmin = userID
+
 	if err := tx.Save(&walletTransaction).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update transaction status"})
@@ -140,7 +153,7 @@ func FetchAllWalletTransactions(c fiber.Ctx) error {
 		// return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	var wallet_transactions []models.WalletTransaction
-	if err := dbQuery.Find(&wallet_transactions).Order("created_at DESC").Error; err != nil {
+	if err := dbQuery.Preload("User").Find(&wallet_transactions).Order("created_at desc").Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(wallet_transactions)
