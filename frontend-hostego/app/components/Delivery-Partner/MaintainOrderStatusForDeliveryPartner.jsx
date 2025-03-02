@@ -69,7 +69,6 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
   };
 
 
-
   return (
     <div className="min-h-screen bg-[#F4F6FB]">
       {/* Main Content */}
@@ -156,6 +155,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
                     <span>Items Total</span>
                     <span>₹{shop?.shop_products?.reduce((acc, item) => acc + item.sub_total, 0)}</span>
                   </div>
+
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>Platform Fee</span>
                     <span>₹{activeOrder?.platform_fee}</span>
@@ -167,6 +167,10 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
                   <div className="flex justify-between font-medium pt-2 border-t">
                     <span>Total Amount</span>
                     <span>₹{activeOrder?.final_order_value}</span>
+                  </div>
+                  <div className="flex justify-between text-sm mt-2 text-gray-600 pt-2 border-2 border-[var(--primary-color)] rounded-md p-2">
+                    <span>Cooking Requests</span>
+                    <span className='text-[var(--primary-color)] '>{activeOrder?.cooking_requests}</span>
                   </div>
                 </div>
               </div >
@@ -185,7 +189,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
               Navigate
             </button>
           </div>
-          
+
         </div >
 
         {/* Status Timeline */}
@@ -194,7 +198,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
       </div>
 
       {/* Bottom Action Bar */}
-      <div className="z-10 fixed bottom-0 left-0 right-0 bg-white border-t p-4">
+      <div className="z-10  left-0 right-0   p-4">
         <div className="max-w-md mx-auto">
           {getStatusStep(activeOrder?.order_status) < ORDER_STATUSES.length - 1 && (
             <SliderStatusTracker
@@ -206,7 +210,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
           )}
         </div>
       </div>
-      <ConfirmationPopup 
+      <ConfirmationPopup
         variant="info"
         title="Confirm Order Status"
         isOpen={isConfirmationPopupOpen}

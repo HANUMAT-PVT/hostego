@@ -95,7 +95,7 @@ const OrderDetailsPage = () => {
 
     const status = statusConfig[order?.order_status] || statusConfig.pending
     const StatusIcon = status.icon
-
+    console.log(order,"order found")
     return (
         <div className="min-h-screen bg-[var(--bg-page-color)]">
             <BackNavigationButton title="Order Details" />
@@ -175,7 +175,7 @@ const OrderDetailsPage = () => {
                     <div className="flex gap-3">
                         {/* Call Button */}
                         <button
-                            onClick={() => window.location.href = `tel:${order?.delivery_partner?.mobile_number}`}
+                            onClick={() => window.location.href = `tel:${order?.delivery_partner?.user?.mobile_number}`}
                             className=" border-2 border-[var(--primary-color)] flex-1 py-3.5 px-4 rounded-xl bg-[var(--primary-color)]/10 hover:bg-[var(--primary-color)]/15 
                                      text-[var(--primary-color)] font-medium flex items-center justify-center gap-2 
                                      transition-all duration-200 group"

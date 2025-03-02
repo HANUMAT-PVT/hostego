@@ -6,7 +6,7 @@ const StatusTimeLine = ({ ORDER_STATUSES, activeOrder }) => {
         return ORDER_STATUSES.findIndex(s => s.id === status);
     }
     return (
-        <div div className="bg-white rounded-xl shadow-sm p-4 mb-20" >
+        <div div className="bg-white rounded-xl shadow-sm p-4 mb" >
             <h4 className="font-semibold mb-4">Order Progress</h4>
             <div className="relative">
       {/* Background Vertical Line */}
