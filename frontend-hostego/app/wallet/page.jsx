@@ -76,7 +76,7 @@ const Page = () => {
         const amount = "100"; // Replace with the desired amount
         const transactionNote = "Payment for services";
         const transactionID = `TXN${Date.now()}`; // Unique transaction reference
-        const upiURL = `upi://pay?pa=${upiID}&pn=YourName&tr=${transactionID}&tn=${transactionNote}&am=${amount}&cu=INR`;
+        const upiURL = `upi://pay?pa=${upiID}&pn=Hanumat Sharan&tr=${transactionID}&tn=${transactionNote}&am=${amount}&cu=INR`;
         window.location.href = upiURL; // Redirect to UPI apps
     };
     return (
