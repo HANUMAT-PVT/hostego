@@ -18,7 +18,6 @@ const Transactions = () => {
       let { data } = await axiosClient.get("/api/wallet/transactions")
       setPaymentTransactions(data)
     } catch (error) {
-      console.log(error, "error")
     } finally {
       setIsLoading(false)
     }
@@ -87,7 +86,7 @@ const Transactions = () => {
             <div className='flex justify-between items-center'>
               <div className='flex items-center gap-3'>
                 <div className={`p-2 rounded-full ${el?.transaction_type === "credit" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-500"}`}>
-                  {el.transaction_type === "credit" ? <ArrowUpRight size={20} /> : <ArrowDownRight size={20} />}
+                  {el.transaction_type === "credit" ?  <ArrowDownRight size={20} /> :  <ArrowUpRight size={20} />}
                 </div>
                 <div>
                   <p className='text-sm font-semibold'>{el.transaction_type.toUpperCase()}</p>

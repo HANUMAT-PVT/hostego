@@ -11,13 +11,12 @@ import HostegoLoader from '../HostegoLoader'
 const PaymentCard = ({ transaction, onVerify, onReject }) => {
     const [isLoading, setIsLoading] = useState(false)
     const [isImageModalOpen, setIsImageModalOpen] = useState(false)
-    console.log(transaction)
 
-    const handleVerify = async () => {
+    const handleVerify = async (status, transactionId) => {
         try {
             setIsLoading(true)
-            await axiosClient.post(`/api/wallet/verifiy-wallet-transaction/${transaction?.transaction_id}`)
-            onVerify(transaction?.transaction_id)
+            await axiosClient.post(`/api/wallet/verifiy-wallet-transaction/${transactionId}`, { "transaction_status": status })
+            onVerify(transactionId)
         } catch (error) {
             console.error('Error verifying payment:', error)
         } finally {
@@ -28,6 +27,7 @@ const PaymentCard = ({ transaction, onVerify, onReject }) => {
     if (isLoading) {
         return <HostegoLoader />
     }
+
 
     return (
         <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-200 hover:shadow-md">
@@ -71,6 +71,14 @@ const PaymentCard = ({ transaction, onVerify, onReject }) => {
                 {/* Transaction Details */}
                 <div className="space-y-3 mb-4">
                     <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Name</span>
+                        <span className="font-medium capitalize">{transaction?.user?.first_name}{" "} {transaction?.user?.last_name}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Phone Number</span>
+                        <span className="font-medium capitalize">{transaction?.user?.mobile_number}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Transaction Type</span>
                         <span className="font-medium capitalize">{transaction?.transaction_type}</span>
                     </div>
@@ -100,7 +108,7 @@ const PaymentCard = ({ transaction, onVerify, onReject }) => {
                 {/* Action Buttons */}
                 <div className="flex gap-3 mt-4">
                     <button
-                        onClick={handleVerify}
+                        onClick={() => handleVerify("success", transaction?.transaction_id)}
                         disabled={isLoading || transaction?.transaction_status !== 'pending'}
                         className="flex-1 py-2 px-4 bg-[var(--primary-color)] text-white rounded-lg font-medium 
                                  hover:opacity-90 transition-all duration-200 disabled:opacity-50 
@@ -110,7 +118,7 @@ const PaymentCard = ({ transaction, onVerify, onReject }) => {
                         {isLoading ? 'Verifying...' : 'Verify Payment'}
                     </button>
                     <button
-                        onClick={() => onReject(transaction?.transaction_id)}
+                        onClick={() => handleVerify("failed", transaction?.transaction_id)}
                         disabled={isLoading || transaction?.transaction_status !== 'pending'}
                         className="flex-1 py-2 px-4 border-2 border-red-500 text-red-500 rounded-lg font-medium 
                                  hover:bg-red-50 transition-all duration-200 disabled:opacity-50 

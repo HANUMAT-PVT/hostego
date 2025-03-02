@@ -11,6 +11,8 @@ import HostegoLoader from '../components/HostegoLoader'
 import PaymentStatus from '../components/PaymentStatus'
 import { useRouter } from 'next/navigation'
 import HostegoToast from '../components/HostegoToast'
+import { useDispatch, useSelector } from 'react-redux'
+import { setFetchCartData } from '../lib/redux/features/user/userSlice'
 
 const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
     return (
@@ -62,17 +64,27 @@ const page = () => {
     // Hostego – Simplify Your Hostel Life"
     const [openAddressList, setOpenAddressList] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState(false)
-    const [cartData, setCartData] = useState({})
     const [isPageLoading, setIsPageLoading] = useState(true)
     const [paymentStatus, setPaymentStatus] = useState(null)
-    const [orderTimer, setOrderTimer] = useState(30)
+    const [orderTimer, setOrderTimer] = useState(10)
     const [isTimerRunning, setIsTimerRunning] = useState(false)
     const [isToastVisible, setIsToastVisible] = useState(false)
+    const [isPageFirstLoad, setIsPageFirstLoad] = useState(true)
+
+    const dispatch = useDispatch()
+    const { cartData } = useSelector((state) => state.user)
     const router = useRouter()
 
     useEffect(() => {
         fetchCartItems()
     }, [])
+
+    useEffect(() => {
+        if (isPageFirstLoad) {
+            setIsPageFirstLoad(false)
+            return
+        }
+    }, [isPageFirstLoad])
 
     useEffect(() => {
         let interval
@@ -89,14 +101,13 @@ const page = () => {
 
     const fetchCartItems = async () => {
         try {
-            setIsPageLoading(true)
-            const { data } = await axiosClient.get('/api/cart/')
-            setCartData(data)
-            console.log(data)
+            if (!isPageFirstLoad) setIsPageLoading(true)
+            dispatch(setFetchCartData(true))
         } catch (error) {
             console.error('Error fetching cart:', error)
         } finally {
             setIsPageLoading(false)
+
         }
     }
 
@@ -115,7 +126,7 @@ const page = () => {
 
     const cancelOrder = () => {
         setIsTimerRunning(false)
-        setOrderTimer(30)
+        setOrderTimer(10)
     }
 
     const handleCreateOrder = async () => {
@@ -143,13 +154,14 @@ const page = () => {
             setPaymentStatus('failed')
         } finally {
             setIsTimerRunning(false)
-            setOrderTimer(30)
+            setOrderTimer(10)
         }
     }
 
     if (isPageLoading) {
         return <HostegoLoader />
     }
+
 
     return (
         <div className='min-h-screen bg-[var(--bg-page-color)]'>
@@ -243,13 +255,13 @@ const page = () => {
                     <div className='flex justify-between font-normal items-start'>
                         <span className='text-gray-800'>Delivery Fee</span>
                         {cartData?.free_delivery ? (
-                         
+
                             <div className='flex items-center gap-2'>
                                 <p className='line-through'>₹{cartData?.cart_value?.actual_shipping_fee}</p>
                                 <div className='bg-gradient-to-r from-[#655df0] to-[#9333ea] text-white px-3  rounded-md'>
                                     <span className='font-bold tracking-wide'>FREE</span>
                                 </div>
-                               
+
                             </div>
                         ) : (
                             // Regular Delivery Fee Display
@@ -257,7 +269,7 @@ const page = () => {
                                 <div className='flex items-center gap-2'>
                                     <span>₹{cartData?.cart_value?.actual_shipping_fee}</span>
                                 </div>
-                                
+
                             </div>
                         )}
                     </div>

@@ -8,13 +8,13 @@ import { CircleUserRound, House, Package, Search, ShoppingBag, ShoppingBagIcon, 
 import { useRouter } from 'next/navigation'
 import axiosClient from '../utils/axiosClient'
 import ProductCardSkeleton from '../components/ProductCardSkeleton'
-
+import { useSelector } from 'react-redux'
 
 const navItems = [
     { name: 'All', icon: ShoppingBasket },
-    { name: 'Food', icon: UtensilsCrossed }, // Replace with Settings icon
-    { name: 'Snacks', icon: ShoppingBagIcon }, // Replace with Search icon
-    // { name: 'Profile', icon: CircleUserRound },
+    { name: 'Food', icon: UtensilsCrossed },
+    { name: 'Snacks', icon: ShoppingBagIcon },
+
 
 ]
 const page = () => {
@@ -22,7 +22,7 @@ const page = () => {
     const [activeIndex, setActiveIndex] = useState(0)
     const [products, setProducts] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-
+    const { cartData } = useSelector((state) => state.user)
     useEffect(() => {
         fetchProducts()
     }, [])
@@ -83,7 +83,7 @@ const page = () => {
 
             </div>
             <BottomNavigationBar />
-            <CartFloatingButton />
+            {cartData?.cart_items?.length > 0 && <CartFloatingButton />}
         </div>
     )
 }

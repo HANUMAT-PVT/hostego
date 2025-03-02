@@ -95,7 +95,7 @@ const Help = () => {
                         icon={Phone}
                         title="24/7 Support"
                         description="Get immediate assistance from our support team"
-                        action="tel:+919876543210"
+                        action="tel:+918264121428"
                         actionText="Call Support"
                     />
                     <ContactCard

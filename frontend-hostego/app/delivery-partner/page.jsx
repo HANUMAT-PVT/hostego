@@ -353,7 +353,7 @@ const Page = () => {
                                         type="file"
                                         accept="image/*"
                                         onChange={(e) => setDeliveryPartnerVerificationData({ ...deliveryPartnerVerificationData, aadhaar_front_img: e.target.files[0] })}
-                                        className="hidden"
+                                        className="hidden "
                                         id="screenshot-upload-front"
                                         placeholder='Payment screenshot'
                                     />
@@ -361,7 +361,7 @@ const Page = () => {
                                         htmlFor="screenshot-upload-front"
                                         className="flex items-center justify-between w-full cursor-pointer"
                                     >
-                                        <span className="text-gray-500">
+                                        <span className="text-gray-500 truncate max-w-[200px] overflow-hidden text-ellipsis">
                                             {deliveryPartnerVerificationData?.aadhaar_front_img ? deliveryPartnerVerificationData?.aadhaar_front_img.name : "Aadhar front "}
                                         </span>
                                         <Upload className="text-[#655df0]" />
@@ -386,7 +386,7 @@ const Page = () => {
                                         htmlFor="screenshot-upload-back"
                                         className="flex items-center justify-between w-full cursor-pointer"
                                     >
-                                        <span className="text-gray-500">
+                                        <span className="text-gray-500 truncate max-w-[200px] overflow-hidden text-ellipsis">
                                             {deliveryPartnerVerificationData?.aadhaar_back_img ? deliveryPartnerVerificationData?.aadhaar_back_img.name : "Aadhar Back "}
                                         </span>
                                         <Upload className="text-[#655df0]" />
@@ -411,7 +411,7 @@ const Page = () => {
                                         htmlFor="screenshot-upload-bank"
                                         className="flex items-center justify-between w-full cursor-pointer"
                                     >
-                                        <span className="text-gray-500">
+                                        <span className="text-gray-500 truncate max-w-[200px] overflow-hidden text-ellipsis">
                                             {deliveryPartnerVerificationData?.bank_details_img ? deliveryPartnerVerificationData?.bank_details_img.name : "Bank Details "}
                                         </span>
                                         <Upload className="text-[#655df0]" />

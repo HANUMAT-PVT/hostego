@@ -71,11 +71,19 @@ const Page = () => {
     if (isLoading) {
         return <HostegoLoader />
     }
-
+    const handlePayment = () => {
+        const upiID = "8264121428@superyes"; // Replace with actual UPI ID
+        const amount = "100"; // Replace with the desired amount
+        const transactionNote = "Payment for services";
+        
+        const upiURL = `upi://pay?pa=${upiID}&pn=YourName&tn=${transactionNote}&am=${amount}&cu=INR`;
+      
+        window.location.href = upiURL; // Redirect to UPI apps
+      };
     return (
         <div className='min-h-screen bg-[var(--bg-page-color)]'>
             <BackNavigationButton title="Wallet" />
-
+        <div className='p-2 border-2 border-[var(--primary-color)] rounded-lg' onClick={handlePayment}>DO Payment</div>
             {/* Balance Card */}
             <div className='p-4'>
                 <div className='bg-gradient-to-r from-[var(--primary-color)] to-purple-600 rounded-xl p-6 text-white mb-6'>
@@ -157,7 +165,7 @@ const Page = () => {
                                     htmlFor="screenshot-upload"
                                     className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-[var(--primary-color)]/5 transition-colors"
                                 >
-                                    <span className="text-gray-600">
+                                    <span className="text-gray-600 truncate max-w-[200px] overflow-hidden text-ellipsis">
                                         {paymentScreenShotImgUrl ? paymentScreenShotImgUrl.name : "Upload screenshot"}
                                     </span>
                                     <Upload className="text-[var(--primary-color)]" />
