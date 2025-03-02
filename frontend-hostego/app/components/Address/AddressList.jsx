@@ -9,19 +9,8 @@ import { useRouter } from 'next/navigation'
 
 export default function AddresList({ openAddressList, setOpenAddressList, sendSelectedAddress }) {
   const router = useRouter()
-  const [open, setOpen] = useState(false)
-  const userAddress = [
-    {
-      id: 1,
-      heading: "Home",
-      street: 'Room no. 1115,Zakir-A,Chandigarh University'
-    },
-    {
-      id: 2,
-      heading: "Friend",
-      street: 'Room no. 1118,Zakir-A,Chandigarh University'
-    }
-  ]
+
+ 
 
   const [address, setAddress] = useState([])
 
