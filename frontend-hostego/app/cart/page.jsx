@@ -204,7 +204,7 @@ const page = () => {
                         <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-[var(--primary-color)] transition-all duration-1000"
-                                style={{ width: `${(orderTimer / 30) * 100}%` }}
+                                style={{ width: `${(orderTimer / 10) * 100}%` }}
                             />
                         </div>
                     </div>
