@@ -28,7 +28,7 @@ const s3 = new AWS.S3();
 
 // Image compression options
 const compressionOptions = {
-  maxSizeMB: 0.5,          // Max file size in MB
+  maxSizeMB: 0.2,          // Max file size in MB
   maxWidthOrHeight: 1024,  // Max width/height in pixels
   useWebWorker: true,      // Use web worker for better performance
   fileType: 'image/webp'   // Convert to WebP for better compression

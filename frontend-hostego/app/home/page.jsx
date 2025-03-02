@@ -4,7 +4,7 @@ import BottomNavigationBar from '../components/BottomNavigationBar'
 import ProductCard from '../components/ProductCard'
 import SearchComponent from '../components/SearchComponent'
 import CartFloatingButton from "../components/Cart/CartFloatingButton"
-import { CircleUserRound, House, Package, Search, ShoppingBag, ShoppingBagIcon, ShoppingBasket, User, UtensilsCrossed } from 'lucide-react'
+import { ChevronDown, MapPin, ShoppingBagIcon, ShoppingBasket, User, UtensilsCrossed } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import axiosClient from '../utils/axiosClient'
 import ProductCardSkeleton from '../components/ProductCardSkeleton'
@@ -22,7 +22,8 @@ const page = () => {
     const [activeIndex, setActiveIndex] = useState(0)
     const [products, setProducts] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    const { cartData } = useSelector((state) => state.user)
+    const { cartData, useraddresses } = useSelector((state) => state.user)
+
     useEffect(() => {
         fetchProducts()
     }, [])
@@ -39,15 +40,18 @@ const page = () => {
         }
     }
 
-
+    
     return (
         <div>
             <div className='gradient-background sticky top-0 z-10 '>
                 <div className={` flex justify-between items-center   text-white p-4  items-left gap-1 `}>
                     <div>
                         <p className="text-xs font-bold">Hostego in</p>
-                        <p className="text-2xl font-bold">15 minutes </p>
-                        <p className="text-sm font-medium">Zakir A,Changiarh University</p>
+                        <p className="text-2xl font-bold">few minutes </p>
+                        <div onClick={()=>router.push("/address")} className='flex items-center gap-2'>
+                            <p className="text-sm font-medium">{useraddresses[0]?.address_line_1 ||"Chandigarh University"}</p>
+                            <ChevronDown className='w-4 h-4' />
+                        </div>
                     </div>
                     <div onClick={() => router.push("/profile")} className='bg-white rounded-full p-1'>
                         <User color='black' className='rounded-full' size={22} />
@@ -71,14 +75,14 @@ const page = () => {
                 </div>
 
             </div>
-            <div className=' overflow-auto grid grid-cols-2 gap-2  justify-between  '>
+            <div className=' overflow-auto grid grid-cols-2 gap-2  justify-between mb-16  '>
                 {isLoading ? (
                     // Show 6 skeleton cards while loading
                     [...Array(6)].map((_, index) => (
                         <ProductCardSkeleton key={index} />
                     ))
                 ) : (
-                    products?.map((prd) => <ProductCard {...prd} key={prd?.product_id} />)
+                    products?.map((prd) => <ProductCard isAlreadyInCart={cartData?.cart_items?.some(item => item.product_id === prd?.product_id)} {...prd} key={prd?.product_id} />)
                 )}
 
             </div>

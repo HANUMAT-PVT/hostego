@@ -7,6 +7,7 @@ const CartItem = ({ product_item, quantity, cart_item_id, fetchCartAgain }) => {
     const [cartItemQuantity, setCartItemQuantity] = useState(quantity || 1)
 
     const debouncedUpdateQuantity = useCallback(
+
         debounce(async (cartItemId, quantity) => {
             try {
                 await axiosClient.patch(`/api/cart/${cartItemId}`, { quantity })
@@ -20,7 +21,7 @@ const CartItem = ({ product_item, quantity, cart_item_id, fetchCartAgain }) => {
     )
 
     const updateCartItemQuantity = (cart_item_id, quantity) => {
-        if (quantity < 0) return
+        if (quantity < 0 || quantity > 20) return
 
         setCartItemQuantity(quantity)
         debouncedUpdateQuantity(cart_item_id, quantity)

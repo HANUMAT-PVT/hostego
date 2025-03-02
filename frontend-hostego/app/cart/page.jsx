@@ -70,10 +70,12 @@ const page = () => {
     const [isTimerRunning, setIsTimerRunning] = useState(false)
     const [isToastVisible, setIsToastVisible] = useState(false)
     const [isPageFirstLoad, setIsPageFirstLoad] = useState(true)
+    const [cookingRequests, setCookingRequests] = useState('')
 
     const dispatch = useDispatch()
     const { cartData } = useSelector((state) => state.user)
     const router = useRouter()
+
 
     useEffect(() => {
         fetchCartItems()
@@ -134,7 +136,8 @@ const page = () => {
 
             setPaymentStatus('processing')
             const { data } = await axiosClient.post('/api/order', {
-                address_id: selectedAddress?.address_id
+                address_id: selectedAddress?.address_id,
+                cooking_requests: cookingRequests
             })
 
             const response = await axiosClient.post(`/api/payment`, {
@@ -143,9 +146,11 @@ const page = () => {
 
             if (response.data) {
                 setPaymentStatus('success')
+                dispatch(setFetchCartData(true))
                 setTimeout(() => {
                     router.push('/orders')
                 }, 2000)
+
             } else {
                 setPaymentStatus('failed')
             }
@@ -236,7 +241,21 @@ const page = () => {
                 selectedAddress={selectedAddress}
                 setOpenAddressList={setOpenAddressList}
             />
-
+            {/* Extra Infor */}
+            <div className='bg-white mx-2 mt-4 rounded-xl p-4 shadow-sm'>
+                <div className="relative">
+                    <label className="absolute text-[var(--primary-color)] text-sm -top-3 left-3 bg-white px-1">
+                        Type Cooking Requests
+                    </label>
+                    <textarea
+                        value={cookingRequests}
+                        onChange={(e) => setCookingRequests(e.target.value)}
+                        className="w-full px-4 py-3 border-2 border-[var(--primary-color)] rounded-md outline-none min-h-[70px] resize-none"
+                        placeholder="Enter your complete cooking requests"
+                        required
+                    />
+                </div>
+            </div>
             {/* Bill Details */}
             <div className='bg-white mx-2 mt-4 rounded-xl p-4 shadow-sm'>
                 <div className='flex items-center gap-2 mb-4'>
@@ -244,7 +263,7 @@ const page = () => {
                     <p className='font-medium text-md'>Bill Details</p>
                 </div>
 
-                <div className='space-y-3 text-md'>
+                <div className='space-y-2 text-md'>
                     {/* Item Total */}
                     <div className='flex justify-between font-normal'>
                         <span className='text-gray-800'>Item Total</span>

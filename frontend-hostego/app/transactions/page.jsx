@@ -94,7 +94,7 @@ const Transactions = () => {
                 </div>
               </div>
               <div className='text-right'>
-                <p className={`text-lg font-bold ${el.transaction_type === "credit" ? "text-green-600" : "text-red-500"}`}>₹{el.amount}</p>
+                <p className={`text-lg font-bold ${el.transaction_type === "credit" ? "text-green-600" : "text-red-500"}`}>₹{el?.amount}</p>
                 <p className='text-xs text-gray-500 flex items-center gap-1 justify-end'>
                   {getStatusIcon(el?.transaction_status)} {el?.transaction_status}
                 </p>
