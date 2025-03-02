@@ -133,6 +133,7 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 	var order models.Order
 	var wallet models.Wallet
 	var walletTransaction models.WalletTransaction
+	var delivery_partner models.DeliveryPartner
 
 	tx := database.DB.Begin()
 
@@ -147,6 +148,11 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 	}
 
 	if err := tx.Where("user_id=?", order.UserId).First(&wallet).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if err := tx.Where("delivery_partner_id = ?", order.DeliveryPartnerId).First(&delivery_partner).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -168,20 +174,32 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
+	// Create a wallet transaction for the refund
 	walletTransaction.Amount = order.FinalOrderValue
 	walletTransaction.TransactionType = models.TransactionCustomType(models.TransactionRefund)
 	walletTransaction.TransactionStatus = models.TransactionStatusType(models.TransactionSuccess)
 	walletTransaction.UserId = order.UserId
 	wallet.Balance += order.FinalOrderValue
 
+	// Update the delivery partner to not be assigned to an order
+	delivery_partner.IsOrderAssigned = false
+
+	// Update the delivery partner to not be assigned to an order
+	if err := tx.Save(&delivery_partner).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	// create a wallet transaction for the refund
 	if err := tx.Create(&walletTransaction).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
+	// Update the wallet balance
 	if err := tx.Where("user_id=?", order.UserId).Save(&wallet).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
+	// Commit the transaction
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
 	}

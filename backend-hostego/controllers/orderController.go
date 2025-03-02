@@ -202,15 +202,25 @@ func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
 	if err := database.DB.Preload("User").Where("delivery_partner_id=?", request_assign.DeliveryPartnerId).Find(&delivery_partner).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
+	if delivery_partner.AvailabilityStatus == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Delivery partner is not available"})
+	}
+	if delivery_partner.IsOrderAssigned {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Delivery partner is already assigned to an order"})
+	}
 	jsonDeliveryPartner, err := json.Marshal(delivery_partner)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	order.DeliveryPartner = jsonDeliveryPartner
+	delivery_partner.IsOrderAssigned = true
 	order.DeliveryPartnerId = request_assign.DeliveryPartnerId
 	order.OrderStatus = models.AssignedOrderStatus
 
 	if err := database.DB.Where("order_id=?", request_assign.OrderId).Save(&order).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	if err := database.DB.Where("delivery_partner_id=?", request_assign.DeliveryPartnerId).Save(&delivery_partner).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
@@ -232,6 +242,11 @@ func UpdateOrderById(c fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Order not found"})
 	}
 
+	var delivery_partner models.DeliveryPartner
+	if err := database.DB.Where("delivery_partner_id = ?", existingOrder.DeliveryPartnerId).First(&delivery_partner).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Delivery partner not found"})
+	}
+
 	var updateData struct {
 		OrderStatus       models.OrderStatusType `json:"order_status"`
 		DeliveryPartnerId string                 `json:"delivery_partner_id"`
@@ -244,6 +259,10 @@ func UpdateOrderById(c fiber.Ctx) error {
 	existingOrder.OrderStatus = updateData.OrderStatus
 	if updateData.DeliveryPartnerId != "" {
 		existingOrder.DeliveryPartnerId = updateData.DeliveryPartnerId
+	}
+	if updateData.OrderStatus == models.DeliveredOrderStatus {
+		existingOrder.DeliveredAt = time.Now()
+		delivery_partner.IsOrderAssigned = false
 	}
 
 	// Save the changes

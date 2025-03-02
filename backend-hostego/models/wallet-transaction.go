@@ -40,4 +40,5 @@ type WalletTransaction struct {
 	UpdatedAt         time.Time             `gorm:"autoUpdateTime" json:"updated_at"`
 	TransactionStatus TransactionStatusType `gorm:"type:varchar(20);not null" json:"transaction_status"`
 	PaymentMethod     PaymentMethod         `gorm:"embedded" json:"payment_method"`
+	
 }
