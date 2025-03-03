@@ -2,11 +2,12 @@
 
 import React from "react";
 import PhoneEmailAuthButton from "../../components/PhoneEmailAuth";
-import { Clock, Package, Shield, Smartphone, Home } from "lucide-react";
+import { Clock, Package, Shield, Smartphone, } from "lucide-react";
+import Image from "next/image";
 
 const Page = () => {
   return (
-    <div className="relative h-screen bg-gradient-to-br from-blue-500 to-purple-600">
+    <div className="relative h-screen gradient-background">
       {/* Floating Circles Background */}
       <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl" />
       <div className="absolute bottom-40 right-10 w-32 h-32 bg-purple-400/10 rounded-full blur-xl" />
@@ -21,10 +22,10 @@ const Page = () => {
           <div className="max-h-[80vh] overflow-y-auto">
             {/* Heading and Tagline */}
             <div className="text-center space-y-3 mb-8">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-2">
-                <Home className="w-8 h-8 text-white" />
+              <div className="w-16 h-16  from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                <Image src="/hostego_logo.svg" alt="Hostego" className="w-16 h-16" width={50} height={50} />
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text">
+              <h1 className="text-2xl font-bold gradient-background-text text-transparent bg-clip-text">
                 Welcome to Hostego
               </h1>
               <p className="text-gray-600 text-sm font-medium">
