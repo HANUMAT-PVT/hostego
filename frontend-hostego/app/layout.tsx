@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",     
   },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -30,6 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
