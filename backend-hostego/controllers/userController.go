@@ -55,7 +55,7 @@ func UpdateUserById(c fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	if err := c.Bind().JSON(&user).Error; err != nil {
+	if err := c.Bind().JSON(&user); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
 
