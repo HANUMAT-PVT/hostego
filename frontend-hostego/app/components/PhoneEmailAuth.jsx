@@ -43,9 +43,9 @@ const PhoneEmailAuth = () => {
 
             let response = await axiosClient.post("/api/auth/signup", {
                 mobile_number: data?.user_country_code + data?.user_phone_number,
-                first_name: "Test",
+                first_name: "Hostego",
                 last_name: "User",
-                email: `test@test.com+${Math.random() * 2323 + Date.now()}+`
+                email: `test${Math.random() * 2323 + Date.now()}@hostego.in`
 
             })
 
