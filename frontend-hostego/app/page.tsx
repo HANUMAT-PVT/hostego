@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 text-white p-8 sm:p-20">
+    <div className="relative flex flex-col items-center justify-center min-h-screen gradient-background text-white p-8 sm:p-20">
       {/* Background Blurs */}
       <div className="absolute top-0 left-0 w-72 h-72 bg-white/10 blur-3xl rounded-full"></div>
       <div className="absolute bottom-0 right-0 w-72 h-72 bg-white/10 blur-3xl rounded-full"></div>
@@ -31,7 +31,7 @@ export default function Home() {
       {/* Glassmorphism Info Card */}
       <div className="relative mt-10 p-6 bg-white/10 backdrop-blur-lg rounded-xl shadow-lg text-center max-w-md">
         <h2 className="text-2xl font-bold">Launching Soon!</h2>
-        <p className="text-white/80 mt-2">
+        <p className="text-white mt-2">
           Be the first to experience the future of hostel management.
         </p>
       </div>
