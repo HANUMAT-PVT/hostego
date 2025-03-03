@@ -49,21 +49,21 @@ const Profile = () => {
             className="flex flex-col gap-2 items-center text-center cursor-pointer "
           >
             <Wallet size={20} />
-            <p className="text-md font-normal  ">Wallet</p>
+            <p className="text-sm font-normal  ">Wallet</p>
           </div>
           <div
             onClick={() => router.push("/support")}
             className="flex flex-col gap-2 items-center text-center cursor-pointer "
           >
             <MessageSquareText size={20} />
-            <p className="text-md font-normal  ">Support</p>
+            <p className="text-sm font-normal  ">Support</p>
           </div>
           <div
             onClick={() => router.push("/transactions")}
             className="flex flex-col gap-2 items-center text-center cursor-pointer "
           >
             <CreditCard size={20} />
-            <p className="text-md font-normal">Transactions</p>
+            <p className="text-sm font-normal">Transactions</p>
           </div>
         </div>
 
