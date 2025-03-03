@@ -31,15 +31,21 @@ const Profile = () => {
       console.log(error)
     }
   }
-
+  const splitMobileNumberByCountryCode = (mobileNumber) => {
+    if (!mobileNumber) return "+91 - XXXXXXXXXX";
+    const countryCode = mobileNumber?.slice(0, 3);
+    const mobileNumberWithoutCountryCode = mobileNumber?.slice(3);
+    return `${countryCode} - ${mobileNumberWithoutCountryCode}`;
+  }
   return (
     <>
       <BackNavigationButton title={"Profile"} />
 
       <div className="p-4 mt-3 flex flex-col gap-5">
-        <div className="flex flex-col gap-3">
-          <p className="text-2xl font-medium">My account </p>
-          <p className="text-md font-normal">{userAccount?.mobile_number}</p>
+        <div className="flex flex-col gap-1 font-semibold">
+          <p className="text-2xl ">{((userAccount?.first_name||"Hostego") + " " + (userAccount?.last_name || "User" )).toUpperCase()} </p>
+          <p className="text-sm  font-medium text-gray-500 flex items-center gap-2">{splitMobileNumberByCountryCode(userAccount?.mobile_number)} · {userAccount?.email}</p>
+          <p onClick={() => router.push("/edit-account")} className="text-sm mt-1 text-gray-500 flex items-center gap-1 cursor-pointer">Edit Profile <ChevronRight size={18} className="text-gray-600" /></p>
         </div>
         {/* Suggestion Box done */}
 
