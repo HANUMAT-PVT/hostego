@@ -58,12 +58,8 @@ func CreateNewOrder(c fiber.Ctx) error {
 	if err := database.DB.Where("user_id=?", user_id).Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	jsonOrderItems, err := json.Marshal(cartItems)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
 
-	order.OrderItems = jsonOrderItems
+	order.OrderItems = cartItems
 	order.UserId = user_id
 	totalCharges := CalculateFinalOrderValue(cartItems, freeDelivery)
 	order.PlatformFee = totalCharges.PlatformFee
@@ -158,31 +154,28 @@ func MarkOrderAsDelivered(c fiber.Ctx) error {
 }
 
 func FetchOrderById(c fiber.Ctx) error {
-
 	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-
 	if middleErr != nil {
-
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-
 	}
-
 	if user_id == "" {
 
 	}
-
 	order_id := c.Params("id")
-
 	var order models.Order
 
 	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("order_id=?", order_id).First(&order).Error; err != nil {
-
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-
+	}
+	for i, item := range order.OrderItems {
+		var product models.Product
+		if err := database.DB.Where("product_id = ?", item.ProductId).First(&product).Error; err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch product details"})
+		}
+		order.OrderItems[i].ProductItem = product
 	}
 
 	return c.Status(fiber.StatusOK).JSON(order)
-
 }
 
 func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
@@ -217,12 +210,15 @@ func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
 	if delivery_partner.AvailabilityStatus == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Delivery partner is not available"})
 	}
-
+	if delivery_partner.IsOrderAssigned {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Delivery partner is already assigned to an order"})
+	}
 	jsonDeliveryPartner, err := json.Marshal(delivery_partner)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	order.DeliveryPartner = jsonDeliveryPartner
+	delivery_partner.IsOrderAssigned = true
 	order.DeliveryPartnerId = request_assign.DeliveryPartnerId
 	order.OrderStatus = models.AssignedOrderStatus
 
@@ -271,6 +267,7 @@ func UpdateOrderById(c fiber.Ctx) error {
 	}
 	if updateData.OrderStatus == models.DeliveredOrderStatus {
 		existingOrder.DeliveredAt = time.Now()
+		delivery_partner.IsOrderAssigned = false
 	}
 
 	// Save the changes

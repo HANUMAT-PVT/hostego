@@ -27,7 +27,7 @@ type Order struct {
 	User                 User               `gorm:"foreignKey:UserId;references:UserId" json:"user"`
 	CreatedAt            time.Time          `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt            time.Time          `gorm:"autoUpdateTime" json:"updated_at"`
-	OrderItems           datatypes.JSON     `gorm:"type:jsonb" json:"order_items"`
+	OrderItems           []CartItem         `gorm:"type:jsonb" json:"order_items"`
 	PlatformFee          float64            `gorm:"type:double precision;not null;" json:"platform_fee"`
 	ShippingFee          float64            `gorm:"type:double precision;not null;" json:"shipping_fee"`
 	FinalOrderValue      float64            `gorm:"type:double precision;not null;" json:"final_order_value"`
