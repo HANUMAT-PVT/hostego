@@ -55,15 +55,11 @@ func CreateNewOrder(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Address ID is required"})
 	}
 
-	if err := database.DB.Preload("ProductItem.Shop").Where("user_id=?", user_id).Find(&cartItems).Error; err != nil {
+	if err := database.DB.Where("user_id=?", user_id).Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
-	jsonCartItems, err := json.Marshal(cartItems)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to serialize cart items"})
-	}
-	order.OrderItems = jsonCartItems
+	order.OrderItems = cartItems
 	order.UserId = user_id
 	totalCharges := CalculateFinalOrderValue(cartItems, freeDelivery)
 	order.PlatformFee = totalCharges.PlatformFee
@@ -170,6 +166,12 @@ func FetchOrderById(c fiber.Ctx) error {
 
 	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("order_id=?", order_id).First(&order).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}for i, item := range order.OrderItems {
+		var product models.Product
+		if err := database.DB.Where("product_id = ?", item.ProductId).First(&product).Error; err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch product details"})
+		}
+		order.OrderItems[i].ProductItem = product
 	}
 
 	return c.Status(fiber.StatusOK).JSON(order)

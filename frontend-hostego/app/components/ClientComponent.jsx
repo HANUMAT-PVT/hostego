@@ -4,7 +4,7 @@ import React from 'react'
 import axiosClient from '../utils/axiosClient'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { setUserAccount, setCartData, setFetchCartData, setUserAddresses } from '../lib/redux/features/user/userSlice'
+import { setUserAccount, setCartData, setFetchCartData, setUserAddresses, setUserRoles } from '../lib/redux/features/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
 
 
@@ -23,6 +23,13 @@ const ClientComponent = ({ children }) => {
             fetchCartItems();
         }
     }, [fetchCartData]);
+
+
+    const fetchUserRoles = async () => {
+        const { data } = await axiosClient.get("/api/roles");
+
+        dispatch(setUserRoles(data))
+    };
 
     const fetchCartItems = async () => {
         try {
@@ -43,6 +50,7 @@ const ClientComponent = ({ children }) => {
 
             dispatch(setUserAccount(data))
             fetchCartItems()
+            fetchUserRoles()
         } catch (error) {
             console.log(error);
             router.push('/auth/sign-up')

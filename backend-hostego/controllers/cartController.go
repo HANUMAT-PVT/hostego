@@ -120,7 +120,8 @@ func FetchUserCart(c fiber.Ctx) error {
 		freeDelivery = true
 	}
 	if err := database.DB.Preload("ProductItem.Shop").
-		Where("user_id = ?", user_id).
+		Where("user_id = ? AND is_ordered = ?", user_id, false).
+
 		Order("created_at asc").
 		Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
