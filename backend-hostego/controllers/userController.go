@@ -3,26 +3,27 @@ package controllers
 import (
 	"backend-hostego/database"
 	"backend-hostego/middlewares"
-	"fmt"
 
 	"backend-hostego/models"
 
 	"github.com/gofiber/fiber/v3"
 )
 
-func CreateUser(c fiber.Ctx) error {
-	var user models.User
-	if err := c.Bind().JSON(&user); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
-	}
-	fmt.Printf("Parsed User: %+v\n", user)
-	database.DB.Create(&user)
-	return c.Status(201).JSON(user)
-}
-
 func GetUsers(c fiber.Ctx) error {
+	user_id, err := middlewares.VerifyUserAuthCookie(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
+	}
+	if user_id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+	}
 	var users []models.User
 	database.DB.Find(&users)
+	
+	for _,user:=range users{
+		var roles []models.Role
+		database.DB.Where("user_id = ?",user.UserId).Find(&roles)
+	}
 	return c.Status(200).JSON(users)
 
 }
