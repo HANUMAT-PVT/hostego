@@ -24,7 +24,7 @@ const SearchComponent = ({ viewOnly, sendSearchValue }) => {
                 >
                     <Search className="text-gray-800 mr-2 text-bold" size={20} />
                     <span className="text-gray-600 text-sm">
-                        Search for samosa, noodles, chips, coke and more...
+                       Search 'samosa'
                     </span>
                 </div>
             ) : (
