@@ -37,7 +37,7 @@ const CartFloatingButton = () => {
             >
                 <div className='flex flex-col items-center'>
                     <img
-                        className='w-[40px] rounded-full border-2'
+                        className='w-[40px] h-[45px] rounded-full border-2'
                         src={cartData?.cart_items[0]?.product_item?.product_img_url}
                         alt={cartData?.cart_items[0]?.product_item?.product_name}
                     />

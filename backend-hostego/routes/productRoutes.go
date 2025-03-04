@@ -15,5 +15,7 @@ func ProductRoutes(app *fiber.App) error {
 
 	productRoutes.Post("/", controllers.CreateNewProduct)
 
+	productRoutes.Patch("/:id", controllers.UpdateProductById)
+
 	return nil
 }

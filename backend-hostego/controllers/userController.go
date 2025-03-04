@@ -19,13 +19,22 @@ func GetUsers(c fiber.Ctx) error {
 	}
 	var users []models.User
 	database.DB.Find(&users)
-	
-	for _,user:=range users{
-		var roles []models.Role
-		database.DB.Where("user_id = ?",user.UserId).Find(&roles)
-	}
-	return c.Status(200).JSON(users)
 
+	type UserWithRoles struct {
+		User  models.User       `json:"user"`
+		Roles []models.UserRole `json:"roles"`
+	}
+
+	// Initialize slice with proper length
+	usersWithRoles := make([]UserWithRoles, len(users))
+
+	for i := range users {
+		var roles []models.UserRole
+		database.DB.Preload("Role").Where("user_id = ?", users[i].UserId).Find(&roles)
+		usersWithRoles[i].Roles = roles
+		usersWithRoles[i].User = users[i]
+	}
+	return c.Status(200).JSON(usersWithRoles)
 }
 
 func GetUserById(c fiber.Ctx) error {

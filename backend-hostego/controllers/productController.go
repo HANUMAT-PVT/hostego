@@ -83,21 +83,17 @@ func FetchProducts(c fiber.Ctx) error {
 }
 
 func UpdateProductById(c fiber.Ctx) error {
-	var product models.Product
 	product_id := c.Params("id")
+	var product models.Product
 
-	err := database.DB.First(&product, "product_id ?", product_id).Error
+	if err := c.Bind().JSON(&product); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	err := database.DB.Where("product_id = ?", product_id).Updates(&product).Error
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": "Product not found !"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	if err := c.Bind().JSON(&product).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
-	}
-
-	if err := database.DB.Save(&product).Error; err != nil {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": err.Error()})
-	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Product updated succesfully", "product": product})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Product updated successfully", "product": product})
 
 }
 

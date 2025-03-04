@@ -4,9 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter, MoreVertical, Phone, Mail, Calendar, Clock, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
 import axiosClient from '../../utils/axiosClient';
 
-const UserCard = ({ user, onStatusChange, onRoleChange }) => {
+const UserCard = ({ userData, onRoleChange }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [showRoleMenu, setShowRoleMenu] = useState(false);
+
+    const user = userData.user; // Get user data
+    const userRoles = userData.roles || []; // Get roles array
+
     const formattedDate = new Date(user.created_at).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -33,11 +37,13 @@ const UserCard = ({ user, onStatusChange, onRoleChange }) => {
         9: { id: 9, name: "Customer Support", class: "bg-orange-100 text-orange-700" }
     };
 
-    const userRoles = user.roles?.map(role => role.role.role_id) || [];
+    // Get array of role IDs that user currently has
+    const userRoleIds = userRoles?.map(role => role?.role?.role_id);
 
     const handleRoleToggle = async (roleId) => {
+        const currentRoleItemId = userRoles?.find(role => role?.role?.role_id === roleId)?.user_role_id;
         try {
-            await onRoleChange(user.user_id, roleId, !userRoles.includes(roleId));
+            await onRoleChange(user?.user_id, roleId, !userRoleIds.includes(roleId), currentRoleItemId);
         } catch (error) {
             console.error('Error toggling role:', error);
         }
@@ -100,12 +106,12 @@ const UserCard = ({ user, onStatusChange, onRoleChange }) => {
                     {/* Current Roles */}
                     <div className="flex flex-wrap gap-2">
                         {userRoles.length > 0 ? (
-                            userRoles.map(roleId => (
+                            userRoles.map(roleData => (
                                 <span
-                                    key={roleId}
-                                    className={`px-2 py-1 rounded-full text-xs font-medium ${roles[roleId].class}`}
+                                    key={roleData.user_role_id}
+                                    className={`px-2 py-1 rounded-full text-xs font-medium ${roles[roleData.role.role_id].class}`}
                                 >
-                                    {roles[roleId].name}
+                                    {roles[roleData.role.role_id].name}
                                 </span>
                             ))
                         ) : (
@@ -118,21 +124,21 @@ const UserCard = ({ user, onStatusChange, onRoleChange }) => {
                         <div className="mt-4 p-4 border rounded-lg bg-gray-50 animate-fade-in">
                             <h4 className="text-sm font-medium mb-3">Assign/Remove Roles</h4>
                             <div className="space-y-2">
-                                {Object.values(roles).map(role => (
+                                {Object.values(roles)?.map(role => (
                                     <div
-                                        key={role.id}
+                                        key={role?.id}
                                         className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-lg transition-colors"
                                     >
-                                        <span className="text-sm">{role.name}</span>
+                                        <span className="text-sm">{role?.name}</span>
                                         <button
-                                            onClick={() => handleRoleToggle(role.id)}
+                                            onClick={() => handleRoleToggle(role?.id)}
                                             className={`px-3 py-1 rounded-full text-xs font-medium transition-colors
-                                                ${userRoles.includes(role.id)
+                                                ${userRoleIds.includes(role?.id)
                                                     ? 'bg-[var(--primary-color)] text-white'
                                                     : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                                                 }`}
                                         >
-                                            {userRoles.includes(role.id) ? 'Remove' : 'Add'}
+                                            {userRoleIds.includes(role?.id) ? 'Remove' : 'Add'}
                                         </button>
                                     </div>
                                 ))}
@@ -148,7 +154,7 @@ const UserCard = ({ user, onStatusChange, onRoleChange }) => {
                     <div className="space-y-3">
                         <div className="flex items-center gap-2 text-sm">
                             <Mail className="w-4 h-4 text-gray-400" />
-                            <span className="text-gray-600">{user.email}</span>
+                            <span className="text-gray-600">{user?.email}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                             <Calendar className="w-4 h-4 text-gray-400" />
@@ -180,6 +186,7 @@ const UserManager = () => {
             setLoading(true);
             const { data } = await axiosClient.get('/api/users/');
             setUsers(data);
+            console.log(data, "data")
         } catch (error) {
             console.error('Error fetching users:', error);
         } finally {
@@ -187,22 +194,22 @@ const UserManager = () => {
         }
     };
 
-    const fetchUserRoles = async () => {
-        try {
-            const { data } = await axiosClient.get('/api/user-roles/');
-            setUserRoles(data);
-        } catch (error) {
-            console.error('Error fetching user roles:', error);
-        }
-    };
 
-    const handleRoleChange = async (userId, roleId, isAdding) => {
+    const handleRoleChange = async (userId, roleId, isAdding, userRoleId) => {
         try {
-            const endpoint = isAdding ? '/api/user-roles/add' : '/api/user-roles/remove';
-            await axiosClient.post(endpoint, {
-                user_id: userId,
-                role_id: roleId
-            });
+            if (isAdding && roleId === 1) {
+                toast.error("Super Admin role cannot be added or removed");
+                return;
+            }
+            const endpoint = isAdding ? `/api/user-roles/add` : `/api/user-roles/${userRoleId}`;
+            if (isAdding) {
+                await axiosClient.post(endpoint, {
+                    user_id: userId,
+                    role_id: roleId
+                });
+            } else {
+                await axiosClient.delete(endpoint);
+            }
 
             // Refresh users list
             await fetchUsers();
@@ -211,7 +218,8 @@ const UserManager = () => {
         }
     };
 
-    const filteredUsers = users.filter(user => {
+    const filteredUsers = users.filter(userData => {
+        const user = userData.user;
         const matchesSearch = (
             user.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -242,19 +250,19 @@ const UserManager = () => {
                 <div className="bg-white p-4 rounded-xl shadow-sm">
                     <h3 className="text-sm text-gray-500">Verified Users</h3>
                     <p className="text-2xl font-semibold text-green-600">
-                        {users.filter(u => u.firebase_otp_verified === 1).length}
+                        {users?.filter(u => u?.user?.firebase_otp_verified === 1).length}
                     </p>
                 </div>
                 <div className="bg-white p-4 rounded-xl shadow-sm">
                     <h3 className="text-sm text-gray-500">Unverified Users</h3>
                     <p className="text-2xl font-semibold text-red-600">
-                        {users.filter(u => u.firebase_otp_verified === 0).length}
+                        {users?.filter(u => u?.user?.firebase_otp_verified === 0).length}
                     </p>
                 </div>
                 <div className="bg-white p-4 rounded-xl shadow-sm">
                     <h3 className="text-sm text-gray-500">New Today</h3>
                     <p className="text-2xl font-semibold text-[var(--primary-color)]">
-                        {users.filter(u => new Date(u.created_at).toDateString() === new Date().toDateString()).length}
+                        {users?.filter(u => new Date(u?.user?.created_at).toDateString() === new Date()?.toDateString()).length}
                     </p>
                 </div>
             </div>
@@ -292,7 +300,7 @@ const UserManager = () => {
             <div className="space-y-4">
                 {loading ? (
                     // Loading Skeleton
-                    [...Array(3)].map((_, i) => (
+                    [...Array(3)]?.map((_, i) => (
                         <div key={i} className="bg-white rounded-xl p-4 shadow-sm animate-pulse">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-full bg-gray-200" />
@@ -303,11 +311,11 @@ const UserManager = () => {
                             </div>
                         </div>
                     ))
-                ) : filteredUsers.length > 0 ? (
-                    filteredUsers.map(user => (
+                ) : filteredUsers?.length > 0 ? (
+                    filteredUsers?.map(userData => (
                         <UserCard
-                            key={user.user_id}
-                            user={user}
+                            key={userData?.user?.user_id}
+                            userData={userData}
                             onRoleChange={handleRoleChange}
                         />
                     ))
