@@ -7,6 +7,8 @@ import (
 )
 
 func UserRoutes(app *fiber.App) {
-	userRoutes := app.Group("/api/user")
+	userRoutes := app.Group("/api/users")
 	userRoutes.Patch("/me", controllers.UpdateUserById)
+	userRoutes.Get("/me", controllers.GetUserById)
+	userRoutes.Get("/", controllers.GetUsers)
 }

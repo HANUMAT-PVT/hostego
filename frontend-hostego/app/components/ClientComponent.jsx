@@ -39,7 +39,7 @@ const ClientComponent = ({ children }) => {
 
     const fetchUserAccount = async () => {
         try {
-            const { data } = await axiosClient.get("/api/user/me");
+            const { data } = await axiosClient.get("/api/users/me");
 
             dispatch(setUserAccount(data))
             fetchCartItems()

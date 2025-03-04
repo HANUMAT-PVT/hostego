@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Home, Package, Users, Settings, PackageOpenIcon } from "lucide-react";
+import { Home, Package, Users, Settings, PackageOpenIcon, UserCircle } from "lucide-react";
 import OrderAssignment from "../../components/Admin/OrderAssignment";
 import SidebarItem from "../../components/Admin/SidebarItem";
 import OrdersList from "../../components/Admin/OrdersList";
 import WalletPaymentVerfication from "./WalletPaymentVerfication";
 import DeliveryPartnerManagement from "./DeliveryPartnerManagement";
+import UserManager from "./UserManager";
 
 export default function AdminPanel() {
     const router = useRouter();
@@ -58,6 +59,12 @@ export default function AdminPanel() {
                         isActive={currentPage === "orders"}
                         onClick={() => updatePage("orders")}
                     />
+                    <SidebarItem
+                        icon={<UserCircle size={20} />}
+                        text="Users"
+                        isActive={currentPage === "users"}
+                        onClick={() => updatePage("users")}
+                    />
                 </nav>
             </aside>
 
@@ -68,6 +75,7 @@ export default function AdminPanel() {
                 {currentPage === "partners" && <DeliveryPartnerManagement />}
                 {currentPage === "wallet_payment_verification" && <WalletPaymentVerfication />}
                 {currentPage === "orders" && <OrdersList />}
+                {currentPage === "users" && <UserManager />}
             </main>
         </div>
     );
