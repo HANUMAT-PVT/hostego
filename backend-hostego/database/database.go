@@ -36,48 +36,48 @@ func ConnectDataBase() {
 	err = db.AutoMigrate(&models.UserRole{})
 	err = db.AutoMigrate(&models.DeliveryPartner{})
 
-	db.Create(&models.Role{
-		RoleName: "super_admin",
-	})
-	db.Create(&models.Role{
-		RoleName: "admin",
-	})
-	db.Create(&models.Role{
-		RoleName: "user",
-	})
-	db.Create(&models.Role{
-		RoleName: "delivery_partner",
-	})
+	// db.Create(&models.Role{
+	// 	RoleName: "super_admin",
+	// })
+	// db.Create(&models.Role{
+	// 	RoleName: "admin",
+	// })
+	// db.Create(&models.Role{
+	// 	RoleName: "user",
+	// })
+	// db.Create(&models.Role{
+	// 	RoleName: "delivery_partner",
+	// })
 
-	db.Create(&models.Role{
-		RoleName: "admin",
-	})
-	db.Create(&models.Role{
-		RoleName: "payments_manager",
-	})
-	db.Create(&models.Role{
-		RoleName: "order_assign_manager",
-	})
-	db.Create(&models.Role{
-		RoleName: "delivery_partner_manager",
-	})
-	db.Create(&models.Role{
-		RoleName: "order_manager",
-	})
-	db.Create(&models.Role{
-		RoleName: "delivery_partner",
-	})
-	db.Create(&models.Role{
-		RoleName: "user",
-	})
-	db.Create(&models.Role{
-		RoleName: "customer_support",
-	})
+	// db.Create(&models.Role{
+	// 	RoleName: "admin",
+	// })
+	// db.Create(&models.Role{
+	// 	RoleName: "payments_manager",
+	// })
+	// db.Create(&models.Role{
+	// 	RoleName: "order_assign_manager",
+	// })
+	// db.Create(&models.Role{
+	// 	RoleName: "delivery_partner_manager",
+	// })
+	// db.Create(&models.Role{
+	// 	RoleName: "order_manager",
+	// })
+	// db.Create(&models.Role{
+	// 	RoleName: "delivery_partner",
+	// })
+	// db.Create(&models.Role{
+	// 	RoleName: "user",
+	// })
+	// db.Create(&models.Role{
+	// 	RoleName: "customer_support",
+	// })
 
-	db.Create(&models.UserRole{
-		UserId: "c5c7946a-d056-4319-bfb8-e930c91052bc",
-		RoleId: 1,
-	})
+	// db.Create(&models.UserRole{
+	// 	UserId: "c5c7946a-d056-4319-bfb8-e930c91052bc",
+	// 	RoleId: 1,
+	// })
 
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
