@@ -24,16 +24,25 @@ const UserCard = ({ userData, onRoleChange }) => {
         hour: '2-digit',
         minute: '2-digit'
     });
-
+    // 1 | super_admin
+    // 2 | admin
+    // 3 | user
+    // 4 | delivery_partner
+    // 5 | payments_manager
+    // 6 | order_assign_manager
+    // 7 | delivery_partner_manager
+    // 8 | order_manager
+    // 9 | customer_support
+    //     (9 rows)
     const roles = {
         1: { id: 1, name: "Super Admin", class: "bg-red-100 text-red-700" },
-        2: { id: 2, name: "Payments Manager", class: "bg-blue-100 text-blue-700" },
-        3: { id: 3, name: "Order Assign Manager", class: "bg-green-100 text-green-700" },
+        5: { id: 2, name: "Payments Manager", class: "bg-blue-100 text-blue-700" },
+        6: { id: 3, name: "Order Assign Manager", class: "bg-green-100 text-green-700" },
         4: { id: 4, name: "Delivery Partner Manager", class: "bg-purple-100 text-purple-700" },
-        5: { id: 5, name: "Order Manager", class: "bg-yellow-100 text-yellow-700" },
-        6: { id: 6, name: "Delivery Partner", class: "bg-indigo-100 text-indigo-700" },
-        7: { id: 7, name: "User", class: "bg-gray-100 text-gray-700" },
-        8: { id: 8, name: "Admin", class: "bg-pink-100 text-pink-700" },
+        8: { id: 5, name: "Order Manager", class: "bg-yellow-100 text-yellow-700" },
+        7: { id: 6, name: "Delivery Partner", class: "bg-indigo-100 text-indigo-700" },
+        3: { id: 7, name: "User", class: "bg-gray-100 text-gray-700" },
+        2: { id: 8, name: "Admin", class: "bg-pink-100 text-pink-700" },
         9: { id: 9, name: "Customer Support", class: "bg-orange-100 text-orange-700" }
     };
 
