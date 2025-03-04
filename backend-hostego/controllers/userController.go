@@ -18,18 +18,14 @@ func GetUsers(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 	var users []models.User
-	if err := database.DB.Find(&users).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	for i := range users {
-		var roles []models.UserRole
-		if err := database.DB.Preload("Role").Where("user_id = ?", users[i].UserId).Find(&roles).Error; err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-		}
-		users[i].Roles = roles
+	database.DB.Find(&users)
+	
+	for _,user:=range users{
+		var roles []models.Role
+		database.DB.Where("user_id = ?",user.UserId).Find(&roles)
 	}
 	return c.Status(200).JSON(users)
+
 }
 
 func GetUserById(c fiber.Ctx) error {

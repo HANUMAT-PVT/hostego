@@ -24,4 +24,5 @@ type DeliveryPartner struct {
 	VerificationStatus int       `gorm:"type:int;default:0;" json:"verification_status"`
 	CreatedAt          time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt          time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	IsOrderAssigned    bool      `gorm:"type:boolean;default:false;" json:"is_order_assigned"`
 }
