@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter, MoreVertical, Phone, Mail, Calendar, Clock, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
 import axiosClient from '../../utils/axiosClient';
 
-const UserCard = ({ user, onStatusChange }) => {
+const UserCard = ({ user, onStatusChange, onRoleChange }) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [showRoleMenu, setShowRoleMenu] = useState(false);
     const formattedDate = new Date(user.created_at).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -19,6 +20,28 @@ const UserCard = ({ user, onStatusChange }) => {
         hour: '2-digit',
         minute: '2-digit'
     });
+
+    const roles = {
+        1: { id: 1, name: "Super Admin", class: "bg-red-100 text-red-700" },
+        2: { id: 2, name: "Payments Manager", class: "bg-blue-100 text-blue-700" },
+        3: { id: 3, name: "Order Assign Manager", class: "bg-green-100 text-green-700" },
+        4: { id: 4, name: "Delivery Partner Manager", class: "bg-purple-100 text-purple-700" },
+        5: { id: 5, name: "Order Manager", class: "bg-yellow-100 text-yellow-700" },
+        6: { id: 6, name: "Delivery Partner", class: "bg-indigo-100 text-indigo-700" },
+        7: { id: 7, name: "User", class: "bg-gray-100 text-gray-700" },
+        8: { id: 8, name: "Admin", class: "bg-pink-100 text-pink-700" },
+        9: { id: 9, name: "Customer Support", class: "bg-orange-100 text-orange-700" }
+    };
+
+    const userRoles = user.roles?.map(role => role.role.role_id) || [];
+
+    const handleRoleToggle = async (roleId) => {
+        try {
+            await onRoleChange(user.user_id, roleId, !userRoles.includes(roleId));
+        } catch (error) {
+            console.error('Error toggling role:', error);
+        }
+    };
 
     return (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -58,6 +81,62 @@ const UserCard = ({ user, onStatusChange }) => {
                         <div className="flex items-center gap-1.5 text-sm text-red-600 bg-red-50 px-2.5 py-1 rounded-full">
                             <XCircle size={14} />
                             <span>Unverified</span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Roles Section */}
+                <div className="mt-4">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-gray-500">Roles</span>
+                        <button
+                            onClick={() => setShowRoleMenu(!showRoleMenu)}
+                            className="text-sm text-[var(--primary-color)] hover:underline"
+                        >
+                            Manage Roles
+                        </button>
+                    </div>
+
+                    {/* Current Roles */}
+                    <div className="flex flex-wrap gap-2">
+                        {userRoles.length > 0 ? (
+                            userRoles.map(roleId => (
+                                <span
+                                    key={roleId}
+                                    className={`px-2 py-1 rounded-full text-xs font-medium ${roles[roleId].class}`}
+                                >
+                                    {roles[roleId].name}
+                                </span>
+                            ))
+                        ) : (
+                            <span className="text-sm text-gray-400">No roles assigned</span>
+                        )}
+                    </div>
+
+                    {/* Role Management Menu */}
+                    {showRoleMenu && (
+                        <div className="mt-4 p-4 border rounded-lg bg-gray-50 animate-fade-in">
+                            <h4 className="text-sm font-medium mb-3">Assign/Remove Roles</h4>
+                            <div className="space-y-2">
+                                {Object.values(roles).map(role => (
+                                    <div
+                                        key={role.id}
+                                        className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                    >
+                                        <span className="text-sm">{role.name}</span>
+                                        <button
+                                            onClick={() => handleRoleToggle(role.id)}
+                                            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors
+                                                ${userRoles.includes(role.id)
+                                                    ? 'bg-[var(--primary-color)] text-white'
+                                                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                                                }`}
+                                        >
+                                            {userRoles.includes(role.id) ? 'Remove' : 'Add'}
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -116,6 +195,22 @@ const UserManager = () => {
             console.error('Error fetching user roles:', error);
         }
     };
+
+    const handleRoleChange = async (userId, roleId, isAdding) => {
+        try {
+            const endpoint = isAdding ? '/api/user-roles/add' : '/api/user-roles/remove';
+            await axiosClient.post(endpoint, {
+                user_id: userId,
+                role_id: roleId
+            });
+
+            // Refresh users list
+            await fetchUsers();
+        } catch (error) {
+            console.error('Error updating role:', error);
+        }
+    };
+
     const filteredUsers = users.filter(user => {
         const matchesSearch = (
             user.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -213,6 +308,7 @@ const UserManager = () => {
                         <UserCard
                             key={user.user_id}
                             user={user}
+                            onRoleChange={handleRoleChange}
                         />
                     ))
                 ) : (

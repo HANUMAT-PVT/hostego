@@ -90,18 +90,11 @@ export default function AdminPanel() {
             {/* Main Content */}
             <main className="flex-1 p-6">
                 {currentPage === "dashboard" && <h1 className="text-2xl font-bold">📊 Dashboard</h1>}
-<<<<<<< Updated upstream
-                {currentPage === "order-assign" && <OrderAssignment />}
-                {currentPage === "partners" && <DeliveryPartnerManagement />}
-                {currentPage === "wallet_payment_verification" && <WalletPaymentVerfication />}
-                {currentPage === "orders" && <OrdersList />}
-                {currentPage === "users" && <UserManager />}
-=======
                 {currentPage === "order-assign" && (checkUserRole("super_admin") || checkUserRole("order_assign_manager")) && <OrderAssignment />}
                 {currentPage === "partners" && (checkUserRole("super_admin") || checkUserRole("delivery_partner_manager")) && <DeliveryPartnerManagement />}
                 {currentPage === "wallet_payment_verification" && (checkUserRole("super_admin") || checkUserRole("payment_verification_manager")) && <WalletPaymentVerfication />}
                 {currentPage === "orders" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <OrdersList />}
->>>>>>> Stashed changes
+                {currentPage === "users" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <UserManager />}
             </main>
         </div>
     );
