@@ -8,11 +8,14 @@ import OrdersList from "../../components/Admin/OrdersList";
 import WalletPaymentVerfication from "./WalletPaymentVerfication";
 import DeliveryPartnerManagement from "./DeliveryPartnerManagement";
 import UserManager from "./UserManager";
+import { useSelector } from "react-redux";
+
 
 export default function AdminPanel() {
     const router = useRouter();
+    const { userRoles } = useSelector(state => state.user)
     const searchParams = useSearchParams();
-
+    console.log(userRoles)
     // Get the current page from query params, default to 'dashboard'
     const currentPage = searchParams.get("page") || "order-assign";
 
@@ -20,6 +23,22 @@ export default function AdminPanel() {
     const updatePage = (page) => {
         router.push(`?page=${page}`, { scroll: false });
     };
+
+
+    function checkUserRole(roleName) {
+        console.log(roleName, "roleName")
+        if (userRoles.length === 0) {
+            return;
+        }
+        const role = userRoles.find(userRole => userRole?.role?.role_name === roleName);
+        if (!role) {
+            router.push("/home");
+        }
+        if (role) {
+            return true
+        }
+
+    }
 
     return (
         <div className="flex h-screen bg-[var(--bg-page-color)]">
@@ -71,11 +90,18 @@ export default function AdminPanel() {
             {/* Main Content */}
             <main className="flex-1 p-6">
                 {currentPage === "dashboard" && <h1 className="text-2xl font-bold">📊 Dashboard</h1>}
+<<<<<<< Updated upstream
                 {currentPage === "order-assign" && <OrderAssignment />}
                 {currentPage === "partners" && <DeliveryPartnerManagement />}
                 {currentPage === "wallet_payment_verification" && <WalletPaymentVerfication />}
                 {currentPage === "orders" && <OrdersList />}
                 {currentPage === "users" && <UserManager />}
+=======
+                {currentPage === "order-assign" && (checkUserRole("super_admin") || checkUserRole("order_assign_manager")) && <OrderAssignment />}
+                {currentPage === "partners" && (checkUserRole("super_admin") || checkUserRole("delivery_partner_manager")) && <DeliveryPartnerManagement />}
+                {currentPage === "wallet_payment_verification" && (checkUserRole("super_admin") || checkUserRole("payment_verification_manager")) && <WalletPaymentVerfication />}
+                {currentPage === "orders" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <OrdersList />}
+>>>>>>> Stashed changes
             </main>
         </div>
     );

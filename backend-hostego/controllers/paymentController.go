@@ -88,9 +88,11 @@ func InitiatePayment(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	if err := tx.Where("user_id = ?", userId).Delete(&cartItem).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove cart items"})
+	for _, item := range order.OrderItems {
+		if err := tx.Model(&cartItem).Where("cart_item_id = ?", item.CartItemId).Update("is_ordered", true).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to order cart items"})
+		}
 	}
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})

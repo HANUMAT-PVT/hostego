@@ -14,6 +14,8 @@ type CartItem struct {
 	UserId     string    `gorm:"type:text;not null;index;" json:"user_id"`
 	CreatedAt  time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt  time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	IsOrdered  bool      `gorm:"type:boolean;default:false" json:"is_ordered"`
 	// Foreign Key Relation
+
 	ProductItem Product `gorm:"foreignKey:ProductId;references:ProductId" json:"product_item"`
 }
