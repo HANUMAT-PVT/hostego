@@ -166,8 +166,7 @@ func FetchOrderById(c fiber.Ctx) error {
 
 	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("order_id=?", order_id).First(&order).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
-	for i, item := range order.OrderItems {
+	}for i, item := range order.OrderItems {
 		var product models.Product
 		if err := database.DB.Where("product_id = ?", item.ProductId).First(&product).Error; err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch product details"})
