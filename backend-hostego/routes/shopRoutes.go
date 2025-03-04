@@ -16,6 +16,8 @@ func ShopRoutes(app *fiber.App) error {
 
 	shopRoutes.Get("/",controllers.FetchShops)
 
+	shopRoutes.Patch("/:id", controllers.UpdateShopById)
+
 	return nil
 }
 

@@ -46,11 +46,11 @@ func UpdateShopById(c fiber.Ctx) error {
 	var shop models.Shop
 	shop_id := c.Params("id")
 
-	if err := database.DB.First(&shop, "where shop_id= ?", shop_id).Error; err != nil {
+	if err := database.DB.Where("shop_id = ?", shop_id).First(&shop).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": "Shop not found!"})
 
 	}
-	if err := c.Bind().JSON(&shop).Error; err != nil {
+	if err := c.Bind().JSON(&shop); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 

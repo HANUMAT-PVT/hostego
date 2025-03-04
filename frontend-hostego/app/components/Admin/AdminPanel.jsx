@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Home, Package, Users, Settings, PackageOpenIcon, UserCircle } from "lucide-react";
+import { Home, Package, Users, Settings, PackageOpenIcon, UserCircle, ShoppingBasket } from "lucide-react";
 import OrderAssignment from "../../components/Admin/OrderAssignment";
 import SidebarItem from "../../components/Admin/SidebarItem";
 import OrdersList from "../../components/Admin/OrdersList";
@@ -9,6 +9,8 @@ import WalletPaymentVerfication from "./WalletPaymentVerfication";
 import DeliveryPartnerManagement from "./DeliveryPartnerManagement";
 import UserManager from "./UserManager";
 import { useSelector } from "react-redux";
+import ProductsManager from "./ProductsManager";
+import ShopsManager from "./ShopsManager";
 
 
 export default function AdminPanel() {
@@ -48,42 +50,54 @@ export default function AdminPanel() {
                     🚀 Admin Panel
                 </h2>
                 <nav className="flex flex-col gap-4">
-                    <SidebarItem
+                    {(checkUserRole("super_admin") || checkUserRole("order_manager")) && <SidebarItem
                         icon={<Home size={20} />}
                         text="Dashboard"
                         isActive={currentPage === "dashboard"}
                         onClick={() => updatePage("dashboard")}
-                    />
-                    <SidebarItem
+                    />}
+                    {(checkUserRole("super_admin") || checkUserRole("order_assign_manager")) && <SidebarItem
                         icon={<Package size={20} />}
                         text="Order Assign"
                         isActive={currentPage === "order-assign"}
                         onClick={() => updatePage("order-assign")}
-                    />
-                    <SidebarItem
+                    />}
+                    {(checkUserRole("super_admin") || checkUserRole("delivery_partner_manager")) && <SidebarItem
                         icon={<Users size={20} />}
                         text="Delivery Partners"
                         isActive={currentPage === "partners"}
                         onClick={() => updatePage("partners")}
-                    />
-                    <SidebarItem
+                    />}
+                    {(checkUserRole("super_admin") || checkUserRole("payment_verification_manager")) && <SidebarItem
                         icon={<Settings size={20} />}
                         text="Payment Verification"
                         isActive={currentPage === "wallet_payment_verification"}
                         onClick={() => updatePage("wallet_payment_verification")}
-                    />
-                    <SidebarItem
+                    />}
+                    {(checkUserRole("super_admin") || checkUserRole("order_manager")) && <SidebarItem
                         icon={<PackageOpenIcon size={20} />}
                         text="Orders"
                         isActive={currentPage === "orders"}
                         onClick={() => updatePage("orders")}
-                    />
-                    <SidebarItem
+                    />}
+                    {(checkUserRole("super_admin") || checkUserRole("order_manager")) && <SidebarItem
                         icon={<UserCircle size={20} />}
                         text="Users"
                         isActive={currentPage === "users"}
                         onClick={() => updatePage("users")}
-                    />
+                    />}
+                    {(checkUserRole("super_admin") || checkUserRole("order_manager")) && <SidebarItem
+                        icon={<PackageOpenIcon size={20} />}
+                        text="Products"
+                        isActive={currentPage === "products"}
+                        onClick={() => updatePage("products")}
+                    />}
+                     {(checkUserRole("super_admin") || checkUserRole("order_manager")) && <SidebarItem
+                        icon={<ShoppingBasket size={20} />}
+                        text="Shops"
+                        isActive={currentPage === "shops"}
+                        onClick={() => updatePage("shops")}
+                    />}
                 </nav>
             </aside>
 
@@ -95,6 +109,8 @@ export default function AdminPanel() {
                 {currentPage === "wallet_payment_verification" && (checkUserRole("super_admin") || checkUserRole("payment_verification_manager")) && <WalletPaymentVerfication />}
                 {currentPage === "orders" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <OrdersList />}
                 {currentPage === "users" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <UserManager />}
+                {currentPage === "products" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <ProductsManager />} 
+                {currentPage === "shops" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <ShopsManager />} 
             </main>
         </div>
     );

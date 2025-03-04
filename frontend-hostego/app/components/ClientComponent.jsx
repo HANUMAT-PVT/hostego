@@ -4,7 +4,7 @@ import React from 'react'
 import axiosClient from '../utils/axiosClient'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { setUserAccount, setCartData, setFetchCartData, setUserAddresses, setUserRoles } from '../lib/redux/features/user/userSlice'
+import { setUserAccount, setCartData, setFetchCartData, setUserAddresses, setUserRoles   } from '../lib/redux/features/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
 
 
@@ -23,13 +23,6 @@ const ClientComponent = ({ children }) => {
             fetchCartItems();
         }
     }, [fetchCartData]);
-
-
-    const fetchUserRoles = async () => {
-        const { data } = await axiosClient.get("/api/roles");
-
-        dispatch(setUserRoles(data))
-    };
 
     const fetchCartItems = async () => {
         try {
@@ -50,15 +43,23 @@ const ClientComponent = ({ children }) => {
 
             dispatch(setUserAccount(data))
             fetchCartItems()
-            fetchUserRoles()
         } catch (error) {
             console.log(error);
             router.push('/auth/sign-up')
         }
     };
+    
+    const fetchUserRoles = async () => {
+        try {
+            const { data } = await axiosClient.get('/api/user-roles')
+            dispatch(setUserRoles(data))
+        } catch (error) {
+            console.error('Error fetching user roles:', error)
+        }
+    }
 
     useEffect(() => {
-        fetchAddress()
+        fetchUserRoles()
     }, [])
 
     const fetchAddress = async () => {
