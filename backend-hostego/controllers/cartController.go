@@ -76,7 +76,9 @@ func UpdateProductInUserCart(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&cartItem); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-
+	if cartItem.Quantity > 20 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Quantity cannot be greater than 20"})
+	}
 	// Delete cart item if quantity is 0
 	if cartItem.Quantity <= 0 {
 		if err := database.DB.Where("cart_item_id = ? AND user_id = ?", cart_item_id, user_id).Delete(&cartItem).Error; err != nil {
@@ -121,7 +123,6 @@ func FetchUserCart(c fiber.Ctx) error {
 	}
 	if err := database.DB.Preload("ProductItem.Shop").
 		Where("user_id = ? AND is_ordered = ?", user_id, false).
-
 		Order("created_at asc").
 		Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
@@ -130,8 +131,8 @@ func FetchUserCart(c fiber.Ctx) error {
 	cartValue := CalculateFinalOrderValue(cartItems, freeDelivery)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"cart_items": cartItems,
-		"cart_value":  cartValue,
+		"cart_items":    cartItems,
+		"cart_value":    cartValue,
 		"free_delivery": freeDelivery,
 	})
 }

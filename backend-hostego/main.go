@@ -39,7 +39,8 @@ func main() {
 	routes.AddressRoutes(app)
 	routes.UserRoutes(app)
 	routes.RoleRoutes(app)
-	
+	routes.UserRoleRoute(app)
+
 	// Fetch all users
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "Welcome to the Hostego Backend Sever !"})

@@ -18,6 +18,7 @@ type User struct {
 	LastLoginTimestamp  time.Time `gorm:"autoUpdateTime" json:"last_login_timestamp"`
 	CreatedAt           time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt           time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	Roles               []UserRole `gorm:"foreignKey:UserId;references:UserId" json:"roles"`
 }
 
 // Before create hook to generate uuid
