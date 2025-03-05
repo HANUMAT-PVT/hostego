@@ -38,7 +38,7 @@ const ProductCard = ({
             <div className='relative w-full flex justify-center p-3'>
                 <div className='w-32 h-32 relative'>
                     <img
-                        className='w-full h-full object-contain hover:scale-105 transition-transform duration-200'
+                        className=' rounded-md w-full h-full object-contain hover:scale-105 transition-transform duration-200'
                         src={product_img_url}
                         alt={product_name}
                     />

@@ -11,9 +11,9 @@ import ProductCardSkeleton from '../components/ProductCardSkeleton'
 import { useSelector } from 'react-redux'
 
 const navItems = [
-    { name: 'All', icon: ShoppingBasket },
-    { name: 'Food', icon: UtensilsCrossed },
-    { name: 'Snacks', icon: ShoppingBagIcon },
+    { name: 'All', icon: ShoppingBasket, category: "" },
+    { name: 'Food', icon: UtensilsCrossed, category: "food" },
+    { name: 'Snacks', icon: ShoppingBagIcon, category: "snacks" },
 
 
 ]
@@ -26,12 +26,12 @@ const page = () => {
 
     useEffect(() => {
         fetchProducts()
-    }, [])
+    }, [activeIndex])
 
     const fetchProducts = async () => {
         try {
             setIsLoading(true)
-            const { data } = await axiosClient.get("/api/products/all?page=1&limit=40")
+            const { data } = await axiosClient.get(`/api/products/all?page=1&limit=40&tags=${navItems[activeIndex]?.category}`)
             setProducts(data)
         } catch (error) {
             console.error('Error fetching products:', error)
@@ -75,7 +75,7 @@ const page = () => {
                 </div>
 
             </div>
-            <div className=' overflow-auto grid grid-cols-2 gap-2  justify-between mb-16  '>
+            <div className=' overflow-auto grid grid-cols-2 gap-2  justify-between mb-16 py-1 mb-16  '>
                 {isLoading ? (
                     // Show 6 skeleton cards while loading
                     [...Array(6)].map((_, index) => (

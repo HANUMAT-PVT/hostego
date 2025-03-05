@@ -21,35 +21,34 @@ func CreateNewProduct(c fiber.Ctx) error {
 
 func FetchProducts(c fiber.Ctx) error {
 	var products []models.Product
-
 	dbQuery := database.DB
 
 	searchQuery := c.Query("search")
-	// tagsQuery := c.Query("tags")
+	tagsQuery := c.Query("tags") // Expecting tags=food or tags=chicken
 	minPrice := c.Query("min_price")
 	maxPrice := c.Query("max_price")
 	availability := c.Query("availability")
 	sort := c.Query("sort", "asc")
-	queryLimit := c.Query("limit", "10") // Default 10 products per page
-	queryPage := c.Query("page", "1")    //Default page is 1
+	queryLimit := c.Query("limit", "10")
+	queryPage := c.Query("page", "1")
 
 	if searchQuery != "" {
-		dbQuery = dbQuery.Where("product_name ILIKE  ? OR description ILIKE ?", "%"+searchQuery+"%", "%"+searchQuery+"%")
+		dbQuery = dbQuery.Where("product_name ILIKE ? OR description ILIKE ?", "%"+searchQuery+"%", "%"+searchQuery+"%")
 	}
-	// if tagsQuery != "" {
 
-	// 	dbQuery = dbQuery.Where("tags @> ?", datatypes.JSON(tagsQuery))
+	// ✅ Filtering by tags
+	if tagsQuery != "" {
+		dbQuery = dbQuery.Where("tags @> ?", `["`+tagsQuery+`"]`)
+	}
 
-	// }
 	if minPrice != "" {
 		dbQuery = dbQuery.Where("food_price >= ?", minPrice)
-
 	}
 	if maxPrice != "" {
-		dbQuery = dbQuery.Where("food_price<= ?", maxPrice)
+		dbQuery = dbQuery.Where("food_price <= ?", maxPrice)
 	}
 	if availability != "" {
-		dbQuery = dbQuery.Where("availability=?", availability)
+		dbQuery = dbQuery.Where("availability = ?", availability)
 	}
 
 	if sort == "desc" {
@@ -62,8 +61,6 @@ func FetchProducts(c fiber.Ctx) error {
 	if err != nil || limit < 1 {
 		limit = 10
 	}
-
-	// ✅ Get "page" query parameter (default to 1)
 
 	page, err := strconv.Atoi(queryPage)
 	if err != nil {
@@ -81,6 +78,7 @@ func FetchProducts(c fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(products)
 }
+
 
 func UpdateProductById(c fiber.Ctx) error {
 	product_id := c.Params("id")
