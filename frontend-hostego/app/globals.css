@@ -90,24 +90,16 @@ input[type="number"] {
 }
 
 @keyframes slide-up {
-  0% {
-    opacity: 0;
+  from {
     transform: translateY(100%);
   }
-  60% {
-    transform: translateY(-10%);
-  }
-  80% {
-    transform: translateY(5%);
-  }
-  100% {
-    opacity: 1;
+  to {
     transform: translateY(0);
   }
 }
 
 .animate-slide-up {
-  animation: slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slide-up 0.3s ease-out forwards;
 }
 
 @keyframes shimmer {
