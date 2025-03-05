@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import BackNavigationButton from '../components/BackNavigationButton'
 import CartItem from '../components/Cart/CartItem'
 import AddressList from '../components/Address/AddressList'
-import { Home, Clock, Truck, CreditCard, MapPin, Timer, AlertCircle, TicketCheck } from 'lucide-react'
+import { Home, Clock, Truck, CreditCard, MapPin, Timer, AlertCircle, TicketCheck, Wallet, ArrowRight, X, CheckCircle } from 'lucide-react'
 import HostegoButton from '../components/HostegoButton'
 import axiosClient from '../utils/axiosClient'
 import HostegoLoader from '../components/HostegoLoader'
@@ -71,11 +71,15 @@ const page = () => {
     const [isToastVisible, setIsToastVisible] = useState(false)
     const [isPageFirstLoad, setIsPageFirstLoad] = useState(true)
     const [cookingRequests, setCookingRequests] = useState('')
+    const [showPaymentDrawer, setShowPaymentDrawer] = useState(false);
 
     const dispatch = useDispatch()
-    const { cartData } = useSelector((state) => state.user)
+    const { cartData, userWallet } = useSelector((state) => state.user)
     const router = useRouter()
 
+    // Calculate wallet status
+    const hasInsufficientBalance = userWallet?.balance < cartData?.cart_value?.final_order_value;
+    const amountNeeded = cartData?.cart_value?.final_order_value - (userWallet?.balance || 0);
 
     useEffect(() => {
         fetchCartItems()
@@ -162,6 +166,14 @@ const page = () => {
             setOrderTimer(10)
         }
     }
+
+    const handlePlaceOrder = () => {
+        if (!selectedAddress) {
+            setIsToastVisible(true);
+            return;
+        }
+        setShowPaymentDrawer(true);
+    };
 
     if (isPageLoading) {
         return <HostegoLoader />
@@ -331,7 +343,7 @@ const page = () => {
                     </div>
                 )}
                 <HostegoButton
-                    onClick={startOrderTimer}
+                    onClick={handlePlaceOrder}
                     text={`Place Order • ₹${cartData?.cart_value?.final_order_value}`}
                     className={`w-full py-3 rounded-xl font-medium transition-all duration-200
                         ${!selectedAddress
@@ -341,6 +353,89 @@ const page = () => {
                     disabled={!selectedAddress || isTimerRunning}
                 />
             </div>
+
+            {/* Payment Confirmation Drawer */}
+            {showPaymentDrawer && (
+                <div className="fixed inset-0 bg-black/50 z-50">
+                    <div
+                        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 animate-slide-up"
+                        style={{ maxHeight: '80vh', overflowY: 'auto' }}
+                    >
+                        {/* Drawer Header */}
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">Payment Confirmation</h3>
+                            <button
+                                onClick={() => setShowPaymentDrawer(false)}
+                                className="p-2 hover:bg-gray-100 rounded-full"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Wallet Status */}
+                        <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                            <div className="flex justify-between items-center mb-3">
+                                <div className="flex items-center gap-2">
+                                    <Wallet className="text-[var(--primary-color)]" size={20} />
+                                    <span className="font-medium">Wallet Balance</span>
+                                </div>
+                                <span className="text-xl font-semibold">₹{userWallet?.balance || 0}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-sm text-gray-600">
+                                <span>Order Amount</span>
+                                <span>₹{cartData?.cart_value?.final_order_value}</span>
+                            </div>
+                        </div>
+
+                        {/* Status Message */}
+                        <div className={`rounded-xl p-4 mb-6 ${hasInsufficientBalance ? 'bg-red-50' : 'bg-green-50'}`}>
+                            <div className="flex items-start gap-3">
+                                {hasInsufficientBalance ? (
+                                    <>
+                                        <AlertCircle className="text-red-600 flex-shrink-0" size={20} />
+                                        <div>
+                                            <p className="font-medium text-red-600">Insufficient Balance</p>
+                                            <p className="text-sm text-red-500">Add ₹{amountNeeded} more to place order</p>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <CheckCircle className="text-green-600 flex-shrink-0" size={20} />
+                                        <div>
+                                            <p className="font-medium text-green-600">Sufficient Balance</p>
+                                            <p className="text-sm text-green-500">Your wallet has enough balance</p>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Action Button */}
+                        {hasInsufficientBalance ? (
+                            <button
+                                onClick={() => {
+                                    setShowPaymentDrawer(false);
+                                    router.push('/wallet');
+                                }}
+                                className="w-full bg-red-600 text-white py-3 rounded-xl font-medium hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+                            >
+                                Add Money to Wallet
+                                <ArrowRight size={18} />
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => {
+                                    setShowPaymentDrawer(false);
+                                    startOrderTimer();
+                                }}
+                                className="w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium hover:opacity-90 transition-opacity"
+                            >
+                                Confirm Order
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
 
             <AddressList
                 showAddressButton={false}

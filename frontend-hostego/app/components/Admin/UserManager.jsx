@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, MoreVertical, Phone, Mail, Calendar, Clock, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
+import { Search, Filter, MoreVertical, Phone, Mail, Calendar, Clock, CheckCircle, XCircle, ChevronDown, RefreshCw } from 'lucide-react';
 import axiosClient from '../../utils/axiosClient';
 
 const UserCard = ({ userData, onRoleChange }) => {
@@ -24,7 +24,7 @@ const UserCard = ({ userData, onRoleChange }) => {
         hour: '2-digit',
         minute: '2-digit'
     });
-  
+
     const roles = {
         1: { id: 1, name: "Super Admin", class: "bg-red-100 text-red-700" },
         2: { id: 2, name: "Admin", class: "bg-pink-100 text-pink-700" },
@@ -34,16 +34,17 @@ const UserCard = ({ userData, onRoleChange }) => {
         6: { id: 6, name: "Order Assign Manager", class: "bg-green-100 text-green-700" },
         7: { id: 7, name: "Delivery Partner", class: "bg-indigo-100 text-indigo-700" },
         8: { id: 8, name: "Order Manager", class: "bg-yellow-100 text-yellow-700" },
-        9: { id: 9, name: "Customer Support", class: "bg-orange-100 text-orange-700" }
+        9: { id: 9, name: "Customer Support", class: "bg-orange-100 text-orange-700" },
+        10: { id: 10, name: "Inventory Manager", class: "bg-green-100 text-green-700" }
     };
 
     // Get array of role IDs that user currently has
     const userRoleIds = userRoles?.map(role => role?.role?.role_id);
 
     const handleRoleToggle = async (roleId) => {
-    
+
         const currentRoleItemId = userRoles?.find(role => role?.role_id === roleId)?.user_role_id;
-     
+
         try {
             await onRoleChange(user?.user_id, roleId, !userRoleIds?.includes(roleId), currentRoleItemId);
         } catch (error) {
@@ -180,6 +181,7 @@ const UserManager = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterVerified, setFilterVerified] = useState('all'); // 'all', 'verified', 'unverified'
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     useEffect(() => {
         fetchUsers();
@@ -190,7 +192,7 @@ const UserManager = () => {
             setLoading(true);
             const { data } = await axiosClient.get('/api/users/');
             setUsers(data);
-            console.log(data, "data")
+
         } catch (error) {
             console.error('Error fetching users:', error);
         } finally {
@@ -223,6 +225,12 @@ const UserManager = () => {
         }
     };
 
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        await fetchUsers();
+        setIsRefreshing(false);
+    };
+
     const filteredUsers = users.filter(userData => {
         const user = userData.user;
         const matchesSearch = (
@@ -241,10 +249,22 @@ const UserManager = () => {
 
     return (
         <div className="p-4">
-            {/* Header */}
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
-                <p className="text-gray-600">Manage and monitor user accounts</p>
+            {/* Header with Refresh Button */}
+            <div className="flex justify-between items-center mb-6">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
+                    <p className="text-gray-600">Manage and monitor user accounts</p>
+                </div>
+                <button
+                    onClick={handleRefresh}
+                    disabled={isRefreshing}
+                    className={`p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all ${isRefreshing ? 'opacity-50' : ''}`}
+                >
+                    <RefreshCw
+                        size={20}
+                        className={`text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`}
+                    />
+                </button>
             </div>
             {/* Stats Summary */}
             <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 mb-2">

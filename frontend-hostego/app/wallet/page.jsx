@@ -1,11 +1,13 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { Upload, Wallet, IndianRupee, History, AlertCircle, CheckCircle2 } from "lucide-react"
+import { Upload, Wallet, IndianRupee, History, AlertCircle, CheckCircle2, PhoneCall, Copy, Check } from "lucide-react"
 import BackNavigationButton from '../components/BackNavigationButton'
 import { uploadToS3Bucket } from '../lib/aws'
 import HostegoButton from "../components/HostegoButton"
 import axiosClient from '../utils/axiosClient'
 import HostegoLoader from '../components/HostegoLoader'
+import { useDispatch } from 'react-redux'
+import { setUserWallet } from '../lib/redux/features/user/userSlice'
 
 const Page = () => {
     const defaultWalletDetails = {
@@ -18,7 +20,9 @@ const Page = () => {
     const [walletTransactionCreationLoading, setWalletTransactionCreationLoading] = useState(false)
     const [paymentScreenShotImgUrl, setPaymentScreenShotImgUrl] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [copied, setCopied] = useState(false)
 
+    const dispatch = useDispatch()
     useEffect(() => {
         fetchUserWallet()
     }, [])
@@ -28,6 +32,7 @@ const Page = () => {
             setIsLoading(true)
             let { data } = await axiosClient.get("/api/wallet")
             setUserWallet(data)
+            dispatch(setUserWallet(data))
         } catch (error) {
             console.error('Error fetching wallet:', error)
         } finally {
@@ -68,27 +73,52 @@ const Page = () => {
         }
     }
 
+    const handleCopyUPI = () => {
+        navigator.clipboard.writeText("8264121428@superyes");
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
     if (isLoading) {
         return <HostegoLoader />
     }
-    const handlePayment = () => {
-        const upiID = "8264121428@superyes";
-        const amount = "1";
-        const note = "Payment for services";
-
-        const gpayURL = `tez://upi/pay?pa=${upiID}&pn=Hanumat Sharan&am=${amount}&tn=${note}&cu=INR`;
-
-        window.location.href = gpayURL; // Open Google Pay
-    };
 
 
     return (
         <div className='min-h-screen bg-[var(--bg-page-color)]'>
             <BackNavigationButton title="Wallet" />
-            {/* <div className='p-2 border-2 border-[var(--primary-color)] rounded-lg' onClick={handlePayment}>DO Payment</div> */}
+
+            {/* Instant Approval Message */}
+            <div className="mx-4 mb-4">
+                <div className="bg-gradient-to-r from-[var(--primary-color)]/10 to-purple-600/10 rounded-xl p-4 border border-[var(--primary-color)]/20">
+                    <div className="flex items-start gap-3">
+                        <div className="p-2 bg-white rounded-full">
+                            <CheckCircle2 className="w-5 h-5 text-[var(--primary-color)]" />
+                        </div>
+                        <div>
+                            <h3 className="font-medium text-[var(--primary-color)] text-md mb-1">
+                                Get Instant Wallet Payment Approval!
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-3 ">
+                                For immediate verification of your payment and instant wallet credit:
+                            </p>
+                            <a
+                                href="tel:+918264121428"
+                                className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-sm w-fit hover:shadow-md transition-shadow"
+                            >
+                                <PhoneCall className="w-4 h-4 text-[var(--primary-color)]" />
+                                <span className="font-medium text-[var(--primary-color)]">
+                                    +91 8264121428
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Balance Card */}
             <div className='p-4'>
-                <div className='bg-gradient-to-r from-[var(--primary-color)] to-purple-600 rounded-xl p-6 text-white mb-6'>
+                <div className='sticky top-0 bg-gradient-to-r from-[var(--primary-color)] to-purple-600 rounded-xl p-6 text-white mb-6'>
                     <div className='flex items-center gap-2 mb-2'>
                         <Wallet className="w-5 h-5 text-white/80" />
                         <p className='text-white/80'>Available Balance</p>
@@ -99,10 +129,41 @@ const Page = () => {
                     </div>
                 </div>
 
+                {/* UPI ID Section - New Addition */}
+                <div className="bg-white rounded-xl overflow-hidden mb-4">
+                    <div className="bg-[var(--primary-color)]/5 p-2 border-b border-[var(--primary-color)]/10">
+                        <h3 className="font-medium text-[var(--primary-color)]">Pay via UPI ID</h3>
+                    </div>
+                    <div className="p-2">
+                        <div
+                            onClick={handleCopyUPI}
+                            className="flex items-center justify-between  p-4 rounded-lg cursor-pointer  transition-colors"
+                        >
+                            <div>
+                                <p className="text-sm text-gray-500 mb-1">UPI ID</p>
+                                <p className="font-medium">8264121428@superyes</p>
+                            </div>
+                            <button className="flex items-center gap-2 text-[var(--primary-color)]">
+                                {copied ? (
+                                    <>
+                                        <Check size={18} />
+                                        <span className="text-sm">Copied!</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Copy size={18} />
+                                        <span className="text-sm">Copy</span>
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 {/* QR Code Section */}
                 <div className="bg-white rounded-xl overflow-hidden mb-6">
                     <div className="bg-[var(--primary-color)]/5 p-4 border-b border-[var(--primary-color)]/10">
-                        <h3 className="font-medium text-[var(--primary-color)]">Scan QR to Pay</h3>
+                        <h3 className="font-medium text-[var(--primary-color)]">Or Scan QR to Pay</h3>
                     </div>
                     <div className="p-6 flex flex-col items-center">
                         <div className="bg-white p-3 rounded-xl shadow-lg mb-4">

@@ -24,13 +24,13 @@ export default function AddresList({ openAddressList, setOpenAddressList, sendSe
   }
 
   return (
-    <Dialog open={openAddressList} onClose={() => setOpenAddressList(!openAddressList)} className="relative z-10">
+    <Dialog open={openAddressList} onClose={() => setOpenAddressList(!openAddressList)} className="relative z-10 ">
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-closed:opacity-0"
+        className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-closed:opacity-0 "
       />
 
-      <div className="fixed inset-0 overflow-hidden">
+      <div className="fixed inset-0 overflow-hidden animate-slide-up">
         <div className="absolute inset-0 overflow-hidden">
           <div className="pointer-events-none fixed bottom-0 left-0 flex w-full max-h-screen">
             <DialogPanel className="pointer-events-auto relative w-full max-h-[90vh] transform transition duration-500 ease-in-out data-closed:translate-y-full sm:duration-700 bg-white rounded-t-xl shadow-xl">

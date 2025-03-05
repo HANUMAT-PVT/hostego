@@ -47,25 +47,25 @@ export default function AdminPanel() {
                     🚀 Admin Panel
                 </h2>
                 <nav className="flex flex-col gap-4">
-                    {(checkUserRole("super_admin") || checkUserRole("order_manager")) && <SidebarItem
+                    {(checkUserRole("super_admin") || checkUserRole("admin")) && <SidebarItem
                         icon={<Home size={20} />}
                         text="Dashboard"
                         isActive={currentPage === "dashboard"}
                         onClick={() => updatePage("dashboard")}
                     />}
-                    {(checkUserRole("super_admin") || checkUserRole("order_assign_manager")) && <SidebarItem
+                    {(checkUserRole("super_admin") || checkUserRole("order_assign_manager") || checkUserRole("admin")) && <SidebarItem
                         icon={<Package size={20} />}
                         text="Order Assign"
                         isActive={currentPage === "order-assign"}
                         onClick={() => updatePage("order-assign")}
                     />}
-                    {(checkUserRole("super_admin") || checkUserRole("delivery_partner_manager")) && <SidebarItem
+                    {(checkUserRole("super_admin") || checkUserRole("delivery_partner_manager") || checkUserRole("admin")) && <SidebarItem
                         icon={<Users size={20} />}
                         text="Delivery Partners"
                         isActive={currentPage === "partners"}
                         onClick={() => updatePage("partners")}
                     />}
-                    {(checkUserRole("super_admin") || checkUserRole("payments_manager")) && <SidebarItem
+                    {(checkUserRole("super_admin")) && <SidebarItem
                         icon={<Settings size={20} />}
                         text="Payment Verification"
                         isActive={currentPage === "wallet_payment_verification"}
@@ -77,19 +77,19 @@ export default function AdminPanel() {
                         isActive={currentPage === "orders"}
                         onClick={() => updatePage("orders")}
                     />}
-                    {(checkUserRole("super_admin") || checkUserRole("order_manager")) && <SidebarItem
+                    {(checkUserRole("super_admin") || checkUserRole("admin")) && <SidebarItem
                         icon={<UserCircle size={20} />}
                         text="Users"
                         isActive={currentPage === "users"}
                         onClick={() => updatePage("users")}
                     />}
-                    {(checkUserRole("super_admin") || checkUserRole("order_manager")) && <SidebarItem
+                    {(checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <SidebarItem
                         icon={<PackageOpenIcon size={20} />}
                         text="Products"
                         isActive={currentPage === "products"}
                         onClick={() => updatePage("products")}
                     />}
-                    {(checkUserRole("super_admin") || checkUserRole("order_manager")) && <SidebarItem
+                    {(checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <SidebarItem
                         icon={<ShoppingBasket size={20} />}
                         text="Shops"
                         isActive={currentPage === "shops"}
@@ -101,13 +101,13 @@ export default function AdminPanel() {
             {/* Main Content */}
             <main className="flex-1 p-6">
                 {currentPage === "dashboard" && <h1 className="text-2xl font-bold">📊 Dashboard</h1>}
-                {currentPage === "order-assign" && (checkUserRole("super_admin") || checkUserRole("order_assign_manager")) && <OrderAssignment />}
-                {currentPage === "partners" && (checkUserRole("super_admin") || checkUserRole("delivery_partner_manager")) && <DeliveryPartnerManagement />}
-                {currentPage === "wallet_payment_verification" && (checkUserRole("super_admin") || checkUserRole("payments_manager")) && <WalletPaymentVerfication />}
+                {currentPage === "order-assign" && (checkUserRole("super_admin") || checkUserRole("order_assign_manager") || checkUserRole("admin")) && <OrderAssignment />}
+                {currentPage === "partners" && (checkUserRole("super_admin") || checkUserRole("delivery_partner_manager") || checkUserRole("admin")) && <DeliveryPartnerManagement />}
+                {currentPage === "wallet_payment_verification" && (checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <WalletPaymentVerfication />}
                 {currentPage === "orders" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <OrdersList />}
                 {currentPage === "users" && (checkUserRole("super_admin") || checkUserRole("admin")) && <UserManager />}
-                {currentPage === "products" && (checkUserRole("super_admin") || checkUserRole("admin")) && <ProductsManager />}
-                {currentPage === "shops" && (checkUserRole("super_admin") || checkUserRole("admin")) && <ShopsManager />}
+                {currentPage === "products" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <ProductsManager />}
+                {currentPage === "shops" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <ShopsManager />}
             </main>
         </div>
     );
