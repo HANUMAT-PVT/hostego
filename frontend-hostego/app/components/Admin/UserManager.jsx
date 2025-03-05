@@ -24,16 +24,7 @@ const UserCard = ({ userData, onRoleChange }) => {
         hour: '2-digit',
         minute: '2-digit'
     });
-    // 1 | super_admin
-    // 2 | admin
-    // 3 | user
-    // 4 | delivery_partner
-    // 5 | payments_manager
-    // 6 | order_assign_manager
-    // 7 | delivery_partner_manager
-    // 8 | order_manager
-    // 9 | customer_support
-    //     (9 rows)
+  
     const roles = {
         1: { id: 1, name: "Super Admin", class: "bg-red-100 text-red-700" },
         2: { id: 8, name: "Admin", class: "bg-pink-100 text-pink-700" },
@@ -50,13 +41,17 @@ const UserCard = ({ userData, onRoleChange }) => {
     const userRoleIds = userRoles?.map(role => role?.role?.role_id);
 
     const handleRoleToggle = async (roleId) => {
-        const currentRoleItemId = userRoles?.find(role => role?.role?.role_id === roleId)?.user_role_id;
+        console.log(roleId, "roleId")
+        console.log(userRoles, "userRoles")
+        const currentRoleItemId = userRoles?.find(role => role?.role_id === roleId)?.user_role_id;
+        console.log(currentRoleItemId, "currentRoleItemId")
         try {
             await onRoleChange(user?.user_id, roleId, !userRoleIds.includes(roleId), currentRoleItemId);
         } catch (error) {
             console.error('Error toggling role:', error);
         }
     };
+
 
     return (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -181,6 +176,7 @@ const UserCard = ({ userData, onRoleChange }) => {
 };
 
 const UserManager = () => {
+    
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');

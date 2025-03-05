@@ -17,7 +17,7 @@ export default function AdminPanel() {
     const router = useRouter();
     const { userRoles } = useSelector(state => state.user)
     const searchParams = useSearchParams();
-    console.log(userRoles)
+   
     // Get the current page from query params, default to 'dashboard'
     const currentPage = searchParams.get("page") || "order-assign";
 
@@ -28,7 +28,7 @@ export default function AdminPanel() {
 
 
     function checkUserRole(roleName) {
-        console.log(roleName, "roleName")
+       
         if (userRoles.length === 0) {
             return;
         }
@@ -68,7 +68,7 @@ export default function AdminPanel() {
                         isActive={currentPage === "partners"}
                         onClick={() => updatePage("partners")}
                     />}
-                    {(checkUserRole("super_admin") || checkUserRole("payment_verification_manager")) && <SidebarItem
+                    {(checkUserRole("super_admin") || checkUserRole("payments_manager")) && <SidebarItem
                         icon={<Settings size={20} />}
                         text="Payment Verification"
                         isActive={currentPage === "wallet_payment_verification"}
@@ -106,11 +106,11 @@ export default function AdminPanel() {
                 {currentPage === "dashboard" && <h1 className="text-2xl font-bold">📊 Dashboard</h1>}
                 {currentPage === "order-assign" && (checkUserRole("super_admin") || checkUserRole("order_assign_manager")) && <OrderAssignment />}
                 {currentPage === "partners" && (checkUserRole("super_admin") || checkUserRole("delivery_partner_manager")) && <DeliveryPartnerManagement />}
-                {currentPage === "wallet_payment_verification" && (checkUserRole("super_admin") || checkUserRole("payment_verification_manager")) && <WalletPaymentVerfication />}
+                {currentPage === "wallet_payment_verification" && (checkUserRole("super_admin") || checkUserRole("payments_manager")) && <WalletPaymentVerfication />}
                 {currentPage === "orders" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <OrdersList />}
-                {currentPage === "users" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <UserManager />}
-                {currentPage === "products" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <ProductsManager />} 
-                {currentPage === "shops" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <ShopsManager />} 
+                {currentPage === "users" && (checkUserRole("super_admin") || checkUserRole("admin")) && <UserManager />}
+                {currentPage === "products" && (checkUserRole("super_admin") || checkUserRole("admin")) && <ProductsManager />} 
+                {currentPage === "shops" && (checkUserRole("super_admin") || checkUserRole("admin")) && <ShopsManager />} 
             </main>
         </div>
     );
