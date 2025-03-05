@@ -27,13 +27,13 @@ const UserCard = ({ userData, onRoleChange }) => {
   
     const roles = {
         1: { id: 1, name: "Super Admin", class: "bg-red-100 text-red-700" },
-        2: { id: 8, name: "Admin", class: "bg-pink-100 text-pink-700" },
-        3: { id: 7, name: "User", class: "bg-gray-100 text-gray-700" },
+        2: { id: 2, name: "Admin", class: "bg-pink-100 text-pink-700" },
+        3: { id: 3, name: "User", class: "bg-gray-100 text-gray-700" },
         4: { id: 4, name: "Delivery Partner Manager", class: "bg-purple-100 text-purple-700" },
-        5: { id: 2, name: "Payments Manager", class: "bg-blue-100 text-blue-700" },
-        6: { id: 3, name: "Order Assign Manager", class: "bg-green-100 text-green-700" },
-        7: { id: 6, name: "Delivery Partner", class: "bg-indigo-100 text-indigo-700" },
-        8: { id: 5, name: "Order Manager", class: "bg-yellow-100 text-yellow-700" },
+        5: { id: 5, name: "Payments Manager", class: "bg-blue-100 text-blue-700" },
+        6: { id: 6, name: "Order Assign Manager", class: "bg-green-100 text-green-700" },
+        7: { id: 7, name: "Delivery Partner", class: "bg-indigo-100 text-indigo-700" },
+        8: { id: 8, name: "Order Manager", class: "bg-yellow-100 text-yellow-700" },
         9: { id: 9, name: "Customer Support", class: "bg-orange-100 text-orange-700" }
     };
 
@@ -41,10 +41,9 @@ const UserCard = ({ userData, onRoleChange }) => {
     const userRoleIds = userRoles?.map(role => role?.role?.role_id);
 
     const handleRoleToggle = async (roleId) => {
-        console.log(roleId, "roleId")
-        console.log(userRoles, "userRoles")
+    
         const currentRoleItemId = userRoles?.find(role => role?.role_id === roleId)?.user_role_id;
-        console.log(currentRoleItemId, "currentRoleItemId")
+     
         try {
             await onRoleChange(user?.user_id, roleId, !userRoleIds.includes(roleId), currentRoleItemId);
         } catch (error) {
@@ -176,7 +175,7 @@ const UserCard = ({ userData, onRoleChange }) => {
 };
 
 const UserManager = () => {
-    
+
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
