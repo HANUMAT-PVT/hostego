@@ -2,12 +2,13 @@
 import axios from "axios";
 import { useEffect } from "react";
 import axiosClient from "../utils/axiosClient"
-
 import { useRouter } from "next/navigation"
+import { useDispatch } from "react-redux"
+import { setFetchUserAccount } from "../lib/redux/features/user/userSlice"
 
 const PhoneEmailAuth = () => {
     const router = useRouter()
-
+    const dispatch = useDispatch()
     useEffect(() => {
         // Dynamically load the Phone.Email script
         const script = document.createElement("script");
@@ -51,6 +52,7 @@ const PhoneEmailAuth = () => {
 
             localStorage.setItem("auth-response", JSON.stringify(response.data))
             // alert("Signup successfull")
+            dispatch(setFetchUserAccount(true))
             router.push("/home")
 
         } catch (error) {

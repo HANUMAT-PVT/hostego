@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import BackNavigationButton from '../components/BackNavigationButton';
 import { Edit2 } from 'lucide-react';
 import axiosClient from '../utils/axiosClient';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setFetchUserAccount } from '../lib/redux/features/user/userSlice';
 
 const EditField = ({ label, value, onSave, type = "text" }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -51,8 +52,8 @@ const EditField = ({ label, value, onSave, type = "text" }) => {
                     onChange={(e) => setCurrentValue(e.target.value)}
                     disabled={!isEditing}
                     className={`w-full py-2 px-3 rounded-lg transition-all ${isEditing
-                            ? 'border-2 border-[var(--primary-color)] bg-white outline-none'
-                            : 'border border-gray-100 bg-gray-50'
+                        ? 'border-2 border-[var(--primary-color)] bg-white outline-none'
+                        : 'border border-gray-100 bg-gray-50'
                         }`}
                 />
 
@@ -62,8 +63,8 @@ const EditField = ({ label, value, onSave, type = "text" }) => {
                             onClick={handleSave}
                             disabled={!isValueChanged}
                             className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${isValueChanged
-                                    ? 'bg-[var(--primary-color)] text-white hover:opacity-90'
-                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                ? 'bg-[var(--primary-color)] text-white hover:opacity-90'
+                                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                 }`}
                         >
                             Update
@@ -85,12 +86,14 @@ const EditField = ({ label, value, onSave, type = "text" }) => {
 const Page = () => {
     const { userAccount } = useSelector((state) => state.user);
     const [updateStatus, setUpdateStatus] = useState('');
-   
+    const dispatch = useDispatch()
 
     const handleUpdateField = async (field, value) => {
         try {
             setUpdateStatus('Updating...');
-            await axiosClient.patch(`/api/user/me`, { [field]: value });
+
+            await axiosClient.patch(`/api/users/me`, { [field]: value });
+            dispatch(setFetchUserAccount(true))
             setUpdateStatus('Updated successfully!');
             setTimeout(() => setUpdateStatus(''), 2000);
         } catch (error) {

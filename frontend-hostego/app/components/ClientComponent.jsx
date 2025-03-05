@@ -4,19 +4,21 @@ import React from 'react'
 import axiosClient from '../utils/axiosClient'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { setUserAccount, setCartData, setFetchCartData, setUserAddresses, setUserRoles   } from '../lib/redux/features/user/userSlice'
+import { setUserAccount, setCartData, setFetchCartData, setUserAddresses, setUserRoles } from '../lib/redux/features/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
 
 
 const ClientComponent = ({ children }) => {
 
     const dispatch = useDispatch();
-    const { fetchCartData } = useSelector((state) => state.user)
+    const { fetchCartData, fetchUser } = useSelector((state) => state.user)
     const router = useRouter()
 
     useEffect(() => {
+
         fetchUserAccount();
-    }, []);
+
+    }, [fetchUser]);
 
     useEffect(() => {
         if (fetchCartData) {
@@ -48,7 +50,7 @@ const ClientComponent = ({ children }) => {
             router.push('/auth/sign-up')
         }
     };
-    
+
     const fetchUserRoles = async () => {
         try {
             const { data } = await axiosClient.get('/api/user-roles')

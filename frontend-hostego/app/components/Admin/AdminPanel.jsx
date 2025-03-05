@@ -17,7 +17,7 @@ export default function AdminPanel() {
     const router = useRouter();
     const { userRoles } = useSelector(state => state.user)
     const searchParams = useSearchParams();
-   
+
     // Get the current page from query params, default to 'dashboard'
     const currentPage = searchParams.get("page") || "order-assign";
 
@@ -28,14 +28,11 @@ export default function AdminPanel() {
 
 
     function checkUserRole(roleName) {
-       
+
         if (userRoles.length === 0) {
             return;
         }
         const role = userRoles.find(userRole => userRole?.role?.role_name === roleName);
-        if (!role) {
-            router.push("/home");
-        }
         if (role) {
             return true
         }
@@ -92,7 +89,7 @@ export default function AdminPanel() {
                         isActive={currentPage === "products"}
                         onClick={() => updatePage("products")}
                     />}
-                     {(checkUserRole("super_admin") || checkUserRole("order_manager")) && <SidebarItem
+                    {(checkUserRole("super_admin") || checkUserRole("order_manager")) && <SidebarItem
                         icon={<ShoppingBasket size={20} />}
                         text="Shops"
                         isActive={currentPage === "shops"}
@@ -109,8 +106,8 @@ export default function AdminPanel() {
                 {currentPage === "wallet_payment_verification" && (checkUserRole("super_admin") || checkUserRole("payments_manager")) && <WalletPaymentVerfication />}
                 {currentPage === "orders" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <OrdersList />}
                 {currentPage === "users" && (checkUserRole("super_admin") || checkUserRole("admin")) && <UserManager />}
-                {currentPage === "products" && (checkUserRole("super_admin") || checkUserRole("admin")) && <ProductsManager />} 
-                {currentPage === "shops" && (checkUserRole("super_admin") || checkUserRole("admin")) && <ShopsManager />} 
+                {currentPage === "products" && (checkUserRole("super_admin") || checkUserRole("admin")) && <ProductsManager />}
+                {currentPage === "shops" && (checkUserRole("super_admin") || checkUserRole("admin")) && <ShopsManager />}
             </main>
         </div>
     );
