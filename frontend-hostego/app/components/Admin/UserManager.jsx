@@ -45,7 +45,7 @@ const UserCard = ({ userData, onRoleChange }) => {
         const currentRoleItemId = userRoles?.find(role => role?.role_id === roleId)?.user_role_id;
      
         try {
-            await onRoleChange(user?.user_id, roleId, !userRoleIds.includes(roleId), currentRoleItemId);
+            await onRoleChange(user?.user_id, roleId, !userRoleIds?.includes(roleId), currentRoleItemId);
         } catch (error) {
             console.error('Error toggling role:', error);
         }
