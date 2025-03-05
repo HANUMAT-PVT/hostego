@@ -1,11 +1,21 @@
 'use client'
 import React, { useState } from 'react'
 import axiosClient from '../utils/axiosClient'
-import { Check, ShoppingCart, Loader2 } from 'lucide-react'
+import { Check, ShoppingCart, Loader2, Store, Leaf, Package } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { setFetchCartData } from '../lib/redux/features/user/userSlice'
 
-const ProductCard = ({ product_img_url, product_name, myKey, tags, food_price, weight, product_id, isAlreadyInCart }) => {
+const ProductCard = ({
+    product_img_url,
+    product_name,
+    myKey,
+    food_price,
+    weight,
+    product_id,
+    isAlreadyInCart,
+    food_category,
+    shop
+}) => {
     const [isInCart, setIsInCart] = useState(isAlreadyInCart);
     const [isLoading, setIsLoading] = useState(false)
     const dispatch = useDispatch()
@@ -14,7 +24,6 @@ const ProductCard = ({ product_img_url, product_name, myKey, tags, food_price, w
         try {
             setIsLoading(true)
             await axiosClient.post(`/api/cart/`, { product_id, quantity: 1 })
-
             setIsInCart(true)
             dispatch(setFetchCartData(true))
         } catch (error) {
@@ -25,46 +34,78 @@ const ProductCard = ({ product_img_url, product_name, myKey, tags, food_price, w
     }
 
     return (
-        <div key={myKey} className='product-item flex flex-col gap-2  p-2'>
-            <div className='relative p-2 flex flex-col items-center group'>
-                <img className='w-[90px] h-[90px]'
-                    src={product_img_url}
-                    alt={product_name}
-                />
+        <div key={myKey} className='bg-white rounded-xl border border-gray-100'>
+            <div className='relative w-full flex justify-center p-3'>
+                <div className='w-32 h-32 relative'>
+                    <img
+                        className='w-full h-full object-contain hover:scale-105 transition-transform duration-200'
+                        src={product_img_url}
+                        alt={product_name}
+                    />
+                    {food_category?.is_veg === 1 && (
+                        <div className='absolute -top-1 -left-1 bg-green-100 p-1 rounded-full'>
+                            <Leaf size={12} className="text-green-600" />
+                        </div>
+                    )}
+                </div>
+            </div>
 
-                {isInCart ? (
-                    <div className='absolute bottom-0 right-0 bg-green-100 text-sm text-green-600 px-2 py-1 rounded-md font-medium border border-green-200 flex items-center gap-1'>
-                        <ShoppingCart size={12} className="stroke-2" />
-                        <span>In Cart</span>
+            <div className='p-3 pt-0'>
+                {/* Product Name and Weight */}
+                <div className='mb-2'>
+                    <h3 className='font-medium text-gray-800 line-clamp-1'>{product_name}</h3>
+                    <div className='flex items-center gap-2 mt-1'>
+                        <span className='text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 flex items-center gap-1'>
+                            <Package size={10} />
+                            {weight}
+                        </span>
                     </div>
-                ) : (
-                    <button
-                        onClick={addProductInTheCart}
-                        disabled={isLoading}
-                        className={`absolute bottom-0 right-0 bg-white text-sm text-green-600 px-2 py-1 border-2 border-green-600 rounded-md font-semibold 
-                            transition-all duration-200 ease-in-out
-                            hover:bg-green-600 hover:text-white hover:scale-105
-                            active:scale-95
-                            disabled:opacity-50 disabled:cursor-not-allowed
-                            flex items-center gap-1 min-w-[60px] justify-center`}
-                    >
-                        {isLoading ? (
-                            <>
-                                <Loader2 size={14} className="animate-spin" />
-                                <span>Adding</span>
-                            </>
-                        ) : (
-                            'ADD'
-                        )}
-                    </button>
-                )}
-            </div>
+                </div>
 
-            <div className='flex gap-2'>
-                <p className='text-[10px] px-2 py-1 rounded-lg bg-gray-200 font-medium text-gray-800'>{weight}</p>
+                {/* Shop Info */}
+                <div className='flex items-center gap-1.5 mb-3'>
+                    <Store size={12} className="text-gray-500" />
+                    <span className='text-xs text-gray-600'>{shop?.shop_name}</span>
+                </div>
+
+                {/* Price and Add to Cart */}
+                <div className='flex items-center justify-between'>
+                    <div>
+                        <span className='text-lg font-semibold text-gray-900'>₹{food_price}</span>
+                    </div>
+
+                    {isInCart ? (
+                        <div className='bg-green-100 text-sm text-green-600 px-3 py-1.5 rounded-lg font-medium border border-green-200 flex items-center gap-1.5'>
+                            <Check size={14} className="stroke-2" />
+                            <span>Added</span>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={addProductInTheCart}
+                            disabled={isLoading}
+                            className={`text-sm px-3 py-1.5 rounded-lg font-medium 
+                                transition-all duration-200 ease-in-out
+                                ${isLoading
+                                    ? 'bg-gray-100 text-gray-400'
+                                    : 'bg-[var(--primary-color)] text-white hover:opacity-90 active:scale-95'
+                                }
+                                flex items-center gap-2`}
+                        >
+                            {isLoading ? (
+                                <>
+                                    <Loader2 size={14} className="animate-spin" />
+                                    <span>Adding</span>
+                                </>
+                            ) : (
+                                <>
+                                    <ShoppingCart size={14} />
+                                    <span>Add</span>
+                                </>
+                            )}
+                        </button>
+                    )}
+                </div>
             </div>
-            <p className='product-title text-sm font-medium'>{product_name}</p>
-            <p className='product-price text-left text-sm font-semibold'>₹ {food_price}</p>
         </div>
     )
 }
