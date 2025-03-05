@@ -168,6 +168,9 @@ const page = () => {
     }
 
     const handlePlaceOrder = () => {
+        if (cartData?.cart_items?.length === 0) {
+            return;
+        }
         if (!selectedAddress) {
             setIsToastVisible(true);
             return;
@@ -344,7 +347,7 @@ const page = () => {
                 )}
                 <HostegoButton
                     onClick={handlePlaceOrder}
-                    text={`Place Order • ₹${cartData?.cart_value?.final_order_value}`}
+                    text={`Place Order • ₹${cartData?.cart_value?.final_order_value || 0}`}
                     className={`w-full py-3 rounded-xl font-medium transition-all duration-200
                         ${!selectedAddress
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
