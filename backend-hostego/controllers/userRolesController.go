@@ -52,7 +52,7 @@ func DeleteUserRole(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 	userRoleId := c.Params("id")
-	if err := database.DB.Where("user_id = ? AND user_role_id = ?", user_id, userRoleId).Delete(&models.UserRole{}).Error; err != nil {
+	if err := database.DB.Where("user_role_id = ?", userRoleId).Delete(&models.UserRole{}).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User role deleted successfully"})
