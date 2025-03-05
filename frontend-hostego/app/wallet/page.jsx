@@ -118,7 +118,7 @@ const Page = () => {
 
             {/* Balance Card */}
             <div className='p-4'>
-                <div className='sticky top-0 bg-gradient-to-r from-[var(--primary-color)] to-purple-600 rounded-xl p-6 text-white mb-6'>
+                <div className='sticky top-10 bg-gradient-to-r from-[var(--primary-color)] to-purple-600 rounded-xl p-6 text-white mb-6'>
                     <div className='flex items-center gap-2 mb-2'>
                         <Wallet className="w-5 h-5 text-white/80" />
                         <p className='text-white/80'>Available Balance</p>
