@@ -183,12 +183,6 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 	wallet.Balance += order.FinalOrderValue
 
 
-
-	// Update the delivery partner to not be assigned to an order
-	if err := tx.Save(&delivery_partner).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
 	// create a wallet transaction for the refund
 	if err := tx.Create(&walletTransaction).Error; err != nil {
 		tx.Rollback()
