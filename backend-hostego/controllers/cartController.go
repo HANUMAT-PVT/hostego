@@ -121,7 +121,7 @@ func FetchUserCart(c fiber.Ctx) error {
 	}
 	if err := database.DB.Preload("ProductItem.Shop").
 		Where("user_id = ?", user_id).
-		Order("created_at asc").
+		Order("created_at desc").
 		Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"backend-hostego/database"
+	"backend-hostego/middlewares"
 	"backend-hostego/models"
 	"strconv"
 
@@ -9,8 +10,14 @@ import (
 )
 
 func CreateNewProduct(c fiber.Ctx) error {
+	user_id, err := middlewares.VerifyUserAuthCookie(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
+	}
+	if user_id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+	}
 	var product models.Product
-
 	if err := c.Bind().JSON(&product); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
@@ -20,6 +27,13 @@ func CreateNewProduct(c fiber.Ctx) error {
 }
 
 func FetchProducts(c fiber.Ctx) error {
+	user_id, err := middlewares.VerifyUserAuthCookie(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
+	}
+	if user_id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+	}
 	var products []models.Product
 	dbQuery := database.DB
 
@@ -79,15 +93,21 @@ func FetchProducts(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(products)
 }
 
-
 func UpdateProductById(c fiber.Ctx) error {
+	user_id, err := middlewares.VerifyUserAuthCookie(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
+	}
+	if user_id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+	}
 	product_id := c.Params("id")
 	var product models.Product
 
 	if err := c.Bind().JSON(&product); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	err := database.DB.Where("product_id = ?", product_id).Updates(&product).Error
+	err = database.DB.Where("product_id = ?", product_id).Updates(&product).Error
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
@@ -96,6 +116,13 @@ func UpdateProductById(c fiber.Ctx) error {
 }
 
 func FetchProductById(c fiber.Ctx) error {
+	user_id, err := middlewares.VerifyUserAuthCookie(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
+	}
+	if user_id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+	}
 	product_id := c.Params("id")
 	var product models.Product
 
