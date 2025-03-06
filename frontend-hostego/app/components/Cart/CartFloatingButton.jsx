@@ -1,16 +1,16 @@
 
 "use client"
-import axiosClient from '@/app/utils/axiosClient'
+
 import { ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import {  useSelector } from 'react-redux'
 
 
 const CartFloatingButton = () => {
     const router = useRouter()
     const [cartTotalItems, setCartTotalItems] = useState(0)
-    const dispatch = useDispatch();
+  
 
     const { cartData } = useSelector((state) => state.user)
 
@@ -37,7 +37,7 @@ const CartFloatingButton = () => {
             >
                 <div className='flex flex-col items-center'>
                     <img
-                        className='w-[40px] h-[45px] rounded-full border-2'
+                        className='w-[50px] h-[50px] rounded-full border-2'
                         src={cartData?.cart_items[0]?.product_item?.product_img_url}
                         alt={cartData?.cart_items[0]?.product_item?.product_name}
                     />
