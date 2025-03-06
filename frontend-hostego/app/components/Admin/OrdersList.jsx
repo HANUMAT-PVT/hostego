@@ -142,7 +142,11 @@ const OrderCard = ({ order, onRefresh }) => {
                             <User className="w-5 h-5 text-green-600" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">Customer</p>
+                            <p className="text-sm text-gray-600">Customer Name</p>
+                            <p className="font-medium">{order.user.first_name} {order.user.last_name}</p>
+                        </div>
+                        <div>
+                            <p className="text-sm text-gray-600"> Mobile Number</p>
                             <p className="font-medium">{order.user.mobile_number}</p>
                         </div>
                     </div>
