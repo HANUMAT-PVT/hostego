@@ -6,7 +6,7 @@ const initialState = {
   fetchCartData: false,
   useraddresses: [],
   userRoles: [],
-  fetchUser: false,
+  fetchUser: true,
   userWallet: {},
 };
 
@@ -32,14 +32,14 @@ export const userSlice = createSlice({
     setFetchUserAccount: (state, { payload }) => {
       state.fetchUser = payload;
     },
-    setUserWallet: (state, { payload }) => {
+    setUserAccountWallet: (state, { payload }) => {
       state.userWallet = payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setUserAccount, setCartData, setFetchCartData, setUserAddresses, setUserRoles, setFetchUserAccount, setUserWallet } =
+export const { setUserAccount, setCartData, setFetchCartData, setUserAddresses, setUserRoles, setFetchUserAccount, setUserAccountWallet } =
   userSlice.actions;
 
 export default userSlice.reducer;

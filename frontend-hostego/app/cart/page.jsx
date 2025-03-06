@@ -16,7 +16,7 @@ import { setFetchCartData } from '../lib/redux/features/user/userSlice'
 
 const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
     return (
-        <div className={`bg-white mx-2 rounded-xl p-4 shadow-sm transition-all duration-200 
+        <div  onClick={() => setOpenAddressList(true)} className={`bg-white mx-2 rounded-xl p-4 shadow-sm transition-all duration-200 
             ${!selectedAddress ? 'border-2 border-red-200 ' : 'border border-gray-100'}`}>
             <div className='flex items-center justify-between mb-3'>
                 <div className='flex items-center gap-2'>
@@ -24,7 +24,7 @@ const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
                     <p className='font-medium'>Delivery Address</p>
                 </div>
                 <button
-                    onClick={() => setOpenAddressList(true)}
+                   
                     className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all
                         ${!selectedAddress
                             ? 'bg-red-50 text-red-500 hover:bg-red-100'
@@ -233,7 +233,7 @@ const page = () => {
                         <Clock className="w-5 h-5" />
                         <p className='font-medium'>Express Delivery</p>
                     </div>
-                    <p className='text-sm opacity-90 mt-1'>Estimated delivery in 15-20 minutes</p>
+                    <p className='text-sm opacity-90 mt-1'>Estimated delivery in 12-0 minutes</p>
                 </div>
                 <div className='p-4'>
                     <p className='text-sm text-gray-600'>Order Summary • {cartData?.cart_items?.length || 0} items</p>

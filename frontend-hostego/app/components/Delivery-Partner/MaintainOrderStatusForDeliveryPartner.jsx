@@ -55,7 +55,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
   const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false);
   const [isItemsExpanded, setIsItemsExpanded] = useState(false);
 
-  const [isCardExpanded, setIsCardExpanded] = useState(activeOrder?.order_status == "delivered" ? false : true)
+
 
   useEffect(() => {
     setActiveOrder(transformOrder(order))
@@ -75,11 +75,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
     <div className=" bg-[#F4F6FB]">
       {/* Main Content */}
       <div className="max-w-md mx-auto p-4" onClick={() => {
-        if (activeOrder?.order_status == "delivered") {
-          setIsCardExpanded(!isCardExpanded)
-        } else {
-          setIsCardExpanded(true)
-        }
+       
       }}>
         {/* Earnings Card */}
         <div className='rounded-xl px-4 py-4 text-center bg-white mb-2 flex flex-col gap-2'>
@@ -90,7 +86,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
         </div>
 
         {/* Restaurant Details */}
-        {isCardExpanded && <>
+        { <>
           <div className="bg-white rounded-xl shadow-sm mb-6">
             {activeOrder?.order_items?.map((shop) => <div key={shop?.shop_id}>
 

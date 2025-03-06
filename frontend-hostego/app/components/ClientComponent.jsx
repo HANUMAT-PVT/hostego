@@ -4,7 +4,7 @@ import React from 'react'
 import axiosClient from '../utils/axiosClient'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { setUserAccount, setCartData, setFetchCartData, setUserAddresses, setUserRoles, setUserWallet } from '../lib/redux/features/user/userSlice'
+import { setUserAccount, setCartData, setFetchCartData, setUserAddresses, setUserRoles, setUserAccountWallet, setFetchUserAccount } from '../lib/redux/features/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
 
 
@@ -16,7 +16,9 @@ const ClientComponent = ({ children }) => {
 
     useEffect(() => {
 
-        fetchUserAccount();
+        if (fetchUser) {
+            fetchUserAccount();
+        }
 
 
     }, [fetchUser]);
@@ -50,6 +52,7 @@ const ClientComponent = ({ children }) => {
 
             dispatch(setUserAccount(data))
             fetchCartItems()
+            dispatch(setFetchUserAccount(false))
         } catch (error) {
             console.log(error);
             router.push('/auth/sign-up')
@@ -67,7 +70,7 @@ const ClientComponent = ({ children }) => {
     const fetchUserWallet = async () => {
         try {
             const { data } = await axiosClient.get('/api/wallet')
-            dispatch(setUserWallet(data))
+            dispatch(setUserAccountWallet(data))
         } catch (error) {
             console.error('Error fetching user wallet:', error)
         }

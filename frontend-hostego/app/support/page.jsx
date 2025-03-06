@@ -110,7 +110,7 @@ const Help = () => {
                         title="Live Chat"
                         description="Chat with our support team in real-time"
                         action="#"
-                        actionText="Start Chat"
+                        actionText="Coming Soon!"
                     />
                 </div>
 
