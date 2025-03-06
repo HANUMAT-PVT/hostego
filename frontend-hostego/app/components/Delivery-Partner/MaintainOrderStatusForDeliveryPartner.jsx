@@ -72,7 +72,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
 
 
   return (
-    <div className="min-h-screen bg-[#F4F6FB]">
+    <div className=" bg-[#F4F6FB]">
       {/* Main Content */}
       <div className="max-w-md mx-auto p-4" onClick={() => {
         if (activeOrder?.order_status == "delivered") {
