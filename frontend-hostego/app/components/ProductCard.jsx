@@ -53,7 +53,7 @@ const ProductCard = ({
             <div className='p-3 pt-0'>
                 {/* Product Name and Weight */}
                 <div className='mb-2'>
-                    <h3 className='font-medium text-gray-800 line-clamp-1'>{product_name}</h3>
+                    <h3 className='font-medium text-sm text-gray-800 line-clamp-3'>{product_name}</h3>
                     <div className='flex items-center gap-2 mt-1'>
                         <span className='text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 flex items-center gap-1'>
                             <Package size={10} />

@@ -7,7 +7,7 @@ import HostegoButton from "../components/HostegoButton"
 import axiosClient from '../utils/axiosClient'
 import HostegoLoader from '../components/HostegoLoader'
 import { useDispatch } from 'react-redux'
-import { setUserWallet } from '../lib/redux/features/user/userSlice'
+import { setUserAccountWallet } from '../lib/redux/features/user/userSlice'
 
 const Page = () => {
     const defaultWalletDetails = {
@@ -32,7 +32,7 @@ const Page = () => {
             setIsLoading(true)
             let { data } = await axiosClient.get("/api/wallet")
             setUserWallet(data)
-            dispatch(setUserWallet(data))
+            dispatch(setUserAccountWallet(data))
         } catch (error) {
             console.error('Error fetching wallet:', error)
         } finally {
@@ -196,6 +196,7 @@ const Page = () => {
                                     value={walletDetails?.amount || ''}
                                     onChange={(e) => {
                                         const value = e.target.value ? Number(e.target.value) : ""
+                                        if (value > 2000) return
                                         setWalletDetails({ ...walletDetails, amount: value })
                                     }}
                                     className="ml-2 outline-none bg-transparent w-full"

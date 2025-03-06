@@ -195,7 +195,7 @@ const OrderDetailsPage = () => {
                     <div className="mt-4 pt-4 border-t border-gray-100">
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                             <Clock className="w-4 h-4" />
-                            <span>Estimated delivery in {order?.estimated_delivery_time || '15-20'} minutes</span>
+                            <span>Estimated delivery in {order?.estimated_delivery_time || '20-30'} minutes</span>
                         </div>
                         
                     </div>
