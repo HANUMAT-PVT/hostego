@@ -103,7 +103,7 @@ func FetchAllDeliveryPartners(c fiber.Ctx) error {
 		dbQuery = dbQuery.Where("verification_status=?", verification_status)
 	}
 
-	if err := dbQuery.Preload("User").Find(&delivery_partners).Error; err != nil {
+	if err := dbQuery.Preload("User").Order("created_at desc").Find(&delivery_partners).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(delivery_partners)

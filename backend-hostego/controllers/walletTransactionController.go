@@ -49,7 +49,7 @@ func CreditWalletTransaction(c fiber.Ctx) error {
 }
 
 func VerifyWalletTransactionById(c fiber.Ctx) error {
-	
+
 	userID, middleErr := middlewares.VerifyUserAuthCookie(c)
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
@@ -88,7 +88,7 @@ func VerifyWalletTransactionById(c fiber.Ctx) error {
 	}
 
 	// Update wallet balance
-	if requestData.TransactionStatus == string(models.TransactionSuccess)	 {
+	if requestData.TransactionStatus == string(models.TransactionSuccess) {
 		wallet.Balance += walletTransaction.Amount
 		if err := tx.Save(&wallet).Error; err != nil {
 			tx.Rollback()
@@ -133,7 +133,7 @@ func FetchUserWalletTransactions(c fiber.Ctx) error {
 
 	var wallet_transactions []models.WalletTransaction
 
-	if err := database.DB.Find(&wallet_transactions, "user_id=?", user_id).Order("created_at desc").Error; err != nil {
+	if err := database.DB.Where("user_id=?", user_id).Order("created_at desc").Find(&wallet_transactions).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(wallet_transactions)
@@ -157,7 +157,7 @@ func FetchAllWalletTransactions(c fiber.Ctx) error {
 		// return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	var wallet_transactions []models.WalletTransaction
-	if err := dbQuery.Preload("User").Find(&wallet_transactions).Order("created_at desc").Error; err != nil {
+	if err := dbQuery.Preload("User").Order("created_at desc").Find(&wallet_transactions).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(wallet_transactions)
