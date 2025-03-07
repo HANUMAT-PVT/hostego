@@ -247,11 +247,11 @@ const UserManager = () => {
         return matchesSearch && matchesFilter;
     });
 
-    return (
+  return (
         <div className="p-4">
             {/* Header with Refresh Button */}
             <div className="flex justify-between items-center mb-6">
-                <div>
+    <div>
                     <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
                     <p className="text-gray-600">Manage and monitor user accounts</p>
                 </div>
@@ -352,7 +352,7 @@ const UserManager = () => {
             </div>
 
 
-        </div>
+    </div>
     );
 };
 

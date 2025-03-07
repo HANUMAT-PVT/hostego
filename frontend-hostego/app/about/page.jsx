@@ -110,7 +110,7 @@ const AboutPage = () => {
                         <div className="w-8 h-8 rounded-full bg-[#655df0] text-white flex items-center justify-center flex-shrink-0">
                             3
                         </div>
-                        <div>
+        <div>
                             <h3 className="font-medium mb-1">Room Delivery</h3>
                             <p className="text-gray-600">Relax while we deliver right to your room</p>
                         </div>

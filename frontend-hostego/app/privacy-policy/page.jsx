@@ -17,7 +17,7 @@ const Section = ({ icon: Icon, title, children }) => (
 );
 
 const PrivacyPolicy = () => {
-    return (
+  return (
         <div className="min-h-screen bg-[#f4f6fb]">
             <BackNavigationButton title="Privacy Policy" />
 
@@ -125,7 +125,7 @@ const PrivacyPolicy = () => {
                     </div>
                 </div>
             </div>
-        </div>
+    </div>
     );
 };
 
