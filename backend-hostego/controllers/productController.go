@@ -35,7 +35,7 @@ func FetchProducts(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 	var products []models.Product
-	dbQuery := database.DB
+	dbQuery := database.DB.Preload("Shop")
 
 	searchQuery := c.Query("search")
 	tagsQuery := c.Query("tags") // Expecting tags=food or tags=chicken
@@ -43,11 +43,23 @@ func FetchProducts(c fiber.Ctx) error {
 	maxPrice := c.Query("max_price")
 	availability := c.Query("availability")
 	sort := c.Query("sort", "asc")
-	queryLimit := c.Query("limit", "10")
+	queryLimit := c.Query("limit", "50")
 	queryPage := c.Query("page", "1")
 
 	if searchQuery != "" {
-		dbQuery = dbQuery.Where("product_name ILIKE ? OR description ILIKE ?", "%"+searchQuery+"%", "%"+searchQuery+"%")
+		dbQuery = dbQuery.Where(
+			`product_name ILIKE ? 
+			OR description ILIKE ? 
+			OR shop_id IN (SELECT shop_id FROM shops WHERE shop_name ILIKE ?)
+			OR EXISTS (
+				SELECT 1 FROM jsonb_array_elements_text(tags) tag 
+				WHERE tag ILIKE ?
+			)`,
+			"%"+searchQuery+"%",
+			"%"+searchQuery+"%",
+			"%"+searchQuery+"%",
+			"%"+searchQuery+"%",
+		)
 	}
 
 	// ✅ Filtering by tags
@@ -73,7 +85,7 @@ func FetchProducts(c fiber.Ctx) error {
 
 	limit, err := strconv.Atoi(queryLimit)
 	if err != nil || limit < 1 {
-		limit = 10
+		limit = 50
 	}
 
 	page, err := strconv.Atoi(queryPage)
@@ -83,10 +95,7 @@ func FetchProducts(c fiber.Ctx) error {
 	offset := (page - 1) * limit
 	dbQuery = dbQuery.Offset(offset).Limit(limit)
 
-	// **Preload Shop details**
-	errDb := dbQuery.Preload("Shop").Find(&products).Error
-
-	if errDb != nil {
+	if err := dbQuery.Find(&products).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch products"})
 	}
 
