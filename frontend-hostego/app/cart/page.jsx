@@ -233,7 +233,7 @@ const page = () => {
                         <Clock className="w-5 h-5" />
                         <p className='font-medium'>Express Delivery</p>
                     </div>
-                    <p className='text-sm opacity-90 mt-1'>Estimated delivery in 12-0 minutes</p>
+                    <p className='text-sm opacity-90 mt-1'>Estimated delivery in 15-30 minutes</p>
                 </div>
                 <div className='p-4'>
                     <p className='text-sm text-gray-600'>Order Summary • {cartData?.cart_items?.length || 0} items</p>
