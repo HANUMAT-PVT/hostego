@@ -33,6 +33,11 @@ const ClientComponent = ({ children }) => {
         }
     }, [fetchCartData]);
 
+    useEffect(() => {
+        fetchUserRoles()
+        fetchAddress()
+    }, [])
+
     const fetchCartItems = async () => {
         try {
 
@@ -67,6 +72,7 @@ const ClientComponent = ({ children }) => {
             console.error('Error fetching user roles:', error)
         }
     }
+
     const fetchUserWallet = async () => {
         try {
             const { data } = await axiosClient.get('/api/wallet')
@@ -75,9 +81,7 @@ const ClientComponent = ({ children }) => {
             console.error('Error fetching user wallet:', error)
         }
     }
-    useEffect(() => {
-        fetchUserRoles()
-    }, [])
+
 
     const fetchAddress = async () => {
         try {

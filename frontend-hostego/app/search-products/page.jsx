@@ -6,6 +6,17 @@ import ProductCard from '../components/ProductCard'
 import { debounce } from 'lodash'
 import axiosClient from '../utils/axiosClient'
 import { useSelector } from 'react-redux'
+import SearchProductCard, { SearchProductSkeleton, EmptyState } from '../components/SearchProductCard'
+
+const SearchSkeletons = () => {
+    return (
+        <>
+            {[1, 2, 3, 4, 5].map((item) => (
+                <SearchProductSkeleton key={item} />
+            ))}
+        </>
+    )
+}
 
 const page = () => {
     const [searchValue, setSearchValue] = useState("");
@@ -17,7 +28,6 @@ const page = () => {
     const [totalItems, setTotalItems] = useState(0);
 
     const { cartData } = useSelector(state => state.user);
-
 
     // Initial fetch
     useEffect(() => {
@@ -31,7 +41,7 @@ const page = () => {
     const fetchProducts = useCallback(async (search) => {
         try {
             setLoading(true);
-            const { data } = await axiosClient.get(`/api/products/all?page=${currentPage}&limit=10&search=${search}`);
+            const { data } = await axiosClient.get(`/api/products/all?page=${currentPage}&limit=50&search=${search}`);
             setProducts(data);
         } catch (err) {
             setError(err.message);
@@ -54,8 +64,6 @@ const page = () => {
         debouncedSearch(value);
     };
 
-
-
     return (
         <div>
             <div className='gradient-background py-4 sticky top-0 z-10'>
@@ -68,24 +76,28 @@ const page = () => {
 
             <div className='p-4'>
                 {loading ? (
-                    <div className="text-center py-4">Loading...</div>
+                    <div className='flex flex-col gap-4'>
+                        <SearchSkeletons />
+                    </div>
                 ) : error ? (
-                    <div className="text-center text-red-500 py-4">{error}</div>
+                    <div className="text-center text-red-500 py-4">
+                        <p className="font-medium">Oops! Something went wrong</p>
+                        <p className="text-sm mt-1">{error}</p>
+                    </div>
                 ) : (
-                    <div className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                        {products?.map((prd) => (
-                            <ProductCard
-                                isAlreadyInCart={cartData?.cart_items?.some(
-                                    item => item?.product_id === prd?.product_id
-                                )}
-                                {...prd}
-                                key={prd?.product_id}
-                            />
-                        ))}
-                        {products?.length === 0 && (
-                            <div className="col-span-full text-center py-8 text-gray-500">
-                                No products found
-                            </div>
+                    <div className='flex flex-col gap-4'>
+                        {products?.length > 0 ? (
+                            products.map((prd) => (
+                                <SearchProductCard
+                                    key={prd?.product_id}
+                                    {...prd}
+                                    isAlreadyInCart={cartData?.cart_items?.some(
+                                        item => item?.product_id === prd?.product_id
+                                    )}
+                                />
+                            ))
+                        ) : (
+                            <EmptyState sendSearchValue={handleSearch} searchValue={searchValue} />
                         )}
                     </div>
                 )}
