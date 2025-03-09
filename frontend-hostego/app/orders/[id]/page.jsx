@@ -9,6 +9,99 @@ import HostegoLoader from '@/app/components/HostegoLoader'
 import StatusTimeLine from '../../components/Orders/StatusTimeLine'
 import { transformOrder } from '../../utils/helper'
 import { ORDER_STATUSES } from '../../components/Delivery-Partner/MaintainOrderStatusForDeliveryPartner'
+import { subscribeToNotifications } from '../../utils/webNotifications'
+const DeliveryPartnerSection = ({ order, isActiveOrder }) => {
+    const [timeElapsed, setTimeElapsed] = useState('');
+
+    // Calculate time elapsed since order creation
+    useEffect(() => {
+        const calculateTimeElapsed = () => {
+            const orderTime = new Date(order?.created_at);
+            const now = new Date();
+            const diff = Math.floor((now - orderTime) / 1000 / 60); // minutes
+            setTimeElapsed(
+                diff < 60
+                    ? `${diff} min ago`
+                    : `${Math.floor(diff / 60)}h ${diff % 60}m ago`
+            );
+        };
+
+        calculateTimeElapsed();
+        const timer = setInterval(calculateTimeElapsed, 60000); // Update every minute
+
+        return () => clearInterval(timer);
+    }, [order?.created_at]);
+
+    return (
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            {/* Status Banner */}
+            <div className="bg-gradient-to-r from-[var(--primary-color)] to-purple-600 p-4 text-white">
+                <div className="flex items-center justify-between">
+                    <h3 className="font-medium">Delivery Partner</h3>
+                    {isActiveOrder && (
+                        <span className="flex items-center gap-2 text-sm">
+                            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                            Active Order
+                        </span>
+                    )}
+                </div>
+                <p className="text-sm opacity-80 mt-1">{timeElapsed}</p>
+            </div>
+
+            {/* Partner Details */}
+            <div className="p-4">
+                <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 rounded-full bg-[var(--primary-color)]/10 flex items-center justify-center flex-shrink-0">
+                        <Bike className="w-8 h-8 text-[var(--primary-color)]" />
+                    </div>
+                    <div>
+                        <h3 className="font-medium text-lg text-gray-900">
+                            {order?.delivery_partner?.user?.first_name} {order?.delivery_partner?.user?.last_name}
+                        </h3>
+                        <p className="text-gray-500">Your Delivery Partner</p>
+                    </div>
+                </div>
+
+                {/* Contact and Info */}
+                <div className="space-y-4">
+                    {/* Call Button */}
+                    <button
+                        onClick={() => window.location.href = `tel:${order?.delivery_partner?.user?.mobile_number}`}
+                        className="w-full py-3 px-4 rounded-xl border-2 border-[var(--primary-color)] 
+                                 bg-[var(--primary-color)]/5 hover:bg-[var(--primary-color)]/10
+                                 text-[var(--primary-color)] font-medium flex items-center justify-center gap-3
+                                 transition-all duration-200"
+                    >
+                        <div className="relative">
+                            <Phone className="w-5 h-5" />
+                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        </div>
+                        <span>Call Partner</span>
+                    </button>
+
+                    {/* Delivery Info */}
+                    <div className="bg-gray-50 rounded-xl p-4">
+                        <div className="flex items-center gap-2 text-gray-600">
+                            <Clock className="w-4 h-4" />
+                            <span>Estimated delivery in {order?.estimated_delivery_time || '20-30'} minutes</span>
+                        </div>
+                    </div>
+
+                    {/* Safety Tip */}
+                    <div className="bg-yellow-50 rounded-xl p-4 flex items-start gap-3">
+                        <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                            <p className="font-medium text-yellow-800 mb-1">Safety First</p>
+                            <p className="text-sm text-yellow-700">
+                                For your safety, please don't share any sensitive information with the delivery partner.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const OrderDetailsPage = () => {
     const { id } = useParams()
@@ -68,15 +161,26 @@ const OrderDetailsPage = () => {
         }
     }
 
+    // Check if order is in final state
+    const isOrderActive = (status) => {
+        return !['delivered', 'cancelled'].includes(status?.toLowerCase());
+    };
+
     useEffect(() => {
-
-
         fetchOrder()
 
-    }, [id])
+        // Only set up interval if order is active
+        if (order && isOrderActive(order.order_status)) {
+            const interval = setInterval(() => {
+                if (document.visibilityState === 'visible') {
 
+                    subscribeToNotifications("Order Update Alert", "Your order might have been updated")
+                }
+            }, 60000 * 3); // Refresh every 3 minutes
 
-
+            return () => clearInterval(interval);
+        }
+    }, [id, order?.order_status])
 
     const fetchOrder = async () => {
         try {
@@ -95,7 +199,7 @@ const OrderDetailsPage = () => {
 
     const status = statusConfig[order?.order_status] || statusConfig.pending
     const StatusIcon = status.icon
-    console.log(order,"order found")
+
     return (
         <div className="min-h-screen bg-[var(--bg-page-color)]">
             <BackNavigationButton title="Order Details" />
@@ -156,57 +260,11 @@ const OrderDetailsPage = () => {
             </div>
             {/* Delivery Partner Contact Section */}
             {order?.delivery_partner && (
-                <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-full bg-[var(--primary-color)]/10 flex items-center justify-center">
-                                <Bike className="w-6 h-6 text-[var(--primary-color)]" />
-                            </div>
-                            <div>
-                                <h3 className="font-medium text-gray-800">
-                                    {order?.delivery_partner?.first_name}
-                                </h3>
-                                <p className="text-sm text-gray-500">Your Delivery Partner</p>
-                            </div>
-                        </div>
-                       
-                    </div>
-
-                    <div className="flex gap-3">
-                        {/* Call Button */}
-                        <button
-                            onClick={() => window.location.href = `tel:${order?.delivery_partner?.user?.mobile_number}`}
-                            className=" border-2 border-[var(--primary-color)] flex-1 py-3.5 px-4 rounded-xl bg-[var(--primary-color)]/10 hover:bg-[var(--primary-color)]/15 
-                                     text-[var(--primary-color)] font-medium flex items-center justify-center gap-2 
-                                     transition-all duration-200 group"
-                        >
-                            <div className="relative">
-                                <Phone className="w-5 h-5" />
-                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                            </div>
-                            <span>Call Partner</span>
-                        </button>
-
-                        {/* Chat Button - Optional */}
-                        
-                    </div>
-
-                    {/* Delivery Info */}
-                    <div className="mt-4 pt-4 border-t border-gray-100">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Clock className="w-4 h-4" />
-                            <span>Estimated delivery in {order?.estimated_delivery_time || '20-30'} minutes</span>
-                        </div>
-                        
-                    </div>
-
-                    {/* Safety Tip */}
-                    <div className="mt-4 bg-yellow-50 rounded-lg p-3 flex items-start gap-2">
-                        <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                        <p className="text-sm text-yellow-700">
-                            For your safety Please don't share any sensitive information.
-                        </p>
-                    </div>
+                <div className="mx-4 my-4">
+                    <DeliveryPartnerSection
+                        order={order}
+                        isActiveOrder={isOrderActive(order.order_status)}
+                    />
                 </div>
             )}
             {/* Delivery Address */}

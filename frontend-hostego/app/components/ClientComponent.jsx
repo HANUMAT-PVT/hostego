@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { setUserAccount, setCartData, setFetchCartData, setUserAddresses, setUserRoles, setUserAccountWallet, setFetchUserAccount } from '../lib/redux/features/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
-
+import { subscribeToNotifications } from '../utils/webNotifications'
 
 const ClientComponent = ({ children }) => {
 
@@ -22,6 +22,16 @@ const ClientComponent = ({ children }) => {
 
 
     }, [fetchUser]);
+
+    useEffect(() => {
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker
+                .register("/sw.js")
+                .catch((error) => {
+                    console.error("Service Worker Registration Failed", error);
+                });
+        }
+    }, []);
 
     useEffect(() => {
         fetchUserWallet()
@@ -92,9 +102,11 @@ const ClientComponent = ({ children }) => {
         }
     }
 
+
     return (
 
         <>
+
             {children}
         </>
 

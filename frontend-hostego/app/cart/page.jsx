@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation'
 import HostegoToast from '../components/HostegoToast'
 import { useDispatch, useSelector } from 'react-redux'
 import { setFetchCartData, setFetchUserWalletBool, setUserAccountWallet } from '../lib/redux/features/user/userSlice'
-
+import { subscribeToNotifications } from '../utils/webNotifications'
 const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
     return (
         <div onClick={() => setOpenAddressList(true)} className={`bg-white mx-2 rounded-xl p-4 shadow-sm transition-all duration-200 
@@ -163,6 +163,7 @@ const page = () => {
             if (response.data) {
                 setPaymentStatus('success')
                 dispatch(setFetchCartData(true))
+                subscribeToNotifications("Payment Success", "Your order has been placed successfully")
                 setTimeout(() => {
                     router.push('/orders')
                 }, 2000)
