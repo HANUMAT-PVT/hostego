@@ -4,9 +4,11 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/middlewares"
 	"backend-hostego/models"
+	"encoding/json"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
+	"gorm.io/gorm"
 )
 
 func InitiatePayment(c fiber.Ctx) error {
@@ -92,6 +94,21 @@ func InitiatePayment(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove cart items"})
 	}
+
+	var orderItems []models.CartItem
+	if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse order items"})
+	}
+
+	for _, item := range orderItems {
+		if err := tx.Model(&models.Product{}).Where("product_id = ?", item.ProductId).
+			Update("stock_quantity", gorm.Expr("stock_quantity - ?", item.Quantity)).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		}
+	}
+
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
 	}
@@ -182,6 +199,11 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 	walletTransaction.UserId = order.UserId
 	wallet.Balance += order.FinalOrderValue
 
+	var orderItems []models.CartItem
+	if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse order items"})
+	}
 
 	// create a wallet transaction for the refund
 	if err := tx.Create(&walletTransaction).Error; err != nil {
@@ -192,6 +214,13 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 	if err := tx.Where("user_id=?", order.UserId).Save(&wallet).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	for _, item := range orderItems {
+		if err := tx.Model(&models.Product{}).Where("product_id = ?", item.ProductId).
+			Update("stock_quantity", gorm.Expr("stock_quantity + ?", item.Quantity)).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		}
 	}
 	// Commit the transaction
 	if err := tx.Commit().Error; err != nil {

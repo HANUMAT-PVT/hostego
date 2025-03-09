@@ -18,6 +18,7 @@ const (
 	OnTheWayOrderStatus  = "on_the_way"
 	DeliveredOrderStatus = "delivered"
 	CookingOrderStatus   = "cooking"
+	ReachedDoorStatus    = "reached_door"
 	CanceledOrderStatus  = "cancelled"
 )
 
