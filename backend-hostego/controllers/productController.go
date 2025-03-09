@@ -34,9 +34,15 @@ func FetchProducts(c fiber.Ctx) error {
 	if user_id == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
+
 	var products []models.Product
 	dbQuery := database.DB.Preload("Shop")
 
+	adminQuery := c.Query("admin")
+	if adminQuery == "true" {
+	}else{
+		dbQuery = dbQuery.Where("stock_quantity > ?", 0)
+	}
 	searchQuery := c.Query("search")
 	tagsQuery := c.Query("tags") // Expecting tags=food or tags=chicken
 	minPrice := c.Query("min_price")
@@ -96,7 +102,7 @@ func FetchProducts(c fiber.Ctx) error {
 	dbQuery = dbQuery.Offset(offset).Limit(limit)
 
 	if err := dbQuery.Find(&products).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch products"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch products", "message": err.Error()})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(products)
@@ -105,23 +111,34 @@ func FetchProducts(c fiber.Ctx) error {
 func UpdateProductById(c fiber.Ctx) error {
 	user_id, err := middlewares.VerifyUserAuthCookie(c)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	if user_id == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
+
 	product_id := c.Params("id")
 	var product models.Product
 
-	if err := c.Bind().JSON(&product); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	// First find existing product
+	if err := database.DB.First(&product, "product_id = ?", product_id).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 	}
-	err = database.DB.Where("product_id = ?", product_id).Updates(&product).Error
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Product updated successfully", "product": product})
 
+	// Get update data and update directly
+	if err := c.Bind().JSON(&product); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	// Save all changes
+	if err := database.DB.Save(&product).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Product updated successfully",
+		"product": product,
+	})
 }
 
 func FetchProductById(c fiber.Ctx) error {

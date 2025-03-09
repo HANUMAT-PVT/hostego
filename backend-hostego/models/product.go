@@ -9,8 +9,8 @@ import (
 
 // Food Category Structure
 type FoodCategory struct {
-	IsVeg    int `gorm:"type:int;not null;" json:"is_veg"`
-	IsCooked int `gorm:"type:int;not null;" json:"is_cooked"`
+	IsVeg    int `gorm:"type:int;not null;default:0" json:"is_veg"`
+	IsCooked int `gorm:"type:int;not null;default:0" json:"is_cooked"`
 }
 
 // Discount Structure
@@ -35,5 +35,6 @@ type Product struct {
 	ShopId          uuid.UUID      `gorm:"type:uuid;not null;index" json:"shop_id"`
 	Shop            Shop           `gorm:"foreignKey:ShopId;references:ShopId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"shop"`
 	Tags            datatypes.JSON `gorm:"type:jsonB;" json:"tags"`
+	StockQuantity   int            `gorm:"type:int;not null;default:0" json:"stock_quantity"`
 	Weight          string         `gorm:"type:varchar(255);" json:"weight"`
 }
