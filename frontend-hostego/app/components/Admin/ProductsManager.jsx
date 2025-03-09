@@ -23,7 +23,8 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
         preparation_time: '0 min',
         shop_id: '',
         tags: [],
-        weight: ''
+        weight: '',
+        stock_quantity: 0
     });
 
     const [tagInput, setTagInput] = useState('');
@@ -33,8 +34,8 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
             try {
                 const { data } = await axiosClient.get('/api/shop');
                 setShops(data);
-                if (data.length > 0) {
-                    setFormData(prev => ({ ...prev, shop_id: data[0].shop_id }));
+                if (data?.length > 0) {
+                    setFormData(prev => ({ ...prev, shop_id: data[0]?.shop_id }));
                 }
             } catch (error) {
                 console.error('Error fetching shops:', error);
@@ -66,7 +67,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
             tags: prev.tags.filter(tag => tag !== tagToRemove)
         }));
     };
-
+    console.log(formData, "formData")
     return (
         <div className="bg-white rounded-xl p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-6">
@@ -124,7 +125,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
                             <input
                                 type="number"
-                                value={formData.food_price}
+                                value={formData?.food_price}
                                 onChange={(e) => setFormData(prev => ({ ...prev, food_price: Number(e.target.value) }))}
                                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                                 required
@@ -134,8 +135,18 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">Weight</label>
                             <input
                                 type="text"
-                                value={formData.weight}
+                                value={formData?.weight}
                                 onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
+                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Stock Quantity</label>
+                            <input
+                                type="number"
+                                value={formData?.stock_quantity}
+                                onChange={(e) => setFormData(prev => ({ ...prev, stock_quantity: Number(e.target.value) }))}
                                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                                 required
                             />
@@ -149,10 +160,10 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                                 <label className="flex items-center gap-2">
                                     <input
                                         type="radio"
-                                        checked={formData.food_category.is_veg === 1}
+                                        checked={formData?.food_category?.is_veg === 1}
                                         onChange={() => setFormData(prev => ({
                                             ...prev,
-                                            food_category: { ...prev.food_category, is_veg: 1 }
+                                            food_category: { ...prev?.food_category, is_veg: 1 }
                                         }))}
                                         className="text-green-600"
                                     />
@@ -161,10 +172,10 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                                 <label className="flex items-center gap-2">
                                     <input
                                         type="radio"
-                                        checked={formData.food_category.is_veg === 0}
+                                        checked={formData?.food_category?.is_veg === 0}
                                         onChange={() => setFormData(prev => ({
                                             ...prev,
-                                            food_category: { ...prev.food_category, is_veg: 0 }
+                                            food_category: { ...prev?.food_category, is_veg: 0 }
                                         }))}
                                         className="text-red-600"
                                     />
@@ -179,10 +190,10 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                                 <label className="flex items-center gap-2">
                                     <input
                                         type="radio"
-                                        checked={formData.food_category.is_cooked === 1}
+                                        checked={formData?.food_category?.is_cooked === 1}
                                         onChange={() => setFormData(prev => ({
                                             ...prev,
-                                            food_category: { ...prev.food_category, is_cooked: 1 }
+                                            food_category: { ...prev?.food_category, is_cooked: 1 }
                                         }))}
                                     />
                                     <span>Yes</span>
@@ -190,10 +201,70 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                                 <label className="flex items-center gap-2">
                                     <input
                                         type="radio"
-                                        checked={formData.food_category.is_cooked === 0}
+                                        checked={formData?.food_category?.is_cooked === 0}
                                         onChange={() => setFormData(prev => ({
                                             ...prev,
-                                            food_category: { ...prev.food_category, is_cooked: 0 }
+                                            food_category: { ...prev?.food_category, is_cooked: 0 }
+                                        }))}
+                                    />
+                                    <span>No</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Food Type</label>
+                            <div className="flex gap-3">
+                                <label className="flex items-center gap-2">
+                                    <input
+                                        type="radio"
+                                        checked={formData?.food_category?.is_veg === 1}
+                                        onChange={() => setFormData(prev => ({
+                                            ...prev,
+                                            food_category: { ...prev?.food_category, is_veg: 1 }
+                                        }))}
+                                        className="text-green-600"
+                                    />
+                                    <span>Veg</span>
+                                </label>
+                                <label className="flex items-center gap-2">
+                                    <input
+                                        type="radio"
+                                        checked={formData?.food_category?.is_veg === 0}
+                                        onChange={() => setFormData(prev => ({
+                                            ...prev,
+                                            food_category: { ...prev?.food_category, is_veg: 0 }
+                                        }))}
+                                        className="text-red-600"
+                                    />
+                                    <span>Non-veg</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Availability</label>
+                            <div className="flex gap-3">
+                                <label className="flex items-center gap-2">
+                                    <input
+                                        type="radio"
+                                        checked={formData?.availability === 1}
+                                        onChange={() => setFormData(prev => ({
+                                            ...prev,
+                                            availability: 1
+                                        }))}
+
+                                    />
+                                    <span>Yes</span>
+                                </label>
+                                <label className="flex items-center gap-2">
+                                    <input
+                                        type="radio"
+                                        checked={formData?.availability === 0}
+                                        onChange={() => setFormData(prev => ({
+                                            ...prev,
+                                            availability: 0
                                         }))}
                                     />
                                     <span>No</span>
@@ -206,7 +277,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Product Image URL</label>
                         <input
                             type="url"
-                            value={formData.product_img_url}
+                            value={formData?.product_img_url}
                             onChange={(e) => setFormData(prev => ({ ...prev, product_img_url: e.target.value }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             required
@@ -216,7 +287,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                         <textarea
-                            value={formData.description}
+                            value={formData?.description}
                             onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             rows={3}
@@ -227,7 +298,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
                         <div className="flex gap-2 mb-2 flex-wrap">
-                            {formData.tags.map(tag => (
+                            {formData?.tags?.map(tag => (
                                 <span
                                     key={tag}
                                     className="bg-gray-100 px-2 py-1 rounded-full text-sm flex items-center gap-1"
@@ -298,7 +369,7 @@ const ProductsManager = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const { data } = await axiosClient.get('/api/products/all?page=1&limit=40');
+            const { data } = await axiosClient.get('/api/products/all?page=1&limit=40&admin=true');
             setProducts(data);
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -339,10 +410,10 @@ const ProductsManager = () => {
         product.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-  return (
+    return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
-    <div>
+                <div>
                     <h1 className="text-2xl font-bold text-gray-800">Products Management</h1>
                     <p className="text-gray-600">Manage your product catalog</p>
                 </div>
@@ -363,13 +434,13 @@ const ProductsManager = () => {
                 <div className="bg-white p-4 rounded-xl shadow-sm">
                     <h3 className="text-sm text-gray-500">Available Products</h3>
                     <p className="text-2xl font-semibold text-green-600">
-                        {products.filter(p => p.availability === 1).length}
+                        {products?.filter(p => p.availability === 1).length}
                     </p>
                 </div>
                 <div className="bg-white p-4 rounded-xl shadow-sm">
                     <h3 className="text-sm text-gray-500">Out of Stock</h3>
                     <p className="text-2xl font-semibold text-red-600">
-                        {products.filter(p => p.availability === 0).length}
+                        {products?.filter(p => p.availability === 0).length}
                     </p>
                 </div>
             </div>
@@ -408,6 +479,8 @@ const ProductsManager = () => {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shop</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Availability</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</th>
                                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -421,39 +494,45 @@ const ProductsManager = () => {
                                     <td className="px-6 py-4">
                                         <div className="flex items-center">
                                             <img
-                                                src={product.product_img_url}
-                                                alt={product.product_name}
+                                                src={product?.product_img_url}
+                                                alt={product?.product_name}
                                                 className="w-10 h-10 rounded-lg object-cover"
                                             />
                                             <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900">{product.product_name}</div>
-                                                <div className="text-sm text-gray-500">{product.weight}</div>
+                                                <div className="text-sm font-medium text-gray-900">{product?.product_name}</div>
+                                                <div className="text-sm text-gray-500">{product?.weight}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="text-sm text-gray-900">
-                                            {product.shop?.shop_name || 'Unknown Shop'}
+                                            {product?.shop?.shop_name || 'Unknown Shop'}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.food_category.is_veg ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                             }`}>
-                                            {product.food_category.is_veg ? 'Veg' : 'Non-veg'}
+                                            {product?.food_category?.is_veg ? 'Veg' : 'Non-veg'}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-500">
-                                        ₹{product.food_price}
+                                        ₹{product?.food_price}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-gray-500">
+                                        {product?.availability ? 'Available' : 'Out of Stock'}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-gray-500">
+                                        {product?.stock_quantity || 0}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.availability ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product?.availability ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                             }`}>
-                                            {product.availability ? 'Available' : 'Out of Stock'}
+                                            {product?.availability ? 'Available' : 'Out of Stock'}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-wrap gap-1">
-                                            {product.tags.map(tag => (
+                                            {product?.tags?.map(tag => (
                                                 <span
                                                     key={tag}
                                                     className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
@@ -477,7 +556,7 @@ const ProductsManager = () => {
                     </table>
                 </div>
             </div>
-    </div>
+        </div>
     );
 };
 
