@@ -12,11 +12,11 @@ import PaymentStatus from '../components/PaymentStatus'
 import { useRouter } from 'next/navigation'
 import HostegoToast from '../components/HostegoToast'
 import { useDispatch, useSelector } from 'react-redux'
-import { setFetchCartData } from '../lib/redux/features/user/userSlice'
+import { setFetchCartData, setFetchUserWalletBool, setUserAccountWallet } from '../lib/redux/features/user/userSlice'
 
 const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
     return (
-        <div  onClick={() => setOpenAddressList(true)} className={`bg-white mx-2 rounded-xl p-4 shadow-sm transition-all duration-200 
+        <div onClick={() => setOpenAddressList(true)} className={`bg-white mx-2 rounded-xl p-4 shadow-sm transition-all duration-200 
             ${!selectedAddress ? 'border-2 border-red-200 ' : 'border border-gray-100'}`}>
             <div className='flex items-center justify-between mb-3'>
                 <div className='flex items-center gap-2'>
@@ -24,7 +24,7 @@ const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
                     <p className='font-medium'>Delivery Address</p>
                 </div>
                 <button
-                   
+
                     className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all
                         ${!selectedAddress
                             ? 'bg-red-50 text-red-500 hover:bg-red-100'
@@ -81,8 +81,20 @@ const page = () => {
     const hasInsufficientBalance = userWallet?.balance < cartData?.cart_value?.final_order_value;
     const amountNeeded = cartData?.cart_value?.final_order_value - (userWallet?.balance || 0);
 
+    // Add new function to fetch wallet
+    const fetchUserWallet = async () => {
+        try {
+            const { data } = await axiosClient.get("/api/wallet")
+            dispatch(setUserAccountWallet(data))
+        } catch (error) {
+            console.error('Error fetching wallet:', error)
+        }
+    }
+
     useEffect(() => {
+        // Fetch cart items and wallet data when page loads
         fetchCartItems()
+        fetchUserWallet()
     }, [])
 
     useEffect(() => {

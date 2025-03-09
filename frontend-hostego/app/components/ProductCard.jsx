@@ -42,11 +42,13 @@ const ProductCard = ({
                         src={product_img_url}
                         alt={product_name}
                     />
-                    {food_category?.is_veg === 1 && (
-                        <div className='absolute -top-1 -left-1 bg-green-100 p-1 rounded-full'>
-                            <Leaf size={12} className="text-green-600" />
-                        </div>
-                    )}
+
+                    {food_category?.is_veg === 1 ? <div className='absolute -top-1 -left-1 bg-green-100 p-1 rounded-full'>
+                        <Leaf size={12} className={'text-green-600'} />
+                    </div> : <div className='absolute -top-1 -left-1 bg-red-100 p-1 rounded-full'>
+                        <Leaf size={12} className={'text-red-600'} />
+                    </div>}
+
                 </div>
             </div>
 
