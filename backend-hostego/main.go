@@ -1,21 +1,22 @@
 package main
 
 import (
-	"log"
-
 	"backend-hostego/database"
 	"backend-hostego/routes"
+	"log"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"gorm.io/gorm"
 )
 
-// Global DB variable
 var db *gorm.DB
 
-func main() {
+// VAPID keys for Web Push Notifications (Generate your own keys)
+const publicKey = "BGQRMk6dwGjrQHY47G4g1gphFGBdK11REbNsz8qUkMq9XJVkLO9VWs3a72ntetjKO5PRFEyRYrWggs8VJefqr7A"
+const privateKey = "W8PauXVtgDPZ8RHYulzVXEFd8uEawUwlPx8xGzMXg4w"
 
+func main() {
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
@@ -26,8 +27,10 @@ func main() {
 		ExposeHeaders:    []string{"Authorization"},
 	}))
 
+	// Connect Database
 	database.ConnectDataBase()
 
+	// Setup All Routes
 	routes.AuthRoutes(app)
 	routes.ShopRoutes(app)
 	routes.ProductRoutes(app)
@@ -39,13 +42,13 @@ func main() {
 	routes.AddressRoutes(app)
 	routes.UserRoutes(app)
 	routes.UserRolesRoutes(app)
+	routes.WebPushNotificationRoutes(app)
 
-
-	
-	// Fetch all users
+	// Default Route
 	app.Get("/", func(c fiber.Ctx) error {
-		return c.JSON(fiber.Map{"message": "Welcome to the Hostego Backend Sever !"})
+		return c.JSON(fiber.Map{"message": "Welcome to the Hostego Backend Server!"})
 	})
 
+	// Start the server
 	log.Fatal(app.Listen("0.0.0.0:8000"))
 }
