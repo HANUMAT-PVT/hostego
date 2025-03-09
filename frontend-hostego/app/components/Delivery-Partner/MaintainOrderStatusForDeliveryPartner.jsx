@@ -6,6 +6,7 @@ import { transformOrder } from '../../utils/helper'
 import SliderStatusTracker from "./SliderStatusTracker"
 import StatusTimeLine from '../Orders/StatusTimeLine';
 import ConfirmationPopup from '../ConfirmationPopup';
+import { formatDate } from '../../utils/helper';
 
 export const ORDER_STATUSES = [
   {
@@ -94,20 +95,20 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
   const getNextStatus = (order) => {
     return ORDER_STATUSES[getStatusStep(order?.order_status) + 1];
   };
-
-
+ 
+  
   return (
     <AccordionSection title="Order Details" icon={Package} defaultOpen={true}>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-4">
         {/* Order Header - Always Visible */}
-        <div className="p-4 bg-gradient-to-r from-[var(--primary-color)] to-purple-600 text-white">
-          <div className="flex items-center justify-between">
+        <div className="p-4 bg-gradient-to-r from-[var(--primary-color)]   to-purple-600 text-white">
+          <div className="flex flex-col items-start gap-1">
             <span className="bg-white/20 px-3 py-1 rounded-full text-sm">
               Order #{activeOrder?.order_id?.slice(-6)}
             </span>
             <span className="text-sm flex items-center gap-1">
               <Clock size={14} />
-              {activeOrder?.created_at}
+              {formatDate(activeOrder?.created_at)}
             </span>
           </div>
         </div>
@@ -127,17 +128,17 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
         {/* Customer Section */}
         <AccordionSection title="Customer Details" icon={User} defaultOpen={false}>
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col items-start gap-2">
               <div>
                 <p className="text-sm text-gray-500">Customer Name</p>
-                <p className="font-medium">{activeOrder?.user?.first_name}</p>
+                <p className="font-medium">{activeOrder?.user?.first_name} {activeOrder?.user?.last_name}</p>
               </div>
               <button
                 onClick={() => window.location.href = `tel:${activeOrder?.user?.mobile_number}`}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary-color)] text-white font-medium hover:opacity-90 transition-opacity"
               >
                 <Phone size={16} />
-                Call Customer
+                Call {activeOrder?.user?.first_name}
               </button>
             </div>
             <div className="bg-gray-100 p-3 rounded-lg">
@@ -172,9 +173,10 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
                   />
                   <div className="flex-1">
                     <h4 className="font-medium">{product?.product_item?.product_name}</h4>
-                    <p className="text-sm text-gray-500">
-                      Qty: {product?.quantity}
+                    <p className="text-sm font-medium text-gray-500">
+                     ₹{product?.product_item?.food_price} ×  {product?.quantity}
                     </p>
+
                   </div>
                   <span className="font-medium">₹{product?.sub_total}</span>
                 </div>
