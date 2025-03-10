@@ -10,6 +10,8 @@ import StatusTimeLine from '../../components/Orders/StatusTimeLine'
 import { transformOrder } from '../../utils/helper'
 import { ORDER_STATUSES } from '../../components/Delivery-Partner/MaintainOrderStatusForDeliveryPartner'
 import { subscribeToNotifications } from '../../utils/webNotifications'
+import ConfirmationPopup from '@/app/components/ConfirmationPopup'
+
 const DeliveryPartnerSection = ({ order, isActiveOrder }) => {
     const [timeElapsed, setTimeElapsed] = useState('');
 
@@ -107,6 +109,8 @@ const OrderDetailsPage = () => {
     const { id } = useParams()
     const [order, setOrder] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [isConfirming, setIsConfirming] = useState(false)
+    const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false)
 
     const statusConfig = {
         pending: {
@@ -146,7 +150,12 @@ const OrderDetailsPage = () => {
             bgColor: 'bg-purple-50',
             label: 'On The Way'
         },
-
+        reached_door: {
+            icon: Check,
+            color: 'text-purple-500',
+            bgColor: 'bg-purple-50',
+            label: 'Reached Door'
+        },
         delivered: {
             icon: CheckCircle2,
             color: 'text-green-500',
@@ -191,6 +200,21 @@ const OrderDetailsPage = () => {
             console.error('Error fetching order:', error)
         } finally {
             setIsLoading(false)
+        }
+    }
+
+    const handleOrderDelivered = async () => {
+        try {
+            setIsConfirming(true)
+            await axiosClient.patch(`/api/order/${id}`, {
+                order_status: 'delivered'
+            })
+            await fetchOrder() // Refresh order data
+        } catch (error) {
+            console.error('Error confirming delivery:', error)
+        } finally {
+            setIsConfirming(false)
+            setIsConfirmationPopupOpen(false)
         }
     }
 
@@ -327,8 +351,52 @@ const OrderDetailsPage = () => {
             {/* Maintaining order status */}
             <div className="bg-white mx-2 mt-3 mb-4 rounded-xl p-4 shadow-sm">
                 <StatusTimeLine activeOrder={transformOrder(order)} ORDER_STATUSES={ORDER_STATUSES} />
+
+                {/* Confirmation Button - Only show when status is reached_door */}
+                {order?.order_status === 'reached_door' && (
+                    <div className="mt-4 space-y-3">
+                        <div className="bg-yellow-50 rounded-lg p-3 flex items-start gap-2">
+                            <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                            <p className="text-sm text-yellow-700">
+                                Please confirm only after receiving your order from the delivery partner.
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setIsConfirmationPopupOpen(true)}
+                            disabled={isConfirming}
+                            className={`w-full py-3 px-4 rounded-xl font-medium 
+                                ${isConfirming
+                                    ? 'bg-gray-100 text-gray-400'
+                                    : 'bg-[var(--primary-color)] text-white hover:bg-[var(--primary-color)]/90'
+                                } transition-all duration-200 flex items-center justify-center gap-2`}
+                        >
+                            {isConfirming ? (
+                                <>
+                                    <RefreshCcw className="w-5 h-5 animate-spin" />
+                                    <span>Confirming...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Check className="w-5 h-5" />
+                                    <span>Confirm Order Received</span>
+                                </>
+                            )}
+                        </button>
+                    </div>
+                )}
             </div>
 
+            {/* Confirmation Popup */}
+            <ConfirmationPopup
+                variant="info"
+                title="Confirm Order Delivery"
+                isOpen={isConfirmationPopupOpen}
+                message="Have you received your order from the delivery partner?"
+                onConfirm={handleOrderDelivered}
+                onCancel={() => setIsConfirmationPopupOpen(false)}
+                confirmText="Yes, I've Received It"
+                cancelText="No, Not Yet"
+            />
         </div>
     )
 }

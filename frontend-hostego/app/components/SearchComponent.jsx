@@ -1,11 +1,19 @@
 "use client"
 import { ArrowLeft, Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 const SearchComponent = ({ viewOnly, sendSearchValue }) => {
     const router = useRouter();
     const [value, setInputValue] = useState("");
+    const inputRef = useRef(null);
+
+    // Auto focus input when component mounts
+    useEffect(() => {
+        if (!viewOnly && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [viewOnly]);
 
     const handleInputChange = (e) => {
         const newValue = e.target.value;
@@ -24,7 +32,7 @@ const SearchComponent = ({ viewOnly, sendSearchValue }) => {
                 >
                     <Search className="text-gray-800 mr-2 text-bold" size={20} />
                     <span className="text-gray-600 text-sm">
-                       Search 'samosa'
+                        Search 'samosa'
                     </span>
                 </div>
             ) : (
@@ -35,6 +43,7 @@ const SearchComponent = ({ viewOnly, sendSearchValue }) => {
                         size={20}
                     />
                     <input
+                        ref={inputRef}
                         type="text"
                         value={value}
                         onChange={handleInputChange}

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import BackNavigationButton from "../components/BackNavigationButton";
-import { Info, Landmark, ShoppingBag, Clock, Upload, User, ChevronDown, Shield } from "lucide-react";
+import { Info, Landmark, ShoppingBag, Clock, Upload, User, ChevronDown, Shield, RefreshCw } from "lucide-react";
 import HostegoButton from "../components/HostegoButton"
 import { uploadToS3Bucket } from '../lib/aws'
 import axiosClient from "../utils/axiosClient"
@@ -110,6 +110,7 @@ const Page = () => {
     const [deliveryPartner, setDeliveryPartner] = useState({});
     const [formSubmitingLoading, setFormSubmitingLoading] = useState(false);
     const [deliveryPartnerEarnings, setDeliveryPartnerEarnings] = useState(0);
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     const [deliveryPartnerVerificationData, setDeliveryPartnerVerificationData] = useState({
         address: "",
@@ -159,7 +160,7 @@ const Page = () => {
 
 
     const updateOrderStatus = async (orderId, newStatus) => {
-      
+
         try {
             let { data } = await axiosClient.patch(`/api/order/${orderId}`, {
                 order_status: newStatus
@@ -227,7 +228,19 @@ const Page = () => {
         }
     }
 
-
+    const handleRefresh = async () => {
+        try {
+            setIsRefreshing(true);
+            await Promise.all([
+                fetchDeliveryPartnerOrders(),
+                fetchDeliveryPartnerEarnings()
+            ]);
+        } catch (error) {
+            console.error('Error refreshing data:', error);
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -273,30 +286,11 @@ const Page = () => {
             </div>
         );
     }
-   
+
 
     return (
-        <div className="bg-[var(--bg-page-color)]">
-            <div className="sticky top-0 z-30">
-                <BackNavigationButton title="Delivery Partner" />
-                {/* Online/Offline Toggle */}
-                {!!deliveryPartner?.verification_status && <div className="bg-white  px-4 py-4 rounded-md flex justify-between items-center shadow-md ">
-                    <div
-                        className={`relative w-24 h-8 rounded-full cursor-pointer transition flex items-center ${isOnline ? "bg-green-500" : "bg-gray-400"}`}
-                        onClick={() => updateDeliveryPartnerAvailabilityStatus(!isOnline)}
-                    >
-                        <span
-                            className={`absolute w-full text-center text-xs ${isOnline ? "-ml-3" : "ml-3"} font-bold text-white`}
-                        >
-                            {isOnline ? "ONLINE" : "OFFLINE"}
-                        </span>
-                        <div
-                            className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transition-transform ${isOnline ? "translate-x-[60px]" : "translate-x-0"}`}
-                        />
-                    </div>
-                    <Info color="var(--primary-color)" size={24} />
-                </div>}
-            </div>
+        <div className="min-h-screen bg-[var(--bg-page-color)]">
+            <BackNavigationButton title="Delivery Partner" />
 
             <div className="p-4 space-y-4">
                 {/* Verification Status */}
@@ -304,6 +298,39 @@ const Page = () => {
 
                 {/* Personal Information Accordion */}
                 <PersonalInfoAccordion deliveryPartner={deliveryPartner} />
+
+                {/* My Progress Section with Refresh Button */}
+                <div className="bg-white p-2 m-4 rounded-md mt-4">
+                    <div className="flex items-center justify-between border-b pb-2">
+                        <p className="text-gray-600 font-normal text-md">MY PROGRESS</p>
+                        <button
+                            onClick={handleRefresh}
+                            disabled={isRefreshing}
+                            className={`p-2 rounded-full ${isRefreshing ? 'bg-gray-100' : 'hover:bg-gray-100'} 
+                                transition-all duration-200 active:scale-95`}
+                        >
+                            <RefreshCw
+                                className={`w-5 h-5 text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`}
+                            />
+                        </button>
+                    </div>
+                    <div className="flex justify-between mt-3">
+                        <div className="flex flex-col items-center gap-1 px-4">
+                            <p className="font-semibold text-xl">₹ {deliveryPartnerEarnings?.summary?.total_earnings}</p>
+                            <div className="flex gap-2 items-center">
+                                <Landmark size={14} />
+                                <p className="text-xs">Total earnings</p>
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-center gap-1 px-4">
+                            <p className="font-semibold text-xl">{deliveryPartnerEarnings?.summary?.total_orders}</p>
+                            <div className="flex gap-2 items-center">
+                                <ShoppingBag size={14} />
+                                <p className="text-xs">Orders</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Document Upload Form - show only if not verified */}
                 {!deliveryPartner.documents?.upi_id && (
@@ -425,29 +452,8 @@ const Page = () => {
                     </div>
                 )}
 
-                {/* My Progress Section */}
-                <div className="bg-white p-2 m-4 rounded-md mt-4">
-                    <p className="text-gray-600 font-normal text-md border-b pb-2">MY PROGRESS</p>
-                    <div className="flex justify-between mt-3">
-                        <div className="flex flex-col items-center gap-1 px-4">
-                            <p className="font-semibold text-xl">₹ {deliveryPartnerEarnings?.summary?.total_earnings}</p>
-                            <div className="flex gap-2 items-center">
-                                <Landmark size={14} />
-                                <p className="text-xs">Total earnings</p>
-                            </div>
-                        </div>
-                        <div className="flex flex-col items-center gap-1 px-4">
-                            <p className="font-semibold text-xl">{deliveryPartnerEarnings?.summary?.total_orders}</p>
-                            <div className="flex gap-2 items-center">
-                                <ShoppingBag size={14} />
-                                <p className="text-xs">Orders</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Order History Section */}
-                <div className="mt-6 px-4 ">
+                {/* <div className="mt-6 px-4 ">
                     {deliveryPartnerEarnings?.earnings?.map((day, index) => (
                         <div key={index} className="mb-6 mt-6">
                             <p className="text-lg font-semibold mb-2">{day?.date}</p>
@@ -475,7 +481,7 @@ const Page = () => {
                             </div>
                         </div>
                     ))}
-                </div>
+                </div> */}
             </div>
 
             {deliveryPartnerOrders?.map((order) => (
