@@ -53,7 +53,7 @@ export const ORDER_STATUSES = [
   }
 ];
 
-const AccordionSection = ({ title, icon: Icon, children, defaultOpen = false }) => {
+const AccordionSection = ({ title, icon: Icon, children, defaultOpen = false, count, status }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
@@ -95,8 +95,11 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
   const getNextStatus = (order) => {
     return ORDER_STATUSES[getStatusStep(order?.order_status) + 1];
   };
- 
-  
+
+  const shouldShowSlider = (status) => {
+    return !['reached_door', 'delivered', 'cancelled'].includes(status?.toLowerCase());
+  };
+
   return (
     <AccordionSection title="Order Details" icon={Package} defaultOpen={true}>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-4">
@@ -151,6 +154,14 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
         {/* Order Status Section */}
         <AccordionSection title="Order Status" icon={Clock} defaultOpen={false}>
           <StatusTimeLine ORDER_STATUSES={ORDER_STATUSES} activeOrder={activeOrder} />
+          <div className="p-4 bg-gray-50 border-t">
+            {shouldShowSlider(activeOrder?.order_status) && (
+              <SliderStatusTracker
+                text={`Slide to ${ORDER_STATUSES[getStatusStep(activeOrder.order_status) + 1].label}`}
+                onConfirm={() => setIsConfirmationPopupOpen(true)}
+              />
+            )}
+          </div>
         </AccordionSection>
 
         {/* Order Items Section */}
@@ -174,7 +185,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
                   <div className="flex-1">
                     <h4 className="font-medium">{product?.product_item?.product_name}</h4>
                     <p className="text-sm font-medium text-gray-500">
-                     ₹{product?.product_item?.food_price} ×  {product?.quantity}
+                      ₹{product?.product_item?.food_price} ×  {product?.quantity}
                     </p>
 
                   </div>
@@ -190,18 +201,12 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
                 </div>
               )}
             </div>
+
           </AccordionSection>
         ))}
 
         {/* Bottom Actions */}
-        <div className="p-4 bg-gray-50 border-t">
-          {getStatusStep(activeOrder?.order_status) < ORDER_STATUSES.length - 1 && (
-            <SliderStatusTracker
-              text={`Slide to ${ORDER_STATUSES[getStatusStep(activeOrder.order_status) + 1].label}`}
-              onConfirm={() => setIsConfirmationPopupOpen(true)}
-            />
-          )}
-        </div>
+
 
         <ConfirmationPopup
           variant="info"

@@ -33,6 +33,12 @@ const OrderPreviewCard = ({ order }) => {
             bgColor: 'bg-[var(--primary-color)]/10',
             label: 'On the way'
         },
+        reached_door: {
+            icon: Check,
+            color: 'text-purple-500',
+            bgColor: 'bg-purple-50',
+            label: 'Reached Door'
+        },
         picked: {
             icon: Truck,
             color: 'text-purple-500',

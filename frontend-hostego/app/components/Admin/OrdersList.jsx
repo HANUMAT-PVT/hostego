@@ -53,7 +53,7 @@ const OrderCard = ({ order, onRefresh }) => {
 
     const handleStatusUpdate = async (newStatus) => {
         try {
-            if(newStatus=="cancelled"){
+            if (newStatus == "cancelled") {
                 setIsUpdating(true)
                 await axiosClient.post(`/api/payment/refund`, {
                     order_id: order?.order_id
@@ -104,6 +104,7 @@ const OrderCard = ({ order, onRefresh }) => {
                             <option value="picked">Picked</option>
                             <option value="reached">Reached </option>
                             <option value="on_the_way">On The Way</option>
+                            <option value="reached_door">Reached Door</option>
                             <option value="delivered">Delivered</option>
                             <option value="cancelled">Cancelled</option>
                         </select>
@@ -205,7 +206,7 @@ const OrderCard = ({ order, onRefresh }) => {
                                 <span className="text-gray-600">Items Total</span>
                                 <span>₹{order.order_items.reduce((acc, item) => acc + item.sub_total, 0)}</span>
                             </div>
-                            
+
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Delivery Fee</span>
                                 <span>₹{order.shipping_fee}</span>
