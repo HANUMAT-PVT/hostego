@@ -95,18 +95,42 @@ func InitiatePayment(c fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove cart items"})
 	}
 
+	// Create order items from cart items
 	var orderItems []models.CartItem
 	if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse order items"})
 	}
 
+	// Store each cart item as an order item
 	for _, item := range orderItems {
-		if err := tx.Model(&models.Product{}).Where("product_id = ?", item.ProductId).
+		orderItem := models.OrderItem{
+			OrderId:   order.OrderId,
+			ProductId: item.ProductId,
+			Quantity:  item.Quantity,
+			SubTotal:  item.SubTotal,
+		}
+
+		if err := tx.Create(&orderItem).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		}
+
+		// Update product stock
+		if err := tx.Model(&models.Product{}).
+			Where("product_id = ?", item.ProductId).
 			Update("stock_quantity", gorm.Expr("stock_quantity - ?", item.Quantity)).Error; err != nil {
 			tx.Rollback()
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 		}
+	}
+
+	// Mark cart items as deleted
+	if err := tx.Model(&models.CartItem{}).
+		Where("user_id = ?", userId).
+		Update("is_deleted", true).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update cart items"})
 	}
 
 	if err := tx.Commit().Error; err != nil {

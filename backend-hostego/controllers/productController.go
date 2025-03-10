@@ -40,7 +40,7 @@ func FetchProducts(c fiber.Ctx) error {
 
 	adminQuery := c.Query("admin")
 	if adminQuery == "true" {
-	}else{
+	} else {
 		dbQuery = dbQuery.Where("stock_quantity > ?", 0)
 	}
 	searchQuery := c.Query("search")
@@ -66,6 +66,9 @@ func FetchProducts(c fiber.Ctx) error {
 			"%"+searchQuery+"%",
 			"%"+searchQuery+"%",
 		)
+		database.DB.Create(&models.SearchQuery{
+			Query: searchQuery,
+		})
 	}
 
 	// ✅ Filtering by tags
