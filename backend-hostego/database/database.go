@@ -35,8 +35,8 @@ func ConnectDataBase() {
 	err = db.AutoMigrate(&models.Role{})
 	err = db.AutoMigrate(&models.UserRole{})
 	err = db.AutoMigrate(&models.DeliveryPartner{})
-
-	
+	err = db.AutoMigrate(&models.SearchQuery{})
+	err = db.AutoMigrate(&models.OrderItem{})
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
 	}
