@@ -144,11 +144,14 @@ func FetchAllWalletTransactions(c fiber.Ctx) error {
 
 	dbQuery := database.DB
 
-	status := c.Query("status")
-	// tagsQuery := c.Query("tags")
+	transactionStatus := c.Query("transaction_status")
+	transactionType := c.Query("transaction_type")
 
-	if status != "" {
-		dbQuery = dbQuery.Where("transaction_status = ?", status)
+	if transactionStatus != "" {
+		dbQuery = dbQuery.Where("transaction_status = ?", transactionStatus)
+	}
+	if transactionType != "" {
+		dbQuery = dbQuery.Where("transaction_type = ?", transactionType)
 	}
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
