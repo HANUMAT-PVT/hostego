@@ -39,10 +39,7 @@ func FetchProducts(c fiber.Ctx) error {
 	dbQuery := database.DB.Preload("Shop")
 
 	adminQuery := c.Query("admin")
-	if adminQuery == "true" {
-	} else {
-		dbQuery = dbQuery.Where("stock_quantity > ?", 0)
-	}
+
 	searchQuery := c.Query("search")
 	tagsQuery := c.Query("tags") // Expecting tags=food or tags=chicken
 	minPrice := c.Query("min_price")
@@ -86,6 +83,10 @@ func FetchProducts(c fiber.Ctx) error {
 		dbQuery = dbQuery.Where("availability = ?", availability)
 	}
 
+	if adminQuery == "true" {
+	} else {
+		dbQuery = dbQuery.Where("stock_quantity > ?", 0)
+	}
 	if sort == "desc" {
 		dbQuery = dbQuery.Order("food_price DESC")
 	} else {
