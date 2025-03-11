@@ -21,10 +21,12 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/github_deploy
           chmod 600 ~/.ssh/github_deploy
           ssh-keyscan -H 147.93.103.151 >> ~/.ssh/known_hosts
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/github_deploy
 
       - name: 🚀 Deploy to VPS
         run: |
-          ssh -i ~/.ssh/github_deploy -o StrictHostKeyChecking=no root@147.93.103.151 << 'EOF'
+          ssh -o StrictHostKeyChecking=no root@147.93.103.151 << 'EOF'
           cd /root
           ./deploy.sh
           EOF
