@@ -146,12 +146,30 @@ func FetchAllWalletTransactions(c fiber.Ctx) error {
 
 	transactionStatus := c.Query("transaction_status")
 	transactionType := c.Query("transaction_type")
+	
+	searchQuery := c.Query("search")
 
 	if transactionStatus != "" {
 		dbQuery = dbQuery.Where("transaction_status = ?", transactionStatus)
 	}
 	if transactionType != "" {
 		dbQuery = dbQuery.Where("transaction_type = ?", transactionType)
+	}
+	
+	if searchQuery != "" {
+		dbQuery = dbQuery.Where(
+			`amount::text LIKE ? OR 
+			user_id IN (
+				SELECT user_id FROM users 
+				WHERE mobile_number LIKE ? OR 
+				first_name ILIKE ? OR 
+				last_name ILIKE ?
+			)`,
+			"%"+searchQuery+"%",
+			"%"+searchQuery+"%",
+			"%"+searchQuery+"%",
+			"%"+searchQuery+"%",
+		)
 	}
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
