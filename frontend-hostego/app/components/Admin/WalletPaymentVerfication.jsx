@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { formatDate } from '@/app/utils/helper'
-import { CheckCircle2, Clock, IndianRupee, X, ExternalLink, Image as ImageIcon, RefreshCw, Filter } from 'lucide-react'
+import { CheckCircle2, Clock, IndianRupee, X, ExternalLink, Image as ImageIcon, RefreshCw, Filter, Search } from 'lucide-react'
 import axiosClient from '@/app/utils/axiosClient'
 import Image from 'next/image'
 import HostegoLoader from '../HostegoLoader'
@@ -176,23 +176,27 @@ const WalletPaymentVerfication = () => {
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [transactionType, setTransactionType] = useState('credit') // Default to credit
     const [transactionStatus, setTransactionStatus] = useState('pending') // Default to pending
+    const [searchTerm, setSearchTerm] = useState('')
+    
+    // Use array destructuring for useDebounce ho
 
     const fetchPaymentTransactions = async (showRefreshAnimation = false) => {
         try {
             showRefreshAnimation ? setIsRefreshing(true) : setIsLoading(true)
             const queryParams = new URLSearchParams()
 
-            // Only add status to query if it's not empty
+            // Only add params if they have values
             if (transactionStatus) {
                 queryParams.append('transaction_status', transactionStatus)
             }
-
-            // Only add transaction_type to query if it's not empty
             if (transactionType) {
                 queryParams.append('transaction_type', transactionType)
             }
+            if (searchTerm) {
+                queryParams.append('search', searchTerm)
+            }
 
-            const response = await axiosClient.get(`/api/wallet/all-transactions?${queryParams}`)
+            const response = await axiosClient.get(`/api/wallet/all-transactions?${queryParams}&search=${searchTerm}`)
             setPaymentTransactions(response?.data)
         } catch (error) {
             console.error('Error fetching transactions:', error)
@@ -202,68 +206,139 @@ const WalletPaymentVerfication = () => {
         }
     }
 
+    // Add debouncedSearchTerm to dependency array
     useEffect(() => {
         fetchPaymentTransactions()
-    }, [transactionType, transactionStatus]) // Refetch when filters change
+    }, [transactionType, transactionStatus, searchTerm])
 
     const handleRefresh = () => {
         fetchPaymentTransactions(true)
     }
 
-    if (isLoading) {
-        return <HostegoLoader />
-    }
+    
 
     return (
         <div className="max-w-2xl mx-auto p-4 space-y-4">
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold">Payment Verifications</h2>
-                <div className="flex items-center gap-4">
-                    {/* Transaction Type Filter */}
-                    <select
-                        value={transactionType}
-                        onChange={(e) => setTransactionType(e.target.value)}
-                        className="px-4 py-2 rounded-lg border-2 border-gray-100 
-                                focus:border-[var(--primary-color)] outline-none text-sm"
-                    >
-                        <option value="">All Types</option>
-                        <option value="credit">Credit</option>
-                        <option value="debit">Debit</option>
-                        <option value="refund">Refund</option>
-                    </select>
+            <div className="mb-6">
+                <h2 className="text-xl font-semibold mb-4">Payment Verifications</h2>
 
-                    {/* Status Filter */}
-                    <select
-                        value={transactionStatus}
-                        onChange={(e) => setTransactionStatus(e.target.value)}
-                        className="px-4 py-2 rounded-lg border-2 border-gray-100 
-                                focus:border-[var(--primary-color)] outline-none text-sm"
-                    >
-                        <option value="">All Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="success">Success</option>
-                        <option value="failed">Failed</option>
-                    </select>
+                {/* Search and Filters */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                    {/* Search Input */}
+                    <div className="flex-1 relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <input
+                            type="text"
+                            placeholder="Search by ID, name, phone or amount..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2 rounded-lg border-2 border-gray-100 
+                                    focus:border-[var(--primary-color)] outline-none"
+                        />
+                        {searchTerm && (
+                            <button
+                                onClick={() => setSearchTerm('')}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 
+                                         hover:text-gray-600 transition-colors"
+                            >
+                                <X size={16} />
+                            </button>
+                        )}
+                    </div>
 
-                    {/* Refresh Button */}
-                    <button
-                        onClick={handleRefresh}
-                        disabled={isRefreshing}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary-color)]/10 
-                                text-[var(--primary-color)] font-medium hover:bg-[var(--primary-color)]/20 
-                                transition-all duration-200 disabled:opacity-50"
-                    >
-                        <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                        {isRefreshing ? 'Refreshing...' : 'Refresh'}
-                    </button>
+                    {/* Filters */}
+                    <div className="flex items-center gap-3">
+                        {/* Transaction Type Filter */}
+                        <select
+                            value={transactionType}
+                            onChange={(e) => setTransactionType(e.target.value)}
+                            className="px-4 py-2 rounded-lg border-2 border-gray-100 
+                                    focus:border-[var(--primary-color)] outline-none text-sm"
+                        >
+                            <option value="">All Types</option>
+                            <option value="credit">Credit</option>
+                            <option value="debit">Debit</option>
+                            <option value="refund">Refund</option>
+                        </select>
+
+                        {/* Status Filter */}
+                        <select
+                            value={transactionStatus}
+                            onChange={(e) => setTransactionStatus(e.target.value)}
+                            className="px-4 py-2 rounded-lg border-2 border-gray-100 
+                                    focus:border-[var(--primary-color)] outline-none text-sm"
+                        >
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="success">Success</option>
+                            <option value="failed">Failed</option>
+                        </select>
+
+                        {/* Refresh Button */}
+                        <button
+                            onClick={handleRefresh}
+                            disabled={isRefreshing}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary-color)]/10 
+                                    text-[var(--primary-color)] font-medium hover:bg-[var(--primary-color)]/20 
+                                    transition-all duration-200 disabled:opacity-50"
+                        >
+                            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                            {isRefreshing ? 'Refreshing...' : 'Refresh'}
+                        </button>
+                    </div>
                 </div>
+
+                {/* Active Filters Display */}
+                {(searchTerm || transactionType || transactionStatus) && (
+                    <div className="flex flex-wrap gap-2 mt-4">
+                        {searchTerm && (
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm 
+                                         bg-[var(--primary-color)]/10 text-[var(--primary-color)]">
+                                <Search size={14} />
+                                {searchTerm}
+                                <button
+                                    onClick={() => setSearchTerm('')}
+                                    className="ml-1 hover:text-[var(--primary-color)]/70"
+                                >
+                                    <X size={14} />
+                                </button>
+                            </span>
+                        )}
+                        {transactionType && (
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm 
+                                         bg-blue-50 text-blue-600">
+                                <Filter size={14} />
+                                {transactionType}
+                                <button
+                                    onClick={() => setTransactionType('')}
+                                    className="ml-1 hover:text-blue-400"
+                                >
+                                    <X size={14} />
+                                </button>
+                            </span>
+                        )}
+                        {transactionStatus && (
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm 
+                                         bg-green-50 text-green-600">
+                                <Clock size={14} />
+                                {transactionStatus}
+                                <button
+                                    onClick={() => setTransactionStatus('')}
+                                    className="ml-1 hover:text-green-400"
+                                >
+                                    <X size={14} />
+                                </button>
+                            </span>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Results count */}
             <div className="text-sm text-gray-500 mb-4">
                 Found {paymentTransactions.length} transaction{paymentTransactions.length !== 1 ? 's' : ''}
             </div>
-
+            {isLoading && <HostegoLoader />}
             {isRefreshing ? (
                 <div className="flex items-center justify-center py-12">
                     <HostegoLoader />

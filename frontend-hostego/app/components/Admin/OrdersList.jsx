@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect, useCallback } from 'react'
-import { Package, User, MapPin, IndianRupee, Clock, ChevronDown, ChevronUp, Phone, CheckCircle2, AlertCircle, Search, Filter, RefreshCw, Bike } from 'lucide-react'
+import { Package, User, MapPin, IndianRupee, Clock, ChevronDown, ChevronUp, Phone, CheckCircle2, AlertCircle, Search, Filter, RefreshCw } from 'lucide-react'
 import { formatDate } from '@/app/utils/helper'
 import axiosClient from '@/app/utils/axiosClient'
 import HostegoLoader from '../HostegoLoader'
@@ -126,34 +126,19 @@ const OrderCard = ({ order, onRefresh }) => {
                             <p className="text-lg font-semibold">₹{order.final_order_value}</p>
                         </div>
                     </div>
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                                <Clock className="w-5 h-5 text-blue-600" />
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-600">Order Date</p>
-                                <p className="font-medium">{formatDate(order.created_at)}</p>
-                            </div>
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+                            <Clock className="w-5 h-5 text-blue-600" />
                         </div>
-                        {/* Show delivery time if order is delivered */}
-                        {order.order_status === 'delivered' && order.delivered_at && (
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
-                                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-600">Delivered At</p>
-                                    <p className="font-medium">{formatDate(order.delivered_at)}</p>
-                                </div>
-                            </div>
-                        )}
+                        <div>
+                            <p className="text-sm text-gray-600">Order Date</p>
+                            <p className="font-medium">{formatDate(order.created_at)}</p>
+                        </div>
                     </div>
                 </div>
 
                 {/* Customer & Delivery Info */}
                 <div className="space-y-4">
-                    {/* Customer Info */}
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
                             <User className="w-5 h-5 text-green-600" />
@@ -163,31 +148,10 @@ const OrderCard = ({ order, onRefresh }) => {
                             <p className="font-medium">{order.user.first_name} {order.user.last_name}</p>
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">Mobile Number</p>
+                            <p className="text-sm text-gray-600"> Mobile Number</p>
                             <p className="font-medium">{order.user.mobile_number}</p>
                         </div>
                     </div>
-
-                    {/* Delivery Partner Info - Only show if exists */}
-                    {order.delivery_partner && (
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                                <Bike className="w-5 h-5 text-blue-600" />
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-600">Delivery Partner</p>
-                                <p className="font-medium">
-                                    {order.delivery_partner.user.first_name} {order.delivery_partner.user.last_name}
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-600">Partner Phone</p>
-                                <p className="font-medium">{order.delivery_partner.user.mobile_number}</p>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Delivery Address */}
                     <div className="flex items-start gap-3">
                         <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center">
                             <MapPin className="w-5 h-5 text-orange-600" />
