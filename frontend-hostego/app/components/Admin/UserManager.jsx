@@ -322,7 +322,7 @@ const UserManager = () => {
             </div>
 
             {/* User List */}
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-y-auto max-h-[85vh]">
                 {loading ? (
                     // Loading Skeleton
                     [...Array(3)]?.map((_, i) => (

@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { Shield, User, MapPin, CheckCircle2, X, ExternalLink, Image as ImageIcon, RefreshCw, Phone, Mail, AlertCircle, MoreVertical } from 'lucide-react'
+import { Shield, User, MapPin, CheckCircle2, X, ExternalLink, Image as ImageIcon, RefreshCw, Phone, Mail, AlertCircle, MoreVertical, Search } from 'lucide-react'
 import axiosClient from '@/app/utils/axiosClient'
 import HostegoLoader from '../HostegoLoader'
 import HostegoButton from '../HostegoButton'
@@ -210,6 +210,7 @@ const DeliveryPartnerManagement = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [filter, setFilter] = useState('all')
+  const [searchQuery, setSearchQuery] = useState('')
 
   const fetchPartners = async (showRefreshAnimation = false) => {
     try {
@@ -228,24 +229,29 @@ const DeliveryPartnerManagement = () => {
     fetchPartners()
   }, [])
 
-  const handleStatusUpdate = async (partnerId, field, value) => {
-    try {
-      await axiosClient.patch(`/api/delivery-partner/${partnerId}`, {
-        [field]: value
-      })
-      // Refresh the list after update
-      fetchPartners()
-    } catch (error) {
-      console.error('Error updating partner status:', error)
-    }
-  }
-
   const filteredPartners = partners.filter(partner => {
-    if (filter === 'verified') return partner.verification_status === 1
-    if (filter === 'unverified') return partner.verification_status === 0
-    if (filter === 'active') return partner.account_status === 1
-    if (filter === 'inactive') return partner.account_status === 0
-    return true
+    // First apply status filters
+    const statusFilter = () => {
+      if (filter === 'verified') return partner.verification_status === 1
+      if (filter === 'unverified') return partner.verification_status === 0
+      if (filter === 'active') return partner.account_status === 1
+      if (filter === 'inactive') return partner.account_status === 0
+      return true
+    }
+
+    // Then apply search filter
+    const searchFilter = () => {
+      if (!searchQuery) return true
+      const query = searchQuery.toLowerCase()
+      return (
+        partner.delivery_partner_id?.toLowerCase().includes(query) ||
+        partner.user?.first_name?.toLowerCase().includes(query) ||
+        partner.user?.mobile_number?.includes(query) ||
+        partner.user?.email?.toLowerCase().includes(query)
+      )
+    }
+
+    return statusFilter() && searchFilter()
   })
 
   if (isLoading) return <HostegoLoader />
@@ -255,10 +261,22 @@ const DeliveryPartnerManagement = () => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold">Delivery Partners</h2>
         <div className="flex items-center gap-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="text"
+              placeholder="Search by name, ID, phone..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-64 pl-10 pr-4 py-2 rounded-lg border-2 border-gray-100 
+                       focus:border-[var(--primary-color)] outline-none transition-all"
+            />
+          </div>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg border-2 border-gray-100 focus:border-[var(--primary-color)] outline-none"
+            className="px-4 py-2 rounded-lg border-2 border-gray-100 
+                     focus:border-[var(--primary-color)] outline-none"
           >
             <option value="all">All Partners</option>
             <option value="verified">Verified</option>
@@ -279,7 +297,27 @@ const DeliveryPartnerManagement = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
+      {/* Results count */}
+      <div className="mb-4 text-sm text-gray-500">
+        Found {filteredPartners.length} delivery partner{filteredPartners.length !== 1 ? 's' : ''}
+      </div>
+
+      {/* No results message */}
+      {filteredPartners.length === 0 && (
+        <div className="text-center py-8 bg-white rounded-xl">
+          <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-gray-100">
+            <User className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-1">No delivery partners found</h3>
+          <p className="text-gray-500">
+            {searchQuery
+              ? "Try adjusting your search or filters"
+              : "No delivery partners match the selected filters"}
+          </p>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-6 overflow-y-auto max-h-[85vh]">
         {filteredPartners.map(partner => (
           <DeliveryPartnerProfileCard
             key={partner?.delivery_partner_id}

@@ -471,8 +471,8 @@ const ProductsManager = () => {
             )}
 
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
+                <div className="overflow-y-auto overflow-x-auto max-h-[55vh] max-w-[85vw] ">
+                    <table className="w-full  ">
                         <thead className="bg-gray-50">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
@@ -488,7 +488,7 @@ const ProductsManager = () => {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="divide-y divide-gray-200 ">
                             {filteredProducts.map((product) => (
                                 <tr key={product.product_id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4">
@@ -510,7 +510,7 @@ const ProductsManager = () => {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.food_category.is_veg ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                        <span className={`inline-flex text-nowrap items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.food_category.is_veg ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                             }`}>
                                             {product?.food_category?.is_veg ? 'Veg' : 'Non-veg'}
                                         </span>
@@ -519,13 +519,13 @@ const ProductsManager = () => {
                                         ₹{product?.food_price}
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-500">
-                                        {product?.availability ? 'Available' : 'Out of Stock'}
+                                        {product?.weight}
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-500">
                                         {product?.stock_quantity || 0}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product?.availability ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                        <span className={`inline-flex text-nowrap items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product?.availability ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                             }`}>
                                             {product?.availability ? 'Available' : 'Out of Stock'}
                                         </span>
