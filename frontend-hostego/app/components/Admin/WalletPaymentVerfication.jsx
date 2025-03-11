@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { formatDate } from '@/app/utils/helper'
-import { CheckCircle2, Clock, IndianRupee, X, ExternalLink, Image as ImageIcon, RefreshCw } from 'lucide-react'
+import { CheckCircle2, Clock, IndianRupee, X, ExternalLink, Image as ImageIcon, RefreshCw, Filter } from 'lucide-react'
 import axiosClient from '@/app/utils/axiosClient'
 import Image from 'next/image'
 import HostegoLoader from '../HostegoLoader'
@@ -62,7 +62,11 @@ const PaymentCard = ({ transaction, onVerify, onReject }) => {
                     <span className={`px-3 py-1 rounded-full text-sm 
                         ${transaction?.transaction_status === 'pending'
                             ? 'bg-orange-50 text-orange-600'
-                            : 'bg-green-50 text-green-600'
+                            : transaction?.transaction_status === 'success'
+                                ? 'bg-green-50 text-green-600'
+                                : transaction?.transaction_status === 'failed'
+                                    ? 'bg-red-50 text-red-600'
+                                    : 'bg-gray-50 text-gray-600'
                         }`}>
                         {transaction?.transaction_status?.toUpperCase()}
                     </span>
@@ -170,11 +174,25 @@ const WalletPaymentVerfication = () => {
     const [paymentTransactions, setPaymentTransactions] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [isRefreshing, setIsRefreshing] = useState(false)
+    const [transactionType, setTransactionType] = useState('credit') // Default to credit
+    const [transactionStatus, setTransactionStatus] = useState('pending') // Default to pending
 
     const fetchPaymentTransactions = async (showRefreshAnimation = false) => {
         try {
             showRefreshAnimation ? setIsRefreshing(true) : setIsLoading(true)
-            const response = await axiosClient.get('/api/wallet/all-transactions?status=pending')
+            const queryParams = new URLSearchParams()
+
+            // Only add status to query if it's not empty
+            if (transactionStatus) {
+                queryParams.append('transaction_status', transactionStatus)
+            }
+
+            // Only add transaction_type to query if it's not empty
+            if (transactionType) {
+                queryParams.append('transaction_type', transactionType)
+            }
+
+            const response = await axiosClient.get(`/api/wallet/all-transactions?${queryParams}`)
             setPaymentTransactions(response?.data)
         } catch (error) {
             console.error('Error fetching transactions:', error)
@@ -186,7 +204,7 @@ const WalletPaymentVerfication = () => {
 
     useEffect(() => {
         fetchPaymentTransactions()
-    }, [])
+    }, [transactionType, transactionStatus]) // Refetch when filters change
 
     const handleRefresh = () => {
         fetchPaymentTransactions(true)
@@ -200,16 +218,50 @@ const WalletPaymentVerfication = () => {
         <div className="max-w-2xl mx-auto p-4 space-y-4">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold">Payment Verifications</h2>
-                <button
-                    onClick={handleRefresh}
-                    disabled={isRefreshing}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary-color)]/10 
-                             text-[var(--primary-color)] font-medium hover:bg-[var(--primary-color)]/20 
-                             transition-all duration-200 disabled:opacity-50"
-                >
-                    <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                    {isRefreshing ? 'Refreshing...' : 'Refresh'}
-                </button>
+                <div className="flex items-center gap-4">
+                    {/* Transaction Type Filter */}
+                    <select
+                        value={transactionType}
+                        onChange={(e) => setTransactionType(e.target.value)}
+                        className="px-4 py-2 rounded-lg border-2 border-gray-100 
+                                focus:border-[var(--primary-color)] outline-none text-sm"
+                    >
+                        <option value="">All Types</option>
+                        <option value="credit">Credit</option>
+                        <option value="debit">Debit</option>
+                        <option value="refund">Refund</option>
+                    </select>
+
+                    {/* Status Filter */}
+                    <select
+                        value={transactionStatus}
+                        onChange={(e) => setTransactionStatus(e.target.value)}
+                        className="px-4 py-2 rounded-lg border-2 border-gray-100 
+                                focus:border-[var(--primary-color)] outline-none text-sm"
+                    >
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="success">Success</option>
+                        <option value="failed">Failed</option>
+                    </select>
+
+                    {/* Refresh Button */}
+                    <button
+                        onClick={handleRefresh}
+                        disabled={isRefreshing}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary-color)]/10 
+                                text-[var(--primary-color)] font-medium hover:bg-[var(--primary-color)]/20 
+                                transition-all duration-200 disabled:opacity-50"
+                    >
+                        <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                        {isRefreshing ? 'Refreshing...' : 'Refresh'}
+                    </button>
+                </div>
+            </div>
+
+            {/* Results count */}
+            <div className="text-sm text-gray-500 mb-4">
+                Found {paymentTransactions.length} transaction{paymentTransactions.length !== 1 ? 's' : ''}
             </div>
 
             {isRefreshing ? (
@@ -223,12 +275,13 @@ const WalletPaymentVerfication = () => {
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">No Transactions</h3>
                     <p className="text-gray-600 max-w-sm mx-auto">
-                        There are no payment transactions to verify at the moment.
-                        New transactions will appear here when users add money to their wallet.
+                        {status || transactionType
+                            ? "No transactions match the selected filters."
+                            : "There are no payment transactions to verify at the moment."}
                     </p>
                 </div>
             ) : (
-                <div className="space-y-4">
+                <div className="space-y-4 overflow-y-auto max-h-[85vh]">
                     {paymentTransactions.map(transaction => (
                         <PaymentCard
                             key={transaction?.transaction_id}

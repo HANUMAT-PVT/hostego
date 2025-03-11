@@ -1,11 +1,11 @@
 'use client'
 import React, { useState, useEffect, useCallback } from 'react'
-import { Package, User, MapPin, IndianRupee, Clock, ChevronDown, ChevronUp, Phone, CheckCircle2, AlertCircle, Search, Filter, RefreshCw } from 'lucide-react'
+import { Package, User, MapPin, IndianRupee, Clock, ChevronDown, ChevronUp, Phone, CheckCircle2, AlertCircle, Search, Filter, RefreshCw, Bike } from 'lucide-react'
 import { formatDate } from '@/app/utils/helper'
 import axiosClient from '@/app/utils/axiosClient'
 import HostegoLoader from '../HostegoLoader'
 import debounce from 'lodash/debounce'
-
+import ConfirmationPopup from '../ConfirmationPopup'
 const OrderStatusBadge = ({ status }) => {
 
     const statusConfig = {
@@ -50,6 +50,7 @@ const OrderCard = ({ order, onRefresh }) => {
     const [isExpanded, setIsExpanded] = useState(false)
     const [isUpdating, setIsUpdating] = useState(false)
     const [selectedStatus, setSelectedStatus] = useState(order.order_status)
+    const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false)
 
     const handleStatusUpdate = async (newStatus) => {
         try {
@@ -90,7 +91,7 @@ const OrderCard = ({ order, onRefresh }) => {
                             value={selectedStatus}
                             onChange={(e) => {
                                 setSelectedStatus(e.target.value)
-                                handleStatusUpdate(e.target.value)
+                                setIsConfirmationPopupOpen(true)
                             }}
                             disabled={isUpdating}
                             className="ml-2 px-3 py-1.5 rounded-lg border-2 border-white/20 
@@ -98,14 +99,14 @@ const OrderCard = ({ order, onRefresh }) => {
                                      focus:outline-none focus:border-white/40
                                      disabled:opacity-50"
                         >
-                            <option value="pending">Pending</option>
+                            {/* <option value="pending">Pending</option> */}
                             <option value="placed">Placed</option>
-                            <option value="assigned">Assigned</option>
-                            <option value="picked">Picked</option>
-                            <option value="reached">Reached </option>
-                            <option value="on_the_way">On The Way</option>
-                            <option value="reached_door">Reached Door</option>
-                            <option value="delivered">Delivered</option>
+                            {/* <option value="assigned">Assigned</option> */}
+                            {/* <option value="picked">Picked</option> */}
+                            {/* <option value="reached">Reached </option> */}
+                            {/* <option value="on_the_way">On The Way</option> */}
+                            {/* <option value="reached_door">Reached Door</option> */}
+                            {/* <option value="delivered">Delivered</option> */}
                             <option value="cancelled">Cancelled</option>
                         </select>
                     </div>
@@ -125,19 +126,34 @@ const OrderCard = ({ order, onRefresh }) => {
                             <p className="text-lg font-semibold">₹{order.final_order_value}</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                            <Clock className="w-5 h-5 text-blue-600" />
+                    <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+                                <Clock className="w-5 h-5 text-blue-600" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-600">Order Date</p>
+                                <p className="font-medium">{formatDate(order.created_at)}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-sm text-gray-600">Order Date</p>
-                            <p className="font-medium">{formatDate(order.created_at)}</p>
-                        </div>
+                        {/* Show delivery time if order is delivered */}
+                        {order.order_status === 'delivered' && order.delivered_at && (
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
+                                    <CheckCircle2 className="w-5 h-5 text-green-600" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-600">Delivered At</p>
+                                    <p className="font-medium">{formatDate(order.delivered_at)}</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 {/* Customer & Delivery Info */}
                 <div className="space-y-4">
+                    {/* Customer Info */}
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
                             <User className="w-5 h-5 text-green-600" />
@@ -147,10 +163,31 @@ const OrderCard = ({ order, onRefresh }) => {
                             <p className="font-medium">{order.user.first_name} {order.user.last_name}</p>
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600"> Mobile Number</p>
+                            <p className="text-sm text-gray-600">Mobile Number</p>
                             <p className="font-medium">{order.user.mobile_number}</p>
                         </div>
                     </div>
+
+                    {/* Delivery Partner Info - Only show if exists */}
+                    {order.delivery_partner && (
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+                                <Bike className="w-5 h-5 text-blue-600" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-600">Delivery Partner</p>
+                                <p className="font-medium">
+                                    {order.delivery_partner.user.first_name} {order.delivery_partner.user.last_name}
+                                </p>
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-600">Partner Phone</p>
+                                <p className="font-medium">{order.delivery_partner.user.mobile_number}</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Delivery Address */}
                     <div className="flex items-start gap-3">
                         <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center">
                             <MapPin className="w-5 h-5 text-orange-600" />
@@ -219,6 +256,17 @@ const OrderCard = ({ order, onRefresh }) => {
                     </div>
                 )}
             </div>
+            <ConfirmationPopup
+                variant="info"
+                title="Confirm Order Status"
+                isOpen={isConfirmationPopupOpen}
+                message="Are you sure you want to update the order status?"
+                onConfirm={() => {
+                    handleStatusUpdate(selectedStatus)
+                    setIsConfirmationPopupOpen(false);
+                }}
+                onCancel={() => setIsConfirmationPopupOpen(false)}
+            />
         </div>
     )
 }
@@ -267,18 +315,8 @@ const OrdersList = () => {
         }
     }, [debouncedSearch])
 
-    if (isLoading) {
-        return <HostegoLoader />
-    }
 
-    const filteredOrders = orders
-        .filter(order => {
-            const matchesSearch = order?.order_id.toLowerCase()?.includes(debouncedSearchTerm.toLowerCase()) ||
-                order.user.mobile_number.includes(debouncedSearchTerm)
-            const matchesStatus = statusFilter === 'all' || order.order_status === statusFilter
-            return matchesSearch && matchesStatus
-        })
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+
 
     return (
         <div className="max-w-4xl mx-auto p-4">
@@ -315,39 +353,38 @@ const OrdersList = () => {
                         onChange={(e) => setStatusFilter(e.target.value)}
                         className="px-4 py-2 rounded-lg border-2 border-gray-100 focus:border-[var(--primary-color)] outline-none"
                     >
-                        <option value="all">All Orders</option>
+                        <option value="">All Orders</option>
                         <option value="pending">Pending</option>
                         <option value="placed">Placed</option>
                         <option value="assigned">Assigned</option>
-                        <option value="preparing">Preparing</option>
-                        <option value="out_for_delivery">Out for Delivery</option>
+                        <option value="reached">Reached Shop</option>
+                        <option value="on_the_way">On The Way</option>
+                        <option value="reached_door">Reached Door</option>
                         <option value="delivered">Delivered</option>
                         <option value="cancelled">Cancelled</option>
                     </select>
                 </div>
             </div>
+            {isLoading && <HostegoLoader />}
 
             {/* Orders List */}
-            <div className="space-y-4">
-                {filteredOrders.length === 0 ? (
-                    <div className="text-center py-12 bg-white rounded-xl">
-                        <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                        <h3 className="text-lg font-semibold text-gray-800 mb-2">No Orders Found</h3>
-                        <p className="text-gray-600">
-                            {searchTerm || statusFilter !== 'all'
-                                ? 'Try adjusting your filters'
-                                : 'There are no orders to display'}
-                        </p>
-                    </div>
-                ) : (
-                    filteredOrders.map(order => (
-                        <OrderCard
-                            key={order.order_id}
-                            order={order}
-                            onRefresh={fetchOrders}
-                        />
-                    ))
-                )}
+            <div className="space-y-4 overflow-y-auto max-h-[85vh]">
+                {orders?.length > 0 ? orders?.map(order => (
+                    <OrderCard
+                        key={order.order_id}
+                        order={order}
+                        onRefresh={fetchOrders}
+                    />
+                )) : <div className="text-center py-12 bg-white rounded-xl">
+                    <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">No Orders Found</h3>
+                    <p className="text-gray-600">
+                        {searchTerm
+                            ? 'Try adjusting your filters'
+                            : 'There are no orders to display'}
+                    </p>
+
+                </div>}
             </div>
         </div>
     )
