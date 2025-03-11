@@ -19,8 +19,10 @@ jobs:
         chmod 600 private_key
 
     - name: Deploy to VPS
+      env:
+        HOST: ${{ secrets.VPS_HOST }}
       run: |
-        ssh -i private_key -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} << 'EOF'
+        ssh -i private_key -o StrictHostKeyChecking=no root@$HOST << 'EOF'
           cd /root
           ./deploy.sh
         EOF
