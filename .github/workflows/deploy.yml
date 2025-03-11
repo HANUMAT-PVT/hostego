@@ -1,4 +1,4 @@
-name: Deploy to VPS
+name: 🚀 Deploy to VPS
 
 on:
   push:
@@ -10,19 +10,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Setup SSH Key
-      run: |
-        echo "${{ secrets.VPS_SSH_KEY }}" > private_key
-        chmod 600 private_key
+      - name: ✅ Setup SSH Key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/github_deploy
+          chmod 600 ~/.ssh/github_deploy
+          ssh-keyscan -H 147.93.103.151 >> ~/.ssh/known_hosts
 
-    - name: Deploy to VPS
-      env:
-        HOST: ${{ secrets.VPS_HOST }}
-      run: |
-        ssh -i private_key -o StrictHostKeyChecking=no root@$HOST << 'EOF'
+      - name: 🚀 Deploy to VPS
+        run: |
+          ssh -i ~/.ssh/github_deploy -o StrictHostKeyChecking=no root@147.93.103.151 << 'EOF'
           cd /root
           ./deploy.sh
-        EOF
+          EOF
