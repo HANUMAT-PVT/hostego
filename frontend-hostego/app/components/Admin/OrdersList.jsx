@@ -54,6 +54,10 @@ const OrderCard = ({ order, onRefresh }) => {
 
     const handleStatusUpdate = async (newStatus) => {
         try {
+            if (newStatus == "") {
+
+                return
+            }
             if (newStatus == "cancelled") {
                 setIsUpdating(true)
                 await axiosClient.post(`/api/payment/refund`, {
@@ -66,6 +70,7 @@ const OrderCard = ({ order, onRefresh }) => {
                 order_status: newStatus,
                 delivery_partner_id: "" // Reset delivery partner ID
             })
+            setSelectedStatus("")
             onRefresh(true) // Refresh the list after update
         } catch (error) {
             console.error('Error updating order status:', error)
@@ -75,18 +80,21 @@ const OrderCard = ({ order, onRefresh }) => {
     }
 
     return (
-        <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-200 hover:shadow-md">
-            {/* Order Header */}
-            <div className="p-4 border-b bg-gradient-to-r from-[var(--primary-color)] to-purple-600">
+        <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-200">
+            {/* Order Header - Improved contrast and spacing */}
+            <div className="p-4 bg-gradient-to-r from-[var(--primary-color)] to-purple-600">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <Package className="w-5 h-5 text-white" />
-                        <span className="text-white font-medium">
-                            #{order.order_id.slice(0, 8)}
-                        </span>
+                    <div className="flex items-center gap-3">
+                        <div className="bg-white/10 p-2 rounded-lg">
+                            <Package className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                            <span className="text-white/70 text-sm">Order ID</span>
+                            <p className="text-white font-medium">#{order?.order_id?.slice(0, 8)}</p>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <OrderStatusBadge status={order.order_status} />
+                    <div className="flex items-center gap-3">
+                        <OrderStatusBadge status={order?.order_status} />
                         <select
                             value={selectedStatus}
                             onChange={(e) => {
@@ -94,67 +102,73 @@ const OrderCard = ({ order, onRefresh }) => {
                                 setIsConfirmationPopupOpen(true)
                             }}
                             disabled={isUpdating}
-                            className="ml-2 px-3 py-1.5 rounded-lg border-2 border-white/20 
+                            className="px-3 py-2 rounded-lg border-2 border-white/20 
                                      bg-white/10 text-white text-sm font-medium
-                                     focus:outline-none focus:border-white/40
-                                     disabled:opacity-50"
+                                     focus:outline-none focus:ring-2 focus:ring-white/40
+                                     disabled:opacity-50 cursor-pointer"
                         >
-                            {/* <option value="pending">Pending</option> */}
+                            <option value="">Update Status</option>
                             <option value="placed">Placed</option>
-                            {/* <option value="assigned">Assigned</option> */}
-                            {/* <option value="picked">Picked</option> */}
-                            {/* <option value="reached">Reached </option> */}
-                            {/* <option value="on_the_way">On The Way</option> */}
-                            {/* <option value="reached_door">Reached Door</option> */}
-                            {/* <option value="delivered">Delivered</option> */}
                             <option value="cancelled">Cancelled</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            {/* Order Content */}
             <div className="p-4">
-                {/* Order Summary */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[var(--primary-color)]/10 flex items-center justify-center">
-                            <IndianRupee className="w-5 h-5 text-[var(--primary-color)]" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-600">Order Value</p>
-                            <p className="text-lg font-semibold">₹{order.final_order_value}</p>
-                        </div>
+                {/* Quick Actions - New section */}
+                <div className="flex gap-3 mb-6">
+                    <button
+                        onClick={() => window.location.href = `tel:${order?.user?.mobile_number}`}
+                        className="flex-1 py-3 px-4 rounded-xl bg-[var(--primary-color)]/5 
+                                 hover:bg-[var(--primary-color)]/10 text-[var(--primary-color)]
+                                 font-medium flex items-center justify-center gap-2 transition-all"
+                    >
+                        <Phone className="w-4 h-4" />
+                        Call Customer
+                    </button>
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="flex-1 py-3 px-4 rounded-xl bg-gray-50 hover:bg-gray-100
+                                 text-gray-700 font-medium flex items-center justify-center gap-2
+                                 transition-all"
+                    >
+                        {isExpanded ? 'Hide Details' : 'View Details'}
+                    </button>
+                </div>
+
+                {/* Order Summary Cards - Improved layout */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="p-4 rounded-xl bg-[var(--primary-color)]/5 space-y-1">
+                        <p className="text-sm text-gray-600">Total Amount</p>
+                        <p className="text-2xl font-semibold text-[var(--primary-color)]">
+                            ₹{order.final_order_value}
+                        </p>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                            <Clock className="w-5 h-5 text-blue-600" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-600">Order Date</p>
-                            <p className="font-medium">{formatDate(order.created_at)}</p>
-                        </div>
+                    <div className="p-4 rounded-xl bg-blue-50 space-y-1">
+                        <p className="text-sm text-gray-600">Delivery Time</p>
+                        <p className="text-lg font-medium text-blue-700">
+                            {formatDate(order.created_at)}
+                        </p>
                     </div>
                 </div>
 
-                {/* Customer & Delivery Info */}
-                <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
-                            <User className="w-5 h-5 text-green-600" />
+                {/* Delivery Info - Better organized */}
+                <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-200">
+                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
+                            <User className="w-6 h-6 text-[var(--primary-color)]" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">Customer Name</p>
-                            <p className="font-medium">{order.user.first_name} {order.user.last_name}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-600"> Mobile Number</p>
-                            <p className="font-medium">{order.user.mobile_number}</p>
+                            <p className="text-sm text-gray-600">Customer</p>
+                            <p className="font-medium text-lg">{order.user.first_name} {order.user.last_name}</p>
+                            <p className="text-sm text-gray-600">{order.user.mobile_number}</p>
                         </div>
                     </div>
+
                     <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center">
-                            <MapPin className="w-5 h-5 text-orange-600" />
+                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
+                            <MapPin className="w-6 h-6 text-orange-600" />
                         </div>
                         <div>
                             <p className="text-sm text-gray-600">Delivery Address</p>
@@ -163,73 +177,63 @@ const OrderCard = ({ order, onRefresh }) => {
                     </div>
                 </div>
 
-                {/* Expand/Collapse Button */}
-                <button
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="w-full mt-4 flex items-center justify-center gap-2 py-2 text-[var(--primary-color)] hover:bg-[var(--primary-color)]/5 rounded-lg transition-colors"
-                >
-                    {isExpanded ? (
-                        <>
-                            <ChevronUp className="w-4 h-4" />
-                            Show Less
-                        </>
-                    ) : (
-                        <>
-                            <ChevronDown className="w-4 h-4" />
-                            View Items
-                        </>
-                    )}
-                </button>
-
-                {/* Order Items */}
+                {/* Order Items - Collapsible section with improved visibility */}
                 {isExpanded && (
-                    <div className="mt-4 pt-4 border-t space-y-3">
+                    <div className="space-y-4 animate-fade-in">
+                        <h3 className="font-medium text-gray-900 mb-3">Order Items</h3>
                         {order.order_items.map((item, index) => (
-                            <div key={index} className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                            <div key={index} className="flex items-center gap-4 bg-gray-50 p-3 rounded-xl">
                                 <img
                                     src={item.product_item.product_img_url}
                                     alt={item.product_item.product_name}
-                                    className="w-12 h-12 rounded-lg object-cover"
+                                    className="w-16 h-16 rounded-xl object-cover"
                                 />
                                 <div className="flex-1">
-                                    <p className="font-medium">{item.product_item.product_name}</p>
-                                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                                        <span>{item.quantity} × ₹{item.product_item.food_price}</span>
-                                        <span className="text-[var(--primary-color)]">₹{item.sub_total}</span>
+                                    <p className="font-medium text-gray-900">{item.product_item.product_name}</p>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <span className="text-sm text-gray-600">
+                                            {item.quantity} × ₹{item.product_item.food_price}
+                                        </span>
+                                        <span className="text-sm font-medium text-[var(--primary-color)]">
+                                            ₹{item.sub_total}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         ))}
 
-                        {/* Order Summary */}
-                        <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+                        {/* Order Summary - Clear breakdown */}
+                        <div className="bg-gray-50 p-4 rounded-xl space-y-3 mt-4">
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Items Total</span>
-                                <span>₹{order.order_items.reduce((acc, item) => acc + item.sub_total, 0)}</span>
+                                <span className="font-medium">₹{order.order_items.reduce((acc, item) => acc + item.sub_total, 0)}</span>
                             </div>
-
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Delivery Fee</span>
-                                <span>₹{order.shipping_fee}</span>
+                                <span className="font-medium">₹{order.shipping_fee}</span>
                             </div>
-                            <div className="flex justify-between font-medium pt-2 border-t">
-                                <span>Total Amount</span>
-                                <span>₹{order.final_order_value}</span>
+                            <div className="flex justify-between font-medium pt-3 border-t">
+                                <span className="text-gray-900">Total Amount</span>
+                                <span className="text-[var(--primary-color)]">₹{order.final_order_value}</span>
                             </div>
                         </div>
                     </div>
                 )}
             </div>
+
             <ConfirmationPopup
                 variant="info"
-                title="Confirm Order Status"
+                title={`Confirm Order ${selectedStatus}`}
                 isOpen={isConfirmationPopupOpen}
-                message="Are you sure you want to update the order status?"
+                message={`Are you sure you want to update the order status to ${selectedStatus}?`}
                 onConfirm={() => {
                     handleStatusUpdate(selectedStatus)
-                    setIsConfirmationPopupOpen(false);
+                    setIsConfirmationPopupOpen(false)
                 }}
-                onCancel={() => setIsConfirmationPopupOpen(false)}
+                onCancel={() => {
+                    setIsConfirmationPopupOpen(false)
+                    setSelectedStatus("")
+                }}
             />
         </div>
     )

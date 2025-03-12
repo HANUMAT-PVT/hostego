@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Phone, Navigation, Clock, Check, ChevronDown, ChevronUp, ShoppingBag, ArrowRight, IndianRupee, User, Package } from 'lucide-react';
+import { Phone, Navigation, Clock, Check, ChevronDown, ChevronUp, ShoppingBag, ArrowRight, IndianRupee, User, Package, MapPin, AlertCircle } from 'lucide-react';
 import { transformOrder } from '../../utils/helper'
 import SliderStatusTracker from "./SliderStatusTracker"
 import StatusTimeLine from '../Orders/StatusTimeLine';
 import ConfirmationPopup from '../ConfirmationPopup';
 import { formatDate } from '../../utils/helper';
+import axiosClient from '../../utils/axiosClient';
 
 export const ORDER_STATUSES = [
   {
@@ -53,25 +54,39 @@ export const ORDER_STATUSES = [
   }
 ];
 
-const AccordionSection = ({ title, icon: Icon, children, defaultOpen = false, count, status }) => {
+const AccordionSection = ({ title, icon: Icon, children, defaultOpen = false, count, badge }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border-b last:border-b-0">
+    <div className="bg-white">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50"
+        className="w-full px-4 py-4 flex items-center justify-between hover:bg-gray-50/50 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[var(--primary-color)]/10 rounded-lg flex items-center justify-center">
-            <Icon className="w-4 h-4 text-[var(--primary-color)]" />
+          <div className="w-10 h-10 bg-[var(--primary-color)]/10 rounded-xl flex items-center justify-center">
+            <Icon className="w-5 h-5 text-[var(--primary-color)]" />
           </div>
-          <span className="font-medium text-gray-900">{title}</span>
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-gray-900">{title}</span>
+            {count && (
+              <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-sm">
+                {count}
+              </span>
+            )}
+            {badge && (
+              <span className="px-2 py-0.5 rounded-full bg-[var(--primary-color)]/10 text-[var(--primary-color)] text-sm font-medium">
+                {badge}
+              </span>
+            )}
+          </div>
         </div>
-        <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown
+          className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        />
       </button>
       {isOpen && (
-        <div className="p-4 bg-gray-50 animate-fade-in">
+        <div className="p-4 animate-fade-in">
           {children}
         </div>
       )}
@@ -82,10 +97,16 @@ const AccordionSection = ({ title, icon: Icon, children, defaultOpen = false, co
 const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) => {
   const [activeOrder, setActiveOrder] = useState(transformOrder(order));
   const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setActiveOrder(transformOrder(order))
   }, [order])
+
+  // Add status filter options
+  
 
   const getStatusStep = (status) => {
     const index = ORDER_STATUSES.findIndex(s => s.id === status);
@@ -101,60 +122,70 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
   };
 
   return (
-    <AccordionSection title="Order Details" icon={Package} defaultOpen={true}>
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-4">
-        {/* Order Header - Always Visible */}
-        <div className="p-4 bg-gradient-to-r from-[var(--primary-color)]   to-purple-600 text-white">
-          <div className="flex flex-col items-start gap-1">
-            <span className="bg-white/20 px-3 py-1 rounded-full text-sm">
-              Order #{activeOrder?.order_id?.slice(-6)}
-            </span>
-            <span className="text-sm flex items-center gap-1">
-              <Clock size={14} />
-              {formatDate(activeOrder?.created_at)}
-            </span>
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      
+
+      {/* Loading State */}
+      {isLoading && (
+        <div className="p-8 text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-[var(--primary-color)] border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-gray-500">Loading orders...</p>
+        </div>
+      )}
+
+      {/* Orders List */}
+     
+
+      {/* Sticky Header with Order Status */}
+      <div className="sticky top-0 z-10 bg-gradient-to-r from-[var(--primary-color)] to-purple-600 p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Package className="w-5 h-5 text-white" />
+            <span className="text-white font-medium">#{activeOrder?.order_id?.slice(-6)}</span>
           </div>
+          <span className="text-white/80 text-sm">{formatDate(activeOrder?.created_at)}</span>
         </div>
 
-        {/* Earnings Section */}
-
-        <div className="bg-[var(--primary-color)]/5 rounded-xl p-4 text-center">
-          <div className="inline-block bg-white px-6 py-1 rounded-full border-2 border-[var(--primary-color)] text-[var(--primary-color)] font-medium mb-3">
-            Active Order
+        {/* Order Status Badge */}
+        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-xl p-3">
+          <div className="flex-1">
+            <p className="text-white/80 text-sm">Current Status</p>
+            <p className="text-white font-medium capitalize">
+              {activeOrder?.order_status?.replace(/_/g, ' ')}
+            </p>
           </div>
-          <h3 className="text-gray-600 font-medium mb-2">Expected Earnings</h3>
-          <p className="text-3xl font-bold text-[var(--primary-color)]">
-            ₹{activeOrder?.delivery_partner_fee}
-          </p>
+          <div className="h-10 w-[2px] bg-white/20"></div>
+          <div className="flex-1 text-right">
+            <p className="text-white/80 text-sm">Expected Earnings</p>
+            <p className="text-white font-bold text-xl">₹{activeOrder?.delivery_partner_fee}</p>
+          </div>
         </div>
+      </div>
 
-        {/* Customer Section */}
-        <AccordionSection title="Customer Details" icon={User} defaultOpen={false}>
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 gap-2 p-3 bg-gray-50">
+        <button
+          onClick={() => window.location.href = `tel:${activeOrder?.user?.mobile_number}`}
+          className="flex items-center justify-center gap-2 bg-[var(--primary-color)] text-white p-2 rounded-xl text-sm font-medium hover:opacity-90 active:scale-95 transition-all"
+        >
+          <Phone size={18} />
+          Call Customer
+        </button>
+       
+      </div>
+
+      {/* Main Content Accordions */}
+      <div className="divide-y">
+        {/* Status Update Section */}
+        <AccordionSection
+          title="Order Status"
+          icon={Clock}
+          defaultOpen={true}
+          badge={shouldShowSlider(activeOrder?.order_status) ? "Action Required" : null}
+        >
           <div className="space-y-4">
-            <div className="flex flex-col items-start gap-2">
-              <div>
-                <p className="text-sm text-gray-500">Customer Name</p>
-                <p className="font-medium">{activeOrder?.user?.first_name} {activeOrder?.user?.last_name}</p>
-              </div>
-              <button
-                onClick={() => window.location.href = `tel:${activeOrder?.user?.mobile_number}`}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary-color)] text-white font-medium hover:opacity-90 transition-opacity"
-              >
-                <Phone size={16} />
-                Call {activeOrder?.user?.first_name}
-              </button>
-            </div>
-            <div className="bg-gray-100 p-3 rounded-lg">
-              <p className="text-sm text-gray-600 mb-2">Delivery Address:</p>
-              <p className="font-medium">{activeOrder?.address?.address_line_1}</p>
-            </div>
-          </div>
-        </AccordionSection>
+            <StatusTimeLine ORDER_STATUSES={ORDER_STATUSES} activeOrder={activeOrder} />
 
-        {/* Order Status Section */}
-        <AccordionSection title="Order Status" icon={Clock} defaultOpen={false}>
-          <StatusTimeLine ORDER_STATUSES={ORDER_STATUSES} activeOrder={activeOrder} />
-          <div className="p-4 bg-gray-50 border-t">
             {shouldShowSlider(activeOrder?.order_status) && (
               <SliderStatusTracker
                 text={`Slide to ${ORDER_STATUSES[getStatusStep(activeOrder.order_status) + 1].label}`}
@@ -164,64 +195,95 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
           </div>
         </AccordionSection>
 
+        {/* Customer Details Section */}
+        <AccordionSection
+          title="Customer Details"
+          icon={User}
+          defaultOpen={true}
+        >
+          <div className="space-y-4">
+            <div className="flex items-start gap-4 bg-blue-50 p-4 rounded-xl">
+              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                <User className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-medium text-gray-900">
+                  {activeOrder?.user?.first_name} {activeOrder?.user?.last_name}
+              </h4>
+                <p className="text-gray-600 mt-1">{activeOrder?.user?.mobile_number}</p>
+                <div className="mt-3 bg-white p-3 rounded-lg border border-blue-100">
+                  <p className="text-sm text-gray-600">Delivery Address</p>
+                  <p className="text-gray-900 mt-1">{activeOrder?.address?.address_line_1}</p>
+                </div>
+              </div>
+            </div>
+                </div>
+        </AccordionSection>
+
         {/* Order Items Section */}
-        {activeOrder?.order_items?.map((shop, index) => (
+        {activeOrder?.order_items?.map((shop) => (
           <AccordionSection
             key={shop?.shop_id}
-            title={`${shop?.shop_name} (${shop?.shop_products?.length} items)`}
+            title={shop?.shop_name}
             icon={ShoppingBag}
+            count={shop?.shop_products?.length}
+            defaultOpen={true}
           >
-            <div className="space-y-4">
+            <div className="space-y-3">
               {shop?.shop_products?.map((product) => (
                 <div
                   key={product?.product_id}
-                  className="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm"
+                  className="flex items-center gap-4 bg-white p-3 rounded-xl border border-gray-100"
                 >
                   <img
                     src={product?.product_item?.product_img_url}
                     alt={product?.product_item?.product_name}
-                    className="w-12 h-12 rounded-lg object-cover"
+                    className="w-16 h-16 rounded-lg object-cover"
                   />
-                  <div className="flex-1">
-                    <h4 className="font-medium">{product?.product_item?.product_name}</h4>
-                    <p className="text-sm font-medium text-gray-500">
-                      ₹{product?.product_item?.food_price} ×  {product?.quantity}
-                    </p>
-
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-gray-900 truncate">
+                      {product?.product_item?.product_name}
+                    </h4>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-sm text-gray-600">
+                        {product?.quantity} × ₹{product?.product_item?.food_price}
+                      </span>
+                      <span className="text-sm font-medium text-[var(--primary-color)]">
+                        ₹{product?.sub_total}
+                      </span>
+                    </div>
                   </div>
-                  <span className="font-medium">₹{product?.sub_total}</span>
                 </div>
               ))}
 
               {activeOrder?.cooking_requests && (
-                <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-100">
-                  <p className="text-sm text-yellow-800">
-                    {activeOrder?.cooking_requests}
-                  </p>
+                <div className="bg-yellow-50 p-4 rounded-xl border border-yellow-100">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-yellow-800 flex-1">
+                      {activeOrder?.cooking_requests}
+                    </p>
+                  </div>
                 </div>
               )}
-            </div>
-
+          </div>
           </AccordionSection>
         ))}
-
-        {/* Bottom Actions */}
-
-
-        <ConfirmationPopup
-          variant="info"
-          title="Confirm Order Status"
-          isOpen={isConfirmationPopupOpen}
-          message="Are you sure you want to update the order status?"
-          onConfirm={() => {
-            const nextStatus = getNextStatus(activeOrder);
-            if (nextStatus) onUpdateOrderStatus(activeOrder?.order_id, nextStatus?.id);
-            setIsConfirmationPopupOpen(false);
-          }}
-          onCancel={() => setIsConfirmationPopupOpen(false)}
-        />
       </div>
-    </AccordionSection>
+
+      <ConfirmationPopup
+        variant="info"
+        title="Confirm Status Update"
+        isOpen={isConfirmationPopupOpen}
+        message={`Are you sure you want to update the order status to ${getNextStatus(activeOrder)?.label}?`}
+        onConfirm={() => {
+          const nextStatus = getNextStatus(activeOrder);
+          if (nextStatus) onUpdateOrderStatus(activeOrder?.order_id, nextStatus?.id);
+          setIsConfirmationPopupOpen(false);
+        }}
+        onCancel={() => setIsConfirmationPopupOpen(false)}
+      />
+    </div>
   );
 };
 
