@@ -41,7 +41,7 @@ const page = () => {
     const fetchProducts = useCallback(async (search) => {
         try {
             setLoading(true);
-            const { data } = await axiosClient.get(`/api/products/all?page=${currentPage}&limit=50&search=${search}`);
+            const { data } = await axiosClient.get(`/api/products/all?page=${currentPage}&limit=50&search=${search}&admin=false`);
             setProducts(data);
         } catch (err) {
             setError(err.message);

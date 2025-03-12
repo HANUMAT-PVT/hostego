@@ -2,30 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import BackNavigationButton from "../components/BackNavigationButton";
-import { Info, Landmark, ShoppingBag, Clock, Upload, User, ChevronDown, Shield, RefreshCw } from "lucide-react";
+import { Info, Landmark, ShoppingBag, Clock, Upload, User, ChevronDown, Shield, RefreshCw, Package } from "lucide-react";
 import HostegoButton from "../components/HostegoButton"
 import { uploadToS3Bucket } from '../lib/aws'
 import axiosClient from "../utils/axiosClient"
 import MaintainOrderStatusForDeliveryPartner from "../components/Delivery-Partner/MaintainOrderStatusForDeliveryPartner"
 import { formatDate, transformDeliveryPartnerOrderEarnings, transformOrdersByDate } from "../utils/helper";
 
-const ordersData = [
-    {
-        date: "22 Feb 2025",
-        orders: [
-            { id: "ORD1234", earning: 15, time: "10:30 AM" },
-            { id: "ORD1235", earning: 23, time: "11:15 AM" },
-            { id: "ORD1236", earning: 19, time: "01:45 PM" },
-        ],
-    },
-    {
-        date: "21 Feb 2025",
-        orders: [
-            { id: "ORD1229", earning: 21, time: "09:00 AM" },
-            { id: "ORD1230", earning: 29, time: "12:30 PM" },
-        ],
-    },
-];
+
 
 const PersonalInfoAccordion = ({ deliveryPartner }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -111,6 +95,7 @@ const Page = () => {
     const [formSubmitingLoading, setFormSubmitingLoading] = useState(false);
     const [deliveryPartnerEarnings, setDeliveryPartnerEarnings] = useState(0);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [selectedFilter, setSelectedFilter] = useState("assigned")
 
     const [deliveryPartnerVerificationData, setDeliveryPartnerVerificationData] = useState({
         address: "",
@@ -120,8 +105,19 @@ const Page = () => {
         bank_details_img: "",
     });
 
+
+    const filterOptions = [
+        { value: '', label: 'All Orders' },
+        { value: 'assigned', label: 'Assigned' },
+        { value: 'reached', label: 'Reached Shop' },
+        { value: 'picked', label: 'Picked Up' },
+        { value: 'on_the_way', label: 'On The Way' },
+        { value: 'reached_door', label: 'Reached Door' },
+        { value: 'delivered', label: 'Delivered' }
+    ];
+
     useEffect(() => {
-        fetchDeliveryPartner();
+        fetchDeliveryPartner(selectedFilter);
     }, []);
 
     useEffect(() => {
@@ -219,9 +215,9 @@ const Page = () => {
         }
     }
 
-    const fetchDeliveryPartnerOrders = async () => {
+    const fetchDeliveryPartnerOrders = async (selectedFilter="") => {
         try {
-            let { data } = await axiosClient.get(`/api/order/delivery-partner/${deliveryPartner?.delivery_partner_id}`)
+            let { data } = await axiosClient.get(`/api/order/delivery-partner/${deliveryPartner?.delivery_partner_id}?status=${selectedFilter}`)
             setDeliveryPartnerOrders(data?.orders)
         } catch (error) {
             console.log(error)
@@ -242,6 +238,11 @@ const Page = () => {
         }
     };
 
+
+    const handleFilterChange = (status) => {
+        setSelectedFilter(status);
+        fetchDeliveryPartnerOrders(status)
+    };
     if (isLoading) {
         return (
             <div className="bg-[var(--bg-page-color)]">
@@ -452,41 +453,44 @@ const Page = () => {
                     </div>
                 )}
 
-                {/* Order History Section */}
-                {/* <div className="mt-6 px-4 ">
-                    {deliveryPartnerEarnings?.earnings?.map((day, index) => (
-                        <div key={index} className="mb-6 mt-6">
-                            <p className="text-lg font-semibold mb-2">{day?.date}</p>
-                            <div className="bg-white p-4 rounded-md shadow-md flex flex-col gap-2">
-                                {day?.orders?.map((order, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="flex justify-between items-center border-b last:border-none py-2"
-                                    >
-                                        <div className="flex flex-col gap-2">
-                                            <div className="flex items-center gap-2">
-                                                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-                                                    Order #{order?.order_id?.slice(-6)}
-                                                </span>
 
-                                            </div>
-                                            <p className="text-sm text-gray-500 flex items-center gap-1">
-                                                <Clock size={14} />
-                                                {formatDate(order?.created_at)}
-                                            </p>
-                                        </div>
-                                        <p className="font-semibold text-green-600">₹ {(order?.delivery_partner_fee).toFixed(1)}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-                </div> */}
             </div>
+            {/* Status Filter Section */}
+            <div className="sticky top-0 z-10 bg-white border-b border-gray-100 p-4">
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    {filterOptions.map((option) => (
+                        <button
+                            key={option.value}
+                            onClick={() => handleFilterChange(option.value)}
+                            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all
+                            ${selectedFilter === option.value
+                                    ? 'bg-[var(--primary-color)] text-white'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                        >
+                            {option?.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+            <div className="flex flex-col gap-2 px-3">
 
-            {deliveryPartnerOrders?.map((order) => (
-                <MaintainOrderStatusForDeliveryPartner onUpdateOrderStatus={updateOrderStatus} key={order?.order_id} order={order} />
-            ))}
+                {deliveryPartnerOrders?.map((order) => (
+                    <MaintainOrderStatusForDeliveryPartner onUpdateOrderStatus={updateOrderStatus} key={order?.order_id} order={order} />
+                ))}
+                {!isLoading && deliveryPartnerOrders.length === 0 && (
+                    <div className="p-8 text-center">
+                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Package className="w-8 h-8 text-gray-400" />
+                        </div>
+                        <h3 className="text-lg font-medium text-gray-900 mb-1">No orders found</h3>
+                        <p className="text-gray-500">
+                            {selectedFilter === 'all'
+                                ? "You don't have any orders yet"
+                                : `No ${filterOptions.find(opt => opt.value === selectedFilter)?.label.toLowerCase()} orders`}
+                        </p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
