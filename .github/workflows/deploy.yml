@@ -1,0 +1,14 @@
+- name: ✅ Setup SSH Key
+  run: |
+    mkdir -p ~/.ssh
+    echo "${{ secrets.VPS_SSH_KEY }}" | tr -d '\r' > ~/.ssh/github_deploy
+    chmod 600 ~/.ssh/github_deploy
+    eval $(ssh-agent -s)
+    ssh-add ~/.ssh/github_deploy
+
+- name: 🚀 Deploy to VPS
+  run: |
+    ssh -i ~/.ssh/github_deploy -o StrictHostKeyChecking=no root@147.93.103.151 << 'EOF'
+      cd /root
+      ./deploy.sh
+    EOF
