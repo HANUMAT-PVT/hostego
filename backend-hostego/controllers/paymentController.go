@@ -126,9 +126,9 @@ func InitiatePayment(c fiber.Ctx) error {
 	}
 
 	// Mark cart items as deleted
-	if err := tx.Model(&models.CartItem{}).
+	if err := tx.
 		Where("user_id = ?", userId).
-		Update("is_deleted", true).Error; err != nil {
+		Delete(&models.CartItem{}).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update cart items"})
 	}
