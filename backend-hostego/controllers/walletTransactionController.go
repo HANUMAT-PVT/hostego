@@ -4,6 +4,7 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/middlewares"
 	"backend-hostego/models"
+	"strconv"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -127,13 +128,25 @@ func FetchUserWallet(c fiber.Ctx) error {
 
 func FetchUserWalletTransactions(c fiber.Ctx) error {
 	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
+	queryPage := c.Query("page", "1")
+	queryLimit := c.Query("limit", "10")
 
 	var wallet_transactions []models.WalletTransaction
+	limit, err := strconv.Atoi(queryLimit)
+	if err != nil || limit < 1 {
+		limit = 50
+	}
 
-	if err := database.DB.Where("user_id=?", user_id).Order("created_at desc").Find(&wallet_transactions).Error; err != nil {
+	page, err := strconv.Atoi(queryPage)
+	if err != nil {
+		page = 1
+	}
+	offset := (page - 1) * limit
+	if err := database.DB.Where("user_id=?", user_id).Order("created_at desc").Limit(limit).Offset(offset).Find(&wallet_transactions).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(wallet_transactions)
@@ -146,7 +159,7 @@ func FetchAllWalletTransactions(c fiber.Ctx) error {
 
 	transactionStatus := c.Query("transaction_status")
 	transactionType := c.Query("transaction_type")
-	
+
 	searchQuery := c.Query("search")
 
 	if transactionStatus != "" {
@@ -155,7 +168,7 @@ func FetchAllWalletTransactions(c fiber.Ctx) error {
 	if transactionType != "" {
 		dbQuery = dbQuery.Where("transaction_type = ?", transactionType)
 	}
-	
+
 	if searchQuery != "" {
 		dbQuery = dbQuery.Where(
 			`amount::text LIKE ? OR 

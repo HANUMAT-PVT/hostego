@@ -5,6 +5,7 @@ import (
 	"backend-hostego/middlewares"
 	"backend-hostego/models"
 	"encoding/json"
+	"strconv"
 
 	"math"
 
@@ -278,11 +279,23 @@ func FetchAllUserOrders(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
+	queryPage := c.Query("page", "1")
+	queryLimit := c.Query("limit", "10")
+	page, err := strconv.Atoi(queryPage)
+	if err != nil || page < 1 {
+		page = 1
+	}
+	limit, err := strconv.Atoi(queryLimit)
+	if err != nil || limit < 1 {
+		limit = 10
+	}
+	offset := (page - 1) * limit
+	
 	if user_id == "" {
 
 	}
 	var orders []models.Order
-	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("user_id=?", user_id).Order("created_at desc").Find(&orders).Error; err != nil {
+	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("user_id=?", user_id).Order("created_at desc").Limit(limit).Offset(offset).Find(&orders).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(orders)
@@ -315,7 +328,7 @@ func FetchAllOrders(c fiber.Ctx) error {
 	}
 
 	var orders []models.Order
-	if err := dbQuery.Preload("User").Preload("PaymentTransaction").Preload("Address").Order("created_at desc").Find(&orders).Error; err != nil {
+	if err := dbQuery.Preload("User").Preload("PaymentTransaction").Preload("Address").Order("created_at asc").Find(&orders).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 

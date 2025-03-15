@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Documents struct {
@@ -24,5 +25,17 @@ type DeliveryPartner struct {
 	VerificationStatus int       `gorm:"type:int;default:0;" json:"verification_status"`
 	CreatedAt          time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt          time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+}
+
+func (u *DeliveryPartner) AfterCreate(tx *gorm.DB) (err error) {
+	deliveryPartnerWallet := DeliveryPartnerWallet{
+		DeliveryPartnerId: u.DeliveryPartnerID.String(),
+		Balance:           0.0,
+	}
+	if err := tx.Create(&deliveryPartnerWallet).Error; err != nil {
+		return err
+	}
+
+	return nil
 
 }

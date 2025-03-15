@@ -5,7 +5,6 @@ import (
 	"backend-hostego/middlewares"
 	"backend-hostego/models"
 
-
 	"strconv"
 
 	"github.com/gofiber/fiber/v3"
@@ -40,7 +39,7 @@ func FetchProducts(c fiber.Ctx) error {
 	var products []models.Product
 	dbQuery := database.DB.Preload("Shop")
 
-	// adminQuery := c.Query("admin")
+
 
 	searchQuery := c.Query("search")
 	tagsQuery := c.Query("tags") // Expecting tags=food or tags=chicken
@@ -52,14 +51,22 @@ func FetchProducts(c fiber.Ctx) error {
 	queryPage := c.Query("page", "1")
 
 	if searchQuery != "" {
-		dbQuery = dbQuery.Where(
-			`product_name ILIKE ? 
+		baseQuery := `(product_name ILIKE ? 
 			OR description ILIKE ? 
 			OR shop_id IN (SELECT shop_id FROM shops WHERE shop_name ILIKE ?)
 			OR EXISTS (
 				SELECT 1 FROM jsonb_array_elements_text(tags) tag 
 				WHERE tag ILIKE ?
-			) AND stock_quantity > 0 AND availability = 1`,
+			))`
+
+		isAdmin := c.Query("admin") == "true"
+
+		if !isAdmin {
+			baseQuery += ` AND stock_quantity > 0 AND availability = '1'`
+		}
+
+		dbQuery = dbQuery.Where(
+			baseQuery,
 			"%"+searchQuery+"%",
 			"%"+searchQuery+"%",
 			"%"+searchQuery+"%",
@@ -81,10 +88,9 @@ func FetchProducts(c fiber.Ctx) error {
 	if maxPrice != "" {
 		dbQuery = dbQuery.Where("food_price <= ?", maxPrice)
 	}
-	if availability != "" {
+	if availability != "" && c.Query("admin") != "true" {
 		dbQuery = dbQuery.Where("availability = ?", availability)
 	}
-	
 
 	if sort == "desc" {
 		dbQuery = dbQuery.Order("food_price DESC")
@@ -92,7 +98,6 @@ func FetchProducts(c fiber.Ctx) error {
 		dbQuery = dbQuery.Order("food_price ASC")
 	}
 
-	
 	limit, err := strconv.Atoi(queryLimit)
 	if err != nil || limit < 1 {
 		limit = 50
@@ -104,7 +109,6 @@ func FetchProducts(c fiber.Ctx) error {
 	}
 	offset := (page - 1) * limit
 	dbQuery = dbQuery.Offset(offset).Limit(limit)
-
 
 	if err := dbQuery.Find(&products).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch products", "message": err.Error()})
