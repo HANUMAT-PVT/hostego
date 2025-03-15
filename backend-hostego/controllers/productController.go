@@ -39,7 +39,12 @@ func FetchProducts(c fiber.Ctx) error {
 	var products []models.Product
 	dbQuery := database.DB.Preload("Shop")
 
+	isAdmin := c.Query("admin") == "true"
 
+	// Apply stock and availability filters for non-admin users by default
+	if !isAdmin {
+		dbQuery = dbQuery.Where("stock_quantity > 0 AND availability = '1'")
+	}
 
 	searchQuery := c.Query("search")
 	tagsQuery := c.Query("tags") // Expecting tags=food or tags=chicken
@@ -58,12 +63,6 @@ func FetchProducts(c fiber.Ctx) error {
 				SELECT 1 FROM jsonb_array_elements_text(tags) tag 
 				WHERE tag ILIKE ?
 			))`
-
-		isAdmin := c.Query("admin") == "true"
-
-		if !isAdmin {
-			baseQuery += ` AND stock_quantity > 0 AND availability = '1'`
-		}
 
 		dbQuery = dbQuery.Where(
 			baseQuery,
@@ -88,7 +87,7 @@ func FetchProducts(c fiber.Ctx) error {
 	if maxPrice != "" {
 		dbQuery = dbQuery.Where("food_price <= ?", maxPrice)
 	}
-	if availability != "" && c.Query("admin") != "true" {
+	if availability != "" && !isAdmin {
 		dbQuery = dbQuery.Where("availability = ?", availability)
 	}
 
