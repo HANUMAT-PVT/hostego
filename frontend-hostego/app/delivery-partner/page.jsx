@@ -95,7 +95,7 @@ const Page = () => {
     const [formSubmitingLoading, setFormSubmitingLoading] = useState(false);
     const [deliveryPartnerEarnings, setDeliveryPartnerEarnings] = useState(0);
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [selectedFilter, setSelectedFilter] = useState("assigned")
+    const [selectedFilter, setSelectedFilter] = useState("active")
 
     const [deliveryPartnerVerificationData, setDeliveryPartnerVerificationData] = useState({
         address: "",
@@ -107,13 +107,9 @@ const Page = () => {
 
 
     const filterOptions = [
-        { value: '', label: 'All Orders' },
-        { value: 'assigned', label: 'Assigned' },
-        { value: 'reached', label: 'Reached Shop' },
-        { value: 'picked', label: 'Picked Up' },
-        { value: 'on_the_way', label: 'On The Way' },
-        { value: 'reached_door', label: 'Reached Door' },
-        { value: 'delivered', label: 'Delivered' }
+        { value: 'active', label: 'Active Orders' },
+        { value: 'delivered', label: 'Delivered' },
+        { value: '', label: 'All Orders' }
     ];
 
     useEffect(() => {
@@ -215,14 +211,25 @@ const Page = () => {
         }
     }
 
-    const fetchDeliveryPartnerOrders = async (selectedFilter="") => {
+    const fetchDeliveryPartnerOrders = async () => {
         try {
-            let { data } = await axiosClient.get(`/api/order/delivery-partner/${deliveryPartner?.delivery_partner_id}?status=${selectedFilter}`)
-            setDeliveryPartnerOrders(data?.orders)
+
+            let { data } = await axiosClient.get(`/api/order/delivery-partner/${deliveryPartner?.delivery_partner_id}?status=${selectedFilter}`);
+            setDeliveryPartnerOrders(data?.orders);
         } catch (error) {
-            console.log(error)
+            console.error('Error fetching orders:', error);
+        } finally {
+
         }
-    }
+    };
+
+    useEffect(() => {
+        fetchDeliveryPartnerOrders();
+    }, [selectedFilter]);
+
+    const handleFilterChange = (value) => {
+        setSelectedFilter(value);
+    };
 
     const handleRefresh = async () => {
         try {
@@ -238,15 +245,11 @@ const Page = () => {
         }
     };
 
-
-    const handleFilterChange = (status) => {
-        setSelectedFilter(status);
-        fetchDeliveryPartnerOrders(status)
-    };
     if (isLoading) {
         return (
             <div className="bg-[var(--bg-page-color)]">
                 <BackNavigationButton title="Delivery Partner" />
+
                 <div className="p-2 space-y-4">
                     {/* Verification Status Skeleton */}
                     <div className="bg-white p-4 rounded-md ">
@@ -294,7 +297,39 @@ const Page = () => {
             <BackNavigationButton title="Delivery Partner" />
 
             <div className="p-4 space-y-4">
+
+                <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
+                            <div className="flex flex-col">
+                                <span className="font-medium text-gray-900">
+                                    {isOnline ? 'Online' : 'Offline'}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                    {isOnline ? 'You\'re accepting delivery orders' : 'Go online to start accepting orders'}
+                                </span>
+                            </div>
+                        </div>
+
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                                type="checkbox"
+                                className="sr-only peer"
+                                checked={isOnline}
+                                onChange={() => updateDeliveryPartnerAvailabilityStatus(!isOnline)}
+                            />
+                            <div className={`w-16 h-7 bg-gray-200 peer-focus:outline-none rounded-full peer 
+                                peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full 
+                                peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] 
+                                ${isOnline ? 'after:start-[15px]' : 'after:start-[2px]'}  after:bg-white after:border-gray-300 after:border after:rounded-full 
+                                after:h-6 after:w-6 after:transition-all peer-checked:bg-[var(--primary-color)]`}>
+                            </div>
+                        </label>
+                    </div>
+                </div>
                 {/* Verification Status */}
+
                 <VerificationStatus deliveryPartner={deliveryPartner} />
 
                 {/* Personal Information Accordion */}
@@ -457,7 +492,7 @@ const Page = () => {
             </div>
             {/* Status Filter Section */}
             <div className="sticky top-0 z-10 bg-white border-b border-gray-100 p-4">
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                <div className="flex items-center gap-2 sticky top-0 z-20 overflow-x-auto pb-2 scrollbar-hide">
                     {filterOptions.map((option) => (
                         <button
                             key={option.value}

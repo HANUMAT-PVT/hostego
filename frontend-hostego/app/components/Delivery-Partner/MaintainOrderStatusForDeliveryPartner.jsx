@@ -106,7 +106,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
   }, [order])
 
   // Add status filter options
-  
+
 
   const getStatusStep = (status) => {
     const index = ORDER_STATUSES.findIndex(s => s.id === status);
@@ -123,7 +123,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-      
+
 
       {/* Loading State */}
       {isLoading && (
@@ -134,7 +134,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
       )}
 
       {/* Orders List */}
-     
+
 
       {/* Sticky Header with Order Status */}
       <div className="sticky top-0 z-10 bg-gradient-to-r from-[var(--primary-color)] to-purple-600 p-4">
@@ -171,7 +171,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
           <Phone size={18} />
           Call Customer
         </button>
-       
+
       </div>
 
       {/* Main Content Accordions */}
@@ -209,7 +209,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
               <div className="flex-1">
                 <h4 className="font-medium text-gray-900">
                   {activeOrder?.user?.first_name} {activeOrder?.user?.last_name}
-              </h4>
+                </h4>
                 <p className="text-gray-600 mt-1">{activeOrder?.user?.mobile_number}</p>
                 <div className="mt-3 bg-white p-3 rounded-lg border border-blue-100">
                   <p className="text-sm text-gray-600">Delivery Address</p>
@@ -217,7 +217,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
                 </div>
               </div>
             </div>
-                </div>
+          </div>
         </AccordionSection>
 
         {/* Order Items Section */}
@@ -266,7 +266,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
                   </div>
                 </div>
               )}
-          </div>
+            </div>
           </AccordionSection>
         ))}
       </div>
