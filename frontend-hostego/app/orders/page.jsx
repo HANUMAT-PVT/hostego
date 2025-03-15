@@ -36,22 +36,26 @@ const OrdersPage = () => {
   const [hasMore, setHasMore] = useState(true)
   const ITEMS_PER_PAGE = 5;
   const [currentPage, setCurrentPage] = useState(1)
+
+
+  useEffect(() => {
+    fetchOrders()
+  }, [currentPage])
+
   const loadMore = () => {
     if (!isLoading && hasMore) {
       setCurrentPage(prev => prev + 1)
     }
   }
-  useEffect(() => {
-    fetchOrders()
-  }, [])
+
 
   const fetchOrders = async () => {
     try {
       const { data } = await axiosClient.get(`/api/order?page=${currentPage}&limit=${ITEMS_PER_PAGE}`)
-      setOrders(data)
+      setOrders(prev => [...prev, ...data])
       setHasMore(data.length < ITEMS_PER_PAGE ? false : true)
     } catch (error) {
-      console.error('Error fetching orders:', error)
+    
     } finally {
       setIsLoading(false)
     }
@@ -76,7 +80,8 @@ const OrdersPage = () => {
       </div>
       {hasMore && (
         <LoadMoreData loadMore={loadMore} isLoading={isLoading} />
-      )}
+      )
+      }
     </div>
   )
 }
