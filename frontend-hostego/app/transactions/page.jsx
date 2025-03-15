@@ -3,23 +3,36 @@ import React, { useEffect, useState } from 'react';
 import { ArrowUpRight, ArrowDownRight, CheckCircle, Clipboard, Clock, XCircle, RefreshCw } from 'lucide-react';
 import BackNavigationButton from '../components/BackNavigationButton';
 import axiosClient from "../utils/axiosClient"
-
+import LoadMoreData from '../components/LoadMoreData';
 const Transactions = () => {
   const [paymentTransactions, setPaymentTransactions] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const [hasMore, setHasMore] = useState(true)
+  const ITEMS_PER_PAGE = 10
 
   useEffect(() => {
     fetchUserAccountTransactions()
-  }, [])
+  }, [currentPage])
 
   const fetchUserAccountTransactions = async () => {
     try {
-      setIsLoading(true)
-      let { data } = await axiosClient.get("/api/wallet/transactions")
-      setPaymentTransactions(data)
+
+      let { data } = await axiosClient.get(`/api/wallet/transactions?page=${currentPage}&limit=${ITEMS_PER_PAGE}`)
+      setPaymentTransactions(prev => currentPage === 1 ? data : [...prev, ...data])
+
+      setHasMore(data.length < ITEMS_PER_PAGE ? false : true)
     } catch (error) {
+      console.error("Error fetching transactions:", error)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const loadMore = () => {
+    if (!isLoading && hasMore) {
+      setCurrentPage(prev => prev + 1)
     }
   }
 
@@ -121,7 +134,8 @@ const Transactions = () => {
                   <Clipboard
                     size={16}
                     className='text-gray-400 cursor-pointer hover:text-gray-600'
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       navigator.clipboard.writeText(el.transaction_id);
                     }}
                   />
@@ -162,6 +176,10 @@ const Transactions = () => {
             </div>
           );
         })}
+
+        {hasMore && (
+          <LoadMoreData loadMore={loadMore} isLoading={isLoading} />
+        )}
       </div>
     </div>
   );

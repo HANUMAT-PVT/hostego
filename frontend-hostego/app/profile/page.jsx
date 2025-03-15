@@ -45,7 +45,7 @@ const Profile = () => {
         <div className="flex flex-col gap-1 font-semibold">
           <p className="text-2xl ">{((userAccount?.first_name||"Hostego") + " " + (userAccount?.last_name || "User" )).toUpperCase()} </p>
           <p className="text-sm  font-medium text-gray-500 flex items-center gap-2">{splitMobileNumberByCountryCode(userAccount?.mobile_number)} · {userAccount?.email}</p>
-          <p onClick={() => router.push("/edit-account")} className="text-sm mt-1 text-gray-500 flex items-center gap-1 cursor-pointer">Edit Profile <ChevronRight size={18} className="text-gray-600" /></p>
+          <p onClick={() => router.push("/edit-account")} className="text-sm mt-1  text-[var(--primary-color)] flex items-center gap-1 cursor-pointer">Edit Profile <ChevronRight size={18} className="text-gray-600" /></p>
         </div>
         {/* Suggestion Box done */}
 

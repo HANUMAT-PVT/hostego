@@ -319,10 +319,10 @@ const Page = () => {
                                 checked={isOnline}
                                 onChange={() => updateDeliveryPartnerAvailabilityStatus(!isOnline)}
                             />
-                            <div className={`w-16 h-7 bg-gray-200 peer-focus:outline-none rounded-full peer 
+                            <div className={`w-[68px] h-[29px] p-1 bg-gray-200 peer-focus:outline-none rounded-full peer 
                                 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full 
                                 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] 
-                                ${isOnline ? 'after:start-[15px]' : 'after:start-[2px]'}  after:bg-white after:border-gray-300 after:border after:rounded-full 
+                                ${isOnline ? 'after:start-[16px]' : 'after:start-[2px]'}  after:bg-white after:border-gray-300 after:border after:rounded-full 
                                 after:h-6 after:w-6 after:transition-all peer-checked:bg-[var(--primary-color)]`}>
                             </div>
                         </label>
@@ -496,9 +496,9 @@ const Page = () => {
                     {filterOptions.map((option) => (
                         <button
                             key={option.value}
-                            onClick={() => handleFilterChange(option.value)}
+                            onClick={() => handleFilterChange(option?.value)}
                             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all
-                            ${selectedFilter === option.value
+                            ${selectedFilter === option?.value
                                     ? 'bg-[var(--primary-color)] text-white'
                                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                         >

@@ -31,12 +31,12 @@ const StatusBadge = ({ status, type }) => {
 }
 
 const DeliveryPartnerProfileCard = ({ partner, onUpdate }) => {
-  const [isLoading, setIsLoading] = useState(false)
+  const [showDeliveryPartnerDetails, setShowDeliveryPartnerDetails] = useState(false)
   const [showActions, setShowActions] = useState(false)
 
   const handleStatusUpdate = async (field, value) => {
     try {
-      setIsLoading(true)
+
       await axiosClient.patch(`/api/delivery-partner/${partner?.delivery_partner_id}`, {
         [field]: value
       })
@@ -44,7 +44,7 @@ const DeliveryPartnerProfileCard = ({ partner, onUpdate }) => {
     } catch (error) {
       console.error('Error updating partner:', error)
     } finally {
-      setIsLoading(false)
+
       setShowActions(false)
     }
   }
@@ -52,17 +52,20 @@ const DeliveryPartnerProfileCard = ({ partner, onUpdate }) => {
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
       {/* Partner Header */}
-      <div className="p-4 border-b bg-gradient-to-r from-[var(--primary-color)] to-purple-600">
+      <div onClick={() => setShowDeliveryPartnerDetails(!showDeliveryPartnerDetails)} className="p-4 border-b bg-gradient-to-r from-[var(--primary-color)] to-purple-600">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <User className="w-5 h-5 text-white" />
             <span className="text-white font-medium">
-              #{partner.delivery_partner_id?.slice(0, 8)}
+              {partner?.user?.first_name} {partner?.user?.last_name} #{partner?.delivery_partner_id?.slice(0, 8)}
             </span>
           </div>
           <div className="relative">
             <button
-              onClick={() => setShowActions(!showActions)}
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowActions(!showActions)
+              }}
               className="p-1 hover:bg-white/10 rounded-full transition-colors"
             >
               <MoreVertical className="w-5 h-5 text-white" />
@@ -143,7 +146,7 @@ const DeliveryPartnerProfileCard = ({ partner, onUpdate }) => {
       </div>
 
       {/* Partner Details */}
-      <div className="p-4">
+      {showDeliveryPartnerDetails && <div className="p-4">
         {/* Status Badges */}
         <div className="flex flex-wrap gap-2 mb-4">
           <StatusBadge status={partner.verification_status} type="verification" />
@@ -200,7 +203,7 @@ const DeliveryPartnerProfileCard = ({ partner, onUpdate }) => {
             ))}
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   )
 }

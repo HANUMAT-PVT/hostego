@@ -7,7 +7,7 @@ import SliderStatusTracker from "./SliderStatusTracker"
 import StatusTimeLine from '../Orders/StatusTimeLine';
 import ConfirmationPopup from '../ConfirmationPopup';
 import { formatDate } from '../../utils/helper';
-import axiosClient from '../../utils/axiosClient';
+
 
 export const ORDER_STATUSES = [
   {
@@ -97,9 +97,8 @@ const AccordionSection = ({ title, icon: Icon, children, defaultOpen = false, co
 const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) => {
   const [activeOrder, setActiveOrder] = useState(transformOrder(order));
   const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState('all');
-  const [filteredOrders, setFilteredOrders] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+
+  
 
   useEffect(() => {
     setActiveOrder(transformOrder(order))
@@ -125,13 +124,6 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
 
 
-      {/* Loading State */}
-      {isLoading && (
-        <div className="p-8 text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-[var(--primary-color)] border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-500">Loading orders...</p>
-        </div>
-      )}
 
       {/* Orders List */}
 
