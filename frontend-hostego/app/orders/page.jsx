@@ -7,7 +7,7 @@ import HostegoLoader from '../components/HostegoLoader'
 import { PackageX } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import HostegoButton from '../components/HostegoButton'
-
+import LoadMoreData from '../components/LoadMoreData'
 const NoOrders = () => {
   const router = useRouter()
   return (
@@ -33,16 +33,23 @@ const NoOrders = () => {
 const OrdersPage = () => {
   const [orders, setOrders] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-
+  const [hasMore, setHasMore] = useState(true)
+  const ITEMS_PER_PAGE = 5;
+  const [currentPage, setCurrentPage] = useState(1)
+  const loadMore = () => {
+    if (!isLoading && hasMore) {
+      setCurrentPage(prev => prev + 1)
+    }
+  }
   useEffect(() => {
     fetchOrders()
   }, [])
 
   const fetchOrders = async () => {
     try {
-      setIsLoading(true)
-      const { data } = await axiosClient.get('/api/order')
+      const { data } = await axiosClient.get(`/api/order?page=${currentPage}&limit=${ITEMS_PER_PAGE}`)
       setOrders(data)
+      setHasMore(data.length < ITEMS_PER_PAGE ? false : true)
     } catch (error) {
       console.error('Error fetching orders:', error)
     } finally {
@@ -67,6 +74,9 @@ const OrdersPage = () => {
           ))
         )}
       </div>
+      {hasMore && (
+        <LoadMoreData loadMore={loadMore} isLoading={isLoading} />
+      )}
     </div>
   )
 }

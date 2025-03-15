@@ -195,9 +195,17 @@ const Page = () => {
                                     placeholder="Enter amount (min ₹100)"
                                     value={walletDetails?.amount || ''}
                                     onChange={(e) => {
-                                        const value = e.target.value ? Number(e.target.value) : ""
-                                        if (value > 2000) return
-                                        setWalletDetails({ ...walletDetails, amount: value })
+                                        const value = e.target.value;
+
+                                        // Allow only numbers
+                                        if (!/^\d*$/.test(value)) return;
+
+                                        const numValue = Number(value);
+
+                                        if (numValue > 2000) return;
+
+                                        setWalletDetails({ ...walletDetails, amount: numValue });
+
                                     }}
                                     className="ml-2 outline-none bg-transparent w-full"
                                     min="100"

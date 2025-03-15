@@ -24,8 +24,6 @@ const page = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalItems, setTotalItems] = useState(0);
 
     const { cartData } = useSelector(state => state.user);
 
@@ -34,10 +32,7 @@ const page = () => {
         fetchProducts(searchValue);
     }, [currentPage]); // Only re-fetch when page changes
 
-    // Create a memoized fetch function
-    // what will be use of memoization here
-    // memoization is used to prevent the re-rendering of the component when the same function is called again and again
-    // it will only call the function when the search value changes
+
     const fetchProducts = useCallback(async (search) => {
         try {
             setLoading(true);
@@ -71,7 +66,7 @@ const page = () => {
                     viewOnly={false}
                     sendSearchValue={handleSearch}
                 />
-                {/* <CartFloatingButton /> */}
+                {cartData?.cart_items?.length > 0 && <CartFloatingButton />}
             </div>
 
             <div className='p-4'>
