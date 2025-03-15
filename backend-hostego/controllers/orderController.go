@@ -207,7 +207,7 @@ func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
 	if delivery_partner.AvailabilityStatus == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Delivery partner is not available"})
 	}
-	
+
 	jsonDeliveryPartner, err := json.Marshal(delivery_partner)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -220,7 +220,6 @@ func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
 	if err := database.DB.Where("order_id=?", request_assign.OrderId).Save(&order).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order assigned succefully to" + " " + delivery_partner.User.FirstName})
 
@@ -260,7 +259,7 @@ func UpdateOrderById(c fiber.Ctx) error {
 	}
 	if updateData.OrderStatus == models.DeliveredOrderStatus {
 		existingOrder.DeliveredAt = time.Now()
-		
+
 	}
 
 	// Save the changes
@@ -348,7 +347,12 @@ func FetchAllOrdersByDeliveryPartner(c fiber.Ctx) error {
 
 	// Add status filter if provided
 	if status != "" {
-		dbQuery = dbQuery.Where("order_status = ?", status)
+		if status == "active" {
+			statuses := []string{models.AssignedOrderStatus, models.ReachedOrderStatus, models.OnTheWayOrderStatus, models.PackedOrderStatus, models.PickedOrderStatus, models.ReachedDoorStatus, models.CookingOrderStatus}
+			dbQuery = dbQuery.Where("order_status IN ?", statuses)
+		} else {
+			dbQuery = dbQuery.Where("order_status = ?", status)
+		}
 	}
 
 	// Add search functionality
