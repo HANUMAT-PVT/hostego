@@ -172,7 +172,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
         <AccordionSection
           title="Order Status"
           icon={Clock}
-          defaultOpen={true}
+          defaultOpen={false}
           badge={shouldShowSlider(activeOrder?.order_status) ? "Action Required" : null}
         >
           <div className="space-y-4">
@@ -191,7 +191,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
         <AccordionSection
           title="Customer Details"
           icon={User}
-          defaultOpen={true}
+          defaultOpen={false}
         >
           <div className="space-y-4">
             <div className="flex items-start gap-4 bg-blue-50 p-4 rounded-xl">
@@ -219,7 +219,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
             title={shop?.shop_name}
             icon={ShoppingBag}
             count={shop?.shop_products?.length}
-            defaultOpen={true}
+            defaultOpen={false}
           >
             <div className="space-y-3">
               {shop?.shop_products?.map((product) => (
