@@ -28,22 +28,22 @@ const PersonalInfoAccordion = ({ deliveryPartner }) => {
             </button>
 
             {isOpen && (
-                <div className="px-4 pb-4 space-y-4 border-t animate-fade-in">
+                <div className="px-4 pb-4 space-y-4 border-t animate-fade-in p-2">
                     <div className="flex items-center justify-between">
-                        <span className="text-gray-500">Name</span>
-                        <span className="font-medium">{deliveryPartner.user?.first_name}</span>
+                        <span className="text-gray-500 text-sm">Name</span>
+                        <span className="font-medium text-sm">{deliveryPartner.user?.first_name}</span>
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-gray-500">Phone</span>
-                        <span className="font-medium">{deliveryPartner.user?.mobile_number}</span>
+                        <span className="font-medium text-sm">{deliveryPartner.user?.mobile_number}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                        <span className="text-gray-500">Email</span>
-                        <span className="font-medium">{deliveryPartner.user?.email}</span>
+                        <span className="text-gray-500 text-sm">Email</span>
+                        <span className="font-medium text-sm">{deliveryPartner.user?.email}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                        <span className="text-gray-500">Address</span>
-                        <span className="font-medium">{deliveryPartner.address}</span>
+                        <span className="text-gray-500 text-sm">Address</span>
+                        <span className="font-medium text-sm">{deliveryPartner.address}</span>
                     </div>
                 </div>
             )}

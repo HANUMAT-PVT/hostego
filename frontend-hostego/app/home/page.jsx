@@ -75,7 +75,7 @@ const page = () => {
                 </div>
 
             </div>
-            <div className=' overflow-auto grid grid-cols-2 gap-2  justify-between mb-16 py-1 mb-16  '>
+            <div className=' overflow-auto grid grid-cols-2 gap-2  justify-between mb-16 py-1 mb-[150px]  '>
                 {isLoading ? (
                     // Show 6 skeleton cards while loading
                     [...Array(6)].map((_, index) => (
