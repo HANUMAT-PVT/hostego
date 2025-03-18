@@ -290,7 +290,7 @@ func FetchAllUserOrders(c fiber.Ctx) error {
 		limit = 10
 	}
 	offset := (page - 1) * limit
-	
+
 	if user_id == "" {
 
 	}
@@ -387,3 +387,110 @@ func FetchAllOrdersByDeliveryPartner(c fiber.Ctx) error {
 		"count":  len(orders),
 	})
 }
+
+func FetchAllOrderItemsAccordingToProducts(c fiber.Ctx) error {
+	type ProductStats struct {
+		ProductId     string  `json:"product_id"`
+		ProductName   string  `json:"product_name"`
+		ProductImg    string  `json:"product_img_url"`
+		OrderCount    int     `json:"order_count"`
+		TotalQuantity int     `json:"total_quantity"`
+		TotalRevenue  float64 `json:"total_revenue"`
+		StockQuantity int     `json:"stock_quantity"`
+		Availability  int     `json:"availability"`
+		Description   string  `json:"description"`
+		CurrentPrice  float64 `json:"current_price"`
+		// Date-based stats
+		LastDayRevenue     float64 `json:"last_day_revenue"`
+		LastWeekRevenue    float64 `json:"last_week_revenue"`
+		LastMonthRevenue   float64 `json:"last_month_revenue"`
+		LastDayOrders      int     `json:"last_day_orders"`
+		LastWeekOrders     int     `json:"last_week_orders"`
+		LastMonthOrders    int     `json:"last_month_orders"`
+	}
+
+	type OverallStats struct {
+		TotalRevenue       float64 `json:"total_revenue"`
+		TotalOrders        int     `json:"total_orders"`
+		LastDayRevenue     float64 `json:"last_day_revenue"`
+		LastWeekRevenue    float64 `json:"last_week_revenue"`
+		LastMonthRevenue   float64 `json:"last_month_revenue"`
+		LastDayOrders      int     `json:"last_day_orders"`
+		LastWeekOrders     int     `json:"last_week_orders"`
+		LastMonthOrders    int     `json:"last_month_orders"`
+	}
+
+	// Get date range filters from query params
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
+	
+	var baseQuery = database.DB.Model(&models.OrderItem{}).
+		Select("order_items.*, products.*, orders.*"). // Select all needed fields
+		Joins("RIGHT JOIN products ON products.product_id = order_items.product_id").
+		Joins("LEFT JOIN orders ON orders.order_id = order_items.order_id")
+
+	if startDate != "" && endDate != "" {
+		baseQuery = baseQuery.Where("orders.created_at BETWEEN ? AND ?", startDate, endDate)
+	}
+
+	// Get product-wise stats
+	var stats []ProductStats
+	err := baseQuery.
+		Select(`
+			products.product_id,
+			products.product_name,
+			products.product_img as product_img,
+			products.description,
+			products.stock_quantity,
+			products.availability,
+			products.food_price as current_price,
+			COUNT(DISTINCT order_items.order_id) as order_count,
+			COALESCE(SUM(order_items.quantity), 0) as total_quantity,
+			COALESCE(SUM(order_items.sub_total), 0) as total_revenue,
+			COALESCE(SUM(CASE WHEN orders.created_at >= NOW() - INTERVAL '1 day' THEN order_items.sub_total ELSE 0 END), 0) as last_day_revenue,
+			COALESCE(SUM(CASE WHEN orders.created_at >= NOW() - INTERVAL '7 day' THEN order_items.sub_total ELSE 0 END), 0) as last_week_revenue,
+			COALESCE(SUM(CASE WHEN orders.created_at >= NOW() - INTERVAL '30 day' THEN order_items.sub_total ELSE 0 END), 0) as last_month_revenue,
+			COUNT(DISTINCT CASE WHEN orders.created_at >= NOW() - INTERVAL '1 day' THEN order_items.order_id END) as last_day_orders,
+			COUNT(DISTINCT CASE WHEN orders.created_at >= NOW() - INTERVAL '7 day' THEN order_items.order_id END) as last_week_orders,
+			COUNT(DISTINCT CASE WHEN orders.created_at >= NOW() - INTERVAL '30 day' THEN order_items.order_id END) as last_month_orders
+		`).
+		Group("products.product_id, products.product_name, products.product_img, products.description, products.stock_quantity, products.availability, products.food_price").
+		Scan(&stats).Error
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "Failed to fetch product statistics",
+			"details": err.Error(),
+		})
+	}
+
+	// Get overall stats with a separate query
+	var overall OverallStats
+	err = database.DB.Model(&models.OrderItem{}).
+		Select(`
+			COALESCE(SUM(order_items.sub_total), 0) as total_revenue,
+			COUNT(DISTINCT order_items.order_id) as total_orders,
+			COALESCE(SUM(CASE WHEN o.created_at >= NOW() - INTERVAL '1 day' THEN order_items.sub_total ELSE 0 END), 0) as last_day_revenue,
+			COALESCE(SUM(CASE WHEN o.created_at >= NOW() - INTERVAL '7 day' THEN order_items.sub_total ELSE 0 END), 0) as last_week_revenue,
+			COALESCE(SUM(CASE WHEN o.created_at >= NOW() - INTERVAL '30 day' THEN order_items.sub_total ELSE 0 END), 0) as last_month_revenue,
+			COUNT(DISTINCT CASE WHEN o.created_at >= NOW() - INTERVAL '1 day' THEN order_items.order_id END) as last_day_orders,
+			COUNT(DISTINCT CASE WHEN o.created_at >= NOW() - INTERVAL '7 day' THEN order_items.order_id END) as last_week_orders,
+			COUNT(DISTINCT CASE WHEN o.created_at >= NOW() - INTERVAL '30 day' THEN order_items.order_id END) as last_month_orders
+		`).
+		Joins("LEFT JOIN orders o ON o.order_id = order_items.order_id").
+		Scan(&overall).Error
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "Failed to fetch overall statistics",
+			"details": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"product_stats": stats,
+		"overall_stats": overall,
+	})
+}
+
+

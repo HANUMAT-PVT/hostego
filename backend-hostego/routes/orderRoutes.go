@@ -8,6 +8,7 @@ import (
 
 func OrderRoutes(app *fiber.App) {
 	orderRoutes := app.Group("/api/order")
+	orderRoutes.Get("/order-items", controllers.FetchAllOrderItemsAccordingToProducts)
 	orderRoutes.Get("/all", controllers.FetchAllOrders)
 	orderRoutes.Post("/", controllers.CreateNewOrder)
 	orderRoutes.Get("/", controllers.FetchAllUserOrders)
