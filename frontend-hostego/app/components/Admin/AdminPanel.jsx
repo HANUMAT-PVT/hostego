@@ -11,12 +11,14 @@ import UserManager from "./UserManager";
 import { useSelector } from "react-redux";
 import ProductsManager from "./ProductsManager";
 import ShopsManager from "./ShopsManager";
-
+import Dashboard from "./Dashboard";
+import axiosClient from "@/app/utils/axiosClient";
 
 export default function AdminPanel() {
     const router = useRouter();
     const { userRoles } = useSelector(state => state.user)
     const searchParams = useSearchParams();
+    const [dashboardStats, setDashboardStats] = useState({product_stats:[],overall_stats:[]})
 
     // Get the current page from query params, default to 'dashboard'
     const currentPage = searchParams.get("page") || "order-assign";
@@ -26,6 +28,19 @@ export default function AdminPanel() {
         router.push(`?page=${page}`, { scroll: false });
     };
 
+    useEffect(() => {
+        fetchDashboardStatus()
+    }, [])
+
+    const fetchDashboardStatus = async () => {
+        try {
+            let { data } = await axiosClient.get(`/api/order/order-items`);
+            console.log(data, "hello data")
+            setDashboardStats(data)
+        } catch (error) {
+
+        }
+    }
 
     function checkUserRole(roleName) {
 
@@ -100,7 +115,7 @@ export default function AdminPanel() {
 
             {/* Main Content */}
             <main className="flex-1 p-6">
-                {currentPage === "dashboard" && <h1 className="text-2xl font-bold">📊 Dashboard</h1>}
+                {currentPage === "dashboard" && <Dashboard data={dashboardStats} />}
                 {currentPage === "order-assign" && (checkUserRole("super_admin") || checkUserRole("order_assign_manager") || checkUserRole("admin")) && <OrderAssignment />}
                 {currentPage === "partners" && (checkUserRole("super_admin") || checkUserRole("delivery_partner_manager") || checkUserRole("admin")) && <DeliveryPartnerManagement />}
                 {currentPage === "wallet_payment_verification" && (checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <WalletPaymentVerfication />}
