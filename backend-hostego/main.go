@@ -43,6 +43,7 @@ func main() {
 	routes.UserRoutes(app)
 	routes.UserRolesRoutes(app)
 	routes.WebPushNotificationRoutes(app)
+	routes.SearchQueryRoutes(app)
 
 	// Default Route
 	app.Get("/", func(c fiber.Ctx) error {
