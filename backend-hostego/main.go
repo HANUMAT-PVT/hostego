@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"gorm.io/gorm"
+	"backend-hostego/cron"
 )
 
 var db *gorm.DB
@@ -44,6 +45,9 @@ func main() {
 	routes.UserRolesRoutes(app)
 	routes.WebPushNotificationRoutes(app)
 	routes.SearchQueryRoutes(app)
+
+	// Initialize cron jobs
+	cron.InitCronJobs()
 
 	// Default Route
 	app.Get("/", func(c fiber.Ctx) error {
