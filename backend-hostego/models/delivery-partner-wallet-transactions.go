@@ -15,4 +15,6 @@ type DeliveryPartnerWalletTransaction struct {
 	UpdatedAt         time.Time             `gorm:"autoUpdateTime" json:"updated_at"`
 	TransactionStatus TransactionStatusType `gorm:"type:varchar(20);not null" json:"transaction_status"`
 	PaymentMethod     PaymentMethod         `gorm:"embedded" json:"payment_method"`
+	UserId            string                `gorm:"type:string;not null;index" json:"user_id"`
+	User              User                  `gorm:"foreignKey:UserId;references:UserId" json:"user"`
 }

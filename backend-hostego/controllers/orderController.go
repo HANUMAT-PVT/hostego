@@ -260,6 +260,7 @@ func UpdateOrderById(c fiber.Ctx) error {
 	}
 	if updateData.OrderStatus == models.DeliveredOrderStatus {
 		existingOrder.DeliveredAt = time.Now()
+		AddEarningsToDeliveryPartnerWallet(c,existingOrder)
 
 	}
 
