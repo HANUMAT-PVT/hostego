@@ -447,7 +447,7 @@ func FetchAllOrderItemsAccordingToProducts(c fiber.Ctx) error {
 			COUNT(DISTINCT CASE WHEN orders.created_at >= NOW() - INTERVAL '30 day' THEN order_items.order_id END) as last_month_orders
 		`).
 		Table("products").
-		Joins("LEFT JOIN order_items ON products.product_id::text = order_items.product_id::text").
+		Joins("LEFT JOIN order_items ON order_items.product_id::text = products.product_id").
 		Joins("LEFT JOIN orders ON orders.order_id = order_items.order_id")
 
 	if startDate != "" && endDate != "" {
