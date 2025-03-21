@@ -54,7 +54,7 @@ const PhoneEmailAuth = () => {
             
             dispatch(setFetchUserAccount(true))
             router.push("/home")
-            window.location.reload()
+            
 
         } catch (error) {
             console.log(error, "error")
