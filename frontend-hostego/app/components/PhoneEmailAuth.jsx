@@ -55,6 +55,9 @@ const PhoneEmailAuth = () => {
             dispatch(setFetchUserAccount(true))
             router.push("/home")
             
+            setTimeout(()=>{
+                window.location.reload()
+            },1500 )
 
         } catch (error) {
             console.log(error, "error")
