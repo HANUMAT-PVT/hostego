@@ -302,11 +302,11 @@ const DeliveryPartnerManagement = () => {
 
       {/* Results count */}
       <div className="mb-4 text-sm text-gray-500">
-        Found {filteredPartners.length} delivery partner{filteredPartners.length !== 1 ? 's' : ''}
+        Found {filteredPartners?.length} delivery partner{filteredPartners?.length !== 1 ? 's' : ''}
       </div>
 
       {/* No results message */}
-      {filteredPartners.length === 0 && (
+      {filteredPartners?.length === 0 && (
         <div className="text-center py-8 bg-white rounded-xl">
           <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-gray-100">
             <User className="w-8 h-8 text-gray-400" />
@@ -321,7 +321,7 @@ const DeliveryPartnerManagement = () => {
       )}
 
       <div className="grid grid-cols-1 gap-6 overflow-y-auto max-h-[85vh]">
-        {filteredPartners.map(partner => (
+        {filteredPartners?.map(partner => (
           <DeliveryPartnerProfileCard
             key={partner?.delivery_partner_id}
             partner={partner}

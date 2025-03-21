@@ -132,6 +132,7 @@ func InitiatePayment(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update cart items"})
 	}
+	
 
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
@@ -242,6 +243,11 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 	for _, item := range orderItems {
 		if err := tx.Model(&models.Product{}).Where("product_id = ?", item.ProductId).
 			Update("stock_quantity", gorm.Expr("stock_quantity + ?", item.Quantity)).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		}
+		if err := tx.Where("order_id = ?", order.OrderId).
+			Delete(&models.OrderItem{}).Error; err != nil {
 			tx.Rollback()
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 		}

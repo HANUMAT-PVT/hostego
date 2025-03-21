@@ -27,7 +27,7 @@ const PhoneEmailAuth = () => {
         window.phoneEmailListener = (userObj) => {
             const userJsonUrl = userObj.user_json_url;
 
-            console.log("Authenticated User JSON URL:", userJsonUrl);
+           
             localStorage.setItem("userJsonUrl", userJsonUrl);
 
             handleUserAccountCreation(userJsonUrl)
@@ -44,16 +44,17 @@ const PhoneEmailAuth = () => {
 
             let response = await axiosClient.post("/api/auth/signup", {
                 mobile_number: data?.user_country_code + data?.user_phone_number,
-                first_name: "Hostego",
-                last_name: "User",
-                email: `test${Math.random() * 2323 + Date.now()}@hostego.in`
+                first_name: data?.user_first_name || "Hostego",
+                last_name: data?.user_last_name || "User",
+                email: data?.user_email || `test${Math.random() * 2323 + Date.now()}@hostego.in`
 
             })
 
             localStorage.setItem("auth-response", JSON.stringify(response.data))
-            // alert("Signup successfull")
+            
             dispatch(setFetchUserAccount(true))
             router.push("/home")
+            window.location.reload()
 
         } catch (error) {
             console.log(error, "error")

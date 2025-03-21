@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Home, Package, Users, Settings, PackageOpenIcon, UserCircle, ShoppingBasket } from "lucide-react";
+import { Home, Package, Users, Settings, PackageOpenIcon, UserCircle, ShoppingBasket, CreditCard } from "lucide-react";
 import OrderAssignment from "../../components/Admin/OrderAssignment";
 import SidebarItem from "../../components/Admin/SidebarItem";
 import OrdersList from "../../components/Admin/OrdersList";
@@ -13,6 +13,7 @@ import ProductsManager from "./ProductsManager";
 import ShopsManager from "./ShopsManager";
 import Dashboard from "./Dashboard";
 import axiosClient from "@/app/utils/axiosClient";
+import DeliveryPartnerPaymentManager from "./DeliveryPartnerPaymentManager";
 
 export default function AdminPanel() {
     const router = useRouter();
@@ -110,12 +111,18 @@ export default function AdminPanel() {
                         isActive={currentPage === "shops"}
                         onClick={() => updatePage("shops")}
                     />}
+                    {(checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <SidebarItem
+                        icon={<CreditCard size={20} />}
+                        text="Delivery Partner Payments"
+                        isActive={currentPage === "delivery_partner_payment"}
+                        onClick={() => updatePage("delivery_partner_payment")}
+                    />}
                 </nav>
             </aside>
 
             {/* Main Content */}
             <main className="flex-1 p-6">
-                {currentPage === "dashboard" && <Dashboard data={dashboardStats} />}
+                {currentPage === "dashboard" && checkUserRole("super_admin") && <Dashboard dashboardStats={dashboardStats} />}
                 {currentPage === "order-assign" && (checkUserRole("super_admin") || checkUserRole("order_assign_manager") || checkUserRole("admin")) && <OrderAssignment />}
                 {currentPage === "partners" && (checkUserRole("super_admin") || checkUserRole("delivery_partner_manager") || checkUserRole("admin")) && <DeliveryPartnerManagement />}
                 {currentPage === "wallet_payment_verification" && (checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <WalletPaymentVerfication />}
@@ -123,6 +130,7 @@ export default function AdminPanel() {
                 {currentPage === "users" && (checkUserRole("super_admin") || checkUserRole("admin")) && <UserManager />}
                 {currentPage === "products" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <ProductsManager />}
                 {currentPage === "shops" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <ShopsManager />}
+                {currentPage === "delivery_partner_payment" && (checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <DeliveryPartnerPaymentManager />}
             </main>
         </div>
     );
