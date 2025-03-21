@@ -21,7 +21,7 @@ type Discount struct {
 
 // Product Model
 type Product struct {
-	ProductId       string         `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"product_id"`
+	ProductId       string         `gorm:"type:string;primaryKey;default:gen_random_uuid()" json:"product_id"`
 	ProductName     string         `gorm:"type:varchar(255);index;not null" json:"product_name"`
 	FoodCategory    FoodCategory   `gorm:"embedded" json:"food_category"`
 	FoodPrice       float64        `gorm:"type:double precision;not null" json:"food_price"`
