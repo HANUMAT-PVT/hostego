@@ -106,7 +106,7 @@ func InitiatePayment(c fiber.Ctx) error {
 	for _, item := range orderItems {
 		orderItem := models.OrderItem{
 			OrderId:   order.OrderId,
-			ProductId: item.ProductId,
+			ProductId: item.ProductId.String(),
 			Quantity:  item.Quantity,
 			SubTotal:  item.SubTotal,
 		}
