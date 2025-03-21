@@ -260,7 +260,7 @@ func UpdateOrderById(c fiber.Ctx) error {
 	}
 	if updateData.OrderStatus == models.DeliveredOrderStatus {
 		existingOrder.DeliveredAt = time.Now()
-		AddEarningsToDeliveryPartnerWallet(c,existingOrder)
+		AddEarningsToDeliveryPartnerWallet(existingOrder)
 
 	}
 
@@ -402,41 +402,32 @@ func FetchAllOrderItemsAccordingToProducts(c fiber.Ctx) error {
 		Description   string  `json:"description"`
 		CurrentPrice  float64 `json:"current_price"`
 		// Date-based stats
-		LastDayRevenue     float64 `json:"last_day_revenue"`
-		LastWeekRevenue    float64 `json:"last_week_revenue"`
-		LastMonthRevenue   float64 `json:"last_month_revenue"`
-		LastDayOrders      int     `json:"last_day_orders"`
-		LastWeekOrders     int     `json:"last_week_orders"`
-		LastMonthOrders    int     `json:"last_month_orders"`
+		LastDayRevenue   float64 `json:"last_day_revenue"`
+		LastWeekRevenue  float64 `json:"last_week_revenue"`
+		LastMonthRevenue float64 `json:"last_month_revenue"`
+		LastDayOrders    int     `json:"last_day_orders"`
+		LastWeekOrders   int     `json:"last_week_orders"`
+		LastMonthOrders  int     `json:"last_month_orders"`
 	}
 
 	type OverallStats struct {
-		TotalRevenue       float64 `json:"total_revenue"`
-		TotalOrders        int     `json:"total_orders"`
-		LastDayRevenue     float64 `json:"last_day_revenue"`
-		LastWeekRevenue    float64 `json:"last_week_revenue"`
-		LastMonthRevenue   float64 `json:"last_month_revenue"`
-		LastDayOrders      int     `json:"last_day_orders"`
-		LastWeekOrders     int     `json:"last_week_orders"`
-		LastMonthOrders    int     `json:"last_month_orders"`
+		TotalRevenue     float64 `json:"total_revenue"`
+		TotalOrders      int     `json:"total_orders"`
+		LastDayRevenue   float64 `json:"last_day_revenue"`
+		LastWeekRevenue  float64 `json:"last_week_revenue"`
+		LastMonthRevenue float64 `json:"last_month_revenue"`
+		LastDayOrders    int     `json:"last_day_orders"`
+		LastWeekOrders   int     `json:"last_week_orders"`
+		LastMonthOrders  int     `json:"last_month_orders"`
 	}
 
 	// Get date range filters from query params
 	startDate := c.Query("start_date")
 	endDate := c.Query("end_date")
-	
-	var baseQuery = database.DB.Model(&models.OrderItem{}).
-		Select("order_items.*, products.*, orders.*"). // Select all needed fields
-		Joins("RIGHT JOIN products ON products.product_id = order_items.product_id").
-		Joins("LEFT JOIN orders ON orders.order_id = order_items.order_id")
-
-	if startDate != "" && endDate != "" {
-		baseQuery = baseQuery.Where("orders.created_at BETWEEN ? AND ?", startDate, endDate)
-	}
 
 	// Get product-wise stats
 	var stats []ProductStats
-	err := baseQuery.
+	query := database.DB.
 		Select(`
 			products.product_id,
 			products.product_name,
@@ -445,7 +436,7 @@ func FetchAllOrderItemsAccordingToProducts(c fiber.Ctx) error {
 			products.stock_quantity,
 			products.availability,
 			products.food_price as current_price,
-			COUNT(DISTINCT order_items.order_id) as order_count,
+			COUNT(DISTINCT CASE WHEN orders.order_id IS NOT NULL THEN order_items.order_id END) as order_count,
 			COALESCE(SUM(order_items.quantity), 0) as total_quantity,
 			COALESCE(SUM(order_items.sub_total), 0) as total_revenue,
 			COALESCE(SUM(CASE WHEN orders.created_at >= NOW() - INTERVAL '1 day' THEN order_items.sub_total ELSE 0 END), 0) as last_day_revenue,
@@ -455,7 +446,19 @@ func FetchAllOrderItemsAccordingToProducts(c fiber.Ctx) error {
 			COUNT(DISTINCT CASE WHEN orders.created_at >= NOW() - INTERVAL '7 day' THEN order_items.order_id END) as last_week_orders,
 			COUNT(DISTINCT CASE WHEN orders.created_at >= NOW() - INTERVAL '30 day' THEN order_items.order_id END) as last_month_orders
 		`).
-		Group("products.product_id, products.product_name, products.product_img, products.description, products.stock_quantity, products.availability, products.food_price").
+		Table("products").
+		Joins("LEFT JOIN order_items ON products.product_id::text = order_items.product_id::text").
+		Joins("LEFT JOIN orders ON orders.order_id = order_items.order_id")
+
+	if startDate != "" && endDate != "" {
+		startDateTime := startDate + " 00:00:00"
+		endDateTime := endDate + " 23:59:59"
+		query = query.Where("orders.created_at BETWEEN ? AND ? OR orders.created_at IS NULL", startDateTime, endDateTime)
+	}
+
+	err := query.
+		Group("products.product_id").
+		Order("products.product_name").
 		Scan(&stats).Error
 
 	if err != nil {
@@ -493,5 +496,3 @@ func FetchAllOrderItemsAccordingToProducts(c fiber.Ctx) error {
 		"overall_stats": overall,
 	})
 }
-
-

@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import BackNavigationButton from "../components/BackNavigationButton";
-import { Info, Landmark, ShoppingBag, Clock, Upload, User, ChevronDown, Shield, RefreshCw, Package } from "lucide-react";
+import { Info, Landmark, ShoppingBag, Clock, Upload, User, ChevronDown, Shield, RefreshCw, Package, Wallet } from "lucide-react";
 import HostegoButton from "../components/HostegoButton"
 import { uploadToS3Bucket } from '../lib/aws'
 import axiosClient from "../utils/axiosClient"
 import MaintainOrderStatusForDeliveryPartner from "../components/Delivery-Partner/MaintainOrderStatusForDeliveryPartner"
-import { formatDate, transformDeliveryPartnerOrderEarnings, transformOrdersByDate } from "../utils/helper";
+import { transformOrdersByDate, formatDate } from "../utils/helper";
 
 
 
@@ -85,7 +85,52 @@ const VerificationStatus = ({ deliveryPartner }) => {
     );
 };
 
+const WalletCard = ({ walletData }) => (
+    <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+                <div className="p-3 rounded-full bg-blue-100">
+                    <Wallet className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                    <h3 className="font-medium">Wallet Balance</h3>
+                    <p className="text-2xl font-bold text-blue-600">₹{walletData?.balance || 0}</p>
+                </div>
+            </div>
+        </div>
 
+        <div className="grid grid-cols-2 gap-4 mt-4 p-4 bg-gray-50 rounded-lg">
+            <div>
+                <p className="text-sm text-gray-500">Total Earnings</p>
+                <p className="font-semibold">₹{walletData?.total_earnings || 0}</p>
+            </div>
+            <div>
+                <p className="text-sm text-gray-500">Pending Amount</p>
+                <p className="font-semibold">₹{walletData?.pending_amount || 0}</p>
+            </div>
+        </div>
+
+        <div className="mt-4 border-t pt-4">
+            <h4 className="text-sm font-medium mb-3">Recent Transactions</h4>
+            <div className="space-y-3">
+                {walletData?.recent_transactions?.map((transaction) => (
+                    <div key={transaction.id} className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-medium">{transaction.description}</p>
+                            <p className="text-xs text-gray-500">
+                                {formatDate(transaction.created_at)}
+                            </p>
+                        </div>
+                        <p className={`font-medium ${transaction.transaction_type === 'credit' ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                            {transaction.transaction_type === 'credit' ? '+' : '-'}₹{transaction.amount}
+                        </p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+);
 
 const Page = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -96,6 +141,7 @@ const Page = () => {
     const [deliveryPartnerEarnings, setDeliveryPartnerEarnings] = useState(0);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState("active")
+    const [walletData, setWalletData] = useState(null);
 
     const [deliveryPartnerVerificationData, setDeliveryPartnerVerificationData] = useState({
         address: "",
@@ -120,6 +166,7 @@ const Page = () => {
         if (deliveryPartner?.delivery_partner_id) {
             fetchDeliveryPartnerOrders();
             fetchDeliveryPartnerEarnings();
+            fetchWalletData();
         }
     }, [deliveryPartner]);
 
@@ -174,6 +221,15 @@ const Page = () => {
         }
     }
 
+    const fetchWalletData = async () => {
+        try {
+            const { data } = await axiosClient.get('/api/delivery-partner-wallet');
+            const transactions = await axiosClient.get(`/api/delivery-partner-wallet/transactions?page=1&limit=10`)
+            setWalletData({ ...data, recent_transactions: transactions.data });
+        } catch (error) {
+            console.error('Error fetching wallet data:', error);
+        }
+    };
 
     const handleDeliveryPartnerRegistration = async (e) => {
         e.preventDefault()
@@ -236,7 +292,8 @@ const Page = () => {
             setIsRefreshing(true);
             await Promise.all([
                 fetchDeliveryPartnerOrders(),
-                fetchDeliveryPartnerEarnings()
+                fetchDeliveryPartnerEarnings(),
+                fetchWalletData()
             ]);
         } catch (error) {
             console.error('Error refreshing data:', error);
@@ -298,7 +355,7 @@ const Page = () => {
 
             <div className="p-4 space-y-4">
 
-                <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
+                {!!deliveryPartner?.verification_status && <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
@@ -327,10 +384,15 @@ const Page = () => {
                             </div>
                         </label>
                     </div>
-                </div>
+                </div>}
                 {/* Verification Status */}
 
                 <VerificationStatus deliveryPartner={deliveryPartner} />
+
+                {/* Add Wallet Card */}
+                {!!deliveryPartner?.verification_status && (
+                    <WalletCard walletData={walletData} />
+                )}
 
                 {/* Personal Information Accordion */}
                 <PersonalInfoAccordion deliveryPartner={deliveryPartner} />
@@ -352,14 +414,14 @@ const Page = () => {
                     </div>
                     <div className="flex justify-between mt-3">
                         <div className="flex flex-col items-center gap-1 px-4">
-                            <p className="font-semibold text-xl">₹ {deliveryPartnerEarnings?.summary?.total_earnings}</p>
+                            <p className="font-semibold text-xl">₹ {deliveryPartnerEarnings?.summary?.total_earnings || 0}</p>
                             <div className="flex gap-2 items-center">
                                 <Landmark size={14} />
                                 <p className="text-xs">Total earnings</p>
                             </div>
                         </div>
                         <div className="flex flex-col items-center gap-1 px-4">
-                            <p className="font-semibold text-xl">{deliveryPartnerEarnings?.summary?.total_orders}</p>
+                            <p className="font-semibold text-xl">{deliveryPartnerEarnings?.summary?.total_orders || 0}</p>
                             <div className="flex gap-2 items-center">
                                 <ShoppingBag size={14} />
                                 <p className="text-xs">Orders</p>

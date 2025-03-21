@@ -5,10 +5,11 @@ import (
 	"backend-hostego/routes"
 	"log"
 
+	"backend-hostego/cron"
+
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"gorm.io/gorm"
-	"backend-hostego/cron"
 )
 
 var db *gorm.DB
@@ -45,14 +46,14 @@ func main() {
 	routes.UserRolesRoutes(app)
 	routes.WebPushNotificationRoutes(app)
 	routes.SearchQueryRoutes(app)
-
-	// Initialize cron jobs
-	cron.InitCronJobs()
-
+	routes.DeliveryPartnerWalletRoutes(app)
 	// Default Route
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "Welcome to the Hostego Backend Server!"})
 	})
+
+	// Initialize cron jobs
+	cron.InitCronJobs()
 
 	// Start the server
 	log.Fatal(app.Listen("0.0.0.0:8000"))

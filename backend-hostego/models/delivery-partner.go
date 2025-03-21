@@ -31,7 +31,6 @@ func (u *DeliveryPartner) AfterCreate(tx *gorm.DB) (err error) {
 	deliveryPartnerWallet := DeliveryPartnerWallet{
 		DeliveryPartnerId: u.DeliveryPartnerID.String(),
 		Balance:           0.0,
-		UserId:            u.UserId,
 	}
 	if err := tx.Create(&deliveryPartnerWallet).Error; err != nil {
 		return err
