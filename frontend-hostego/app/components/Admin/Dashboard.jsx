@@ -48,7 +48,7 @@ const ProductCard = ({ product }) => {
 }
 
 const Dashboard = ({ dashboardStats }) => {
-    
+
     const [currentData, setCurrentData] = useState(dashboardStats)
     const [isLoading, setIsLoading] = useState(false)
     const [dateRange, setDateRange] = useState({

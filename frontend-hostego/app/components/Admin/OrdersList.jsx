@@ -147,12 +147,44 @@ const OrderCard = ({ order, onRefresh }) => {
                         </p>
                     </div>
                     <div className="p-4 rounded-xl bg-blue-50 space-y-1">
-                        <p className="text-sm text-gray-600">Delivery Time</p>
+                        <p className="text-sm text-gray-600">Order Placed</p>
                         <p className="text-lg font-medium text-blue-700">
                             {formatDate(order.created_at)}
                         </p>
                     </div>
                 </div>
+
+                {/* Add Delivery Partner Info if assigned */}
+                {order.delivery_partner && (
+                    <div className="bg-blue-50 rounded-xl p-4 mb-6">
+                        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-blue-100">
+                            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
+                                <Package className="w-6 h-6 text-blue-600" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-blue-600">Delivery Partner</p>
+                                <p className="font-medium text-lg">{order.delivery_partner.user?.first_name}</p>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <a
+                                        href={`tel:${order.delivery_partner.user?.mobile_number}`}
+                                        className="text-sm text-blue-600 flex items-center gap-1 hover:text-blue-700"
+                                    >
+                                        <Phone className="w-4 h-4" />
+                                        {order.delivery_partner.user?.mobile_number}
+                                    </a>
+                                    <span className="text-sm text-blue-600">
+                                        (ID: #{order.delivery_partner.delivery_partner_id?.slice(0, 8)})
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between text-sm">
+                            <span className="text-blue-600">Current Status</span>
+                            <OrderStatusBadge status={order.order_status} />
+                        </div>
+                    </div>
+                )}
 
                 {/* Delivery Info - Better organized */}
                 <div className="bg-gray-50 rounded-xl p-4 mb-6">
