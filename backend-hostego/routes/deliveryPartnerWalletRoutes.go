@@ -4,12 +4,12 @@ import (
 	"backend-hostego/controllers"
 
 	"github.com/gofiber/fiber/v3"
-)	
+)
 
 func DeliveryPartnerWalletRoutes(app *fiber.App) {
-	deliveryPartnerWalletRoutes := app.Group("/delivery-partner-wallet")
-	deliveryPartnerWalletRoutes.Get("/", controllers.FetchDeliveryPartnerWallet)
-	deliveryPartnerWalletRoutes.Get("/transactions", controllers.FetchDeliveryPartnerWalletTransactions)
-	deliveryPartnerWalletRoutes.Post("/withdrawal-requests", controllers.CreateWalletWithdrawalRequests)
-	deliveryPartnerWalletRoutes.Post("/withdrawal-requests/:transaction_id/verify", controllers.VerifyDeliveryPartnerWithdrawalRequest)
+	deliveryPartnerWalletRoutes := app.Group("/api/delivery-partner-wallet")
+	deliveryPartnerWalletRoutes.Get("/withdrawal-requests", controllers.FetchAllDeliveryPartnersTransactions)
+	deliveryPartnerWalletRoutes.Get("/:id", controllers.FetchDeliveryPartnerWallet)
+	deliveryPartnerWalletRoutes.Get("/transactions/:id", controllers.FetchDeliveryPartnerWalletTransactions)
+	deliveryPartnerWalletRoutes.Patch("/withdrawal-requests/:transaction_id/verify", controllers.VerifyDeliveryPartnerWithdrawalRequest)
 }
