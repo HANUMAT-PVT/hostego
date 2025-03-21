@@ -448,7 +448,8 @@ func FetchAllOrderItemsAccordingToProducts(c fiber.Ctx) error {
 		`).
 		Table("products").
 		Joins("LEFT JOIN order_items ON products.product_id::uuid = order_items.product_id::uuid").
-		Joins("LEFT JOIN orders ON orders.order_id = order_items.order_id")
+Joins("LEFT JOIN orders ON orders.order_id = order_items.order_id")
+// 
 
 	if startDate != "" && endDate != "" {
 		startDateTime := startDate + " 00:00:00"
