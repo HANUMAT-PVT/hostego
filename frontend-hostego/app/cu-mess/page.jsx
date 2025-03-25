@@ -88,7 +88,7 @@ const MealCard = ({ title, items, icon: Icon, description, className }) => {
             </button>
 
             {/* Menu Items - Now collapsible */}
-            <div className={`transition-all duration-200 ${isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
+            <div className={`transition-all duration-200 ${isExpanded ? ' opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
                 <div className="p-4">
                     {items?.length > 0 ? (
                         <div className="space-y-2.5">
