@@ -123,34 +123,7 @@ const TimingCard = ({ icon: Icon, title, time, color, holiday }) => (
     </div>
 )
 
-// Add a new component for Snacks Card
-const SnacksCard = ({ icon: Icon, color, boysType }) => {
-    return (
-        <div className={`flex flex-col ${color} rounded-lg overflow-hidden`}>
-            <div className="p-4">
-                <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2.5 rounded-lg bg-white/90 shadow-sm">
-                        <Icon className="w-5 h-5" />
-                    </div>
-                    <div>
-                        <h4 className="font-medium text-sm">Snacks</h4>
-                        <p className="text-xs opacity-75">{boysType}</p>
-                    </div>
-                </div>
-                <div className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                        <span>Regular Time:</span>
-                        <span>4:30 PM - 5:15 PM</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                        <span>Holiday Time:</span>
-                        <span>4:30 PM - 5:15 PM</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
+
 
 // Update the TimingsAccordion component
 const TimingsAccordion = ({ isOpen, setIsOpen }) => {
@@ -184,20 +157,16 @@ const TimingsAccordion = ({ isOpen, setIsOpen }) => {
                             holiday="12:30 PM - 2:00 PM"
                             color="bg-blue-50 text-blue-600"
                         />
+                        <TimingCard
+                            icon={Sun}
+                            title="Snacks"
+                            time="4:30 PM - 5:15 PM"
+                            holiday="4:30 PM - 5:15 PM"
+                            color="bg-blue-50 text-blue-600"
+                        />
 
                         {/* Replace single snacks card with two cards */}
-                        <div className="space-y-2">
-                            <SnacksCard
-                                icon={Cookie}
-                                color="bg-amber-50 text-amber-600"
-                                boysType="NC Boys"
-                            />
-                            <SnacksCard
-                                icon={Cookie}
-                                color="bg-amber-50 text-amber-600"
-                                boysType="Zakir Boys"
-                            />
-                        </div>
+
 
                         <TimingCard
                             icon={Moon}
