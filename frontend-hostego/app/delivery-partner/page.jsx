@@ -230,7 +230,7 @@ const Page = () => {
             <div className="p-4 space-y-4">
 
 
-                <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
+            {deliveryPartner?.verification_status ==1&& <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
@@ -259,7 +259,7 @@ const Page = () => {
                             </div>
                         </label>
                     </div>
-                </div>
+                </div>}
                 <VerificationStatus deliveryPartner={deliveryPartner} />
                 <PersonalInfoAccordion deliveryPartner={deliveryPartner} />
                 <WalletCard walletData={walletData} />
