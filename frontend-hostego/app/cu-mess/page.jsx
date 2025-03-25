@@ -184,7 +184,11 @@ const TimingsAccordion = ({ isOpen, setIsOpen }) => {
 
 const Page = () => {
     const [messMenus, setMessMenus] = useState([])
-    const [selectedDate, setSelectedDate] = useState(new Date())
+    const [selectedDate, setSelectedDate] = useState(() => {
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        return today
+    })
     const [isLoading, setIsLoading] = useState(true)
     const [isTimingsOpen, setIsTimingsOpen] = useState(false)
 
@@ -226,17 +230,19 @@ const Page = () => {
         })
     }
 
-    // Function to format date to YYYY-MM-DD for comparison
+    // Update the formatDateForComparison function to handle timezone issues
     const formatDateForComparison = (date) => {
-        return new Date(date).toISOString().split('T')[0]
+        const d = new Date(date)
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
     }
 
-    // Find menu for selected date
+    // Update the findMenuForDate function to be more robust
     const findMenuForDate = (date) => {
         const formattedSelectedDate = formatDateForComparison(date)
-        return messMenus.find(menu =>
-            formatDateForComparison(menu.date) === formattedSelectedDate
-        )
+        return messMenus.find(menu => {
+            const menuDate = formatDateForComparison(menu.date)
+            return menuDate === formattedSelectedDate
+        })
     }
 
     const changeDate = (days) => {
@@ -280,14 +286,24 @@ const Page = () => {
                                 >
                                     <ChevronLeft className="w-5 h-5" />
                                 </button>
-                                <div className="text-center">
-                                    <p className="text-sm !w-[200px] !max-w-[200px] font-medium text-gray-900">{formatDate(selectedDate)}</p>
+                                <div className="text-center flex-1">
+                                    <p className="text-sm font-medium text-gray-900">{formatDate(selectedDate)}</p>
                                 </div>
                                 <button
                                     onClick={() => changeDate(1)}
                                     className="p-2 rounded-lg hover:bg-white text-gray-600 transition-all"
                                 >
                                     <ChevronRight className="w-5 h-5" />
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        const today = new Date()
+                                        today.setHours(0, 0, 0, 0)
+                                        setSelectedDate(today)
+                                    }}
+                                    className="px-3 py-1 text-sm bg-[var(--primary-color)] text-white rounded-lg hover:bg-[var(--primary-color)]/90 transition-all"
+                                >
+                                    Today
                                 </button>
                             </div>
                         </div>
