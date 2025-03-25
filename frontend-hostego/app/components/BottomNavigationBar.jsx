@@ -1,5 +1,5 @@
 'use client'
-import { CircleUserRound, House, Package, Search } from 'lucide-react'
+import { CircleUserRound, House, Package, Search, Utensils } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import React, { useState } from 'react'
@@ -13,7 +13,8 @@ const BottomNavigationBar = () => {
   const navItems = [
     { name: 'Home', icon: House, link: "/orders" },
     { name: 'Orders', icon: Package, link: "/orders" }, // Replace with Settings icon
-    { name: 'Search', icon: Search, link: "/search-products" }, // Replace with Search icon
+    { name: 'Cu Mess', icon: Utensils, link: "/cu-mess" }, // Replace with Profile icon
+    // { name: 'Search', icon: Search, link: "/search-products" }, // Replace with Search icon
     { name: 'Profile', icon: CircleUserRound, link: "/profile" }, // Replace with Profile icon
   ]
 
