@@ -294,8 +294,8 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	// fmt.Println("Cashfree Client ID:", config.config.GetEnv("CASHFREE_CLIENT_SECRET", "")("CASHFREE_CLIENT_ID"))
-	// fmt.Println("Cashfree Client Secret:", config.GetEnv("CASHFREE_CLIENT_SECRET", ""))
+	fmt.Println("Cashfree Client ID:", config.GetEnv("CASHFREE_CLIENT_SECRET_"))
+	fmt.Println("Cashfree Client Secret:", config.GetEnv("CASHFREE_CLIENT_SECRET_"))
 
 	clientId := config.GetEnv("CASHFREE_CLIENT_ID_")
 	clientSecret := config.GetEnv("CASHFREE_CLIENT_SECRET_")
