@@ -14,7 +14,7 @@ func GetUsers(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
 	}
-	if user_id == "" {
+	if user_id ==0{
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 	var users []models.User

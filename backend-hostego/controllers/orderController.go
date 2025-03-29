@@ -25,7 +25,7 @@ type FinalOrderValueType struct {
 
 // Move struct definition outside the function
 type requestCreateOrder struct {
-	AddressId       string `json:"address_id"`
+	AddressId       int `json:"address_id"`
 	CookingRequests string `json:"cooking_requests"`
 }
 
@@ -52,7 +52,7 @@ func CreateNewOrder(c fiber.Ctx) error {
 		freeDelivery = true
 	}
 
-	if requestOrder.AddressId == "" {
+	if requestOrder.AddressId == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Address ID is required"})
 	}
 
@@ -139,7 +139,7 @@ func MarkOrderAsDelivered(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if user_id == "" {
+	if user_id == 0 {
 
 	}
 	orderId := c.Params("id")
@@ -163,7 +163,7 @@ func FetchOrderById(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if user_id == "" {
+	if user_id == 0 {
 
 	}
 	order_id := c.Params("id")
@@ -180,8 +180,8 @@ func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
 	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
 
 	type requestAssignOrder struct {
-		DeliveryPartnerId string `json:"delivery_partner_id"`
-		OrderId           string `json:"order_id"`
+		DeliveryPartnerId int `json:"delivery_partner_id"`
+		OrderId           int `json:"order_id"`
 	}
 	var request_assign requestAssignOrder
 
@@ -192,7 +192,7 @@ func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if user_id == "" {
+	if user_id == 0 {
 
 	}
 	if err := c.Bind().JSON(&request_assign); err != nil {
@@ -231,7 +231,7 @@ func UpdateOrderById(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if user_id == "" {
+	if user_id == 0 {
 	}
 	order_id := c.Params("id")
 
@@ -247,7 +247,7 @@ func UpdateOrderById(c fiber.Ctx) error {
 
 	var updateData struct {
 		OrderStatus       models.OrderStatusType `json:"order_status"`
-		DeliveryPartnerId string                 `json:"delivery_partner_id"`
+		DeliveryPartnerId int                 `json:"delivery_partner_id"`
 	}
 	if err := c.Bind().JSON(&updateData); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -255,7 +255,7 @@ func UpdateOrderById(c fiber.Ctx) error {
 
 	// Update only the status
 	existingOrder.OrderStatus = updateData.OrderStatus
-	if updateData.DeliveryPartnerId != "" {
+	if updateData.DeliveryPartnerId != 0 {
 		existingOrder.DeliveryPartnerId = updateData.DeliveryPartnerId
 	}
 	if updateData.OrderStatus == models.DeliveredOrderStatus {
@@ -292,7 +292,7 @@ func FetchAllUserOrders(c fiber.Ctx) error {
 	}
 	offset := (page - 1) * limit
 
-	if user_id == "" {
+	if user_id == 0 {
 
 	}
 	var orders []models.Order
@@ -307,7 +307,7 @@ func FetchAllOrders(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if user_id == "" {
+	if user_id == 0 {
 	}
 
 	dbQuery := database.DB
@@ -342,7 +342,7 @@ func FetchAllOrdersByDeliveryPartner(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
 
-	if user_id == "" {
+	if user_id == 0 {
 	}
 	// Get delivery partner ID from params
 	delivery_partner_id := c.Params("id")

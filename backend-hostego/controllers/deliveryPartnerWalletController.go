@@ -19,7 +19,7 @@ func FetchDeliveryPartnerWallet(c fiber.Ctx) error {
 			"error":   middleErr.Error(),
 		})
 	}
-	if user_id == "" {
+		if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
 		})
@@ -46,7 +46,7 @@ func FetchDeliveryPartnerWalletTransactions(c fiber.Ctx) error {
 			"error":   middleErr.Error(),
 		})
 	}
-	if user_id == "" {
+		if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
 		})
@@ -259,7 +259,7 @@ func FetchAllDeliveryPartnersTransactions(c fiber.Ctx) error {
 			"err":     middleErr.Error(),
 		})
 	}
-	if user_id == "" {
+	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
 		})

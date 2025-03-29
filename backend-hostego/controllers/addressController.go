@@ -24,7 +24,7 @@ func CreateNewAddress(c fiber.Ctx) error {
 	if err := database.DB.First(&user, " user_id = ?", user_id).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found !"})
 	}
-	address.UserId = user_id
+	address.UserId = user.UserId
 	if err := database.DB.Create(&address).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}

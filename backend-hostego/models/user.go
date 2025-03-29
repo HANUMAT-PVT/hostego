@@ -2,14 +2,12 @@ package models
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 // User model
 type User struct {
-	UserId              string     `gorm:"type:uuid;primaryKey;unique;not null;default:gen_random_uuid()" json:"user_id"`
+	UserId              int     `gorm:"type:int;primaryKey;unique;not null;autoIncrement:true" json:"user_id"`
 	FirstName           string     `gorm:"type:varchar(255);" json:"first_name"`
 	LastName            string     `gorm:"type:varchar(255);" json:"last_name"`
 	Email               string     `gorm:"unique;not null;" json:"email"`
@@ -21,15 +19,9 @@ type User struct {
 	
 }
 
-// Before create hook to generate uuid
-func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
-	u.UserId = uuid.New().String()
-	return
-}
 
 func (u *User) AfterCreate(tx *gorm.DB) (err error) {
 	wallet := Wallet{
-		WalletId: uuid.New().String(),
 		UserId:   u.UserId,
 		Balance:  0.0,
 	}

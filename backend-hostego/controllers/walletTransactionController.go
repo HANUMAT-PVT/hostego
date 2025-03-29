@@ -11,7 +11,7 @@ import (
 
 func CreditWalletTransaction(c fiber.Ctx) error {
 	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if user_id == "" {
+	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 	var user models.User
@@ -187,8 +187,8 @@ func FetchAllWalletTransactions(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if user_id != "admin" {
-		// return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	var wallet_transactions []models.WalletTransaction
 	if err := dbQuery.Preload("User").Order("created_at desc").Find(&wallet_transactions).Error; err != nil {
