@@ -126,7 +126,7 @@ const OrderPreviewCard = ({ order }) => {
             <div className="px-4 py-3 bg-gray-50 flex justify-between items-center">
                 <div className="text-sm">
                     <span className="text-gray-600">Order ID: </span>
-                    <span className="font-medium">{order?.order_id?.slice(0, 8)}</span>
+                    <span className="font-medium">{order?.order_id}</span>
                 </div>
                 <button
                     className="text-[var(--primary-color)] text-sm font-medium hover:underline"

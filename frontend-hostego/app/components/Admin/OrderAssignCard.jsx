@@ -18,7 +18,7 @@ const OrderAssignCard = ({ order, selectOrderItem,selectedOrderItem }) => {
                     <div className="flex items-center gap-2">
                         <Package className="w-5 h-5 text-white" />
                         <span className="text-white font-medium">
-                            #{order?.order_id?.slice(0, 8)}
+                            #{order?.order_id}
                         </span>
                     </div>
                     <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm">

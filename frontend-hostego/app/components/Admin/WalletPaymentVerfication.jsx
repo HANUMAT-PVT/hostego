@@ -41,7 +41,7 @@ const PaymentCard = ({ transaction, onVerify, onReject }) => {
                         </span>
                     </div>
                     <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm">
-                        #{transaction?.transaction_id?.slice(0, 8)}
+                        #{transaction?.transaction_id}
                     </span>
                 </div>
             </div>
@@ -177,7 +177,7 @@ const WalletPaymentVerfication = () => {
     const [transactionType, setTransactionType] = useState('credit') // Default to credit
     const [transactionStatus, setTransactionStatus] = useState('pending') // Default to pending
     const [searchTerm, setSearchTerm] = useState('')
-    
+
     // Use array destructuring for useDebounce ho
 
     const fetchPaymentTransactions = async (showRefreshAnimation = false) => {
@@ -215,7 +215,7 @@ const WalletPaymentVerfication = () => {
         fetchPaymentTransactions(true)
     }
 
-    
+
 
     return (
         <div className="max-w-2xl mx-auto p-4 space-y-4">

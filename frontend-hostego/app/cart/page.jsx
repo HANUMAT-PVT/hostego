@@ -14,6 +14,9 @@ import HostegoToast from '../components/HostegoToast'
 import { useDispatch, useSelector } from 'react-redux'
 import { setFetchCartData, setFetchUserWalletBool, setUserAccountWallet } from '../lib/redux/features/user/userSlice'
 import { subscribeToNotifications } from '../utils/webNotifications'
+import { load } from "@cashfreepayments/cashfree-js";
+
+
 const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
     return (
         <div onClick={() => setOpenAddressList(true)} className={`bg-white mx-2 rounded-xl p-4 shadow-sm transition-all duration-200 
@@ -62,6 +65,18 @@ const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
 
 const page = () => {
     // Hostego – Simplify Your Hostel Life"
+
+
+    let cashfree;
+    var initializeSDK = async function () {
+        cashfree = await load({
+            mode: "sandbox",
+        });
+    };
+    initializeSDK();
+
+
+
     const [openAddressList, setOpenAddressList] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState(false)
     const [isPageLoading, setIsPageLoading] = useState(true)
@@ -111,7 +126,7 @@ const page = () => {
                 setOrderTimer((prev) => prev - 1)
             }, 1000)
         } else if (orderTimer === 0) {
-            handleCreateOrder()
+            handleCashFreePayment()
         }
 
         return () => clearInterval(interval)
@@ -147,6 +162,53 @@ const page = () => {
         setOrderTimer(10)
     }
 
+    const handleCashFreePayment = async () => {
+        setPaymentStatus('processing')
+        const { data } = await axiosClient.post('/api/order', {
+            address_id: selectedAddress?.address_id,
+            cooking_requests: cookingRequests
+        })
+
+        const response = await axiosClient.post(`/api/payment/cashfree`, {
+            order_id: data?.order_id
+        })
+
+        await doPayment(response?.data?.payment_session_id, response?.data?.order_id, data?.order_id)
+
+    }
+    const doPayment = async (paymentSessionId, paymentSessionorderId, order_id) => {
+
+        let checkoutOptions = {
+            paymentSessionId: paymentSessionId,
+            redirectTarget: "_modal",
+        };
+        let result = await cashfree.checkout(checkoutOptions)
+
+        if (result.error) {
+            // This will be true whenever user clicks on close icon inside the modal or any error happens during the payment
+            console.log("User has closed the popup or there is some payment error, Check for Payment Status");
+            console.log(result.error);
+        }
+        if (result.redirect) {
+            // This will be true when the payment redirection page couldnt be opened in the same window
+            // This is an exceptional case only when the page is opened inside an inAppBrowser
+            // In this case the customer will be redirected to return url once payment is completed
+            console.log("Payment will be redirected");
+        }
+        if (result.paymentDetails) {
+            console.log(order_id, "order id")
+            // This will be called whenever the payment is completed irrespective of transaction status
+            console.log("Payment has been completed, Check for Payment Status");
+            let checkPayment = await axiosClient.post(`/api/payment/cashfree/${paymentSessionorderId}`, {
+                order_id: order_id
+            })
+
+            setPaymentStatus('success')
+            router.push("/orders")
+        }
+
+
+    }
     const handleCreateOrder = async () => {
         try {
 
@@ -191,6 +253,8 @@ const page = () => {
         setShowPaymentDrawer(true);
     };
 
+
+
     if (isPageLoading) {
         return <HostegoLoader />
     }
@@ -199,6 +263,7 @@ const page = () => {
     return (
         <div className='min-h-screen bg-[var(--bg-page-color)]'>
             <BackNavigationButton title="Checkout" />
+            {/* <CartCheckout paymentSessionId={response?.data?.payment_session_id} /> */}
             <HostegoToast message="Please select a delivery address" variant="error" show={isToastVisible} onClose={() => setIsToastVisible(false)} />
             {/* Timer Banner - shows when timer is running */}
             {isTimerRunning && (
@@ -213,7 +278,7 @@ const page = () => {
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
-                                    onClick={handleCreateOrder}
+                                    onClick={handleCashFreePayment}
                                     className="px-4 py-1.5 bg-green-600 text-white rounded-full text-sm font-medium
                                              hover:bg-green-700 transition-colors text-nowrap"
                                 >
@@ -442,7 +507,8 @@ const page = () => {
                             <button
                                 onClick={() => {
                                     setShowPaymentDrawer(false);
-                                    startOrderTimer();
+                                    startOrderTimer()
+                                    handleCashFreePayment();
                                 }}
                                 className="w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium hover:opacity-90 transition-opacity"
                             >

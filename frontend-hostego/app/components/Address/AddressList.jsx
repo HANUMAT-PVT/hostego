@@ -72,7 +72,7 @@ export default function AddressList({ openAddressList, setOpenAddressList, sendS
                       <div className="flex flex-col gap-4 mt-4 max-h-[50vh] overflow-y-auto">
                         {address?.map((addr) => (
                           <AddressItem 
-                            key={addr.id}
+                            key={addr.address_id}
                             address={addr}
                             onSelect={() => {
                               sendSelectedAddress(addr);
