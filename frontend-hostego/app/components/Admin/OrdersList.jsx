@@ -91,7 +91,7 @@ const OrderCard = ({ order, onRefresh }) => {
                         </div>
                         <div>
                             <span className="text-white/70 text-sm">Order ID</span>
-                            <p className="text-white font-medium">#{order?.order_id?.slice(0, 8)}</p>
+                            <p className="text-white font-medium">#{order?.order_id}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -173,7 +173,7 @@ const OrderCard = ({ order, onRefresh }) => {
                                         {order.delivery_partner.user?.mobile_number}
                                     </a>
                                     <span className="text-sm text-blue-600">
-                                        (ID: #{order.delivery_partner.delivery_partner_id?.slice(0, 8)})
+                                        (ID: #{order.delivery_partner.delivery_partner_id})
                                     </span>
                                 </div>
                             </div>

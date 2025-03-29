@@ -133,7 +133,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Package className="w-5 h-5 text-white" />
-            <span className="text-white font-medium">#{activeOrder?.order_id?.slice(-6)}</span>
+            <span className="text-white font-medium">#{activeOrder?.order_id}</span>
           </div>
           <span className="text-white/80 text-sm">{formatDate(activeOrder?.created_at)}</span>
         </div>

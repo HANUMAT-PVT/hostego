@@ -49,7 +49,7 @@ const PhoneEmailAuth = () => {
                 email: data?.user_email || `test${Math.random() * 2323 + Date.now()}@hostego.in`
 
             })
-
+            console.log(response.data, "response")
             localStorage.setItem("auth-response", JSON.stringify(response.data))
             
             dispatch(setFetchUserAccount(true))

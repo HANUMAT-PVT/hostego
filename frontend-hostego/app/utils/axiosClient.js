@@ -17,7 +17,7 @@ axiosClient.interceptors.request.use(
       typeof window !== "undefined"
         ? JSON.parse(localStorage.getItem("auth-response"))
         : null;
-
+ 
     if (auth_response) {
       config.headers.Authorization = `Bearer ${auth_response?.token}`;
     }

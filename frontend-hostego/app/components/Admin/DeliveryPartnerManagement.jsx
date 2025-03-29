@@ -57,7 +57,7 @@ const DeliveryPartnerProfileCard = ({ partner, onUpdate }) => {
           <div className="flex items-center gap-2">
             <User className="w-5 h-5 text-white" />
             <span className="text-white font-medium">
-              {partner?.user?.first_name} {partner?.user?.last_name} #{partner?.delivery_partner_id?.slice(0, 8)}
+              {partner?.user?.first_name} {partner?.user?.last_name} #{partner?.delivery_partner_id}
             </span>
           </div>
           <div className="relative">
