@@ -1,8 +1,8 @@
 "use client";
 import AWS from "aws-sdk";
 import imageCompression from 'browser-image-compression';
-// Only log in development
-if (process.env.NODE_ENV !== "production") {
+// Oprocess.envnly log in development
+if (.NODE_ENV !== "production") {
   console.log("AWS Environment Variables:", {
     region: process.env.NEXT_PUBLIC_AWS_REGION,
     accessKey: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY,

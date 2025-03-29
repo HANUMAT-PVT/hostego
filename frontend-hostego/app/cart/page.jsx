@@ -70,7 +70,7 @@ const page = () => {
     let cashfree;
     var initializeSDK = async function () {
         cashfree = await load({
-            mode: "sandbox",
+            mode: process.env.NEXT_CASHFREE_ENVIRONMENT,
         });
     };
     initializeSDK();
