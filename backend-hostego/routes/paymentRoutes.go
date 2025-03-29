@@ -11,4 +11,6 @@ func PaymentRoutes(app *fiber.App) {
 	paymentRoutes.Post("/", controllers.InitiatePayment)
 	paymentRoutes.Get("/transactions", controllers.FetchUserPaymentTransactions)
 	paymentRoutes.Post("/refund", controllers.InitiateRefundPayment)
+	paymentRoutes.Post("/cashfree", controllers.InitateCashfreePaymentOrder)
+	paymentRoutes.Post("/cashfree/:cf_order_id", controllers.VerifyCashfreePayment)
 }

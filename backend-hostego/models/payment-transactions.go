@@ -24,9 +24,9 @@ const (
 )
 
 type PaymentTransaction struct {
-	PaymentTransactionId string                       `gorm:"type:string;primaryKey;not null;unique;uuid;default:gen_random_uuid()" json:"payment_PaymentTransaction_id"`
-	OrderId              string                       `gorm:"type:string;not null;" json:"order_id"`
-	UserId               string                       `gorm:"type:string;not null;" json:"user_id"`
+	PaymentTransactionId int                          `gorm:"type:int;primaryKey;not null;unique;autoIncrement:true" json:"payment_PaymentTransaction_id"`
+	OrderId              int                          `gorm:"type:int;not null;" json:"order_id"`
+	UserId               int                          `gorm:"type:int;not null;" json:"user_id"`
 	Amount               float64                      `gorm:"type:double precision;not null;" json:"amount"`
 	PaymentMethod        string                       `gorm:"type:varchar(20);not null;" json:"payment_method"`
 	PaymentStatus        PaymentTransactionStatusType `gorm:"type:varchar(20);not null" json:"payment_transaction_status"`

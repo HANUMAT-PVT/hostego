@@ -5,9 +5,10 @@ import (
 )
 
 type OrderItem struct {
-	OrderItemId int       `gorm:"type:int;primaryKey;autoIncrement;" json:"order_item_id"`
-	OrderId     string    `gorm:"type:string;not null;index" json:"order_id"`
-	ProductId   string    `gorm:"type:uuid;not null" json:"product_id"`
+	OrderItemId int       `gorm:"type:int;primaryKey;autoIncrement:true" json:"order_item_id"`
+	OrderId     int       `gorm:"type:int;not null;index" json:"order_id"`
+	ProductId   int       `gorm:"type:int;not null" json:"product_id"`
+	UserId      int       `gorm:"type:int;not null;index" json:"user_id"`
 	Quantity    int       `gorm:"type:int;not null" json:"quantity"`
 	SubTotal    float64   `gorm:"type:double precision;not null" json:"sub_total"`
 	Product     Product   `gorm:"foreignKey:ProductId;references:ProductId" json:"product"`

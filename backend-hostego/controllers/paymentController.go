@@ -1,12 +1,16 @@
 package controllers
 
 import (
+	"backend-hostego/config"
 	"backend-hostego/database"
 	"backend-hostego/middlewares"
 	"backend-hostego/models"
 	"encoding/json"
+	"fmt"
+	"strconv"
 	"time"
 
+	cashfree "github.com/cashfree/cashfree-pg/v3"
 	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
 )
@@ -18,7 +22,7 @@ func InitiatePayment(c fiber.Ctx) error {
 	}
 
 	type OrderRequest struct {
-		OrderID string `json:"order_id"` //Only accept Order ID, not amount
+		OrderID int `json:"order_id"` //Only accept Order ID, not amount
 	}
 	var order models.Order
 
@@ -106,9 +110,10 @@ func InitiatePayment(c fiber.Ctx) error {
 	for _, item := range orderItems {
 		orderItem := models.OrderItem{
 			OrderId:   order.OrderId,
-			ProductId: item.ProductId.String(),
+			ProductId: item.ProductId,
 			Quantity:  item.Quantity,
 			SubTotal:  item.SubTotal,
+			UserId:    order.UserId,
 		}
 
 		if err := tx.Create(&orderItem).Error; err != nil {
@@ -130,18 +135,8 @@ func InitiatePayment(c fiber.Ctx) error {
 		Where("user_id = ?", userId).
 		Delete(&models.CartItem{}).Error; err != nil {
 		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update cart items"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete cart items"})
 	}
-	// Mark cart items as deleted
-	if err := tx.
-		Where("order_id = ?", order.OrderId).
-		Delete(&models.OrderItem{}).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete order items"})
-	}
-	
-
-	
 
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
@@ -177,7 +172,7 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
-	if current_user_id == "" {
+	if current_user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 
@@ -202,7 +197,7 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	if order.DeliveryPartnerId != "" {
+	if order.DeliveryPartnerId != 0 {
 		if err := tx.Where("delivery_partner_id = ?", order.DeliveryPartnerId).First(&delivery_partner).Error; err != nil {
 			tx.Rollback()
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -213,7 +208,7 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 	order.Refunded = true
 	order.RefundedAt = time.Now()
 	order.RefundInitiator = current_user_id
-	order.DeliveryPartnerId = ""
+	order.DeliveryPartnerId = 0
 	order.DeliveryPartner = nil
 
 	if err := tx.Save(&order).Error; err != nil {
@@ -266,4 +261,211 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Refund Completed", "wallet_transaction": walletTransaction, "wallet": wallet})
+}
+
+func InitateCashfreePaymentOrder(c fiber.Ctx) error {
+
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+	tx := database.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	var orderRequest struct {
+		OrderId int `json:"order_id"`
+	}
+	err := c.Bind().JSON(&orderRequest)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	fmt.Println(orderRequest, "orderRequest", user_id)
+	var user models.User
+	if err := tx.First(&user, "user_id = ?", user_id).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	var order models.Order
+	if err := tx.First(&order, "order_id = ?", orderRequest.OrderId).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	// fmt.Println("Cashfree Client ID:", config.config.GetEnv("CASHFREE_CLIENT_SECRET", "")("CASHFREE_CLIENT_ID"))
+	// fmt.Println("Cashfree Client Secret:", config.GetEnv("CASHFREE_CLIENT_SECRET", ""))
+
+	clientId := config.GetEnv("CASHFREE_CLIENT_ID_")
+	clientSecret := config.GetEnv("CASHFREE_CLIENT_SECRET_")
+	cashfree.XClientId = &clientId
+	cashfree.XClientSecret = &clientSecret
+	cashfree.XEnvironment = cashfree.SANDBOX
+
+	request := cashfree.CreateOrderRequest{
+		OrderAmount: order.FinalOrderValue,
+		CustomerDetails: cashfree.CustomerDetails{
+			CustomerId:    strconv.Itoa(user.UserId),
+			CustomerPhone: user.MobileNumber,
+			CustomerEmail: &user.Email,
+			CustomerName:  &user.FirstName,
+		},
+		OrderCurrency: "INR",
+		OrderSplits:   []cashfree.VendorSplit{},
+	}
+	version := "2023-08-01"
+	response, httpResponse, err := cashfree.PGCreateOrder(&version, &request, nil, nil, nil)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(httpResponse.StatusCode)
+	fmt.Println(response)
+	return c.Status(httpResponse.StatusCode).JSON(response)
+
+}
+
+func VerifyCashfreePayment(c fiber.Ctx) error {
+
+	cf_order_id := c.Params("cf_order_id")
+
+	version := "2023-08-01"
+	response, httpResponse, err := cashfree.PGFetchOrder(&version, cf_order_id, nil, nil, nil)
+	if err != nil {
+		fmt.Println(err.Error())
+		return c.Status(httpResponse.StatusCode).JSON(fiber.Map{"erro": err.Error()})
+	}
+	if *response.OrderStatus == "ACTIVE" {
+		fmt.Println("ACTIVE")
+	}
+	if *response.OrderStatus == "PAID" {
+		fmt.Println("PAID")
+	}
+	userId, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+
+	type OrderRequest struct {
+		OrderID int `json:"order_id"` //Only accept Order ID, not amount
+	}
+	var order models.Order
+
+	var request OrderRequest
+
+	var cartItem models.CartItem
+
+	if err := c.Bind().JSON(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+	var wallet models.Wallet
+
+	tx := database.DB.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.First(&order, "order_id=?", request.OrderID).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	if err := tx.First(&wallet, "user_id=?", userId).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	if wallet.Balance < order.FinalOrderValue {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Wallet balance insufficent to complete payment"})
+	}
+	totalAmountToDeduct := order.FinalOrderValue
+	wallet.Balance -= totalAmountToDeduct
+	var walletTransaction models.WalletTransaction
+
+	walletTransaction.Amount = totalAmountToDeduct
+	walletTransaction.TransactionType = "debit"
+	walletTransaction.UserId = userId
+	walletTransaction.TransactionStatus = "success"
+
+	var paymentTransaction models.PaymentTransaction
+
+	if err := tx.Create(&walletTransaction).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	paymentTransaction.OrderId = request.OrderID
+	paymentTransaction.UserId = userId
+	paymentTransaction.Amount = totalAmountToDeduct
+	paymentTransaction.PaymentStatus = "success"
+	paymentTransaction.PaymentMethod = "wallet"
+	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
+	order.OrderStatus = "placed"
+
+	if err := tx.Create(&paymentTransaction).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
+	if err := tx.Where("user_id=?", userId).Save(&wallet).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	if err := tx.Preload("User").Where("order_id=?", request.OrderID).Save(&order).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	if err := tx.Where("user_id = ?", userId).Delete(&cartItem).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove cart items"})
+	}
+
+	// Create order items from cart items
+	var orderItems []models.CartItem
+	if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse order items"})
+	}
+
+	// Store each cart item as an order item
+	for _, item := range orderItems {
+		orderItem := models.OrderItem{
+			OrderId:   order.OrderId,
+			ProductId: item.ProductId,
+			Quantity:  item.Quantity,
+			SubTotal:  item.SubTotal,
+			UserId:    order.UserId,
+		}
+
+		if err := tx.Create(&orderItem).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		}
+
+		// Update product stock
+		if err := tx.Model(&models.Product{}).
+			Where("product_id = ?", item.ProductId).
+			Update("stock_quantity", gorm.Expr("stock_quantity - ?", item.Quantity)).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		}
+	}
+
+	// Mark cart items as deleted
+	if err := tx.
+		Where("user_id = ?", userId).
+		Delete(&models.CartItem{}).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete cart items"})
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Payment Completed", "payment_transaction": paymentTransaction, "order": order, "wallet_transaction": walletTransaction})
+
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func AddProductInUserCart(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	user_id , middleErr := middlewares.VerifyUserAuthCookie(c)
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}

@@ -18,6 +18,7 @@ func CreateNewDeliveryPartner(c fiber.Ctx) error {
 	if err := database.DB.Where("user_id=?", user_id).Find(&delivery_partner).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
 	}
+
 	delivery_partner.UserId = user_id
 	if err := c.Bind().JSON(&delivery_partner); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
@@ -36,7 +37,7 @@ func UpdateDeliveryPartner(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if user_id == "" {
+	if user_id == 0 {
 
 	}
 	// First find the existing delivery partner
@@ -67,7 +68,7 @@ func FetchDeliveryPartnerByUserId(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
 	}
-	if user_id != "" {
+	if user_id != 0 {
 	}
 
 	var delivery_partner models.DeliveryPartner
@@ -84,7 +85,7 @@ func FetchAllDeliveryPartners(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if user_id == "" {
+	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "You are not Authenticated !"})
 	}
 	dbQuery := database.DB
@@ -121,7 +122,7 @@ func FetchDeliveryPartnerEarnings(c fiber.Ctx) error {
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
-	if user_id == "" {
+	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "You are not Authenticated!"})
 	}
 

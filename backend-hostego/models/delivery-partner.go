@@ -3,7 +3,6 @@ package models
 import (
 	"time"
 
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -15,8 +14,8 @@ type Documents struct {
 }
 
 type DeliveryPartner struct {
-	DeliveryPartnerID  uuid.UUID `gorm:"type:uuid;primaryKey;not null;default:gen_random_uuid();" json:"delivery_partner_id"`
-	UserId             string    `gorm:"type:string;not null;unique;" json:"user_id"`
+	DeliveryPartnerID  int       `gorm:"type:int;primaryKey;not null;autoIncrement:true" json:"delivery_partner_id"`
+	UserId             int       `gorm:"type:int;not null;unique;" json:"user_id"`
 	User               User      `gorm:"foreignKey:UserId;references:UserId;" json:"user"`
 	AvailabilityStatus int       `gorm:"type:int;not null;default:0;" json:"availability_status"`
 	Address            string    `gorm:"type:varchar(255);" json:"address"`
@@ -29,7 +28,7 @@ type DeliveryPartner struct {
 
 func (u *DeliveryPartner) AfterCreate(tx *gorm.DB) (err error) {
 	deliveryPartnerWallet := DeliveryPartnerWallet{
-		DeliveryPartnerId: u.DeliveryPartnerID.String(),
+		DeliveryPartnerId: u.DeliveryPartnerID,
 		Balance:           0.0,
 	}
 	if err := tx.Create(&deliveryPartnerWallet).Error; err != nil {

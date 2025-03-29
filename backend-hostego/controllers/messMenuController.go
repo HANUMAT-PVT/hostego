@@ -17,7 +17,7 @@ func UpdateMessMenu(c fiber.Ctx) error {
 		})
 	}
 
-	if user_id == "" {
+	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
 		})
@@ -44,7 +44,7 @@ func FetchMessMenu(c fiber.Ctx) error {
 			"message": "Unauthorized",
 		})
 	}
-	if user_id == "" {
+	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
 		})
@@ -64,7 +64,7 @@ func CreateMessMenuDate(c fiber.Ctx) error {
 		})
 	}
 
-	if user_id == "" {
+	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
 		})
