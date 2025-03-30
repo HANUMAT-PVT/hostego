@@ -316,6 +316,17 @@ func FetchAllOrders(c fiber.Ctx) error {
 	}
 	if user_id == 0 {
 	}
+	queryPage := c.Query("page", "1")
+	queryLimit := c.Query("limit", "10")
+	page, err := strconv.Atoi(queryPage)
+	if err != nil || page < 1 {
+		page = 1
+	}
+	limit, err := strconv.Atoi(queryLimit)
+	if err != nil || limit < 1 {
+		limit = 10
+	}
+	offset := (page - 1) * limit
 
 	dbQuery := database.DB
 
@@ -336,7 +347,7 @@ func FetchAllOrders(c fiber.Ctx) error {
 	}
 
 	var orders []models.Order
-	if err := dbQuery.Preload("User").Preload("PaymentTransaction").Preload("Address").Order("created_at asc").Find(&orders).Error; err != nil {
+	if err := dbQuery.Preload("User").Preload("PaymentTransaction").Preload("Address").Order("created_at asc").Limit(limit).Offset(offset).Find(&orders).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
@@ -450,7 +461,7 @@ func FetchAllOrderItemsAccordingToProducts(c fiber.Ctx) error {
 		query = query.Where("orders.created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
 	}
 
-	var stats []ProductStats
+	var stats = []ProductStats{}
 	err := query.Group(`
 		products.product_id, 
 		products.product_name, 

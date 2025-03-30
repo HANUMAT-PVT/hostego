@@ -19,7 +19,7 @@ func FetchDeliveryPartnerWallet(c fiber.Ctx) error {
 			"error":   middleErr.Error(),
 		})
 	}
-		if user_id == 0 {
+	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
 		})
@@ -46,7 +46,7 @@ func FetchDeliveryPartnerWalletTransactions(c fiber.Ctx) error {
 			"error":   middleErr.Error(),
 		})
 	}
-		if user_id == 0 {
+	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
 		})
@@ -206,7 +206,8 @@ func VerifyDeliveryPartnerWithdrawalRequest(c fiber.Ctx) error {
 	}
 
 	var requestData struct {
-		UniqueTransactionID string `json:"unique_transaction_id"`
+		UniqueTransactionID          string `json:"unique_transaction_id"`
+		TransactionStatusTypePayment string `json:"transaction_status"`
 	}
 	if err := c.Bind().JSON(&requestData); err != nil {
 		tx.Rollback()
@@ -218,11 +219,13 @@ func VerifyDeliveryPartnerWithdrawalRequest(c fiber.Ctx) error {
 
 	// Update transaction
 	deliveryPartnerWalletTransaction.PaymentMethod.PaymentVerifiedByAdmin = user_id
-	deliveryPartnerWalletTransaction.PaymentMethod.UniqueTransactionID = requestData.UniqueTransactionID
-	deliveryPartnerWalletTransaction.TransactionStatus = models.TransactionStatusType(models.TransactionSuccess)
+	deliveryPartnerWalletTransaction.TransactionStatus = models.TransactionStatusType(requestData.TransactionStatusTypePayment)
 
 	// Update wallet balance
-	deliveryPartnerWallet.Balance -= deliveryPartnerWalletTransaction.Amount
+	if models.TransactionStatusType(requestData.TransactionStatusTypePayment) == models.TransactionSuccess {
+		deliveryPartnerWallet.Balance -= deliveryPartnerWalletTransaction.Amount
+		deliveryPartnerWalletTransaction.PaymentMethod.UniqueTransactionID = requestData.UniqueTransactionID
+	}
 
 	// Save both updates
 	if err := tx.Save(&deliveryPartnerWalletTransaction).Error; err != nil {
@@ -255,6 +258,7 @@ func VerifyDeliveryPartnerWithdrawalRequest(c fiber.Ctx) error {
 }
 
 func FetchAllDeliveryPartnersTransactions(c fiber.Ctx) error {
+
 	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
 	if middleErr != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -269,7 +273,7 @@ func FetchAllDeliveryPartnersTransactions(c fiber.Ctx) error {
 	}
 
 	var deliveryParnterWalletTransactions []models.DeliveryPartnerWalletTransaction
-	err := database.DB.Find(&deliveryParnterWalletTransactions).Error
+	err := database.DB.Where("transaction_type = ?", "debit").Order("created_at asc").Find(&deliveryParnterWalletTransactions).Error
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Something went wrong",
