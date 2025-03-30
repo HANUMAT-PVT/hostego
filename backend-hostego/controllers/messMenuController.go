@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"backend-hostego/database"
-	"backend-hostego/middlewares"
 	"backend-hostego/models"
 
 	"github.com/gofiber/fiber/v3"
@@ -10,12 +9,7 @@ import (
 
 func UpdateMessMenu(c fiber.Ctx) error {
 	var id = c.Params("id")
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized",
-		})
-	}
+	user_id := c.Locals("user_id")
 
 	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -38,12 +32,7 @@ func UpdateMessMenu(c fiber.Ctx) error {
 }
 
 func FetchMessMenu(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized",
-		})
-	}
+	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
@@ -57,13 +46,7 @@ func FetchMessMenu(c fiber.Ctx) error {
 }
 
 func CreateMessMenuDate(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized",
-		})
-	}
-
+	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",

@@ -2,12 +2,12 @@ package routes
 
 import (
 	"backend-hostego/controllers"
-
+	"backend-hostego/middlewares"
 	"github.com/gofiber/fiber/v3"
 )
 
 func ProductRoutes(app *fiber.App) error {
-	productRoutes := app.Group("/api/products")
+	productRoutes := app.Group("/api/products", middlewares.VerifyUserAuthCookieMiddleware())
 
 	productRoutes.Get("/all", controllers.FetchProducts)
 

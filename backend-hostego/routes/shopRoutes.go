@@ -2,13 +2,13 @@ package routes
 
 import (
 	"backend-hostego/controllers"
-
+	"backend-hostego/middlewares"
 	"github.com/gofiber/fiber/v3"
 )
 
 func ShopRoutes(app *fiber.App) error {
 
-	shopRoutes:=	app.Group("/api/shop")
+	shopRoutes:=	app.Group("/api/shop", middlewares.VerifyUserAuthCookieMiddleware())
 
 	shopRoutes.Post("/", controllers.CreateShop)
 

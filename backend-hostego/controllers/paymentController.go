@@ -16,9 +16,9 @@ import (
 )
 
 func InitiatePayment(c fiber.Ctx) error {
-	userId, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	userId := c.Locals("user_id").(int)
+	if userId == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 
 	type OrderRequest struct {
@@ -145,9 +145,9 @@ func InitiatePayment(c fiber.Ctx) error {
 }
 
 func FetchUserPaymentTransactions(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 
 	var payment_transactions []models.PaymentTransaction
@@ -159,9 +159,9 @@ func FetchUserPaymentTransactions(c fiber.Ctx) error {
 }
 
 func InitiateRefundPayment(c fiber.Ctx) error {
-	current_user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	current_user_id := c.Locals("user_id").(int)
+	if current_user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	type OrderRequest struct {
 		OrderID string `json:"order_id"`
@@ -265,9 +265,9 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 
 func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	tx := database.DB.Begin()
 	defer func() {
@@ -326,7 +326,10 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 }
 
 func VerifyCashfreePayment(c fiber.Ctx) error {
-
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
 	cf_order_id := c.Params("cf_order_id")
 
 	version := "2023-08-01"

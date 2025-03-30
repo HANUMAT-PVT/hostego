@@ -2,17 +2,15 @@ package controllers
 
 import (
 	"backend-hostego/database"
-	"backend-hostego/middlewares"
-
 	"backend-hostego/models"
 
 	"github.com/gofiber/fiber/v3"
 )
 
 func GetUsers(c fiber.Ctx) error {
-	user_id, err := middlewares.VerifyUserAuthCookie(c)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	if user_id ==0{
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
@@ -38,12 +36,11 @@ func GetUsers(c fiber.Ctx) error {
 }
 
 func GetUserById(c fiber.Ctx) error {
-
-	user_id, err := middlewares.VerifyUserAuthCookie(c)
-
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
+
 
 	var user models.User
 
@@ -54,11 +51,11 @@ func GetUserById(c fiber.Ctx) error {
 }
 
 func UpdateUserById(c fiber.Ctx) error {
-	user_id, midError := middlewares.VerifyUserAuthCookie(c)
-
-	if midError != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Bad request"})
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
+
 	var user models.User
 
 	if err := database.DB.First(&user, "user_id=?", user_id).Error; err != nil {
@@ -76,7 +73,11 @@ func UpdateUserById(c fiber.Ctx) error {
 
 }
 
-func FetchUserByMobileNumber(c fiber.Ctx) error {
+func FetchUserByMobileNumber(c fiber.Ctx) error {	
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
 	mobileNumber := c.Params("mobile_number") // Get mobile number from URL params
 
 	var user models.User

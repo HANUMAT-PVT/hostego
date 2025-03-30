@@ -8,7 +8,10 @@ import (
 )
 
 func CreateShop(c fiber.Ctx) error {
-
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
 	var shop models.Shop
 
 	if err := c.Bind().JSON(&shop); err != nil {
@@ -21,6 +24,10 @@ func CreateShop(c fiber.Ctx) error {
 }
 
 func FetchShopById(c fiber.Ctx) error {
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
 	var products []models.Product
 	shop_id := c.Params("id")
 	var shop models.Shop
@@ -33,7 +40,10 @@ func FetchShopById(c fiber.Ctx) error {
 }
 
 func FetchShops(c fiber.Ctx) error {
-
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
 	var shops []models.Shop
 
 	database.DB.Find(&shops)
@@ -42,7 +52,10 @@ func FetchShops(c fiber.Ctx) error {
 }
 
 func UpdateShopById(c fiber.Ctx) error {
-
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
 	var shop models.Shop
 	shop_id := c.Params("id")
 

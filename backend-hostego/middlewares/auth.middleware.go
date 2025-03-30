@@ -48,3 +48,71 @@ func VerifyUserAuthCookie(c fiber.Ctx) (int, error) {
 }
 
 // test
+
+
+func VerifyUserAuthCookieMiddleware() fiber.Handler {
+	return func(c fiber.Ctx) error {
+		authHeader := c.Get("Authorization")
+
+		if authHeader == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "No auth token found",
+			})
+		}
+
+		// Extract JWT token from "Bearer <token>"
+		splitToken := strings.Split(authHeader, "Bearer ")
+		if len(splitToken) != 2 {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid Authorization token format",
+			})
+		}
+		tokenString := splitToken[1]
+
+		// Parse JWT token
+		token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+			return []byte("hanumat"), nil
+		})
+		if err != nil || !token.Valid {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid token",
+			})
+		}
+
+		// Extract claims from JWT
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid token claims",
+			})
+		}
+
+		// Get user_id from claims
+		userID, exists := claims["user_id"]
+		if !exists {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "User ID not found in token",
+			})
+		}
+
+		// Convert user_id to int
+		var uid int
+		switch v := userID.(type) {
+		case float64: // JWT stores numbers as float64
+			uid = int(v)
+		case int:
+			uid = v
+		default:
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid user ID type",
+			})
+		}
+
+		// Store user_id in request context
+		
+		c.Locals("user_id", uid)
+
+		return c.Next()
+	}
+}
+

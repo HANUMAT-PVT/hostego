@@ -2,12 +2,12 @@ package routes
 
 import (
 	"backend-hostego/controllers"
-
+	"backend-hostego/middlewares"
 	"github.com/gofiber/fiber/v3"
 )
 
 func OrderRoutes(app *fiber.App) {
-	orderRoutes := app.Group("/api/order")
+	orderRoutes := app.Group("/api/order", middlewares.VerifyUserAuthCookieMiddleware())
 	orderRoutes.Get("/order-items", controllers.FetchAllOrderItemsAccordingToProducts)
 	orderRoutes.Get("/all", controllers.FetchAllOrders)
 	orderRoutes.Post("/", controllers.CreateNewOrder)
