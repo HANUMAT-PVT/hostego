@@ -87,7 +87,7 @@ const OrderAssignCard = ({ order, selectOrderItem,selectedOrderItem }) => {
                                     className="w-12 h-12 rounded-lg object-cover"
                                 />
                                 <div className="flex-1">
-                                    <p className="font-medium">{item?.product_item?.product_name}</p>
+                                    <p className="font-medium">{item?.product_item?.product_name} <span className='text-gray-600 text-xs'>( {item?.product_item?.shop?.shop_name} )</span></p>
                                     <p className="text-sm text-gray-600">
                                         {item?.quantity} × ₹{item?.product_item?.food_price}
                                     </p>

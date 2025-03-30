@@ -70,7 +70,7 @@ const OrderPreviewCard = ({ order }) => {
 
 
     return (
-        <div onClick={() => { router.push(`/orders/${order?.order_id}`) }} className="bg-white rounded-xl overflow-hidden shadow-sm m-2 border border-gray-100">
+        <div key={order?.order_id} onClick={() => { router.push(`/orders/${order?.order_id}`) }} className="bg-white rounded-xl overflow-hidden shadow-sm m-2 border border-gray-100">
             {/* Order Status Header */}
             <div className={`p-4 ${status?.bgColor} border-b flex items-center justify-between`}>
                 <div className="flex items-center gap-2">

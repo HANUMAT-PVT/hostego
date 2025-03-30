@@ -101,6 +101,8 @@ const SearchProductCard = ({
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
 
+    const isShopClosed = shop?.shop_status === 0;
+
     const addProductInTheCart = async () => {
         try {
             setIsLoading(true);
@@ -119,7 +121,7 @@ const SearchProductCard = ({
             {/* Product Image Section */}
             <div className='relative w-24 h-24 flex-shrink-0'>
                 <img
-                    className='w-full h-full rounded-lg object-cover'
+                    className={`w-full h-full rounded-lg object-cover ${isShopClosed ? 'opacity-60' : ''}`}
                     src={product_img_url}
                     alt={product_name}
                 />
@@ -130,6 +132,13 @@ const SearchProductCard = ({
                     <Leaf size={12} className={'text-red-600'} />
                 </div>}
 
+                {isShopClosed && (
+                    <div className="absolute -top-2 -right-2">
+                        <div className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-md">
+                            Closed
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Product Details Section */}
@@ -137,8 +146,9 @@ const SearchProductCard = ({
                 <div>
                     {/* Product Name and Weight */}
                     <div className='mb-1.5'>
-
-                        <h3 className='text-gray-800 line-clamp-2 font-semibold  '>{shop?.shop_name}</h3>
+                        <h3 className={`text-gray-800 line-clamp-2 font-semibold ${isShopClosed ? 'text-gray-400' : ''}`}>
+                            {shop?.shop_name}
+                        </h3>
                         <div className='flex items-center gap-2 mt-1'>
                             <span className='text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 flex items-center gap-1'>
                                 <Package size={10} />
@@ -149,18 +159,25 @@ const SearchProductCard = ({
 
                     {/* Shop Info */}
                     <div className='flex items-center gap-1.5 mb-2'>
-
-                        <span className='text-sm text-gray-600 '>{product_name}</span>
+                        <span className={`text-sm ${isShopClosed ? 'text-gray-400' : 'text-gray-600'}`}>
+                            {product_name}
+                        </span>
                     </div>
                 </div>
 
                 {/* Price and Add to Cart */}
                 <div className='flex items-center justify-between'>
                     <div>
-                        <span className='text-lg font-semibold text-gray-900'>₹{food_price}</span>
+                        <span className={`text-lg font-semibold ${isShopClosed ? 'text-gray-400' : 'text-gray-900'}`}>
+                            ₹{food_price}
+                        </span>
                     </div>
 
-                    {isInCart ? (
+                    {isShopClosed ? (
+                        <div className='text-sm text-red-500'>
+                            Not Available
+                        </div>
+                    ) : isInCart ? (
                         <div className='bg-green-100 text-sm text-green-600 px-3 py-1.5 rounded-lg font-medium border border-green-200 flex items-center gap-1.5'>
                             <Check size={14} className="stroke-2" />
                             <span>Added</span>
