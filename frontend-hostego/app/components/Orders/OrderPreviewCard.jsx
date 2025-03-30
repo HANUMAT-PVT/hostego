@@ -30,7 +30,7 @@ const OrderPreviewCard = ({ order }) => {
         on_the_way: {
             icon: Package,
             color: 'text-[var(--primary-color)]',
-            bgColor: 'bg-[var(--primary-color)]/10',
+            bgColor: 'bg-[var(--primary-color)]',
             label: 'On the way'
         },
         reached_door: {

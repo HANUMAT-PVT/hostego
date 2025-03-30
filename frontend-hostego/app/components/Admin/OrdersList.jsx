@@ -6,6 +6,7 @@ import axiosClient from '@/app/utils/axiosClient'
 import HostegoLoader from '../HostegoLoader'
 import debounce from 'lodash/debounce'
 import ConfirmationPopup from '../ConfirmationPopup'
+import LoadMoreData from "../LoadMoreData"
 
 const OrderStatusBadge = ({ status }) => {
 
@@ -104,7 +105,7 @@ const OrderCard = ({ order, onRefresh }) => {
                             }}
                             disabled={isUpdating}
                             className="px-3 py-2 rounded-lg border-2 border-white/20 
-                                     bg-white/10 text-white text-sm font-medium
+                                      text-black text-sm font-medium
                                      focus:outline-none focus:ring-2 focus:ring-white/40
                                      disabled:opacity-50 cursor-pointer"
                         >
@@ -222,13 +223,14 @@ const OrderCard = ({ order, onRefresh }) => {
                                     className="w-16 h-16 rounded-xl object-cover"
                                 />
                                 <div className="flex-1">
-                                    <p className="font-medium text-gray-900">{item.product_item.product_name}</p>
+                                    <p className="font-medium text-gray-900">{item?.product_item?.product_name}</p>
+                                    <p className="font-medium text-xs text-gray-600">{item?.product_item?.shop?.shop_name}</p>
                                     <div className="flex items-center gap-2 mt-1">
                                         <span className="text-sm text-gray-600">
-                                            {item.quantity} × ₹{item.product_item.food_price}
+                                            {item?.quantity} × ₹{item?.product_item?.food_price}
                                         </span>
                                         <span className="text-sm font-medium text-[var(--primary-color)]">
-                                            ₹{item.sub_total}
+                                            ₹{item?.sub_total}
                                         </span>
                                     </div>
                                 </div>
@@ -279,6 +281,8 @@ const OrdersList = () => {
     const [searchTerm, setSearchTerm] = useState('')
     const [statusFilter, setStatusFilter] = useState('placed')
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+    const [hasMore, setHasMore] = useState(true)
+    const [page, setPage] = useState(1)
 
     const debouncedSearch = useCallback(
         debounce((searchValue) => {
@@ -295,11 +299,16 @@ const OrdersList = () => {
 
     const fetchOrders = async (showRefreshAnimation = false) => {
         try {
-            showRefreshAnimation ? setIsRefreshing(true) : setIsLoading(true)
-            const { data } = await axiosClient.get(`/api/order/all?filter=${statusFilter}&search=${debouncedSearchTerm}`)
-            setOrders(data || [])
+            if (showRefreshAnimation) {
+                setIsRefreshing(true)
+            } else {
+                setIsLoading(true)
+            }
+            const { data } = await axiosClient.get(`/api/order/all?filter=${statusFilter}&search=${debouncedSearchTerm}&page=${page}&limit=20`)
+            setOrders([...orders, ...data] || [])
+            setHasMore(data?.length < 20 ? false : true)
         } catch (error) {
-            console.error('Error fetching orders:', error)
+          
         } finally {
             setIsRefreshing(false)
             setIsLoading(false)
@@ -308,7 +317,7 @@ const OrdersList = () => {
 
     useEffect(() => {
         fetchOrders()
-    }, [statusFilter, debouncedSearchTerm])
+    }, [statusFilter, debouncedSearchTerm, page])
 
     useEffect(() => {
         return () => {
@@ -387,6 +396,7 @@ const OrdersList = () => {
 
                 </div>}
             </div>
+            {hasMore && <LoadMoreData loadMore={() => setPage(page + 1)} isLoading={isLoading} />}
         </div>
     )
 }

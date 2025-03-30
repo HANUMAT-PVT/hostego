@@ -20,7 +20,7 @@ export default function AdminPanel() {
     const router = useRouter();
     const { userRoles } = useSelector(state => state.user)
     const searchParams = useSearchParams();
-    const [dashboardStats, setDashboardStats] = useState({product_stats:[],overall_stats:[]})
+    const [dashboardStats, setDashboardStats] = useState({ product_stats: [], overall_stats: [] })
 
     // Get the current page from query params, default to 'dashboard'
     const currentPage = searchParams.get("page") || "order-assign";
@@ -37,8 +37,8 @@ export default function AdminPanel() {
     const fetchDashboardStatus = async () => {
         try {
             let { data } = await axiosClient.get(`/api/order/order-items`);
-            console.log(data, "hello data")
-            setDashboardStats(data)
+
+            setDashboardStats({ product_stats: data.product_stats ? data.product_stats : [], overall_stats: data.overall_stats ? data.overall_stats : [] })
         } catch (error) {
 
         }
