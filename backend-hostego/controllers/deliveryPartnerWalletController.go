@@ -100,7 +100,10 @@ func AddEarningsToDeliveryPartnerWallet(currentOrder models.Order) error {
 		return err
 	}
 
-	tx.Commit()
+	err = tx.Commit().Error
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
