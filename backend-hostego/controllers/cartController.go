@@ -9,7 +9,7 @@ import (
 )
 
 func AddProductInUserCart(c fiber.Ctx) error {
-	user_id , middleErr := middlewares.VerifyUserAuthCookie(c)
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
 	if middleErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
 	}
@@ -23,8 +23,12 @@ func AddProductInUserCart(c fiber.Ctx) error {
 	}
 
 	// Check if product exists
-	if err := database.DB.First(&product, "product_id = ?", cartItem.ProductId).Error; err != nil {
+	if err := database.DB.Preload("Shop").First(&product, "product_id = ?", cartItem.ProductId).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found!"})
+	}
+	// check if the shop is closed or not
+	if product.Shop.ShopStatus == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Shop is closed!"})
 	}
 
 	// Check if item already exists in cart
@@ -68,10 +72,13 @@ func UpdateProductInUserCart(c fiber.Ctx) error {
 
 	var cartItem models.CartItem
 	// First find the existing cart item
-	if err := database.DB.Where("cart_item_id = ? AND user_id = ?", cart_item_id, user_id).First(&cartItem).Error; err != nil {
+	if err := database.DB.Preload("ProductItem").Preload("ProductItem.Shop").Where("cart_item_id = ? AND user_id = ?", cart_item_id, user_id).First(&cartItem).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Cart item not found"})
 	}
-
+	// check if the shop is closed or not
+	if cartItem.ProductItem.Shop.ShopStatus == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Shop is closed!"})
+	}
 	// Bind updated data directly to cartItem
 	if err := c.Bind().JSON(&cartItem); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -125,12 +132,36 @@ func FetchUserCart(c fiber.Ctx) error {
 		Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-
+	// delete the cart item if the shop is closed or not
+	for _, cartItem := range cartItems {
+		if cartItem.ProductItem.Shop.ShopStatus == 0 {
+			database.DB.Where("cart_item_id = ? AND user_id = ?", cartItem.CartItemId, user_id).Delete(&cartItem)
+		}
+	}
+	if err := database.DB.Preload("ProductItem.Shop").
+		Where("user_id = ?", user_id).
+		Order("created_at desc").
+		Find(&cartItems).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
 	cartValue := CalculateFinalOrderValue(cartItems, freeDelivery)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"cart_items": cartItems,
-		"cart_value":  cartValue,
+		"cart_items":    cartItems,
+		"cart_value":    cartValue,
 		"free_delivery": freeDelivery,
 	})
+}
+
+func DeleteCartItem(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	}
+
+	cart_item_id := c.Params("id")
+	if err := database.DB.Where("cart_item_id = ? AND user_id = ?", cart_item_id, user_id).Delete(&models.CartItem{}).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Cart item deleted successfully!"})
 }

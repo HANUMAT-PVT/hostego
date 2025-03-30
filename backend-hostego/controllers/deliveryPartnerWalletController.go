@@ -104,16 +104,16 @@ func AddEarningsToDeliveryPartnerWallet(currentOrder models.Order) error {
 	return nil
 }
 
-func CreateWalletWithdrawalRequests() error {
-	// user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	// if middleErr != nil {
-	// 	return middleErr
-	// }
-	// if user_id == "" {
-	// 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-	// 		"message": "Unauthorized",
-	// 	})
-	// }
+func CreateWalletWithdrawalRequests(c fiber.Ctx) error {
+	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	if middleErr != nil {
+		return middleErr
+	}
+	if user_id == 0 {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized",
+		})
+	}
 	tx := database.DB.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -163,7 +163,10 @@ func CreateWalletWithdrawalRequests() error {
 		return err
 	}
 
-	return nil
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"message": "Withdrawal requests created successfully",
+		"data":    createdTransactions,
+	})
 }
 
 func VerifyDeliveryPartnerWithdrawalRequest(c fiber.Ctx) error {
