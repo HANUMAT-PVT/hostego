@@ -3,12 +3,13 @@ import axios from "axios";
 import { useEffect } from "react";
 import axiosClient from "../utils/axiosClient"
 import { useRouter } from "next/navigation"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { setFetchUserAccount } from "../lib/redux/features/user/userSlice"
 
 const PhoneEmailAuth = () => {
     const router = useRouter()
     const dispatch = useDispatch()
+    const { userAccount } = useSelector((state) => state.user)
     useEffect(() => {
         // Dynamically load the Phone.Email script
         const script = document.createElement("script");
@@ -22,12 +23,19 @@ const PhoneEmailAuth = () => {
         };
     }, []);
 
+    useEffect(() => {
+
+        if (userAccount?.user_id) {
+            router.push("/home")
+        }
+    }, [userAccount])
+
     // Function that gets triggered on successful authentication
     useEffect(() => {
         window.phoneEmailListener = (userObj) => {
             const userJsonUrl = userObj.user_json_url;
 
-           
+
             localStorage.setItem("userJsonUrl", userJsonUrl);
 
             handleUserAccountCreation(userJsonUrl)
@@ -51,13 +59,13 @@ const PhoneEmailAuth = () => {
             })
             console.log(response.data, "response")
             localStorage.setItem("auth-response", JSON.stringify(response.data))
-            
+
             dispatch(setFetchUserAccount(true))
             router.push("/home")
-            
-            setTimeout(()=>{
+
+            setTimeout(() => {
                 window.location.reload()
-            },1500 )
+            }, 1500)
 
         } catch (error) {
             console.log(error, "error")

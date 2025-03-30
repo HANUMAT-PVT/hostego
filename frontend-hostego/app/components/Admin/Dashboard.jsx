@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { BarChart3, DollarSign, ShoppingBag, TrendingUp, Package, Calendar, RefreshCw } from 'lucide-react'
+import { BarChart3, DollarSign, ShoppingBag, TrendingUp, Package, Calendar, RefreshCw, Store } from 'lucide-react'
 import axiosClient from "@/app/utils/axiosClient"
 
 const StatCard = ({ title, value, icon: Icon, trend }) => (
@@ -22,29 +22,90 @@ const StatCard = ({ title, value, icon: Icon, trend }) => (
 )
 
 const ProductCard = ({ product }) => {
-
-    return <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all">
-        <div className="flex items-center gap-4">
-            <img
-                src={product?.product_img_url}
-                alt={product?.product_name}
-                className="w-16 h-16 rounded-lg object-cover"
-            />
-            <div className="flex-1">
-                <h4 className="font-medium text-gray-900">{product?.product_name}</h4>
-
-                <div className="flex items-center justify-between mt-2">
-                    <span className="text-sm font-medium text-gray-900">₹{product?.current_price}</span>
-                    <span className={`px-2 py-1 rounded-full text-xs ${product?.availability ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                        }`}>
-                        {product.availability ? 'In Stock' : 'Out of Stock'}
-                    </span>
+    return (
+        <div className="bg-white p-4 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all">
+            <div className="flex gap-4">
+                {/* Product Image Section */}
+                <div className="relative shrink-0">
+                    <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-50">
+                        <img
+                            src={product?.product_img_url}
+                            alt={product?.product_name}
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+                    <div className={`absolute -top-2 -right-2 px-2.5 py-1 rounded-full text-xs font-medium
+                        ${product?.availability
+                            ? 'bg-green-50 text-green-600 border border-green-100'
+                            : 'bg-red-50 text-red-600 border border-red-100'
+                        }`}
+                    >
+                        {product?.availability ? 'In Stock' : 'Out of Stock'}
+                    </div>
                 </div>
-                <p className="text-semibold font-semibold text-gray-800 mt-2 ">  ₹{product?.last_week_revenue} </p>
-                <p className="text-sm font-semibold text-gray-600 ">{product?.total_quantity} X ₹{product?.current_price} </p>
+
+                {/* Product Info Section */}
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between mb-3">
+                        <div>
+                            <h4 className="font-medium text-gray-900 mb-1 truncate pr-4">
+                                {product?.product_name}
+                            </h4>
+                            <div className="flex items-center gap-2">
+                                <Store size={14} className="text-gray-400" />
+                                <span className="text-sm text-gray-500 truncate">
+                                    {product?.shop_name}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                            <div className="text-lg font-semibold text-gray-900">
+                                ₹{product?.current_price}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-0.5">
+                                per unit
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Stats Section */}
+                    <div className="grid grid-cols-1 gap-4 mt-4">
+                        <div className="bg-gray-50 rounded-lg p-2">
+                            <div className="text-xs text-gray-500 mb-1">Orders</div>
+                            <div className="font-semibold text-gray-900">
+                                {product?.order_count}
+                            </div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-2">
+                            <div className="text-xs text-gray-500 mb-1">Units Sold</div>
+                            <div className="font-semibold text-gray-900">
+                                {product?.total_quantity}
+                            </div>
+                        </div>
+                        <div className="bg-[var(--primary-color)]/5 rounded-lg p-2">
+                            <div className="text-xs text-[var(--primary-color)]/80 mb-1">
+                                Weekly Revenue
+                            </div>
+                            <div className="font-semibold text-[var(--primary-color)]">
+                                ₹{product?.last_week_revenue}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Growth Indicator */}
+                    {/* <div className="flex items-center gap-2 mt-3"> 
+                        <div className="flex items-center gap-1 text-xs text-green-600">
+                            <TrendingUp size={12} />
+                            <span>+{((product?.last_week_revenue / product?.current_price) * 100).toFixed(1)}%</span>
+                        </div>
+                        <span className="text-xs text-gray-500">
+                            vs last week
+                        </span>
+                    </div> */}
+                </div>
             </div>
         </div>
-    </div>
+    )
 }
 
 const Dashboard = ({ dashboardStats }) => {
