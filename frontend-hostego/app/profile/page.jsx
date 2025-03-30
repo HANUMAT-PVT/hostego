@@ -12,14 +12,12 @@ import {
 } from "lucide-react";
 import BackNavigationButton from "../components/BackNavigationButton";
 import { useRouter } from "next/navigation";
-import axiosClient from "../utils/axiosClient";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserAccount } from "../lib/redux/features/user/userSlice";
-import { ChatIcon } from "lucide-react";
+
 const Profile = () => {
 
   const router = useRouter();
-  const dispatch = useDispatch();
+
   const { userAccount } = useSelector((state) => state.user)
 
   const handleUserLogout = () => {
@@ -43,7 +41,7 @@ const Profile = () => {
 
       <div className="p-4 mt-3 flex flex-col gap-5">
         <div className="flex flex-col gap-1 font-semibold">
-          <p className="text-2xl ">{((userAccount?.first_name||"Hostego") + " " + (userAccount?.last_name || "User" )).toUpperCase()} </p>
+          <p className="text-2xl ">{((userAccount?.first_name || "Hostego") + " " + (userAccount?.last_name || "User")).toUpperCase()} </p>
           <p className="text-sm  font-medium text-gray-500 flex items-center gap-2">{splitMobileNumberByCountryCode(userAccount?.mobile_number)} · {userAccount?.email}</p>
           <p onClick={() => router.push("/edit-account")} className="text-sm mt-1  text-[var(--primary-color)] flex items-center gap-1 cursor-pointer">Edit Profile <ChevronRight size={18} className="text-gray-600" /></p>
         </div>

@@ -263,8 +263,9 @@ const OrderDetailsPage = () => {
                                 />
                                 <div className="flex-1">
                                     <h4 className="font-medium text-sm">
-                                        {item?.product_item?.product_name}
+                                        {item?.product_item?.product_name} <span className='text-gray-600 text-xs'>( {item?.product_item?.shop?.shop_name} )</span>
                                     </h4>
+
                                     <p className="text-sm text-gray-600">
                                         {item?.product_item?.weight}
                                     </p>
