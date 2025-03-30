@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, MoreVertical, Phone, Mail, Calendar, Clock, CheckCircle, XCircle, ChevronDown, RefreshCw } from 'lucide-react';
 import axiosClient from '../../utils/axiosClient';
+import { formatDate } from '@/app/utils/helper';
 
 const UserCard = ({ userData, onRoleChange }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
+    
     const [showRoleMenu, setShowRoleMenu] = useState(false);
 
     const user = userData.user; // Get user data
@@ -72,16 +73,11 @@ const UserCard = ({ userData, onRoleChange }) => {
                             </div>
                         </div>
                     </div>
-                    <button
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                    >
-                        <ChevronDown className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                    </button>
+                  
                 </div>
 
                 {/* Verification Status */}
-                <div className="mt-3 flex items-center gap-2">
+                <div className="mt-3 flex  gap-2 flex-col ">
                     {user.firebase_otp_verified ? (
                         <div className="flex items-center gap-1.5 text-sm text-green-600 bg-green-50 px-2.5 py-1 rounded-full">
                             <CheckCircle size={14} />
@@ -93,6 +89,19 @@ const UserCard = ({ userData, onRoleChange }) => {
                             <span>Unverified</span>
                         </div>
                     )}
+                   
+                    <div className="px-4 pb-4  pt-4  animate-fade-in">
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-2 text-sm">
+                            <Mail className="w-4 h-4 text-gray-400" />
+                            <span className="text-gray-600">{user?.email}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                            <Calendar className="w-4 h-4 text-gray-400" />
+                            <span className="text-gray-600">Joined {formatDate(user?.created_at)}</span>
+                        </div>
+                    </div>
+                </div>
                 </div>
 
                 {/* Roles Section */}
@@ -152,25 +161,6 @@ const UserCard = ({ userData, onRoleChange }) => {
                 </div>
             </div>
 
-            {/* Expanded Details */}
-            {isExpanded && (
-                <div className="px-4 pb-4 border-t pt-4 bg-gray-50 animate-fade-in">
-                    <div className="space-y-3">
-                        <div className="flex items-center gap-2 text-sm">
-                            <Mail className="w-4 h-4 text-gray-400" />
-                            <span className="text-gray-600">{user?.email}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm">
-                            <Calendar className="w-4 h-4 text-gray-400" />
-                            <span className="text-gray-600">Joined {formattedDate}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm">
-                            <Clock className="w-4 h-4 text-gray-400" />
-                            <span className="text-gray-600">Last login: {lastLoginDate}</span>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
@@ -247,11 +237,11 @@ const UserManager = () => {
         return matchesSearch && matchesFilter;
     });
 
-  return (
+    return (
         <div className="p-4">
             {/* Header with Refresh Button */}
             <div className="flex justify-between items-center mb-6">
-    <div>
+                <div>
                     <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
                     <p className="text-gray-600">Manage and monitor user accounts</p>
                 </div>
@@ -352,7 +342,7 @@ const UserManager = () => {
             </div>
 
 
-    </div>
+        </div>
     );
 };
 

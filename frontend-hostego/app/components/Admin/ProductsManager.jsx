@@ -21,7 +21,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
             percentage: 0
         },
         preparation_time: '0 min',
-        shop_id: '',
+        shop_id: 0,
         tags: [],
         weight: '',
         stock_quantity: 0
@@ -67,7 +67,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
             tags: prev.tags.filter(tag => tag !== tagToRemove)
         }));
     };
-    console.log(formData, "formData")
+
     return (
         <div className="bg-white rounded-xl p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-6">
@@ -84,7 +84,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                     </label>
                     <select
                         value={formData.shop_id}
-                        onChange={(e) => setFormData(prev => ({ ...prev, shop_id: e.target.value }))}
+                        onChange={(e) => setFormData(prev => ({ ...prev, shop_id: Number(e.target.value) }))}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-white"
                         required
                     >

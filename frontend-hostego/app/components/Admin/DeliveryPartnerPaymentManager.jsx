@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { Wallet, Search, RefreshCw, CheckCircle2, XCircle, Clock, MoreVertical, User, Plus } from 'lucide-react'
 import axiosClient from '@/app/utils/axiosClient'
+import HostegoButton from '../HostegoButton'
 
 const StatusBadge = ({ status }) => {
     const configs = {
@@ -36,7 +37,7 @@ const WithdrawalRequestCard = ({ request, onUpdate }) => {
             setIsVerifying(true)
             await axiosClient.patch(`/api/delivery-partner-wallet/withdrawal-requests/${request?.transaction_id}/verify`, {
                 unique_transaction_id: uniqueTransactionId,
-               
+
             })
             onUpdate()
         } catch (error) {
@@ -172,9 +173,12 @@ const WithdrawalRequestCard = ({ request, onUpdate }) => {
 const DeliveryPartnerPaymentManager = () => {
     const [isLoading, setIsLoading] = useState(true)
     const [isRefreshing, setIsRefreshing] = useState(false)
-    const [filter, setFilter] = useState('all')
+
     const [searchQuery, setSearchQuery] = useState('')
     const [withdrawalRequests, setWithdrawalRequests] = useState([])
+    useEffect(() => {
+        fetchWithdrawalRequests()
+    }, [])
 
 
     const fetchWithdrawalRequests = async (showRefreshAnimation = false) => {
@@ -190,10 +194,16 @@ const DeliveryPartnerPaymentManager = () => {
         }
     }
 
+    const createWithdrawalRequest = async () => {
+        try {
+            const { data } = await axiosClient.post('/api/delivery-partner-wallet/withdrawal-requests')
+            console.log(data)
+            fetchWithdrawalRequests()
+        } catch (error) {
+            console.error('Error creating withdrawal request:', error)
+        }
+    }
 
-    useEffect(() => {
-        fetchWithdrawalRequests()
-    }, [])
 
 
 
@@ -216,6 +226,7 @@ const DeliveryPartnerPaymentManager = () => {
                     <p className="text-gray-500 mt-1">Manage and verify delivery partner withdrawal requests</p>
                 </div>
                 <div className="flex items-center gap-4">
+                    <HostegoButton text='+ Withdrawal Request' onClick={() => createWithdrawalRequest()} />
                     <button
                         onClick={() => fetchWithdrawalRequests(true)}
                         disabled={isRefreshing}
