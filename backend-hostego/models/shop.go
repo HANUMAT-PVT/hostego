@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Shop struct {
-	ShopId          int    `gorm:"type:int;primaryKey;autoIncrement:true" json:"shop_id"`
+	ShopId          int          `gorm:"type:int;primaryKey;autoIncrement:true" json:"shop_id"`
 	ShopName        string       `gorm:"type:varchar(255);" json:"shop_name"`
 	ShopImg         string       `gorm:"type:varchar(255);" json:"shop_img"`
 	Address         string       `gorm:"type:varchar(255);" json:"address"`

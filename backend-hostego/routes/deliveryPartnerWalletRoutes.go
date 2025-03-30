@@ -11,5 +11,6 @@ func DeliveryPartnerWalletRoutes(app *fiber.App) {
 	deliveryPartnerWalletRoutes.Get("/withdrawal-requests", controllers.FetchAllDeliveryPartnersTransactions)
 	deliveryPartnerWalletRoutes.Get("/:id", controllers.FetchDeliveryPartnerWallet)
 	deliveryPartnerWalletRoutes.Get("/transactions/:id", controllers.FetchDeliveryPartnerWalletTransactions)
+	deliveryPartnerWalletRoutes.Post("/withdrawal-requests", controllers.CreateWalletWithdrawalRequests)
 	deliveryPartnerWalletRoutes.Patch("/withdrawal-requests/:transaction_id/verify", controllers.VerifyDeliveryPartnerWithdrawalRequest)
 }

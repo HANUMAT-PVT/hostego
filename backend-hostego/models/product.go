@@ -20,7 +20,7 @@ type Discount struct {
 
 // Product Model
 type Product struct {
-	ProductId       int         `gorm:"type:int;primaryKey;autoIncrement:true" json:"product_id"`
+	ProductId       int            `gorm:"type:int;primaryKey;autoIncrement:true" json:"product_id"`
 	ProductName     string         `gorm:"type:varchar(255);index;not null" json:"product_name"`
 	FoodCategory    FoodCategory   `gorm:"embedded" json:"food_category"`
 	FoodPrice       float64        `gorm:"type:double precision;not null" json:"food_price"`
@@ -31,7 +31,7 @@ type Product struct {
 	CreatedAt       time.Time      `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
 	PreparationTime string         `gorm:"type:varchar(255);not null" json:"preparation_time"`
-	ShopId          int      `gorm:"type:int;not null;index" json:"shop_id"`
+	ShopId          int            `gorm:"type:int;not null;index" json:"shop_id"`
 	Shop            Shop           `gorm:"foreignKey:ShopId;references:ShopId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"shop"`
 	Tags            datatypes.JSON `gorm:"type:jsonB;" json:"tags"`
 	StockQuantity   int            `gorm:"type:int;not null;default:0" json:"stock_quantity"`
