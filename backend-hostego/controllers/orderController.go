@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"backend-hostego/database"
-	"backend-hostego/middlewares"
 	"backend-hostego/models"
 	"encoding/json"
 	"strconv"
@@ -30,10 +29,7 @@ type requestCreateOrder struct {
 }
 
 func CreateNewOrder(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	user_id := c.Locals("user_id").(int)
 	freeDelivery := false
 	var cartItems []models.CartItem
 	var order models.Order
@@ -142,10 +138,7 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 }
 
 func MarkOrderAsDelivered(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	user_id := c.Locals("user_id")
 	if user_id == 0 {
 
 	}
@@ -166,12 +159,10 @@ func MarkOrderAsDelivered(c fiber.Ctx) error {
 }
 
 func FetchOrderById(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
-	if user_id == 0 {
+	user_id := c.Locals("user_id")
 
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	order_id := c.Params("id")
 	var order models.Order
@@ -184,7 +175,7 @@ func FetchOrderById(c fiber.Ctx) error {
 }
 
 func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	user_id := c.Locals("user_id")
 
 	type requestAssignOrder struct {
 		DeliveryPartnerId int `json:"delivery_partner_id"`
@@ -196,11 +187,8 @@ func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
 
 	var delivery_partner models.DeliveryPartner
 
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
 	if user_id == 0 {
-
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	if err := c.Bind().JSON(&request_assign); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -234,11 +222,9 @@ func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
 }
 
 func UpdateOrderById(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	user_id := c.Locals("user_id")
 	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	order_id := c.Params("id")
 
@@ -283,9 +269,9 @@ func UpdateOrderById(c fiber.Ctx) error {
 }
 
 func FetchAllUserOrders(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	queryPage := c.Query("page", "1")
 	queryLimit := c.Query("limit", "10")
@@ -310,11 +296,9 @@ func FetchAllUserOrders(c fiber.Ctx) error {
 }
 
 func FetchAllOrders(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	user_id := c.Locals("user_id")
 	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	queryPage := c.Query("page", "1")
 	queryLimit := c.Query("limit", "10")
@@ -355,13 +339,11 @@ func FetchAllOrders(c fiber.Ctx) error {
 }
 
 func FetchAllOrdersByDeliveryPartner(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 
-	if user_id == 0 {
-	}
 	// Get delivery partner ID from params
 	delivery_partner_id := c.Params("id")
 
@@ -408,6 +390,10 @@ func FetchAllOrdersByDeliveryPartner(c fiber.Ctx) error {
 }
 
 func FetchAllOrderItemsAccordingToProducts(c fiber.Ctx) error {
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
 	type ProductStats struct {
 		ProductId        string  `json:"product_id"`
 		ProductName      string  `json:"product_name"`

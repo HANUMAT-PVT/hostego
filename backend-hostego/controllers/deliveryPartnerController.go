@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"backend-hostego/database"
-	"backend-hostego/middlewares"
 	"backend-hostego/models"
 	"math"
 
@@ -11,9 +10,8 @@ import (
 
 func CreateNewDeliveryPartner(c fiber.Ctx) error {
 	var delivery_partner models.DeliveryPartner
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	user_id := c.Locals("user_id").(int)
+	if err := database.DB.Where("user_id=?", user_id).Find(&delivery_partner).Error; err != nil {
 	}
 	if err := database.DB.Where("user_id=?", user_id).Find(&delivery_partner).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
@@ -33,10 +31,7 @@ func CreateNewDeliveryPartner(c fiber.Ctx) error {
 func UpdateDeliveryPartner(c fiber.Ctx) error {
 	var delivery_partner models.DeliveryPartner
 	delivery_partner_id := c.Params("id")
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	user_id := c.Locals("user_id")
 	if user_id == 0 {
 
 	}
@@ -63,11 +58,8 @@ func UpdateDeliveryPartner(c fiber.Ctx) error {
 
 func FetchDeliveryPartnerByUserId(c fiber.Ctx) error {
 
-	user_id, err := middlewares.VerifyUserAuthCookie(c)
+	user_id := c.Locals("user_id")
 
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
-	}
 	if user_id != 0 {
 	}
 
@@ -81,10 +73,7 @@ func FetchDeliveryPartnerByUserId(c fiber.Ctx) error {
 
 func FetchAllDeliveryPartners(c fiber.Ctx) error {
 	var delivery_partners []models.DeliveryPartner
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "You are not Authenticated !"})
 	}
@@ -118,10 +107,7 @@ type DeliveryEarningStats struct {
 }
 
 func FetchDeliveryPartnerEarnings(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "You are not Authenticated!"})
 	}

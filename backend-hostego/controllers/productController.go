@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"backend-hostego/database"
-	"backend-hostego/middlewares"
 	"backend-hostego/models"
 
 	"strconv"
@@ -11,9 +10,9 @@ import (
 )
 
 func CreateNewProduct(c fiber.Ctx) error {
-	user_id, err := middlewares.VerifyUserAuthCookie(c)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
@@ -28,9 +27,9 @@ func CreateNewProduct(c fiber.Ctx) error {
 }
 
 func FetchProducts(c fiber.Ctx) error {
-	user_id, err := middlewares.VerifyUserAuthCookie(c)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
@@ -117,9 +116,9 @@ func FetchProducts(c fiber.Ctx) error {
 }
 
 func UpdateProductById(c fiber.Ctx) error {
-	user_id, err := middlewares.VerifyUserAuthCookie(c)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
@@ -150,9 +149,9 @@ func UpdateProductById(c fiber.Ctx) error {
 }
 
 func FetchProductById(c fiber.Ctx) error {
-	user_id, err := middlewares.VerifyUserAuthCookie(c)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "message": "You are not Authenticated !"})
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})

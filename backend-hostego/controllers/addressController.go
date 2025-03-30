@@ -2,20 +2,15 @@ package controllers
 
 import (
 	"backend-hostego/database"
-	"backend-hostego/middlewares"
 	"backend-hostego/models"
 
 	"github.com/gofiber/fiber/v3"
 )
 
 func CreateNewAddress(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	user_id := c.Locals("user_id")
 	var address models.Address
 	var user models.User
-
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
 
 	if err := c.Bind().JSON(&address); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
@@ -32,14 +27,10 @@ func CreateNewAddress(c fiber.Ctx) error {
 }
 
 func UpdateAddress(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	user_id := c.Locals("user_id")
 	var address models.Address
 	var user models.User
 	address_id := c.Params("id")
-
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
 
 	if err := c.Bind().JSON(&address); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
@@ -55,14 +46,10 @@ func UpdateAddress(c fiber.Ctx) error {
 }
 
 func DeleteAddress(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	user_id := c.Locals("user_id")
 	var address models.Address
 	address_id := c.Params("id")
 	var user models.User
-
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
 
 	if err := database.DB.First(&user, "where user_id = ?", user_id).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found !"})
@@ -75,10 +62,7 @@ func DeleteAddress(c fiber.Ctx) error {
 }
 
 func FetchUserAddress(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	user_id := c.Locals("user_id")
 	var address []models.Address
 	if err := database.DB.Where("user_id = ?", user_id).Order("created_at desc").Find(&address).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})

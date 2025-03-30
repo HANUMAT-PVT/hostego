@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"backend-hostego/database"
-	"backend-hostego/middlewares"
 	"backend-hostego/models"
 	"strconv"
 
@@ -10,7 +9,7 @@ import (
 )
 
 func CreditWalletTransaction(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	user_id := c.Locals("user_id").(int)
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
@@ -25,9 +24,7 @@ func CreditWalletTransaction(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&requestData); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
 	}
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	
 	// if err := c.Bind().JSON(&wallet_transaction).Error; err != nil {
 	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	// }
@@ -50,11 +47,8 @@ func CreditWalletTransaction(c fiber.Ctx) error {
 }
 
 func VerifyWalletTransactionById(c fiber.Ctx) error {
-
-	userID, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	userID := c.Locals("user_id").(int)
+	
 	type verifyWalletTransactionRequest struct {
 		TransactionStatus string `json:"transaction_status"`
 	}
@@ -115,10 +109,10 @@ func VerifyWalletTransactionById(c fiber.Ctx) error {
 }
 
 func FetchUserWallet(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	user_id := c.Locals("user_id")
 	var wallet models.Wallet
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	if err := database.DB.Preload("User").Where("user_id = ?", user_id).Find(&wallet).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
@@ -127,11 +121,7 @@ func FetchUserWallet(c fiber.Ctx) error {
 }
 
 func FetchUserWalletTransactions(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	user_id := c.Locals("user_id")
 	queryPage := c.Query("page", "1")
 	queryLimit := c.Query("limit", "10")
 
@@ -153,7 +143,7 @@ func FetchUserWalletTransactions(c fiber.Ctx) error {
 }
 
 func FetchAllWalletTransactions(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	user_id := c.Locals("user_id")
 
 	dbQuery := database.DB
 
@@ -184,9 +174,7 @@ func FetchAllWalletTransactions(c fiber.Ctx) error {
 			"%"+searchQuery+"%",
 		)
 	}
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}

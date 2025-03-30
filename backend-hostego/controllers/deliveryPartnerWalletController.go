@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"backend-hostego/database"
-	"backend-hostego/middlewares"
 	"backend-hostego/models"
 
 	"github.com/gofiber/fiber/v3"
@@ -10,15 +9,9 @@ import (
 
 func FetchDeliveryPartnerWallet(c fiber.Ctx) error {
 	deliveryPartnerId := c.Params("id")
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	user_id := c.Locals("user_id")
 	var deliveryPartnerWallet models.DeliveryPartnerWallet
 
-	if middleErr != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized",
-			"error":   middleErr.Error(),
-		})
-	}
 	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
@@ -39,13 +32,8 @@ func FetchDeliveryPartnerWallet(c fiber.Ctx) error {
 func FetchDeliveryPartnerWalletTransactions(c fiber.Ctx) error {
 
 	deliveryPartnerId := c.Params("id")
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized",
-			"error":   middleErr.Error(),
-		})
-	}
+	user_id := c.Locals("user_id")
+
 	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
@@ -108,10 +96,7 @@ func AddEarningsToDeliveryPartnerWallet(currentOrder models.Order) error {
 }
 
 func CreateWalletWithdrawalRequests(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return middleErr
-	}
+	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
@@ -174,11 +159,10 @@ func CreateWalletWithdrawalRequests(c fiber.Ctx) error {
 
 func VerifyDeliveryPartnerWithdrawalRequest(c fiber.Ctx) error {
 	transactionId := c.Params("transaction_id")
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
+	user_id := c.Locals("user_id").(int)
+	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",
-			"error":   middleErr.Error(),
 		})
 	}
 
@@ -262,13 +246,7 @@ func VerifyDeliveryPartnerWithdrawalRequest(c fiber.Ctx) error {
 
 func FetchAllDeliveryPartnersTransactions(c fiber.Ctx) error {
 
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Found the delivery Partners",
-			"err":     middleErr.Error(),
-		})
-	}
+	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized",

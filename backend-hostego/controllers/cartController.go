@@ -2,17 +2,13 @@ package controllers
 
 import (
 	"backend-hostego/database"
-	"backend-hostego/middlewares"
 	"backend-hostego/models"
 
 	"github.com/gofiber/fiber/v3"
 )
 
 func AddProductInUserCart(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	user_id := c.Locals("user_id")
 
 	var cartItem models.CartItem
 	var product models.Product
@@ -50,7 +46,7 @@ func AddProductInUserCart(c fiber.Ctx) error {
 	}
 
 	// Create new cart item if it doesn't exist
-	cartItem.UserId = user_id
+	cartItem.UserId = user_id.(int)
 	cartItem.SubTotal = float64(cartItem.Quantity) * product.FoodPrice
 
 	if err := database.DB.Create(&cartItem).Error; err != nil {
@@ -64,11 +60,9 @@ func AddProductInUserCart(c fiber.Ctx) error {
 }
 
 func UpdateProductInUserCart(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	user_id := c.Locals("user_id")
 	cart_item_id := c.Params("id")
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	
 
 	var cartItem models.CartItem
 	// First find the existing cart item
@@ -113,13 +107,11 @@ func UpdateProductInUserCart(c fiber.Ctx) error {
 }
 
 func FetchUserCart(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
+	user_id := c.Locals("user_id")
 	var cartItems []models.CartItem
 	var orderItems []models.Order
 	freeDelivery := false
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	
 	if err := database.DB.Where("user_id = ?", user_id).Find(&orderItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
@@ -154,10 +146,7 @@ func FetchUserCart(c fiber.Ctx) error {
 }
 
 func DeleteCartItem(c fiber.Ctx) error {
-	user_id, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
-	}
+	user_id := c.Locals("user_id")
 
 	cart_item_id := c.Params("id")
 	if err := database.DB.Where("cart_item_id = ? AND user_id = ?", cart_item_id, user_id).Delete(&models.CartItem{}).Error; err != nil {
