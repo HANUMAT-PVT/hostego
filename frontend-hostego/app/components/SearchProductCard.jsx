@@ -135,7 +135,7 @@ const SearchProductCard = ({
                 {isShopClosed && (
                     <div className="absolute -top-2 -right-2">
                         <div className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-md">
-                            Closed
+                            Shop  Closed
                         </div>
                     </div>
                 )}
