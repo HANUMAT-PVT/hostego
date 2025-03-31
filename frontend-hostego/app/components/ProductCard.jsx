@@ -50,7 +50,7 @@ const ProductCard = ({
                 <div className='w-32 h-32 relative'>
                     <img
                         className={`rounded-md w-full h-full object-contain hover:scale-105 transition-transform duration-200 
-                            ${isShopClosed ? '' : ''}`}
+                            ${isShopClosed ? 'opacity-60' : ''}`}
                         src={product_img_url}
                         alt={product_name}
                     />
