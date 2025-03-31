@@ -164,9 +164,12 @@ const Dashboard = ({ dashboardStats }) => {
     } = currentData
 
     // Sort products by order count
-    const topProducts = [...product_stats]
-        .sort((a, b) => b.order_count - a.order_count)
-        .slice(0, 5)
+    const topProducts = [...product_stats].sort((a, b) => b.order_count - a.order_count).slice(0, 5)
+
+    const handleSearchListDownload = async () => {
+        
+        console.log('Search List Download')
+    }
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
@@ -301,6 +304,12 @@ const Dashboard = ({ dashboardStats }) => {
                         </table>
                     </div>
                 </div>
+            </div>
+            {/* Search List Download Button */}
+            <div className="flex justify-end">
+                <button onClick={handleSearchListDownload} className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-lg">
+                    Search List Download
+                </button>
             </div>
         </div>
     )
