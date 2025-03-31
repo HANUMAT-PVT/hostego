@@ -145,7 +145,7 @@ const Page = () => {
 
     const fetchDeliveryPartnerOrders = async () => {
         try {
-            if (!deliveryPartner.delivery_partner_id) return
+            if (!deliveryPartner?.delivery_partner_id) return
             let { data } = await axiosClient.get(`/api/order/delivery-partner/${deliveryPartner?.delivery_partner_id}?status=${selectedFilter}`);
             setDeliveryPartnerOrders(data?.orders);
         } catch (error) {
@@ -419,6 +419,8 @@ const Page = () => {
                 )}
             </div>
             {/* Status Filter Section */}
+            {deliveryPartner?.delivery_partner_id && <>
+
             <div className="sticky top-0 z-10 bg-white border-b border-gray-100 p-4">
                 <div className="flex items-center gap-2 sticky top-0 z-20 overflow-x-auto pb-2 scrollbar-hide">
                     {filterOptions.map((option) => (
@@ -435,6 +437,7 @@ const Page = () => {
                     ))}
                 </div>
             </div>
+
             <div className="flex flex-col gap-2 px-3">
                 {deliveryPartnerOrders?.map((order) => (
                     <MaintainOrderStatusForDeliveryPartner onUpdateOrderStatus={updateOrderStatus} key={order?.order_id} order={order} />
@@ -453,6 +456,7 @@ const Page = () => {
                     </div>
                 )}
             </div>
+            </>}
         </div>
     );
 };
