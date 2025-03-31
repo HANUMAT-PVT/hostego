@@ -82,7 +82,7 @@ export default function AdminPanel() {
                         isActive={currentPage === "partners"}
                         onClick={() => updatePage("partners")}
                     />}
-                    {(checkUserRole("super_admin")) && <SidebarItem
+                    {(checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <SidebarItem
                         icon={<Settings size={20} />}
                         text="Payment Verification"
                         isActive={currentPage === "wallet_payment_verification"}
@@ -131,9 +131,9 @@ export default function AdminPanel() {
             <main className="flex-1 p-6">
                 {currentPage === "dashboard" && checkUserRole("super_admin") && <Dashboard dashboardStats={dashboardStats} />}
                 {currentPage === "order-assign" && (checkUserRole("super_admin") || checkUserRole("order_assign_manager") || checkUserRole("admin")) && <OrderAssignment />}
+                {currentPage === "orders" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <OrdersList />}
                 {currentPage === "partners" && (checkUserRole("super_admin") || checkUserRole("delivery_partner_manager") || checkUserRole("admin")) && <DeliveryPartnerManagement />}
                 {currentPage === "wallet_payment_verification" && (checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <WalletPaymentVerfication />}
-                {currentPage === "orders" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <OrdersList />}
                 {currentPage === "users" && (checkUserRole("super_admin") || checkUserRole("admin")) && <UserManager />}
                 {currentPage === "products" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <ProductsManager />}
                 {currentPage === "shops" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <ShopsManager />}
