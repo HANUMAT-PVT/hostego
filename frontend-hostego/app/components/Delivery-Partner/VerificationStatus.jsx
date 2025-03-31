@@ -28,7 +28,7 @@ const VerificationStatus = ({ deliveryPartner }) => {
                     <p className="text-sm text-yellow-700">
                         {deliveryPartner?.documents?.upi_id
                             ? "We have received your details. Sit back and relax while we verify your documents."
-                            : "Please complete your verification to start accepting orders. Upload the required documents below."}
+                            : "Please upload the required documents belowto complete your verification to start accepting orders."}
                     </p>
                 </div>
             )}
