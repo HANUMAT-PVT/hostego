@@ -305,7 +305,11 @@ const OrdersList = () => {
                 setIsLoading(true)
             }
             const { data } = await axiosClient.get(`/api/order/all?filter=${statusFilter}&search=${debouncedSearchTerm}&page=${page}&limit=20`)
-            setOrders([...orders, ...data] || [])
+            if (showRefreshAnimation) {
+                setOrders(data)
+            } else {
+                setOrders([...orders, ...data] || [])
+            }
             setHasMore(data?.length < 20 ? false : true)
         } catch (error) {
           
