@@ -2,6 +2,7 @@ package controllers
 
 import (
 	// "backend-hostego/config"
+	"backend-hostego/config"
 	"backend-hostego/database"
 	"backend-hostego/models"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtSecret = []byte("hanumat")
+
 
 func Signup(c fiber.Ctx) error {
 	req := new(models.User)
@@ -63,7 +64,8 @@ func generateJWT(user models.User) (string, error) {
 		"exp":        time.Now().Add(24 * 30 * time.Hour).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
+	jwtSecret := config.GetEnv("HOSTEGO_JWT_SECRET_")
+	return token.SignedString([]byte(jwtSecret))
 }
 
 //test commit

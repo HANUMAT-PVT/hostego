@@ -8,5 +8,9 @@ import (
 
 func SearchQueryRoutes(app *fiber.App) {
 	searchQuery := app.Group("/api/search-query", middlewares.VerifyUserAuthCookieMiddleware())
-	searchQuery.Get("/", controllers.FetchSearchQuery)
+	searchQuery.Get("/",
+		middlewares.VerifyUserAuthCookieMiddleware(),
+		middlewares.RoleMiddleware("super_admin", "admin", "inventory_manager"),
+		controllers.FetchSearchQuery,
+	)
 }

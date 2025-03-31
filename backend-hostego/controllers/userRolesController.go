@@ -12,7 +12,7 @@ func CreateUserRole(c fiber.Ctx) error {
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
-	
+
 	var user models.UserRole
 	if err := database.DB.Where("user_id = ? AND role_id = ?", user_id, 1).First(&user).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -53,7 +53,7 @@ func FetchUserRoles(c fiber.Ctx) error {
 
 func DeleteUserRole(c fiber.Ctx) error {
 	user_id := c.Locals("user_id")
-	
+
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}

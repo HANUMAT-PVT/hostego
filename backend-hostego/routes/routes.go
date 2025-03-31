@@ -10,7 +10,11 @@ func SetupRoutes(app *fiber.App) {
 
 	api := app.Group("/api", middlewares.VerifyUserAuthCookieMiddleware())
 
-	api.Get("/users", controllers.GetUsers)
+	api.Get("/users",
+		middlewares.VerifyUserAuthCookieMiddleware(),
+		middlewares.RoleMiddleware("super_admin", "admin"),
+		controllers.GetUsers,
+	)
 
 	// api.Post("/users", controllers.CreateUser)
 }
