@@ -40,7 +40,7 @@ const ProductCard = ({
             {/* Shop Closed Overlay */}
             {isShopClosed && (
                 <div className="absolute top-3 right-3">
-                    <div className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-md">
+                    <div className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-md z-6">
                         Shop  Closed
                     </div>
                 </div>
