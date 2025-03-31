@@ -24,7 +24,7 @@ func CreditWalletTransaction(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&requestData); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
 	}
-	
+
 	// if err := c.Bind().JSON(&wallet_transaction).Error; err != nil {
 	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	// }
@@ -48,7 +48,7 @@ func CreditWalletTransaction(c fiber.Ctx) error {
 
 func VerifyWalletTransactionById(c fiber.Ctx) error {
 	userID := c.Locals("user_id").(int)
-	
+
 	type verifyWalletTransactionRequest struct {
 		TransactionStatus string `json:"transaction_status"`
 	}
@@ -174,7 +174,7 @@ func FetchAllWalletTransactions(c fiber.Ctx) error {
 			"%"+searchQuery+"%",
 		)
 	}
-	
+
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}

@@ -12,7 +12,7 @@ func GetUsers(c fiber.Ctx) error {
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
-	if user_id ==0{
+	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 	var users []models.User
@@ -40,7 +40,6 @@ func GetUserById(c fiber.Ctx) error {
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
-
 
 	var user models.User
 
@@ -73,7 +72,7 @@ func UpdateUserById(c fiber.Ctx) error {
 
 }
 
-func FetchUserByMobileNumber(c fiber.Ctx) error {	
+func FetchUserByMobileNumber(c fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})

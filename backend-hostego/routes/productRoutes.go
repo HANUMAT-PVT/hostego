@@ -13,9 +13,16 @@ func ProductRoutes(app *fiber.App) error {
 
 	productRoutes.Get("/:id", controllers.FetchProductById)
 
-	productRoutes.Post("/", controllers.CreateNewProduct)
+	productRoutes.Post("/",
+		middlewares.VerifyUserAuthCookieMiddleware(),
+		middlewares.RoleMiddleware("super_admin","admin","inventory_manager"),
+		controllers.CreateNewProduct,
+	)
 
-	productRoutes.Patch("/:id", controllers.UpdateProductById)
-
+	productRoutes.Patch("/:id",
+		middlewares.VerifyUserAuthCookieMiddleware(),
+		middlewares.RoleMiddleware("super_admin","admin","inventory_manager"),
+		controllers.UpdateProductById,
+	)
 	return nil
 }

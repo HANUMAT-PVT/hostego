@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"backend-hostego/config"
 	"fmt"
 	"strings"
 
@@ -9,6 +10,7 @@ import (
 )
 
 func VerifyUserAuthCookie(c fiber.Ctx) (int, error) {
+
 	authHeader := c.Get("Authorization")
 
 	if authHeader == "" {
@@ -28,7 +30,7 @@ func VerifyUserAuthCookie(c fiber.Ctx) (int, error) {
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		user_id, exists := claims["user_id"]
-		
+
 		if !exists {
 			return 0, fmt.Errorf("user_id not found in token")
 		}
@@ -49,9 +51,9 @@ func VerifyUserAuthCookie(c fiber.Ctx) (int, error) {
 
 // test
 
-
 func VerifyUserAuthCookieMiddleware() fiber.Handler {
 	return func(c fiber.Ctx) error {
+
 		authHeader := c.Get("Authorization")
 
 		if authHeader == "" {
@@ -71,7 +73,8 @@ func VerifyUserAuthCookieMiddleware() fiber.Handler {
 
 		// Parse JWT token
 		token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-			return []byte("hanumat"), nil
+			jwtSecret := config.GetEnv("HOSTEGO_JWT_SECRET_")
+			return []byte(jwtSecret), nil
 		})
 		if err != nil || !token.Valid {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -109,10 +112,9 @@ func VerifyUserAuthCookieMiddleware() fiber.Handler {
 		}
 
 		// Store user_id in request context
-		
+
 		c.Locals("user_id", uid)
 
 		return c.Next()
 	}
 }
-
