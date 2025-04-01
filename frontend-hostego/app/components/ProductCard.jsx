@@ -39,7 +39,7 @@ const ProductCard = ({
         <div key={myKey} className='bg-white rounded-xl border border-gray-100 relative'>
             {/* Shop Closed Overlay */}
             {isShopClosed && (
-                <div className="absolute top-3 right-3 z-[20]">
+                <div className="absolute top-3 right-3 z-[8]">
                     <div className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-md z-[20]">
                         Shop  Closed
                     </div>
