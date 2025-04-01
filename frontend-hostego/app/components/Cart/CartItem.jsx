@@ -47,7 +47,7 @@ const CartItem = ({ product_item, quantity, cart_item_id, fetchCartAgain }) => {
                     <div className='flex flex-col justify-between py-1 '>
                         <div>
                             <h3 className='font-medium text-gray-800 leading-snug mb-1 text-sm'>
-                                {product_item?.product_name}
+                                {product_item?.product_name} <span className='text-gray-600 text-xs'>( {product_item?.shop?.shop_name} )</span>
                             </h3>
                             <p className='text-sm font-semibold text-gray-500'>
                                 ₹{product_item?.food_price} × {quantity}
