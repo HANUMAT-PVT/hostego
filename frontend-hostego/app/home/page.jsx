@@ -31,7 +31,7 @@ const page = () => {
     const fetchProducts = async () => {
         try {
             setIsLoading(true)
-            const { data } = await axiosClient.get(`/api/products/all?page=1&limit=40&tags=${navItems[activeIndex]?.category}&admin=false`)
+            const { data } = await axiosClient.get(`/api/products/all?page=1&limit=100&tags=${navItems[activeIndex]?.category}&admin=false`)
             setProducts(data)
         } catch (error) {
             console.error('Error fetching products:', error)
