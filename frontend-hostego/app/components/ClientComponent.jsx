@@ -102,6 +102,14 @@ const ClientComponent = ({ children }) => {
         }
     }
 
+    console.log(
+        "%cSTOP!",
+        "color: red; font-size: 50px; font-weight: bold; text-shadow: 2px 2px black;"
+    );
+    console.log(
+        "%cThis is a browser feature intended for developers. If someone told you to copy-paste something here to enable an Hostego feature or \"hack\" someone's account, it is a scam and will give them access to your Hostego account",
+        "color: white; font-size: 16px;"
+    );
 
     return (
 
