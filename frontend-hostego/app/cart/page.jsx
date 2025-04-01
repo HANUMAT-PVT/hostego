@@ -75,7 +75,7 @@ const page = () => {
     };
     initializeSDK();
 
-    consoole.log(process.env.NEXT_CASHFREE_ENVIRONMENT,"environment ")
+    console.log(process.env.NEXT_CASHFREE_ENVIRONMENT,"environment ")
 
     const [openAddressList, setOpenAddressList] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState(false)
