@@ -16,7 +16,7 @@ import axiosClient from "@/app/utils/axiosClient";
 import DeliveryPartnerPaymentManager from "./DeliveryPartnerPaymentManager";
 import CuMessManager from "./CuMessManager";
 
-export default function AdminPanel() {
+export default function  AdminPanel() {
     const router = useRouter();
     const { userRoles } = useSelector(state => state.user)
     const searchParams = useSearchParams();
