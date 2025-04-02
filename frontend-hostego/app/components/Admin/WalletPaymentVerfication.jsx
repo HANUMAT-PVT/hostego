@@ -5,12 +5,13 @@ import { CheckCircle2, Clock, IndianRupee, X, ExternalLink, Image as ImageIcon, 
 import axiosClient from '@/app/utils/axiosClient'
 import Image from 'next/image'
 import HostegoLoader from '../HostegoLoader'
-
-
+import ConfirmationPopup from '../ConfirmationPopup'
 
 const PaymentCard = ({ transaction, onVerify, onReject }) => {
     const [isLoading, setIsLoading] = useState(false)
     const [isImageModalOpen, setIsImageModalOpen] = useState(false)
+    const [showConfirmation, setShowConfirmation] = useState(false)
+    const [pendingAction, setPendingAction] = useState(null)
 
     const handleVerify = async (status, transactionId) => {
         try {
@@ -21,13 +22,19 @@ const PaymentCard = ({ transaction, onVerify, onReject }) => {
             console.error('Error verifying payment:', error)
         } finally {
             setIsLoading(false)
+            setPendingAction(null)
+            setShowConfirmation(false)
         }
+    }
+
+    const initiateAction = (status) => {
+        setPendingAction(status)
+        setShowConfirmation(true)
     }
 
     if (isLoading) {
         return <HostegoLoader />
     }
-
 
     return (
         <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-200 hover:shadow-md">
@@ -112,7 +119,7 @@ const PaymentCard = ({ transaction, onVerify, onReject }) => {
                 {/* Action Buttons */}
                 <div className="flex gap-3 mt-4">
                     <button
-                        onClick={() => handleVerify("success", transaction?.transaction_id)}
+                        onClick={() => initiateAction("success")}
                         disabled={isLoading || transaction?.transaction_status !== 'pending'}
                         className="flex-1 py-2 px-4 bg-[var(--primary-color)] text-white rounded-lg font-medium 
                                  hover:opacity-90 transition-all duration-200 disabled:opacity-50 
@@ -122,7 +129,7 @@ const PaymentCard = ({ transaction, onVerify, onReject }) => {
                         {isLoading ? 'Verifying...' : 'Verify Payment'}
                     </button>
                     <button
-                        onClick={() => handleVerify("failed", transaction?.transaction_id)}
+                        onClick={() => initiateAction("failed")}
                         disabled={isLoading || transaction?.transaction_status !== 'pending'}
                         className="flex-1 py-2 px-4 border-2 border-red-500 text-red-500 rounded-lg font-medium 
                                  hover:bg-red-50 transition-all duration-200 disabled:opacity-50 
@@ -133,6 +140,23 @@ const PaymentCard = ({ transaction, onVerify, onReject }) => {
                     </button>
                 </div>
             </div>
+
+            {/* Confirmation Popup */}
+            <ConfirmationPopup
+                isOpen={showConfirmation}
+                title={pendingAction === "success" ? "Verify Payment" : "Reject Payment"}
+                message={
+                    pendingAction === "success"
+                        ? `Are you sure you want to verify the payment of ₹${transaction?.amount} for transaction ID ${transaction?.transaction_id}?`
+                        : `Are you sure you want to reject the payment of ₹${transaction?.amount} for transaction ID ${transaction?.transaction_id}?`
+                }
+                variant={pendingAction === "success" ? "info" : "danger"}
+                onConfirm={() => handleVerify(pendingAction, transaction?.transaction_id)}
+                onCancel={() => {
+                    setShowConfirmation(false)
+                    setPendingAction(null)
+                }}
+            />
 
             {/* Image Modal */}
             {isImageModalOpen && (

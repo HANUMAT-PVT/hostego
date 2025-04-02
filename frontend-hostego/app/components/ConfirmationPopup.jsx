@@ -81,7 +81,7 @@ const ConfirmationPopup = ({
                                 onClick={onConfirm}
                                 className={`flex-1 px-4 py-2.5 rounded-lg text-white font-medium text-sm 
                                           focus:outline-none focus:ring-2 transition-colors
-                                          ${currentVariant.confirmButton}`}
+                                          ${currentVariant?.confirmButton}`}
                             >
                                 {confirmText}
                             </button>

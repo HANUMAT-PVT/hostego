@@ -25,7 +25,7 @@ export default function Home() {
       <main className="relative max-w-3xl mx-auto flex flex-col items-center text-center gap-6 p-4">
         {/* Launch Badge */}
         <div className="bg-green-500/10 border border-green-500/20 px-3 py-1 rounded-full">
-          <p className="text-xs font-medium text-green-400 flex items-center gap-2">
+          <p className="text-sm font-medium text-green-400 flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
             Now Live in Chandigarh University
           </p>
@@ -33,7 +33,7 @@ export default function Home() {
 
         {/* Main Heading */}
         <div className="space-y-1">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+          <h1 className="text-4xl sm:text-4xl font-bold tracking-tight">
             Hostego
           </h1>
           <p className="text-sm sm:text-base font-medium text-white/80">
@@ -44,7 +44,7 @@ export default function Home() {
         {/* Launch Offer */}
         <div className="relative  border  p-6 rounded-xl w-full max-w-md">
           <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-            <div className="bg-yellow-400 text-black text-xs font-bold px-3 py-0.5 rounded-full">
+            <div className="bg-yellow-400 text-black text-sm font-bold px-3 py-0.5 rounded-full">
               LAUNCH OFFER
             </div>
           </div>
@@ -52,15 +52,15 @@ export default function Home() {
           <div className="flex flex-col items-center gap-4 mt-2">
             <div className="flex items-center gap-2">
               <Truck className="w-5 h-5 text-yellow-300" />
-              <h2 className="text-2xl font-bold">FREE DELIVERY</h2>
+              <h2 className="text-3xl font-bold">FREE DELIVERY</h2>
             </div>
             <div className="space-y-1.5">
-              <p className="text-lg text-white/90">
+              <p className="text-xl text-white/90">
                 For First{" "}
-                <span className="text-yellow-300 font-bold text-xl">101</span>{" "}
+                <span className="text-yellow-300 font-bold text-2xl">101</span>{" "}
                 Orders
               </p>
-              <p className="text-xs text-yellow-300 font-medium">
+              <p className="text-sm text-yellow-300 font-medium">
                 Limited time offer • Order now before it&apos;s gone
               </p>
             </div>
