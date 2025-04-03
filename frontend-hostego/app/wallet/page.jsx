@@ -192,7 +192,7 @@ const Page = () => {
                                 <span className="text-gray-700">₹</span>
                                 <input
                                     type="number"
-                                    placeholder="Enter amount (min ₹100)"
+                                    placeholder="Enter amount (min ₹45)"
                                     value={walletDetails?.amount || ''}
                                     onChange={(e) => {
                                         const value = e.target.value;
