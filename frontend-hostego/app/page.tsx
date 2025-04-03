@@ -9,7 +9,7 @@ export default function Home() {
   useEffect(() => {
 
     setTimeout(() => {
-      router.push("/home");
+     // router.push("/home");
     },3000);
 
   }, []);
