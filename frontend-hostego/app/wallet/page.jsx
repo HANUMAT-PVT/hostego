@@ -48,8 +48,8 @@ const Page = () => {
     const handleWalletTransactionSubmit = async (e) => {
         e.preventDefault()
         try {
-            if (walletDetails?.amount < 100) {
-                alert("Minimum amount to add is 100")
+            if (walletDetails?.amount < 45) {
+                alert("Minimum amount to add is 45")
                 return
             }
             if (!paymentScreenShotImgUrl) return
