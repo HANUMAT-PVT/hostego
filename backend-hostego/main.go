@@ -5,11 +5,10 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/routes"
 	"log"
-	"time"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
-	"github.com/gofiber/fiber/v3/middleware/limiter"
+
 	"gorm.io/gorm"
 )
 
@@ -21,19 +20,6 @@ const privateKey = "W8PauXVtgDPZ8RHYulzVXEFd8uEawUwlPx8xGzMXg4w"
 
 func main() {
 	app := fiber.New()
-
-	app.Use(limiter.New(limiter.Config{
-		Max:        100,             // Max 5 requests
-		Expiration: 1 * time.Minute, // Limit resets every 1 minute
-		KeyGenerator: func(c fiber.Ctx) string {
-			return c.IP() // Use IP address to track requests
-		},
-		LimitReached: func(c fiber.Ctx) error {
-			return c.Status(fiber.StatusTooManyRequests).JSON(fiber.Map{
-				"error": "Too many requests, slow down!",
-			})
-		},
-	}))
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000", "https://hostego.in"},
