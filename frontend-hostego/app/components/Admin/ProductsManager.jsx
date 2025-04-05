@@ -322,7 +322,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                                 type="text"
                                 value={tagInput}
                                 onChange={(e) => setTagInput(e.target.value)}
-                                onkeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                                 placeholder="Add tags..."
                                 className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             />
