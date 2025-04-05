@@ -284,7 +284,7 @@ const OrderDetailsPage = () => {
                 </div>
             </div>
             {/* Delivery Partner Contact Section */}
-            {order?.delivery_partner && order?.order_status !== "delivered"(
+            {order?.delivery_partner (
                 <div className="mx-4 my-4">
                     {< DeliveryPartnerSection
                         order={order}
