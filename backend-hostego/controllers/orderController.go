@@ -233,10 +233,10 @@ func UpdateOrderById(c fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Order not found"})
 	}
 
-	var delivery_partner models.DeliveryPartner
-	if err := database.DB.Where("delivery_partner_id = ?", existingOrder.DeliveryPartnerId).First(&delivery_partner).Error; err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Delivery partner not found"})
-	}
+	// var delivery_partner models.DeliveryPartner
+	// if err := database.DB.Where("delivery_partner_id = ?", existingOrder.DeliveryPartnerId).First(&delivery_partner).Error; err != nil {
+	// 	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Delivery partner not found"})
+	// }
 
 	var updateData struct {
 		OrderStatus       models.OrderStatusType `json:"order_status"`
