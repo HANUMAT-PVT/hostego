@@ -284,12 +284,12 @@ const OrderDetailsPage = () => {
                 </div>
             </div>
             {/* Delivery Partner Contact Section */}
-            {order?.delivery_partner && (
+            {order?.delivery_partner && order?.order_status !== "delivered"(
                 <div className="mx-4 my-4">
-                    <DeliveryPartnerSection
+                    {< DeliveryPartnerSection
                         order={order}
-                        isActiveOrder={isOrderActive(order.order_status)}
-                    />
+                        isActiveOrder={isOrderActive(order?.order_status)}
+                    />}
                 </div>
             )}
             {/* Delivery Address */}
