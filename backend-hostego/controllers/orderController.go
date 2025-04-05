@@ -247,6 +247,14 @@ func UpdateOrderById(c fiber.Ctx) error {
 	}
 
 	// Update only the status
+	if updateData.OrderStatus == models.CanceledOrderStatus {
+		if existingOrder.OrderStatus == models.DeliveredOrderStatus {
+			return c.Status(fiber.StatusOK).JSON(fiber.Map{
+				"message": "Order can't be cancelled its delivered already !",
+				"order":   existingOrder,
+			})
+		}
+	}
 	existingOrder.OrderStatus = updateData.OrderStatus
 	if updateData.DeliveryPartnerId != 0 {
 		existingOrder.DeliveryPartnerId = updateData.DeliveryPartnerId

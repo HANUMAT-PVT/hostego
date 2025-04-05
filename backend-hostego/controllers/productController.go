@@ -71,7 +71,8 @@ func FetchProducts(c fiber.Ctx) error {
 			"%"+searchQuery+"%",
 		)
 		database.DB.Create(&models.SearchQuery{
-			Query: searchQuery,
+			Query:  searchQuery,
+			UserId: user_id.(int),
 		})
 	}
 
