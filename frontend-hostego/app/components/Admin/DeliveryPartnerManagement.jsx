@@ -4,6 +4,7 @@ import { Shield, User, MapPin, CheckCircle2, X, ExternalLink, Image as ImageIcon
 import axiosClient from '@/app/utils/axiosClient'
 import HostegoLoader from '../HostegoLoader'
 import HostegoButton from '../HostegoButton'
+import { useRouter } from 'next/navigation';
 
 const StatusBadge = ({ status, type }) => {
   const configs = {
@@ -33,6 +34,7 @@ const StatusBadge = ({ status, type }) => {
 const DeliveryPartnerProfileCard = ({ partner, onUpdate }) => {
   const [showDeliveryPartnerDetails, setShowDeliveryPartnerDetails] = useState(false)
   const [showActions, setShowActions] = useState(false)
+  const router=useRouter()
 
   const handleStatusUpdate = async (field, value) => {
     try {
@@ -70,7 +72,15 @@ const DeliveryPartnerProfileCard = ({ partner, onUpdate }) => {
             >
               <MoreVertical className="w-5 h-5 text-white" />
             </button>
-
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                router.push(`/admin/delivery-partner/${partner?.delivery_partner_id}`)
+              }}
+              className="p-1 hover:bg-white/10 rounded-full transition-colors"
+            >
+              <ExternalLink className="w-5 h-5 text-white" />
+            </button>
             {/* Actions Dropdown */}
             {showActions && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-10">
@@ -246,11 +256,12 @@ const DeliveryPartnerManagement = () => {
     const searchFilter = () => {
       if (!searchQuery) return true
       const query = searchQuery.toLowerCase()
+      console.log(partner, "parnter")
       return (
-        partner.delivery_partner_id?.toLowerCase().includes(query) ||
-        partner.user?.first_name?.toLowerCase().includes(query) ||
-        partner.user?.mobile_number?.includes(query) ||
-        partner.user?.email?.toLowerCase().includes(query)
+        partner?.user?.first_name?.toLowerCase().includes(query) ||
+        partner?.user?.mobile_number?.includes(query) ||
+        partner?.user?.email?.toLowerCase()?.includes(query) ||
+        partner?.delivery_partner_id?.includes(query)
       )
     }
 
@@ -270,14 +281,14 @@ const DeliveryPartnerManagement = () => {
               type="text"
               placeholder="Search by name, ID, phone..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e?.target?.value)}
               className="w-64 pl-10 pr-4 py-2 rounded-lg border-2 border-gray-100 
                        focus:border-[var(--primary-color)] outline-none transition-all"
             />
           </div>
           <select
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}
+            onChange={(e) => setFilter(e?.target?.value)}
             className="px-4 py-2 rounded-lg border-2 border-gray-100 
                      focus:border-[var(--primary-color)] outline-none"
           >

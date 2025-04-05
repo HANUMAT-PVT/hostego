@@ -4,29 +4,31 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Package, Search, Tag, Clock, DollarSign, Info, Image as ImageIcon, Check, X } from 'lucide-react';
 import axiosClient from '../../utils/axiosClient';
 
+const defaultFormData = {
+    product_name: '',
+    food_category: {
+        is_veg: 1,
+        is_cooked: 0
+    },
+    food_price: '',
+    availability: 1,
+    product_img_url: '',
+    description: '',
+    discount: {
+        is_available: 0,
+        percentage: 0
+    },
+    preparation_time: '0 min',
+    shop_id: null,
+    tags: [],
+    weight: '',
+    stock_quantity: 0
+}
+
 const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
     const [shops, setShops] = useState([]);
-    const [formData, setFormData] = useState({
-        product_name: '',
-        food_category: {
-            is_veg: 1,
-            is_cooked: 0
-        },
-        food_price: '',
-        availability: 1,
-        product_img_url: '',
-        description: '',
-        discount: {
-            is_available: 0,
-            percentage: 0
-        },
-        preparation_time: '0 min',
-        shop_id: 0,
-        tags: [],
-        weight: '',
-        stock_quantity: 0
-    });
-
+    const [formData, setFormData] = useState(defaultFormData);
+    console.log(initialData, "hello initial data")
     const [tagInput, setTagInput] = useState('');
 
     useEffect(() => {
@@ -77,20 +79,21 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
             <form onSubmit={(e) => {
                 e.preventDefault();
                 onSubmit(formData);
+                setFormData(defaultFormData)
             }} className="space-y-4">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         Select Shop <span className="text-red-500">*</span>
                     </label>
                     <select
-                        value={formData.shop_id}
+                        value={formData?.shop_id || initialData?.shop_id}
                         onChange={(e) => setFormData(prev => ({ ...prev, shop_id: Number(e.target.value) }))}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-white"
                         required
                     >
-                        <option value="">Select a shop</option>
-                        {shops.map(shop => (
-                            <option key={shop.shop_id} value={shop.shop_id}>
+                        <option value={""}>Select a shop</option>
+                        {shops?.map(shop => (
+                            <option key={shop?.shop_id} value={shop?.shop_id}>
                                 {shop.shop_name}
                             </option>
                         ))}
@@ -113,7 +116,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
                         <input
                             type="text"
-                            value={formData.product_name}
+                            value={formData?.product_name}
                             onChange={(e) => setFormData(prev => ({ ...prev, product_name: e.target.value }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             required
@@ -319,7 +322,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                                 type="text"
                                 value={tagInput}
                                 onChange={(e) => setTagInput(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                                onkeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                                 placeholder="Add tags..."
                                 className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             />

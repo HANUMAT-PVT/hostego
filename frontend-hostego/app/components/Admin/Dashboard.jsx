@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { BarChart3, DollarSign, ShoppingBag, TrendingUp, Package, Calendar, RefreshCw, Store } from 'lucide-react'
 import axiosClient from "@/app/utils/axiosClient"
+import { convertToCSV, downloadCSV, formatDate } from '@/app/utils/helper'
 
 const StatCard = ({ title, value, icon: Icon, trend }) => (
     <div className="bg-white p-6 rounded-xl shadow-sm">
@@ -116,6 +117,10 @@ const Dashboard = ({ dashboardStats }) => {
         startDate: '',
         endDate: ''
     })
+    const [startDate, setStartDate] = useState('')
+    const [endDate, setEndDate] = useState('')
+    const [isDownloading, setIsDownloading] = useState(false)
+
     useEffect(() => {
         fetchDashboardData()
     }, [])
@@ -137,8 +142,6 @@ const Dashboard = ({ dashboardStats }) => {
             setIsLoading(false)
         }
     }
-
-
 
     const handleDateChange = async (e) => {
         const { name, value } = e.target
@@ -167,10 +170,29 @@ const Dashboard = ({ dashboardStats }) => {
     const topProducts = [...product_stats].sort((a, b) => b.order_count - a.order_count).slice(0, 5)
 
     const handleSearchListDownload = async () => {
-        
-        console.log('Search List Download')
-    }
+        try {
+            setIsDownloading(true)
 
+            // Fetch search queries
+            const response = await axiosClient.get('/api/search-query', {
+                params: {
+                    start_date: startDate,
+                    end_date: endDate
+                }
+            })
+
+            // Convert the data to CSV format
+            const csvData = convertToCSV(response.data)
+
+            // Create and download the CSV file
+            downloadCSV(csvData, `search-results-${formatDate(new Date(), 'yyyy-MM-dd')}.csv`)
+        } catch (error) {
+
+        } finally {
+            setIsDownloading(false)
+        }
+    }
+  
     return (
         <div className="p-6 max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-6">
@@ -306,10 +328,46 @@ const Dashboard = ({ dashboardStats }) => {
                 </div>
             </div>
             {/* Search List Download Button */}
-            <div className="flex justify-end">
-                <button onClick={handleSearchListDownload} className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-lg">
-                    Search List Download
-                </button>
+            <div className="space-y-4">
+                <div className="flex gap-4 items-end">
+                    <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Start Date
+                        </label>
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
+                        />
+                    </div>
+                    <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            End Date
+                        </label>
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
+                        />
+                    </div>
+                    <button
+                        onClick={handleSearchListDownload}
+                        disabled={isDownloading || !startDate || !endDate}
+                        className="bg-[var(--primary-color)] text-white px-6 py-2 rounded-lg disabled:opacity-50 
+                                 flex items-center gap-2"
+                    >
+                        {isDownloading ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                Downloading...
+                            </>
+                        ) : (
+                            'Download Search List'
+                        )}
+                    </button>
+                </div>
             </div>
         </div>
     )
