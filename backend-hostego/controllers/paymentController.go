@@ -164,7 +164,7 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	type OrderRequest struct {
-		OrderID string `json:"order_id"`
+		OrderID int `json:"order_id"`
 	}
 
 	var request OrderRequest
