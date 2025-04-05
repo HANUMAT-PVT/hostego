@@ -159,7 +159,7 @@ export const transformDeliveryPartnerOrderEarnings = (orders) => {
 
 export const formatDate = (dateString, withTime = true) => {
   const date = new Date(dateString);
-  
+
   if (withTime) {
     return date.toLocaleString("en-US", {
       day: "2-digit",
@@ -178,17 +178,16 @@ export const formatDate = (dateString, withTime = true) => {
   });
 };
 
-
 export const transformOrdersByDate = (orders) => {
   const ordersByDate = {};
 
   for (let orderItem of orders) {
-    const orderDate = formatDate(orderItem?.created_at,false); // Extract YYYY-MM-DD
-    
+    const orderDate = formatDate(orderItem?.created_at, false); // Extract YYYY-MM-DD
+
     if (!ordersByDate[orderDate]) {
       ordersByDate[orderDate] = []; // Initialize array if not present
     }
-    
+
     ordersByDate[orderDate].push(orderItem); // Push order into array
   }
 
@@ -198,3 +197,37 @@ export const transformOrdersByDate = (orders) => {
   }));
 };
 
+export const convertToCSV = (data) => {
+  if (!data || !data.length) return "";
+
+  // Define CSV headers based on your SearchQuery model
+  const headers = ["Search Test", "User ID", "Created At"];
+
+  // Convert data to CSV rows
+  const rows = data.map((item) => [
+    item?.query,
+    item?.user_id,
+    formatDate(new Date(item.created_at), "yyyy-MM-dd HH:mm:ss"),
+  ]);
+
+  // Combine headers and rows
+  return [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
+};
+
+ // Helper function to download CSV
+ export const downloadCSV = (csvContent, fileName) => {
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+
+  if (navigator.msSaveBlob) {
+    // IE 10+
+    navigator.msSaveBlob(blob, fileName);
+  } else {
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+};

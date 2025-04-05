@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import BottomNavigationBar from '../components/BottomNavigationBar'
 import ProductCard from '../components/ProductCard'
 import SearchComponent from '../components/SearchComponent'
@@ -22,17 +22,31 @@ const page = () => {
     const [activeIndex, setActiveIndex] = useState(0)
     const [products, setProducts] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [page, setPage] = useState(1)
+    const [hasMore, setHasMore] = useState(true)
     const { cartData, useraddresses } = useSelector((state) => state.user)
+    const productsWrapperRef = useRef(null)
 
     useEffect(() => {
-        fetchProducts()
+        // Reset state when category changes
+        setProducts([])
+        setPage(1)
+        setHasMore(true)
+        fetchProducts(1, true)
     }, [activeIndex])
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (pageNum, isNewCategory = false) => {
         try {
             setIsLoading(true)
-            const { data } = await axiosClient.get(`/api/products/all?page=1&limit=100&tags=${navItems[activeIndex]?.category}&admin=false`)
-            setProducts(data)
+            const { data } = await axiosClient.get(
+                `/api/products/all?page=${pageNum}&limit=15&tags=${navItems[activeIndex]?.category}&admin=false`
+            )
+
+            if (data.length < 15) {
+                setHasMore(false)
+            }
+
+            setProducts(prev => isNewCategory ? data : [...prev, ...data])
         } catch (error) {
             console.error('Error fetching products:', error)
         } finally {
@@ -40,7 +54,35 @@ const page = () => {
         }
     }
 
-    
+    // Handle scroll event for infinite scrolling
+    const handleScroll = () => {
+        if (!productsWrapperRef.current || isLoading || !hasMore) return;
+
+        const { scrollTop, scrollHeight, clientHeight } = productsWrapperRef.current;
+
+        // If we're near the bottom (within 100px), load more
+        if (scrollHeight - scrollTop - clientHeight < 300) {
+            setPage(prevPage => {
+                const nextPage = prevPage + 1;
+                fetchProducts(nextPage);
+                return nextPage;
+            });
+        }
+    };
+
+    useEffect(() => {
+        const wrapper = productsWrapperRef.current;
+        if (wrapper) {
+            wrapper.addEventListener('scroll', handleScroll);
+        }
+
+        return () => {
+            if (wrapper) {
+                wrapper.removeEventListener('scroll', handleScroll);
+            }
+        };
+    }, [hasMore, isLoading]);
+
     return (
         <div>
             <div className='gradient-background sticky top-0 z-10 '>
@@ -48,8 +90,8 @@ const page = () => {
                     <div>
                         <p className="text-xs font-bold">Hostego in</p>
                         <p className="text-2xl font-bold">few minutes </p>
-                        <div onClick={()=>router.push("/address")} className='flex items-center gap-2'>
-                            <p className="text-sm font-medium">{useraddresses[0]?.address_line_1 ||"Chandigarh University"}</p>
+                        <div onClick={() => router.push("/address")} className='flex items-center gap-2'>
+                            <p className="text-sm font-medium">{useraddresses[0]?.address_line_1 || "Chandigarh University"}</p>
                             <ChevronDown className='w-4 h-4' />
                         </div>
                     </div>
@@ -75,17 +117,42 @@ const page = () => {
                 </div>
 
             </div>
-            <div className=' overflow-auto grid grid-cols-2 gap-2  justify-between mb-16 py-1 mb-[150px]  '>
-                {isLoading ? (
-                    // Show 6 skeleton cards while loading
-                    [...Array(6)].map((_, index) => (
-                        <ProductCardSkeleton key={index} />
-                    ))
-                ) : (
-                    products?.map((prd) => <ProductCard isAlreadyInCart={cartData?.cart_items?.some(item => item.product_id === prd?.product_id)} {...prd} key={prd?.product_id} />)
-                )}
+            <div
+                ref={productsWrapperRef}
+                className='h-[calc(100vh-200px)] overflow-y-auto'
+            >
+                <div className='grid grid-cols-2 gap-2 p-2'>
+                    {products?.map((prd) => (
+                        <ProductCard
+                            isAlreadyInCart={cartData?.cart_items?.some(item => item.product_id === prd?.product_id)}
+                            {...prd}
+                            key={prd?.product_id}
+                        />
+                    ))}
 
+                    {/* Loading state */}
+                    {isLoading && (
+                        [...Array(4)].map((_, index) => (
+                            <ProductCardSkeleton key={`skeleton-${index}`} />
+                        ))
+                    )}
+
+                    {/* Loading indicator at bottom */}
+                    {hasMore && !isLoading && products.length > 0 && (
+                        <div className="col-span-2 flex justify-center py-4">
+                            <div className="w-6 h-6 border-2 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                    )}
+
+                    {/* No more products message */}
+                    {!hasMore && products.length > 0 && (
+                        <div className="col-span-2 text-center py-4 text-gray-500">
+                            No more products to load
+                        </div>
+                    )}
+                </div>
             </div>
+
             <BottomNavigationBar />
             {cartData?.cart_items?.length > 0 && <CartFloatingButton />}
         </div>
