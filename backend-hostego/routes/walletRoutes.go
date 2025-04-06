@@ -14,7 +14,7 @@ func WalletRoutes(app *fiber.App) {
 
 	walletRoutes.Post("/verifiy-wallet-transaction/:id",
 		middlewares.VerifyUserAuthCookieMiddleware(),
-		middlewares.RoleMiddleware("super_admin", "payments_manager","admin"),
+		middlewares.RoleMiddleware("super_admin", "payments_manager", "admin"),
 		controllers.VerifyWalletTransactionById,
 	)
 	walletRoutes.Get("/transactions", controllers.FetchUserWalletTransactions)
@@ -24,4 +24,8 @@ func WalletRoutes(app *fiber.App) {
 		middlewares.RoleMiddleware("super_admin", "payments_manager"),
 		controllers.FetchAllWalletTransactions,
 	)
+	walletRoutes.Get("/users-wallet-balances",
+		middlewares.VerifyUserAuthCookieMiddleware(),
+		middlewares.RoleMiddleware("super_admin", "payments_manager"),
+		controllers.FetchUsersWithPositiveWalletBalance)
 }
