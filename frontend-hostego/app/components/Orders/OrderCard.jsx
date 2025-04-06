@@ -54,6 +54,7 @@ const OrderCard = ({ order, onRefresh }) => {
 
     const handleStatusUpdate = async (newStatus) => {
         try {
+            let delivery_partner_id = 0;
             if (newStatus == "") {
 
                 return
@@ -66,9 +67,12 @@ const OrderCard = ({ order, onRefresh }) => {
                 onRefresh(true) // Refresh the list after update
             }
             setIsUpdating(true)
+            if (newStatus == "delivered") {
+                delivery_partner_id = order?.delivery_partner?.delivery_partner_id;
+            }
             await axiosClient.patch(`/api/order/${order.order_id}`, {
                 order_status: newStatus,
-                delivery_partner_id: 0 // Reset delivery partner ID
+                delivery_partner_id // Reset delivery partner ID
             })
             setSelectedStatus("")
             onRefresh(true) // Refresh the list after update
@@ -95,7 +99,7 @@ const OrderCard = ({ order, onRefresh }) => {
                     </div>
                     <div className="flex items-center gap-3">
                         <OrderStatusBadge status={order?.order_status} />
-                      {order?.order_status!=="delivered"&&  <select
+                        {order?.order_status !== "delivered" && <select
                             value={selectedStatus}
                             onChange={(e) => {
                                 setSelectedStatus(e.target.value)
@@ -110,6 +114,7 @@ const OrderCard = ({ order, onRefresh }) => {
                             <option value="">Update Status</option>
                             <option value="placed">Placed</option>
                             <option value="cancelled">Cancelled</option>
+                            <option value="delivered">Delivered</option>
                         </select>}
                     </div>
                 </div>
