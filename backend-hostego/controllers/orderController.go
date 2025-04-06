@@ -258,7 +258,7 @@ func UpdateOrderById(c fiber.Ctx) error {
 	if updateData.OrderStatus == models.DeliveredOrderStatus {
 		// delivered status only when order is not delivered yet
 		if existingOrder.OrderStatus != models.DeliveredOrderStatus {
-		
+
 			existingOrder.DeliveredAt = time.Now()
 			AddEarningsToDeliveryPartnerWallet(existingOrder)
 		}
@@ -268,8 +268,6 @@ func UpdateOrderById(c fiber.Ctx) error {
 	if updateData.DeliveryPartnerId != 0 {
 		existingOrder.DeliveryPartnerId = updateData.DeliveryPartnerId
 	}
-	
-	
 
 	// Save the changes
 	if err := database.DB.Save(&existingOrder).Error; err != nil {
@@ -345,7 +343,7 @@ func FetchAllOrders(c fiber.Ctx) error {
 	}
 
 	var orders []models.Order
-	if err := dbQuery.Preload("User").Preload("PaymentTransaction").Preload("Address").Limit(limit).Offset(offset).Find(&orders).Order("created_at desc").Error; err != nil {
+	if err := dbQuery.Preload("User").Preload("PaymentTransaction").Preload("Address").Order("created_at desc").Limit(limit).Offset(offset).Find(&orders).Order("created_at desc").Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
