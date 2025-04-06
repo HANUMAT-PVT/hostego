@@ -345,7 +345,7 @@ func FetchAllOrders(c fiber.Ctx) error {
 	}
 
 	var orders []models.Order
-	if err := dbQuery.Preload("User").Preload("PaymentTransaction").Preload("Address").Order("created_at asc").Limit(limit).Offset(offset).Find(&orders).Error; err != nil {
+	if err := dbQuery.Preload("User").Preload("PaymentTransaction").Preload("Address").Limit(limit).Offset(offset).Find(&orders).Order("created_at desc").Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
