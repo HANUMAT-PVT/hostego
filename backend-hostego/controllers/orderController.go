@@ -255,15 +255,21 @@ func UpdateOrderById(c fiber.Ctx) error {
 			})
 		}
 	}
+	if updateData.OrderStatus == models.DeliveredOrderStatus {
+		// delivered status only when order is not delivered yet
+		if existingOrder.OrderStatus != models.DeliveredOrderStatus {
+		
+			existingOrder.DeliveredAt = time.Now()
+			AddEarningsToDeliveryPartnerWallet(existingOrder)
+		}
+
+	}
 	existingOrder.OrderStatus = updateData.OrderStatus
 	if updateData.DeliveryPartnerId != 0 {
 		existingOrder.DeliveryPartnerId = updateData.DeliveryPartnerId
 	}
-	if updateData.OrderStatus == models.DeliveredOrderStatus {
-		existingOrder.DeliveredAt = time.Now()
-		AddEarningsToDeliveryPartnerWallet(existingOrder)
-
-	}
+	
+	
 
 	// Save the changes
 	if err := database.DB.Save(&existingOrder).Error; err != nil {
