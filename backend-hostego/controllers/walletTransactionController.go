@@ -184,3 +184,41 @@ func FetchAllWalletTransactions(c fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(wallet_transactions)
 }
+
+func FetchUsersWithPositiveWalletBalance(c fiber.Ctx) error {
+	type WalletUser struct {
+		UserID             uint    `json:"user_id"`
+		Balance            float64 `json:"balance"`
+		TotalWalletBalance float64 `json:"total_wallet_balance"`
+	}
+
+	var results []WalletUser
+
+	// Raw SQL query
+	query := `
+	SELECT 
+	  u.user_id AS user_id,
+	  w.balance,
+	  (
+	    SELECT SUM(balance)
+	    FROM wallets
+	    WHERE balance > 0
+	  ) AS total_wallet_balance
+	FROM 
+	  users u
+	JOIN 
+	  wallets w ON u.user_id = w.user_id
+	WHERE 
+	  w.balance > 0
+	`
+
+	// Execute query
+	if err := database.DB.Raw(query).Scan(&results).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":  "Failed to fetch data",
+			"detail": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(results)
+}
