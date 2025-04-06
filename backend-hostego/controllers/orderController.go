@@ -332,9 +332,8 @@ func FetchAllOrders(c fiber.Ctx) error {
 
 	if searchQuery != "" {
 		dbQuery = dbQuery.Where(
-			"order_id LIKE ? OR user_id IN (SELECT user_id FROM users WHERE mobile_number LIKE ?)",
-			"%"+searchQuery+"%",
-			"%"+searchQuery+"%",
+			"order_id = ? OR user_id = ? OR mobile_number = ?",
+			searchQuery, searchQuery,searchQuery,
 		)
 	}
 
