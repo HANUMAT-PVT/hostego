@@ -48,7 +48,7 @@ const Page = () => {
     const handleWalletTransactionSubmit = async (e) => {
         e.preventDefault()
         try {
-            if (walletDetails?.amount < 16) {
+            if (walletDetails?.amount < 45) {
                 alert("Minimum amount to add is 45")
                 return
             }
