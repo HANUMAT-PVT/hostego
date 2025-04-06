@@ -28,7 +28,7 @@ const defaultFormData = {
 const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
     const [shops, setShops] = useState([]);
     const [formData, setFormData] = useState(defaultFormData);
-    console.log(initialData, "hello initial data")
+  
     const [tagInput, setTagInput] = useState('');
 
     useEffect(() => {
@@ -36,9 +36,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
             try {
                 const { data } = await axiosClient.get('/api/shop');
                 setShops(data);
-                if (data?.length > 0) {
-                    setFormData(prev => ({ ...prev, shop_id: data[0]?.shop_id }));
-                }
+               
             } catch (error) {
                 console.error('Error fetching shops:', error);
             }
@@ -69,6 +67,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
             tags: prev.tags.filter(tag => tag !== tagToRemove)
         }));
     };
+    // console.log(formData.shop_id,"format data",initialData?.shop_id,"initial data .shop id")
 
     return (
         <div className="bg-white rounded-xl p-6 shadow-sm">
