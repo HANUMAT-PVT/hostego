@@ -4,6 +4,7 @@ import { Package, User, MapPin, IndianRupee, Clock, ChevronDown, ChevronUp, Phon
 import { formatDate } from '@/app/utils/helper'
 import ConfirmationPopup from '../ConfirmationPopup'
 import axiosClient from "@/app/utils/axiosClient"
+import { useSelector } from "react-redux"
 
 
 const OrderStatusBadge = ({ status }) => {
@@ -51,7 +52,16 @@ const OrderCard = ({ order, onRefresh }) => {
     const [isUpdating, setIsUpdating] = useState(false)
     const [selectedStatus, setSelectedStatus] = useState(order?.order_status)
     const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false)
+    const [isEditable, setIsEditable] = useState({})
 
+    const { userRoles } = useSelector(state => state.user)
+   
+
+    const checkIsSuperAdmin = () => {
+        for (let el of userRoles) {
+            if (el?.role?.role_id == 1) return true
+        }
+    }
     const handleStatusUpdate = async (newStatus) => {
         try {
             let delivery_partner_id = 0;
@@ -82,6 +92,18 @@ const OrderCard = ({ order, onRefresh }) => {
             setIsUpdating(false)
         }
     }
+
+    const handleOrderItemRefund = async () => {
+        try {
+            let data = await axiosClient.post("/api/order-item/refund", isEditable)
+            alert("Refund Proccessed")
+            setIsEditable({})
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
 
     return (
         <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-200">
@@ -225,11 +247,12 @@ const OrderCard = ({ order, onRefresh }) => {
                                     alt={item.product_item.product_name}
                                     className="w-16 h-16 rounded-xl object-cover"
                                 />
+
                                 <div className="flex-1">
                                     <p className="font-medium text-gray-900">{item?.product_item?.product_name}</p>
                                     <p className="font-medium text-xs text-gray-600">{item?.product_item?.shop?.shop_name}</p>
                                     <div className="flex items-center gap-2 mt-1">
-                                        <span className="text-sm text-gray-600">
+                                        <span eid className="text-sm text-gray-600">
                                             {item?.quantity} × ₹{item?.product_item?.food_price}
                                         </span>
                                         <span className="text-sm font-medium text-[var(--primary-color)]">
@@ -237,7 +260,12 @@ const OrderCard = ({ order, onRefresh }) => {
                                         </span>
                                     </div>
                                 </div>
+                                {checkIsSuperAdmin() && <> <button onClick={() => setIsEditable({ product_id: item?.product_id, order_id: order?.order_id, quantity: item?.quantity })} >Edit</button>
+                                    {isEditable?.product_id && <input type="number" value={isEditable?.quantity || 0} onChange={(e) => setIsEditable({ ...isEditable, quantity: Number(e.target.value) })} />}
+                                    <button onClick={handleOrderItemRefund}>Submit</button></>}
                             </div>
+
+
                         ))}
 
                         {/* Order Summary - Clear breakdown */}
@@ -273,7 +301,7 @@ const OrderCard = ({ order, onRefresh }) => {
                     setSelectedStatus("")
                 }}
             />
-        </div>
+        </div >
     )
 }
 
