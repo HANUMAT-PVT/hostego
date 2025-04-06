@@ -261,7 +261,7 @@ const OrderCard = ({ order, onRefresh }) => {
                                     </div>
                                 </div>
                                 {checkIsSuperAdmin() && <> <button onClick={() => setIsEditable({ product_id: item?.product_id, order_id: order?.order_id, quantity: item?.quantity })} >Edit</button>
-                                    {isEditable?.product_id && <input type="number" value={isEditable?.quantity || 0} onChange={(e) => setIsEditable({ ...isEditable, quantity: Number(e.target.value) })} />}
+                                    {isEditable?.product_id==item.product_id && <input type="number" value={isEditable?.quantity || 0} onChange={(e) => setIsEditable({ ...isEditable, quantity: Number(e.target.value) })} />}
                                     <button onClick={handleOrderItemRefund}>Submit</button></>}
                             </div>
 
