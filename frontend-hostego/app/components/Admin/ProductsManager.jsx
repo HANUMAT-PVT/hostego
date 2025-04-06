@@ -28,7 +28,7 @@ const defaultFormData = {
 const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
     const [shops, setShops] = useState([]);
     const [formData, setFormData] = useState(defaultFormData);
-  
+
     const [tagInput, setTagInput] = useState('');
 
     useEffect(() => {
@@ -36,7 +36,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
             try {
                 const { data } = await axiosClient.get('/api/shop');
                 setShops(data);
-               
+
             } catch (error) {
                 console.error('Error fetching shops:', error);
             }
@@ -409,7 +409,8 @@ const ProductsManager = () => {
 
     const filteredProducts = products.filter(product =>
         product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase())
+        product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.shop.shop_name.toLowerCase().includes(searchTerm.toLocaleLowerCase())
     );
 
     return (
