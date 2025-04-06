@@ -113,6 +113,7 @@ const Dashboard = ({ dashboardStats }) => {
 
     const [currentData, setCurrentData] = useState(dashboardStats)
     const [isLoading, setIsLoading] = useState(false)
+    const [userWalletBalances, setUserWalletBalances] = useState([])
     const [dateRange, setDateRange] = useState({
         startDate: '',
         endDate: ''
@@ -123,6 +124,7 @@ const Dashboard = ({ dashboardStats }) => {
 
     useEffect(() => {
         fetchDashboardData()
+        fetchUserWalletBalances()
     }, [])
     const fetchDashboardData = async (filters = {}) => {
         try {
@@ -140,6 +142,15 @@ const Dashboard = ({ dashboardStats }) => {
             console.error('Error fetching dashboard data:', error)
         } finally {
             setIsLoading(false)
+        }
+    }
+
+    const fetchUserWalletBalances = async () => {
+        try {
+            let { data } = await axiosClient.get('/api/wallet/users-wallet-balances')
+            setUserWalletBalances(data)
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -192,7 +203,7 @@ const Dashboard = ({ dashboardStats }) => {
             setIsDownloading(false)
         }
     }
-  
+
     return (
         <div className="p-6 max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-6">
@@ -277,6 +288,12 @@ const Dashboard = ({ dashboardStats }) => {
                     value={overall_stats?.last_month_revenue}
                     icon={Package}
                     trend={overall_stats?.last_month_revenue}
+                />
+                 <StatCard
+                    title="Users Wallet Balance"
+                    value={userWalletBalances[0]?.total_wallet_balance}
+                    icon={DollarSign}
+                    // trend={overall_stats?.last_month_revenue}
                 />
             </div>
 

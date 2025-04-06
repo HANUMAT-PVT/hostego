@@ -98,7 +98,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
   const [activeOrder, setActiveOrder] = useState(transformOrder(order));
   const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false);
 
-  
+
 
   useEffect(() => {
     setActiveOrder(transformOrder(order))
@@ -260,7 +260,20 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
               )}
             </div>
           </AccordionSection>
+
         ))}
+        {/* Total Order value Section */}
+        <AccordionSection
+
+          title={"Total Order Amount"}
+          icon={ShoppingBag}
+          count={`₹ ${activeOrder?.final_order_value - activeOrder?.shipping_fee}`}
+
+          defaultOpen={false}
+        >
+        
+         
+        </AccordionSection>
       </div>
 
       <ConfirmationPopup
@@ -275,7 +288,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
         }}
         onCancel={() => setIsConfirmationPopupOpen(false)}
       />
-    </div>
+    </div >
   );
 };
 
