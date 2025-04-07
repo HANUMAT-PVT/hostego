@@ -103,6 +103,8 @@ const OrderCard = ({ order, onRefresh }) => {
         }
     }
 
+    
+
 
 
     return (
@@ -272,15 +274,15 @@ const OrderCard = ({ order, onRefresh }) => {
                         <div className="bg-gray-50 p-4 rounded-xl space-y-3 mt-4">
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Items Total</span>
-                                <span className="font-medium">₹{order.order_items.reduce((acc, item) => acc + item.sub_total, 0)}</span>
+                                <span className="font-medium">₹{order?.order_items.reduce((acc, item) => acc + item.sub_total, 0)}</span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Delivery Fee</span>
-                                <span className="font-medium">₹{order.shipping_fee}</span>
+                                <span className="font-medium">₹{order?.shipping_fee}</span>
                             </div>
                             <div className="flex justify-between font-medium pt-3 border-t">
                                 <span className="text-gray-900">Total Amount</span>
-                                <span className="text-[var(--primary-color)]">₹{order.final_order_value}</span>
+                                <span className="text-[var(--primary-color)]">₹{order?.final_order_value}</span>
                             </div>
                         </div>
                     </div>
