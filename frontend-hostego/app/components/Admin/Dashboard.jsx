@@ -8,8 +8,8 @@ const StatCard = ({ title, value, icon: Icon, trend }) => (
     <div className="bg-white p-6 rounded-xl shadow-sm">
         <div className="flex items-center justify-between mb-4">
             <div>
-                <p className="text-sm text-gray-500">{title}</p>
-                <h3 className="text-2xl font-bold">₹{value}</h3>
+                <p className="text-sm text-gray-500 mb-2">{title}</p>
+                <h3 className="text-2xl font-bold">₹{value?.toFixed(1)}</h3>
             </div>
             <div className={`p-3 rounded-full ${trend > 0 ? 'bg-green-100' : 'bg-blue-100'}`}>
                 <Icon className={`w-6 h-6 ${trend > 0 ? 'text-green-600' : 'text-blue-600'}`} />
@@ -114,6 +114,8 @@ const Dashboard = ({ dashboardStats }) => {
     const [currentData, setCurrentData] = useState(dashboardStats)
     const [isLoading, setIsLoading] = useState(false)
     const [userWalletBalances, setUserWalletBalances] = useState([])
+    const [dashboardStatsData, setDashboardStatsData] = useState({})
+
     const [dateRange, setDateRange] = useState({
         startDate: '',
         endDate: ''
@@ -122,10 +124,21 @@ const Dashboard = ({ dashboardStats }) => {
     const [endDate, setEndDate] = useState('')
     const [isDownloading, setIsDownloading] = useState(false)
 
+
+    const {
+        overall_stats,
+        product_stats
+    } = currentData
+
+
+
     useEffect(() => {
         fetchDashboardData()
         fetchUserWalletBalances()
+        fetchDashboardStatsData()
     }, [])
+
+
     const fetchDashboardData = async (filters = {}) => {
         try {
             setIsLoading(true)
@@ -170,12 +183,25 @@ const Dashboard = ({ dashboardStats }) => {
 
     const handleRefresh = () => {
         fetchDashboardData(dateRange)
+        fetchUserWalletBalances()
+        fetchDashboardStatsData(dateRange)
     }
 
-    const {
-        overall_stats,
-        product_stats
-    } = currentData
+    const fetchDashboardStatsData = async (filters = {}) => {
+        try {
+            const { startDate, endDate } = filters
+            let url = '/api/dashboard/stats'
+
+            if (startDate && endDate) {
+                url += `?start_date=${startDate}&end_date=${endDate}`
+            }
+            let { data } = await axiosClient.get(url)
+            setDashboardStatsData(data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     // Sort products by order count
     const topProducts = [...product_stats].sort((a, b) => b.order_count - a.order_count).slice(0, 5)
@@ -289,11 +315,47 @@ const Dashboard = ({ dashboardStats }) => {
                     icon={Package}
                     trend={overall_stats?.last_month_revenue}
                 />
-                 <StatCard
+                <StatCard
                     title="Users Wallet Balance"
                     value={userWalletBalances[0]?.total_wallet_balance}
                     icon={DollarSign}
-                    // trend={overall_stats?.last_month_revenue}
+
+                />
+                <StatCard
+                    title="Total Delivery Partner Fees"
+                    value={dashboardStatsData?.total_delivery_partner_fee}
+                    icon={DollarSign}
+
+                />
+                <StatCard
+                    title="Total Shipping Revnue "
+                    value={dashboardStatsData?.total_shipping_revenue}
+                    icon={DollarSign}
+
+                />
+                <StatCard
+                    title="Total Customers"
+                    value={dashboardStatsData.result?.total_customers}
+                    icon={DollarSign}
+
+                />
+                <StatCard
+                    title="Repeat Customers"
+                    value={dashboardStatsData.result?.repeat_customers}
+                    icon={DollarSign}
+
+                />
+                <StatCard
+                    title="Repeat Customers Revenue"
+                    value={dashboardStatsData.result?.repeat_customers_revenue}
+                    icon={DollarSign}
+
+                />
+                <StatCard
+                    title="Profit/Loss  "
+                    value={(dashboardStatsData?.total_shipping_revenue - dashboardStatsData?.total_delivery_partner_fee)}
+                    icon={DollarSign}
+
                 />
             </div>
 

@@ -125,7 +125,7 @@ const Page = () => {
                     </div>
                     <div className="flex items-baseline gap-1">
                         <IndianRupee className="w-6 h-6" />
-                        <span className="text-3xl font-semibold">{userWallet?.balance}</span>
+                        <span className="text-3xl font-semibold">{userWallet?.balance?.toFixed(1)}</span>
                     </div>
                 </div>
 
@@ -238,7 +238,7 @@ const Page = () => {
                                     className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-[var(--primary-color)]/5 transition-colors"
                                 >
                                     <span className="text-gray-600 truncate max-w-[200px] overflow-hidden text-ellipsis">
-                                        {paymentScreenShotImgUrl ? paymentScreenShotImgUrl.name : "Upload screenshot"}
+                                        {paymentScreenShotImgUrl ? paymentScreenShotImgUrl?.name : "Upload screenshot"}
                                     </span>
                                     <Upload className="text-[var(--primary-color)]" />
                                 </label>
