@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	webpush "github.com/SherClockHolmes/webpush-go"
 	"github.com/gofiber/fiber/v3"
@@ -50,3 +51,50 @@ func SendWebPushNotification(c fiber.Ctx) error {
 	return c.JSON(fiber.Map{"message": "Notification sent successfully"})
 
 }
+
+
+// SendWebPushNotification sends a push notification with the given title and body
+func CreateWebPushNotification(title, body string) error {
+	// Step 1: Read subscription data from a file
+	data, err := os.ReadFile("subscriptions.json")
+	
+	if err != nil {
+		return fmt.Errorf("failed to read subscription file: %w", err)
+	}
+	println("enterin gthis")
+
+	// Step 2: Parse JSON into webpush.Subscription struct
+	subscription := &webpush.Subscription{}
+	if err := json.Unmarshal(data, subscription); err != nil {
+		return fmt.Errorf("failed to unmarshal subscription JSON: %w", err)
+	}
+
+	// Step 3: Create the message payload
+	message := map[string]string{
+		"title": "hHello",
+		"body":  "launching",
+	}
+	messageJSON, err := json.Marshal(message)
+	if err != nil {
+		return fmt.Errorf("failed to marshal notification payload: %w", err)
+	}
+
+	// Step 4: Send the push notification
+	resp, err := webpush.SendNotification(messageJSON, subscription, &webpush.Options{
+		Subscriber:      "mailto:admin@example.com", // optional but recommended
+		VAPIDPublicKey:  publicKey,
+		VAPIDPrivateKey: privateKey,
+		TTL:             30,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to send push notification: %w", err)
+	}
+	defer resp.Body.Close()
+
+	// Optional: Check response status
+	fmt.Println("Notification sent with status:", resp.Status)
+
+	return nil
+}
+
+
