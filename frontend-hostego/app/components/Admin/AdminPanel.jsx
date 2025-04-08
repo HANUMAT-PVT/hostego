@@ -16,7 +16,7 @@ import axiosClient from "@/app/utils/axiosClient";
 import DeliveryPartnerPaymentManager from "./DeliveryPartnerPaymentManager";
 import CuMessManager from "./CuMessManager";
 
-export default function  AdminPanel() {
+export default function AdminPanel() {
     const router = useRouter();
     const { userRoles } = useSelector(state => state.user)
     const searchParams = useSearchParams();
@@ -82,7 +82,7 @@ export default function  AdminPanel() {
                         isActive={currentPage === "partners"}
                         onClick={() => updatePage("partners")}
                     />}
-                    {(checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <SidebarItem
+                    {checkUserRole("super_admin") && <SidebarItem
                         icon={<Settings size={20} />}
                         text="Payment Verification"
                         isActive={currentPage === "wallet_payment_verification"}
@@ -94,7 +94,7 @@ export default function  AdminPanel() {
                         isActive={currentPage === "orders"}
                         onClick={() => updatePage("orders")}
                     />}
-                    {(checkUserRole("super_admin") || checkUserRole("admin")) && <SidebarItem
+                    {(checkUserRole("super_admin")) && <SidebarItem
                         icon={<UserCircle size={20} />}
                         text="Users"
                         isActive={currentPage === "users"}
@@ -112,7 +112,7 @@ export default function  AdminPanel() {
                         isActive={currentPage === "shops"}
                         onClick={() => updatePage("shops")}
                     />}
-                    {(checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <SidebarItem
+                    {(checkUserRole("super_admin")) && <SidebarItem
                         icon={<CreditCard size={20} />}
                         text="Delivery Partner Payments"
                         isActive={currentPage === "delivery_partner_payment"}
@@ -129,12 +129,12 @@ export default function  AdminPanel() {
 
             {/* Main Content */}
             <main className="flex-1 p-6">
-                {currentPage === "dashboard" && checkUserRole("super_admin") && <Dashboard dashboardStats={dashboardStats} />}
+                {currentPage === "dashboard" && (checkUserRole("super_admin") || checkUserRole("admin")) && <Dashboard dashboardStats={dashboardStats} />}
                 {currentPage === "order-assign" && (checkUserRole("super_admin") || checkUserRole("order_assign_manager") || checkUserRole("admin")) && <OrderAssignment />}
                 {currentPage === "orders" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <OrdersList />}
                 {currentPage === "partners" && (checkUserRole("super_admin") || checkUserRole("delivery_partner_manager") || checkUserRole("admin")) && <DeliveryPartnerManagement />}
-                {currentPage === "wallet_payment_verification" && (checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <WalletPaymentVerfication />}
-                {currentPage === "users" && (checkUserRole("super_admin") || checkUserRole("admin")) && <UserManager />}
+                {currentPage === "wallet_payment_verification" && checkUserRole("super_admin")  && <WalletPaymentVerfication />}
+                {currentPage === "users" && (checkUserRole("super_admin")) && <UserManager />}
                 {currentPage === "products" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <ProductsManager />}
                 {currentPage === "shops" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <ShopsManager />}
                 {currentPage === "cu_mess" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <CuMessManager />}
