@@ -4,7 +4,6 @@ import (
 	"backend-hostego/cron"
 	"backend-hostego/database"
 	"backend-hostego/routes"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -25,35 +24,30 @@ var upgrader = websocket.Upgrader{
 }
 
 func websocketHandler(w http.ResponseWriter, r *http.Request) {
+    conn, err := upgrader.Upgrade(w, r, nil)
+    if err != nil {
+        log.Println("Upgrade error:", err)
+        return
+    }
+    defer conn.Close()
 
-	log.Println("🔌 Incoming WebSocket connection attempt")
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("❌ WebSocket upgrade error:", err)
-		return
-	}
-	log.Println("✅ WebSocket connected!")
-	defer conn.Close()
-	// Handle reading/writing here
+    for {
+        messageType, msg, err := conn.ReadMessage()
+        if err != nil {
+            log.Println("Read error:", err)
+            break
+        }
 
-	defer conn.Close()
-	for {
-		_, message, err := conn.ReadMessage()
+        log.Printf("Received: %s", msg)
 
-		if err != nil {
-			log.Println(err.Error())
-			break
-		}
-		// print the recived message from the frontned
-		fmt.Print("Recieved message", message)
-		// send message to the clients
-		err = conn.WriteMessage(websocket.TextMessage, message)
-		if err != nil {
-			log.Println(err.Error())
-			break
-		}
-	}
+        // Echo back
+        if err := conn.WriteMessage(messageType, msg); err != nil {
+            log.Println("Write error:", err)
+            break
+        }
+    }
 }
+
 
 func startWebSocketServer() {
 	http.HandleFunc("/ws", websocketHandler)
@@ -67,7 +61,7 @@ const privateKey = "W8PauXVtgDPZ8RHYulzVXEFd8uEawUwlPx8xGzMXg4w"
 
 func main() {
 
-	go startWebSocketServer()
+	// go startWebSocketServer()
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
