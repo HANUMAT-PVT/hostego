@@ -371,7 +371,7 @@ const ProductsManager = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const { data } = await axiosClient.get('/api/products/all?page=1&limit=200&admin=true');
+            const { data } = await axiosClient.get('/api/products/all?page=1&limit=500&admin=true');
             setProducts(data);
         } catch (error) {
             console.error('Error fetching products:', error);
