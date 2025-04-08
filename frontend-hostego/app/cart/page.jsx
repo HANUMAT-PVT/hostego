@@ -126,7 +126,7 @@ const page = () => {
                 setOrderTimer((prev) => prev - 1)
             }, 1000)
         } else if (orderTimer === 0) {
-            handleCreateOrder()
+            handleCashFreePayment()
         }
 
         return () => clearInterval(interval)
@@ -278,7 +278,7 @@ const page = () => {
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
-                                    onClick={handleCreateOrder}
+                                    onClick={handleCashFreePayment}
                                     className="px-4 py-1.5 bg-green-600 text-white rounded-full text-sm font-medium
                                              hover:bg-green-700 transition-colors text-nowrap"
                                 >
@@ -508,7 +508,7 @@ const page = () => {
                                 onClick={() => {
                                     setShowPaymentDrawer(false);
                                     startOrderTimer()
-                                    handleCreateOrder();
+                                    handleCashFreePayment();
                                 }}
                                 className="w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium hover:opacity-90 transition-opacity"
                             >
