@@ -24,30 +24,29 @@ var upgrader = websocket.Upgrader{
 }
 
 func websocketHandler(w http.ResponseWriter, r *http.Request) {
-    conn, err := upgrader.Upgrade(w, r, nil)
-    if err != nil {
-        log.Println("Upgrade error:", err)
-        return
-    }
-    defer conn.Close()
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("Upgrade error:", err)
+		return
+	}
+	defer conn.Close()
 
-    for {
-        messageType, msg, err := conn.ReadMessage()
-        if err != nil {
-            log.Println("Read error:", err)
-            break
-        }
+	for {
+		messageType, msg, err := conn.ReadMessage()
+		if err != nil {
+			log.Println("Read error:", err)
+			break
+		}
 
-        log.Printf("Received: %s", msg)
+		log.Printf("Received: %s", msg)
 
-        // Echo back
-        if err := conn.WriteMessage(messageType, msg); err != nil {
-            log.Println("Write error:", err)
-            break
-        }
-    }
+		// Echo back
+		if err := conn.WriteMessage(messageType, msg); err != nil {
+			log.Println("Write error:", err)
+			break
+		}
+	}
 }
-
 
 func startWebSocketServer() {
 	http.HandleFunc("/ws", websocketHandler)
@@ -61,7 +60,7 @@ const privateKey = "W8PauXVtgDPZ8RHYulzVXEFd8uEawUwlPx8xGzMXg4w"
 
 func main() {
 
-	// go startWebSocketServer()
+	go startWebSocketServer()
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
