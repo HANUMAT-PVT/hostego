@@ -65,8 +65,8 @@ func main() {
 	// Connect Database
 	database.ConnectDataBase()
 
-	http.HandleFunc("/websocket", websocketHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	// http.HandleFunc("/websocket", websocketHandler)
+	// log.Fatal(http.ListenAndServe(":8080", nil))
 	
 
 	// Setup All Routes
