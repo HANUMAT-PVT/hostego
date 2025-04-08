@@ -301,7 +301,7 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 	clientSecret := config.GetEnv("CASHFREE_CLIENT_SECRET_")
 	cashfree.XClientId = &clientId
 	cashfree.XClientSecret = &clientSecret
-	cashfree.XEnvironment = cashfree.SANDBOX
+	cashfree.XEnvironment = cashfree.PRODUCTION
 
 	request := cashfree.CreateOrderRequest{
 		OrderAmount: order.FinalOrderValue,
