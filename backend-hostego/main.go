@@ -5,14 +5,47 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/routes"
 	"log"
+	"net/http"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
-
+	websocket "github.com/gorilla/websocket"
 	"gorm.io/gorm"
 )
 
 var db *gorm.DB
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+func websocketHandler(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	defer conn.Close()
+	for {
+		_, message, err := conn.ReadMessage()
+
+		if err != nil {
+			log.Println(err.Error())
+			break
+		}
+		// print the recived message from the frontned
+		log.Println("Recieved message %s", message)
+		// send message to the clients
+		err = conn.WriteMessage(websocket.TextMessage, message)
+		if err != nil {
+			log.Println(err.Error())
+			break
+		}
+	}
+}
 
 // VAPID keys for Web Push Notifications (Generate your own keys)
 const publicKey = "BGQRMk6dwGjrQHY47G4g1gphFGBdK11REbNsz8qUkMq9XJVkLO9VWs3a72ntetjKO5PRFEyRYrWggs8VJefqr7A"
@@ -31,6 +64,9 @@ func main() {
 
 	// Connect Database
 	database.ConnectDataBase()
+
+	http.HandleFunc("/websocket", websocketHandler)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 
 	// Setup All Routes
 	routes.AuthRoutes(app)
