@@ -4,6 +4,7 @@ import (
 	"backend-hostego/cron"
 	"backend-hostego/database"
 	"backend-hostego/routes"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -37,7 +38,7 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		// print the recived message from the frontned
-		log.Println("Recieved message %s", message)
+		fmt.Print("Recieved message", message)
 		// send message to the clients
 		err = conn.WriteMessage(websocket.TextMessage, message)
 		if err != nil {
@@ -46,10 +47,11 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
 func startWebSocketServer() {
 	http.HandleFunc("/ws", websocketHandler)
 	log.Println("WebSocket server running on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8080", nil))
 }
 
 // VAPID keys for Web Push Notifications (Generate your own keys)
@@ -71,7 +73,6 @@ func main() {
 
 	// Connect Database
 	database.ConnectDataBase()
-
 
 	// Setup All Routes
 	routes.AuthRoutes(app)
