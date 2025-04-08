@@ -70,7 +70,7 @@ const page = () => {
     let cashfree;
     var initializeSDK = async function () {
         cashfree = await load({
-            mode: "production",
+            mode: process.env.NEXT_CASHFREE_ENVIRONMENT,
         });
     };
     initializeSDK();
@@ -126,7 +126,7 @@ const page = () => {
                 setOrderTimer((prev) => prev - 1)
             }, 1000)
         } else if (orderTimer === 0) {
-            handleCashFreePayment()
+            handleCreateOrder()
         }
 
         return () => clearInterval(interval)
@@ -278,7 +278,7 @@ const page = () => {
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
-                                    onClick={handleCashFreePayment}
+                                    onClick={handleCreateOrder}
                                     className="px-4 py-1.5 bg-green-600 text-white rounded-full text-sm font-medium
                                              hover:bg-green-700 transition-colors text-nowrap"
                                 >
@@ -508,7 +508,7 @@ const page = () => {
                                 onClick={() => {
                                     setShowPaymentDrawer(false);
                                     startOrderTimer()
-                                    handleCashFreePayment();
+                                    handleCreateOrder();
                                 }}
                                 className="w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium hover:opacity-90 transition-opacity"
                             >
