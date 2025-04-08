@@ -13,6 +13,25 @@ const ClientComponent = ({ children }) => {
     const dispatch = useDispatch();
     const { fetchCartData, fetchUser } = useSelector((state) => state.user)
     const router = useRouter()
+    const ws = new WebSocket("wss://backend.hostego.in/ws");
+
+    ws.onopen = () => {
+        console.log("WebSocket connected");
+        ws.send("Hello from client!");
+    };
+
+    ws.onmessage = (e) => {
+        console.log("Message from server:", e.data);
+    };
+
+    ws.onerror = (e) => {
+        console.error("WebSocket error", e);
+    };
+
+    ws.onclose = (e) => {
+        console.warn("WebSocket closed", e);
+    };
+
 
     useEffect(() => {
 
