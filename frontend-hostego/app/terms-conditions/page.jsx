@@ -91,6 +91,7 @@ const TermsConditionsPage = () => {
                         <ul className="list-disc pl-5 space-y-2">
                             <li>Orders can be cancelled before the delivery partner picks up the order</li>
                             <li>Refunds will be processed according to our refund policy</li>
+                            <li>Refunds will be processed according to our refund policy and will be added to the user's wallet.</li>
                             <li>Repeated cancellations may result in service restrictions</li>
                         </ul>
                     </Section>
