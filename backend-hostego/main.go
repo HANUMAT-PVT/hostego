@@ -46,12 +46,19 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+func startWebSocketServer() {
+	http.HandleFunc("/ws", websocketHandler)
+	log.Println("WebSocket server running on :8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
 
 // VAPID keys for Web Push Notifications (Generate your own keys)
 const publicKey = "BGQRMk6dwGjrQHY47G4g1gphFGBdK11REbNsz8qUkMq9XJVkLO9VWs3a72ntetjKO5PRFEyRYrWggs8VJefqr7A"
 const privateKey = "W8PauXVtgDPZ8RHYulzVXEFd8uEawUwlPx8xGzMXg4w"
 
 func main() {
+
+	go startWebSocketServer()
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
@@ -65,9 +72,6 @@ func main() {
 	// Connect Database
 	database.ConnectDataBase()
 
-	// http.HandleFunc("/websocket", websocketHandler)
-	// log.Fatal(http.ListenAndServe(":8080", nil))
-	
 
 	// Setup All Routes
 	routes.AuthRoutes(app)
