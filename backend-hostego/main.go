@@ -25,10 +25,17 @@ var upgrader = websocket.Upgrader{
 }
 
 func websocketHandler(w http.ResponseWriter, r *http.Request) {
+
+	log.Println("🔌 Incoming WebSocket connection attempt")
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err.Error())
+		log.Println("❌ WebSocket upgrade error:", err)
+		return
 	}
+	log.Println("✅ WebSocket connected!")
+	defer conn.Close()
+	// Handle reading/writing here
+
 	defer conn.Close()
 	for {
 		_, message, err := conn.ReadMessage()
