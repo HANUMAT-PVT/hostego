@@ -312,7 +312,7 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 	clientId := config.GetEnv("CASHFREE_CLIENT_ID_")
 	clientSecret := config.GetEnv("CASHFREE_CLIENT_SECRET_")
 	cashFreeApiUrl := config.GetEnv("CASHFREE_API_URL_")
-	println(cashFreeApiUrl,"cashfree api url")
+	println(cashFreeApiUrl, "cashfree api url")
 	resp, err := restyClient.R().
 		SetHeader("Content-Type", "application/json").
 		SetHeader("x-api-version", "2023-08-01").
@@ -335,7 +335,7 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 }
 
 func VerifyCashfreePayment(c fiber.Ctx) error {
-	
+
 	user_id := c.Locals("user_id").(int)
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -355,7 +355,7 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 		SetHeader("x-api-version", "2023-08-01").
 		SetHeader("x-client-id", clientId).
 		SetHeader("x-client-secret", clientSecret).
-		Post(cashFreeApiUrl +"/"+ cf_order_id)
+		Post(cashFreeApiUrl + "/" + cf_order_id)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -418,6 +418,7 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 	paymentTransaction.Amount = totalAmountToDeduct
 	paymentTransaction.PaymentStatus = "success"
 	paymentTransaction.PaymentMethod = "cashfree"
+	paymentTransaction.PaymentOrderId = cf_order_id
 	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
 	order.OrderStatus = "placed"
 
