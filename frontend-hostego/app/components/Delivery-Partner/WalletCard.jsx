@@ -14,7 +14,7 @@ const WalletCard = ({ walletData }) => {
                     </div>
                     <div>
                         <h3 className="font-medium">Wallet Balance</h3>
-                        <p className="text-2xl font-bold text-blue-600">₹{(walletData?.balance).toFixed(1) || 0}</p>
+                        <p className="text-2xl font-bold text-blue-600">₹{(walletData?.balance || 0).toFixed(1)}</p>
                     </div>
                 </div>
             </div>
