@@ -70,7 +70,7 @@ const page = () => {
     let cashfree;
     var initializeSDK = async function () {
         cashfree = await load({
-            mode: process.env.NEXT_CASHFREE_ENVIRONMENT,
+            mode: process.env.NODE_ENV == "production" ? "production" : "sandbox",
         });
     };
     initializeSDK();
@@ -187,18 +187,13 @@ const page = () => {
         if (result.error) {
             // This will be true whenever user clicks on close icon inside the modal or any error happens during the payment
             console.log("User has closed the popup or there is some payment error, Check for Payment Status");
-            console.log(result.error);
+            setPaymentStatus('failed')
         }
         if (result.redirect) {
-            // This will be true when the payment redirection page couldnt be opened in the same window
-            // This is an exceptional case only when the page is opened inside an inAppBrowser
-            // In this case the customer will be redirected to return url once payment is completed
-            console.log("Payment will be redirected");
+
         }
         if (result.paymentDetails) {
-            console.log(order_id, "order id")
-            // This will be called whenever the payment is completed irrespective of transaction status
-            console.log("Payment has been completed, Check for Payment Status");
+
             let checkPayment = await axiosClient.post(`/api/payment/cashfree/${paymentSessionorderId}`, {
                 order_id: order_id
             })
@@ -209,7 +204,7 @@ const page = () => {
 
 
     }
-    const handleCreateOrder = async () => {
+    const handleWalletCreateOrder = async () => {
         try {
 
             setPaymentStatus('processing')
@@ -239,6 +234,15 @@ const page = () => {
         } finally {
             setIsTimerRunning(false)
             setOrderTimer(10)
+        }
+    }
+
+    const handleCreateOrder = () => {
+        setPaymentStatus('processing')
+        if (!hasInsufficientBalance) {
+            handleWalletCreateOrder()
+        } else {
+            handleCashFreePayment()
         }
     }
 
@@ -460,7 +464,7 @@ const page = () => {
                                     <Wallet className="text-[var(--primary-color)]" size={20} />
                                     <span className="font-medium">Wallet Balance</span>
                                 </div>
-                                <span className="text-xl font-semibold">₹{userWallet?.balance || 0}</span>
+                                <span className="text-xl font-semibold">₹{(userWallet?.balance).toFixed(1) || 0}</span>
                             </div>
                             <div className="flex justify-between items-center text-sm text-gray-600">
                                 <span>Order Amount</span>
@@ -476,7 +480,7 @@ const page = () => {
                                         <AlertCircle className="text-red-600 flex-shrink-0" size={20} />
                                         <div>
                                             <p className="font-medium text-red-600">Insufficient Balance</p>
-                                            <p className="text-sm text-red-500">Add ₹{amountNeeded} more to place order</p>
+                                            <p className="text-sm text-red-500">Add ₹{(amountNeeded).toFixed(1)} more to place order</p>
                                         </div>
                                     </>
                                 ) : (
@@ -496,11 +500,12 @@ const page = () => {
                             <button
                                 onClick={() => {
                                     setShowPaymentDrawer(false);
-                                    router.push('/wallet');
+                                    handleCreateOrder()
+
                                 }}
-                                className="w-full bg-red-600 text-white py-3 rounded-xl font-medium hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+                                className="w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium  transition-colors flex items-center justify-center gap-2"
                             >
-                                Add Money to Wallet
+                                Pay Online
                                 <ArrowRight size={18} />
                             </button>
                         ) : (
