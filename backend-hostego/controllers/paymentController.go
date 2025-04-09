@@ -335,6 +335,7 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 }
 
 func VerifyCashfreePayment(c fiber.Ctx) error {
+	
 	user_id := c.Locals("user_id").(int)
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
