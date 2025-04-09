@@ -3,14 +3,13 @@ package controllers
 import (
 	"backend-hostego/config"
 	"backend-hostego/database"
-	"backend-hostego/middlewares"
 	"backend-hostego/models"
 	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
 
-	cashfree "github.com/cashfree/cashfree-pg/v3"
+	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
 )
@@ -297,56 +296,78 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 	fmt.Println("Cashfree Client ID:", config.GetEnv("CASHFREE_CLIENT_ID_"))
 	fmt.Println("Cashfree Client Secret:", config.GetEnv("CASHFREE_CLIENT_SECRET_"))
 
+	body := map[string]interface{}{
+		"order_amount":   order.FinalOrderValue,
+		"order_currency": "INR",
+		"customer_details": map[string]interface{}{
+			"customer_id":    strconv.Itoa(user.UserId),
+			"customer_phone": user.MobileNumber,
+			"customer_email": user.Email,
+			"customer_name":  user.FirstName,
+		},
+	}
+
+	restyClient := resty.New()
+	// Cashfree credentials from env
 	clientId := config.GetEnv("CASHFREE_CLIENT_ID_")
 	clientSecret := config.GetEnv("CASHFREE_CLIENT_SECRET_")
-	cashfree.XClientId = &clientId
-	cashfree.XClientSecret = &clientSecret
-	cashfree.XEnvironment = cashfree.PRODUCTION
+	cashFreeApiUrl := config.GetEnv("CASHFREE_API_URL_")
+	println(cashFreeApiUrl,"cashfree api url")
+	resp, err := restyClient.R().
+		SetHeader("Content-Type", "application/json").
+		SetHeader("x-api-version", "2023-08-01").
+		SetHeader("x-client-id", clientId).
+		SetHeader("x-client-secret", clientSecret).
+		SetBody(body).
+		Post(cashFreeApiUrl)
 
-	request := cashfree.CreateOrderRequest{
-		OrderAmount: order.FinalOrderValue,
-		CustomerDetails: cashfree.CustomerDetails{
-			CustomerId:    strconv.Itoa(user.UserId),
-			CustomerPhone: user.MobileNumber,
-			CustomerEmail: &user.Email,
-			CustomerName:  &user.FirstName,
-		},
-		OrderCurrency: "INR",
-		OrderSplits:   []cashfree.VendorSplit{},
-	}
-	version := "2023-08-01"
-	response, httpResponse, err := cashfree.PGCreateOrder(&version, &request, nil, nil, nil)
 	if err != nil {
-		fmt.Println(err.Error())
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
-	fmt.Println(httpResponse.StatusCode)
-	fmt.Println(response)
-	return c.Status(httpResponse.StatusCode).JSON(response)
+
+	// Return response from Cashfree
+	var cashfreeResp map[string]interface{}
+	if err := json.Unmarshal(resp.Body(), &cashfreeResp); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Invalid response from Cashfree"})
+	}
+	return c.Status(fiber.StatusOK).JSON(cashfreeResp)
 
 }
 
 func VerifyCashfreePayment(c fiber.Ctx) error {
-	user_id := c.Locals("user_id")
+	user_id := c.Locals("user_id").(int)
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	cf_order_id := c.Params("cf_order_id")
 
-	version := "2023-08-01"
-	response, httpResponse, err := cashfree.PGFetchOrder(&version, cf_order_id, nil, nil, nil)
+	restyClient := resty.New()
+
+	// Cashfree credentials from env
+
+	clientId := config.GetEnv("CASHFREE_CLIENT_ID_")
+	clientSecret := config.GetEnv("CASHFREE_CLIENT_SECRET_")
+	cashFreeApiUrl := config.GetEnv("CASHFREE_API_URL_")
+
+	resp, err := restyClient.R().
+		SetHeader("Content-Type", "application/json").
+		SetHeader("x-api-version", "2023-08-01").
+		SetHeader("x-client-id", clientId).
+		SetHeader("x-client-secret", clientSecret).
+		Post(cashFreeApiUrl +"/"+ cf_order_id)
 	if err != nil {
-		fmt.Println(err.Error())
-		return c.Status(httpResponse.StatusCode).JSON(fiber.Map{"erro": err.Error()})
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
-	if *response.OrderStatus == "ACTIVE" {
-		fmt.Println("ACTIVE")
+
+	// Return response from Cashfree
+	var cashfreeResp map[string]interface {
 	}
-	if *response.OrderStatus == "PAID" {
-		fmt.Println("PAID")
+	if err := json.Unmarshal(resp.Body(), &cashfreeResp); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Invalid response from Cashfree"})
 	}
-	userId, middleErr := middlewares.VerifyUserAuthCookie(c)
-	if middleErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": middleErr.Error()})
+	// return c.Status(fiber.StatusOK).JSON(cashfreeResp)
+	if cashfreeResp["order_status"] != "PAID" {
+		return c.Status(500).JSON(fiber.Map{"error": "`Payment is not paid yet", "response": cashfreeResp})
 	}
 
 	type OrderRequest struct {
@@ -361,7 +382,6 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
-	var wallet models.Wallet
 
 	tx := database.DB.Begin()
 
@@ -375,21 +395,14 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	if err := tx.First(&wallet, "user_id=?", userId).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
-	if wallet.Balance < order.FinalOrderValue {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Wallet balance insufficent to complete payment"})
-	}
+
 	totalAmountToDeduct := order.FinalOrderValue
-	wallet.Balance -= totalAmountToDeduct
+
 	var walletTransaction models.WalletTransaction
 
 	walletTransaction.Amount = totalAmountToDeduct
 	walletTransaction.TransactionType = "debit"
-	walletTransaction.UserId = userId
+	walletTransaction.UserId = user_id
 	walletTransaction.TransactionStatus = "success"
 
 	var paymentTransaction models.PaymentTransaction
@@ -400,10 +413,10 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 	}
 
 	paymentTransaction.OrderId = request.OrderID
-	paymentTransaction.UserId = userId
+	paymentTransaction.UserId = user_id
 	paymentTransaction.Amount = totalAmountToDeduct
 	paymentTransaction.PaymentStatus = "success"
-	paymentTransaction.PaymentMethod = "wallet"
+	paymentTransaction.PaymentMethod = "cashfree"
 	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
 	order.OrderStatus = "placed"
 
@@ -413,16 +426,12 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 	}
 
 	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
-	if err := tx.Where("user_id=?", userId).Save(&wallet).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
 
 	if err := tx.Preload("User").Where("order_id=?", request.OrderID).Save(&order).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	if err := tx.Where("user_id = ?", userId).Delete(&cartItem).Error; err != nil {
+	if err := tx.Where("user_id = ?", user_id).Delete(&cartItem).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove cart items"})
 	}
@@ -460,7 +469,7 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 
 	// Mark cart items as deleted
 	if err := tx.
-		Where("user_id = ?", userId).
+		Where("user_id = ?", user_id).
 		Delete(&models.CartItem{}).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete cart items"})
