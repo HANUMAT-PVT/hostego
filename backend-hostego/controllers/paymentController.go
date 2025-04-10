@@ -4,6 +4,7 @@ import (
 	"backend-hostego/config"
 	"backend-hostego/database"
 	"backend-hostego/models"
+	websocket "backend-hostego/websocket"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -293,8 +294,7 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	fmt.Println("Cashfree Client ID:", config.GetEnv("CASHFREE_CLIENT_ID_"))
-	fmt.Println("Cashfree Client Secret:", config.GetEnv("CASHFREE_CLIENT_SECRET_"))
+
 
 	body := map[string]interface{}{
 		"order_amount":   order.FinalOrderValue,
@@ -312,7 +312,7 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 	clientId := config.GetEnv("CASHFREE_CLIENT_ID_")
 	clientSecret := config.GetEnv("CASHFREE_CLIENT_SECRET_")
 	cashFreeApiUrl := config.GetEnv("CASHFREE_API_URL_")
-	println(cashFreeApiUrl, "cashfree api url")
+
 	resp, err := restyClient.R().
 		SetHeader("Content-Type", "application/json").
 		SetHeader("x-api-version", "2023-08-01").
@@ -417,10 +417,16 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 	paymentTransaction.UserId = user_id
 	paymentTransaction.Amount = totalAmountToDeduct
 	paymentTransaction.PaymentStatus = "success"
-	paymentTransaction.PaymentMethod = "cashfree"
+	paymentTransaction.PaymentMethod = "UPI"
 	paymentTransaction.PaymentOrderId = cf_order_id
 	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
 	order.OrderStatus = "placed"
+
+	// after saving the order
+	websocket.SendMessage(websocket.Message{
+		Role:    "admin", // or "delivery", "shop", etc.
+		Content: "A new order has been placed!",
+	})
 
 	if err := tx.Create(&paymentTransaction).Error; err != nil {
 		tx.Rollback()
