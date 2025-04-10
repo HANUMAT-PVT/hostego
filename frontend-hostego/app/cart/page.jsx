@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import BackNavigationButton from '../components/BackNavigationButton'
 import CartItem from '../components/Cart/CartItem'
 import AddressList from '../components/Address/AddressList'
-import { Home, Clock, Truck, CreditCard, MapPin, Timer, AlertCircle, TicketCheck, Wallet, ArrowRight, X, CheckCircle } from 'lucide-react'
+import { Home, Clock, Truck, CreditCard, MapPin, Timer, AlertCircle, TicketCheck, Wallet, ArrowRight, X, CheckCircle, Info } from 'lucide-react'
 import HostegoButton from '../components/HostegoButton'
 import axiosClient from '../utils/axiosClient'
 import HostegoLoader from '../components/HostegoLoader'
@@ -205,7 +205,7 @@ const page = () => {
                                 order_id: order_id
                             });
 
-                            if (result?.data?.response?.order_status=="PAID") {
+                            if (result?.data?.response?.order_status == "PAID") {
                                 clearInterval(interval);
                                 resolve(result);
                             } else if (attempts >= maxAttempts) {
@@ -396,7 +396,8 @@ const page = () => {
 
                     {/* Delivery Fee */}
                     <div className='flex justify-between font-normal items-start'>
-                        <span className='text-gray-800'>Delivery Fee</span>
+                        <span className='text-gray-800'>Delivery Fee <br /><span className='text-xs flex items-center'>   Includes delivery & payment fees</span></span>
+
                         {cartData?.free_delivery ? (
 
                             <div className='flex items-center gap-2'>
