@@ -14,14 +14,15 @@ const ClientComponent = ({ children }) => {
     const { fetchCartData, fetchUser } = useSelector((state) => state.user)
     const router = useRouter()
     useEffect(() => {
-        const socket = new WebSocket("wss://backend.hostego.in/ws");
-
+        const socket = new WebSocket("wss://backend.hostego.in/ws?role=admin");
+        console.log("socketn  implementation starts")
         socket.onopen = () => {
             console.log("✅ Connected");
             socket.send("Hello from client!");
         };
 
         socket.onmessage = (msg) => {
+            subscribeToNotifications("New Order Placed !", "Please assign the order")
             console.log("📨", msg.data);
         };
 
