@@ -113,8 +113,18 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 	platformFee := 1.0
 	// Distribution of charge (80% for delivery partner, 20% for company)
 	deliveryPartnerShare := math.Round((shippingFee*0.8)*100) / 100
-
+	shippingFee = 0
 	shippingFee += platformFee
+	if totalItemSubTotal <= 150.0 {
+		shippingFee  += 150*0.15
+	} else {
+		charge := totalItemSubTotal * 0.15
+		if charge > 39.0 {
+			shippingFee = 39.0
+		} else {
+			shippingFee += math.Round(charge*100) / 100 // Round to 2 decimal places
+		}
+	}
 	actualShippingFee := shippingFee
 	if freeDelivery {
 		shippingFee = 0
@@ -510,7 +520,7 @@ func FetchAllOrderItemsAccordingToProducts(c fiber.Ctx) error {
 }
 
 func CancelOrder(c fiber.Ctx) error {
-	
+
 	current_user_id := c.Locals("user_id").(int)
 	if current_user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -529,7 +539,7 @@ func CancelOrder(c fiber.Ctx) error {
 	}
 
 	var order models.Order
-	
+
 	var delivery_partner models.DeliveryPartner
 
 	tx := database.DB.Begin()
@@ -559,8 +569,6 @@ func CancelOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	
-
 
 	var orderItems []models.CartItem
 	if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
@@ -568,8 +576,6 @@ func CancelOrder(c fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse order items"})
 	}
 
-	
-	
 	for _, item := range orderItems {
 		if err := tx.Model(&models.Product{}).Where("product_id = ?", item.ProductId).
 			Update("stock_quantity", gorm.Expr("stock_quantity + ?", item.Quantity)).Error; err != nil {
@@ -587,6 +593,5 @@ func CancelOrder(c fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order  Cancelled/without refund"})
-
 
 }

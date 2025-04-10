@@ -7,15 +7,17 @@ import (
 	"log"
 	"net/http"
 
+	websocket "backend-hostego/websocket"
+
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
-	websocket "github.com/gorilla/websocket"
+	ws "github.com/gorilla/websocket"
 	"gorm.io/gorm"
 )
 
 var db *gorm.DB
 
-var upgrader = websocket.Upgrader{
+var upgrader = ws.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
@@ -24,25 +26,25 @@ var upgrader = websocket.Upgrader{
 }
 
 func websocketHandler(w http.ResponseWriter, r *http.Request) {
+	role := r.URL.Query().Get("role") // ?role=admin or ?role=delivery
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("Upgrade error:", err)
 		return
 	}
+
+	client := &websocket.Client{
+		Conn: conn,
+		Role: role,
+	}
+	websocket.RegisterClient(client)
+
 	defer conn.Close()
 
 	for {
-		messageType, msg, err := conn.ReadMessage()
+		_, _, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("Read error:", err)
-			break
-		}
-
-		log.Printf("Received: %s", msg)
-
-		// Echo back
-		if err := conn.WriteMessage(messageType, msg); err != nil {
-			log.Println("Write error:", err)
+			log.Println("Connection closed:", err)
 			break
 		}
 	}
@@ -61,6 +63,7 @@ const privateKey = "W8PauXVtgDPZ8RHYulzVXEFd8uEawUwlPx8xGzMXg4w"
 func main() {
 
 	go startWebSocketServer()
+	go websocket.HandleMessages()
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
