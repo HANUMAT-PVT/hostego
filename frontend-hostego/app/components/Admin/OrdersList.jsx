@@ -129,6 +129,7 @@ const OrdersList = () => {
                         <option value="reached_door">Reached Door</option>
                         <option value="delivered">Delivered</option>
                         <option value="cancelled">Cancelled</option>
+                        <option value="canelled-no-refund">Cancelled(No Refund)</option>
                     </select>
                 </div>
             </div>
