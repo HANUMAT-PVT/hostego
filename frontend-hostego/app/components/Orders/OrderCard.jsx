@@ -72,6 +72,7 @@ const OrderCard = ({ order, onRefresh }) => {
 
             if (newStatus==="cancelled-no-refund"){
                 setIsUpdating(true)
+                newStatus="cancelled";
                 await axiosClient.post(`/api/order/cancel-no-refund`, {
                     order_id: order?.order_id
                 })
