@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v3"
+	"gorm.io/gorm"
 )
 
 type FinalOrderValueType struct {
@@ -333,7 +334,7 @@ func FetchAllOrders(c fiber.Ctx) error {
 	if searchQuery != "" {
 		dbQuery = dbQuery.Where(
 			"order_id = ? OR user_id = ? OR mobile_number = ?",
-			searchQuery, searchQuery,searchQuery,
+			searchQuery, searchQuery, searchQuery,
 		)
 	}
 
@@ -506,4 +507,86 @@ func FetchAllOrderItemsAccordingToProducts(c fiber.Ctx) error {
 		"product_stats": stats,
 		"overall_stats": overallStats,
 	})
+}
+
+func CancelOrder(c fiber.Ctx) error {
+	
+	current_user_id := c.Locals("user_id").(int)
+	if current_user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+	type OrderRequest struct {
+		OrderID int `json:"order_id"`
+	}
+
+	var request OrderRequest
+
+	if err := c.Bind().JSON(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+	if current_user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+	}
+
+	var order models.Order
+	
+	var delivery_partner models.DeliveryPartner
+
+	tx := database.DB.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := database.DB.Where("order_id = ?", request.OrderID).First(&order).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if order.DeliveryPartnerId != 0 {
+		if err := tx.Where("delivery_partner_id = ?", order.DeliveryPartnerId).First(&delivery_partner).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		}
+	}
+
+	order.OrderStatus = models.OrderStatusType(models.CanceledOrderStatus)
+	order.DeliveryPartnerId = 0
+	order.DeliveryPartner = nil
+
+	if err := tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	
+
+
+	var orderItems []models.CartItem
+	if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse order items"})
+	}
+
+	
+	
+	for _, item := range orderItems {
+		if err := tx.Model(&models.Product{}).Where("product_id = ?", item.ProductId).
+			Update("stock_quantity", gorm.Expr("stock_quantity + ?", item.Quantity)).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		}
+		if err := tx.Where("order_id = ?", order.OrderId).
+			Delete(&models.OrderItem{}).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		}
+	}
+	// Commit the transaction
+	if err := tx.Commit().Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order  Cancelled/without refund"})
+
+
 }

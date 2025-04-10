@@ -33,5 +33,5 @@ type PaymentTransaction struct {
 	CreatedAt            time.Time                    `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt            time.Time                    `gorm:"autoUpdateTime" json:"updated_at"`
 	User                 User                         `gorm:"foreignKey:UserId;references:UserId;" json:"user"`
-	PaymentOrderId       string                       `gorm:"type:string;not null;" json:"payment_order_id"`
+	PaymentOrderId       string                       `gorm:"type:string;" json:"payment_order_id"`
 }

@@ -15,6 +15,11 @@ func OrderRoutes(app *fiber.App) {
 		middlewares.RoleMiddleware("super_admin", "admin", "inventory_manager"),
 		controllers.FetchAllOrderItemsAccordingToProducts,
 	)
+	orderRoutes.Post("/cancel-no-refund",
+		middlewares.VerifyUserAuthCookieMiddleware(),
+		middlewares.RoleMiddleware("super_admin"),
+		controllers.CancelOrder,
+	)
 
 	orderRoutes.Get("/all",
 		middlewares.VerifyUserAuthCookieMiddleware(),
