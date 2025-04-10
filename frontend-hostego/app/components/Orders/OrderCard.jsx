@@ -69,6 +69,14 @@ const OrderCard = ({ order, onRefresh }) => {
 
                 return
             }
+
+            if (newStatus==="cancelled-no-refund"){
+                setIsUpdating(true)
+                await axiosClient.post(`/api/order/cancel-no-refund`, {
+                    order_id: order?.order_id
+                })
+                onRefresh(true)
+            }
             if (newStatus == "cancelled") {
                 setIsUpdating(true)
                 await axiosClient.post(`/api/payment/refund`, {
@@ -138,6 +146,7 @@ const OrderCard = ({ order, onRefresh }) => {
                             <option value="">Update Status</option>
                             <option value="placed">Placed</option>
                             <option value="cancelled">Cancelled</option>
+                            <option value="cancelled-no-refund">Cancel(No Refund)</option>
                             <option value="delivered">Delivered</option>
                         </select>}
                     </div>

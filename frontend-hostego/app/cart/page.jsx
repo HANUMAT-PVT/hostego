@@ -193,13 +193,40 @@ const page = () => {
 
         }
         if (result.paymentDetails) {
+            const tryPaymentStatus = (paymentSessionorderId, order_id, maxAttempts = 3, delay = 3000) => {
+                return new Promise((resolve, reject) => {
+                    let attempts = 0;
 
-            let checkPayment = await axiosClient.post(`/api/payment/cashfree/${paymentSessionorderId}`, {
-                order_id: order_id
-            })
+                    const interval = setInterval(async () => {
+                        try {
+                            attempts++;
 
-            setPaymentStatus('success')
-            router.push("/orders")
+                            const result = await axiosClient.post(`/api/payment/cashfree/${paymentSessionorderId}`, {
+                                order_id: order_id
+                            });
+
+                            if (result?.data?.response?.order_status=="PAID") {
+                                clearInterval(interval);
+                                resolve(result);
+                            } else if (attempts >= maxAttempts) {
+                                clearInterval(interval);
+                                reject(new Error("Max attempts reached. Payment details not available."));
+                            }
+
+                        } catch (err) {
+                            clearInterval(interval);
+                            reject(err);
+                        }
+                    }, delay);
+                });
+            };
+            try {
+                const paymentResult = await tryPaymentStatus(paymentSessionorderId, order_id);
+                setPaymentStatus('success')
+                router.push("/orders")
+            } catch (error) {
+                console.log(error)
+            }
         }
 
 
