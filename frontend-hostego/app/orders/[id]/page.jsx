@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import BackNavigationButton from '@/app/components/BackNavigationButton'
-import { formatDate } from '@/app/utils/helper'
+import { formatDate, tryPaymentStatus } from '@/app/utils/helper'
 import { Package, MapPin, Clock, CheckCircle2, Truck, Check, AlertCircle, IndianRupee, RefreshCcw, Phone, Bike, MessageSquare, Award } from 'lucide-react'
 import axiosClient from '@/app/utils/axiosClient'
 import HostegoLoader from '@/app/components/HostegoLoader'
@@ -175,26 +175,28 @@ const OrderDetailsPage = () => {
         return !['delivered', 'cancelled'].includes(status?.toLowerCase());
     };
 
+    const verifythePendingOrder = async () => {
+
+        if (order && order.order_status == "pending") {
+            let data = await tryPaymentStatus(order.order_id);
+            if (data?.response?.order_status == "PAID") {
+                fetchOrder()
+
+            }
+        }
+    }
+
     useEffect(() => {
         fetchOrder()
+        if (order?.order_status == "pending") verifythePendingOrder()
 
-        // Only set up interval if order is active
-        if (order && isOrderActive(order.order_status)) {
-            const interval = setInterval(() => {
-                if (document.visibilityState === 'visible') {
-
-                    subscribeToNotifications("Order Update Alert", "Your order might have been updated")
-                }
-            }, 60000 * 3); // Refresh every 3 minutes
-
-            return () => clearInterval(interval);
-        }
-    }, [id, order?.order_status])
+    }, [id,])
 
     const fetchOrder = async () => {
         try {
             setIsLoading(true)
             const { data } = await axiosClient.get(`/api/order/${id}`)
+            console.log(data, "order data")
             setOrder(data)
         } catch (error) {
             console.error('Error fetching order:', error)

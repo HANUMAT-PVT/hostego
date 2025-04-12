@@ -1,3 +1,5 @@
+import axiosClient from "./axiosClient";
+
 export const data = {
   order_id: "e3571ddc-3b87-45ae-a115-e793e4bf3e24",
   user_id: "a926b9cc-bc83-4c9b-a9bc-7ad985fc0d38",
@@ -214,8 +216,8 @@ export const convertToCSV = (data) => {
   return [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
 };
 
- // Helper function to download CSV
- export const downloadCSV = (csvContent, fileName) => {
+// Helper function to download CSV
+export const downloadCSV = (csvContent, fileName) => {
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const link = document.createElement("a");
 
@@ -230,4 +232,36 @@ export const convertToCSV = (data) => {
     link.click();
     document.body.removeChild(link);
   }
+};
+
+export const tryPaymentStatus = (order_id, maxAttempts = 3, delay = 2500) => {
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+
+    const interval = setInterval(async () => {
+      try {
+        attempts++;
+
+        const result = await axiosClient.post(
+          `/api/payment/cashfree/verify-payment`,
+          {
+            order_id: order_id,
+          }
+        );
+
+        if (result?.data?.response?.order_status == "PAID") {
+          clearInterval(interval);
+          resolve(result);
+        } else if (attempts >= maxAttempts) {
+          clearInterval(interval);
+          reject(
+            new Error("Max attempts reached. Payment details not available.")
+          );
+        }
+      } catch (err) {
+        clearInterval(interval);
+        reject(err);
+      }
+    }, delay);
+  });
 };
