@@ -235,6 +235,7 @@ export const downloadCSV = (csvContent, fileName) => {
 };
 
 export const tryPaymentStatus = (order_id, maxAttempts = 3, delay = 2500) => {
+  console.log(order_id,"order id from try payment status")
   return new Promise((resolve, reject) => {
     let attempts = 0;
 
