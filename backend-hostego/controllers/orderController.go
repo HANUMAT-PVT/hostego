@@ -21,6 +21,7 @@ type FinalOrderValueType struct {
 	DeliveryPartnerShare float64 `json:"delivery_partner_fee"`
 	FinalOrderValue      float64 `json:"final_order_value"`
 	ActualShippingFee    float64 `json:"actual_shipping_fee"`
+	RainExtraFee         float64 `json:"rain_extra_fee"`
 }
 
 // Move struct definition outside the function
@@ -111,12 +112,14 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 
 	// Platform fee (fixed at ₹1)
 	platformFee := 1.0
+	rainExtraCharge := 10.0
 	// Distribution of charge (80% for delivery partner, 20% for company)
 	deliveryPartnerShare := math.Round((shippingFee*0.8)*100) / 100
+	deliveryPartnerShare += rainExtraCharge * 0.7
 	shippingFee = 0
 	shippingFee += platformFee
 	if totalItemSubTotal <= 150.0 {
-		shippingFee  += 150*0.15
+		shippingFee += 150 * 0.15
 	} else {
 		charge := totalItemSubTotal * 0.15
 		if charge > 39.0 {
@@ -126,6 +129,9 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 		}
 	}
 	actualShippingFee := shippingFee
+	if rainExtraCharge != 0 {
+		shippingFee += rainExtraCharge
+	}
 	if freeDelivery {
 		shippingFee = 0
 	}
@@ -145,6 +151,7 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 		DeliveryPartnerShare: deliveryPartnerShare,
 		FinalOrderValue:      finalOrderValue,
 		ActualShippingFee:    actualShippingFee,
+		RainExtraFee:         10.0,
 	}
 }
 
