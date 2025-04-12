@@ -16,7 +16,7 @@ export default function RefundPolicy() {
                 </p>
 
                 <p className="mb-4">
-                    <strong>(HOSTEGO) </strong> HANUMAT SHARAN  believes in helping its customers as far as
+                     HANUMAT SHARAN  believes in helping its customers as far as
                     possible and has therefore a liberal cancellation policy. Under this policy:
                 </p>
 
@@ -28,7 +28,7 @@ export default function RefundPolicy() {
                         and they have initiated the shipping process.
                     </li>
                     <li>
-                        <strong>(HOSTEGO) </strong> HANUMAT SHARAN does not accept cancellation requests for
+                        HANUMAT SHARAN does not accept cancellation requests for
                         perishable items like flowers, eatables, etc. However, a refund/replacement can
                         be made if the customer establishes that the quality of the delivered product is
                         not good.
@@ -55,7 +55,7 @@ export default function RefundPolicy() {
                         For products with a manufacturer warranty, please refer the issue directly to them.
                     </li>
                     <li>
-                        In case of any refunds approved by <strong>(HOSTEGO) </strong>HANUMAT SHARAN it will take{" "}
+                        In case of any refunds approved by HANUMAT SHARAN it will take{" "}
                         <strong>3–5 business days</strong> for the refund to be processed to the end customer.
                     </li>
                 </ul>
