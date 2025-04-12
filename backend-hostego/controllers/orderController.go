@@ -112,7 +112,7 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 
 	// Platform fee (fixed at ₹1)
 	platformFee := 1.0
-	rainExtraCharge := 10.0
+	// rainExtraCharge := 10.0
 	// Distribution of charge (80% for delivery partner, 20% for company)
 	deliveryPartnerShare := math.Round((shippingFee*0.8)*100) / 100
 	// deliveryPartnerShare += rainExtraCharge * 0.7
@@ -143,12 +143,12 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 		deliveryPartnerShare = 0
 		platformFee = 0
 		actualShippingFee = 0
-		rainExtraCharge = 10.0
+		// rainExtraCharge = 10.0
 	}
-	if rainExtraCharge != 0 {
-		shippingFee += rainExtraCharge
-		finalOrderValue += rainExtraCharge;
-	}
+	// if rainExtraCharge != 0 {
+	// 	shippingFee += rainExtraCharge
+	// 	finalOrderValue += rainExtraCharge;
+	// }
 	return FinalOrderValueType{
 		SubTotal:             math.Round(totalItemSubTotal*100) / 100,
 		ShippingFee:          shippingFee,
@@ -156,7 +156,7 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 		DeliveryPartnerShare: deliveryPartnerShare,
 		FinalOrderValue:      finalOrderValue,
 		ActualShippingFee:    actualShippingFee,
-		RainExtraFee:         10.0,
+		// RainExtraFee:         10.0,
 	}
 }
 
