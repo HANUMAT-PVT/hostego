@@ -131,6 +131,7 @@ const TermsConditionsPage = () => {
                             <a href="mailto:hanumat@hostego.in" className="text-[#655df0] hover:underline">
                                 hanumat@hostego.in
                             </a>
+                            Hanumat Sharan
                         </p>
                     </Section>
                 </div>
