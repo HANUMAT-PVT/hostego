@@ -69,14 +69,14 @@ const OrderCard = ({ order, onRefresh }) => {
 
                 return
             }
-            let canelNoRefund = false;
+            let cancelNoRefund = false;
 
             if (newStatus === "cancelled-no-refund") {
                 setIsUpdating(true)
                 await axiosClient.post(`/api/order/cancel-no-refund`, {
                     order_id: order?.order_id
                 })
-                canelNoRefund = true
+                cancelNoRefund = true
                 onRefresh(true)
             }
             if (newStatus == "cancelled") {
@@ -91,7 +91,7 @@ const OrderCard = ({ order, onRefresh }) => {
                 delivery_partner_id = order?.delivery_partner?.delivery_partner_id;
             }
             await axiosClient.patch(`/api/order/${order.order_id}`, {
-                order_status: canelNoRefund ? "cancelled" : newStatus,
+                order_status: cancelNoRefund ? "cancelled" : newStatus,
                 delivery_partner_id // Reset delivery partner ID
             })
             setSelectedStatus("")
