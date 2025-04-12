@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setFetchCartData, setFetchUserWalletBool, setUserAccountWallet } from '../lib/redux/features/user/userSlice'
 import { subscribeToNotifications } from '../utils/webNotifications'
 import { load } from "@cashfreepayments/cashfree-js";
+import { tryPaymentStatus } from '../utils/helper'
 
 
 const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
@@ -176,6 +177,7 @@ const page = () => {
         await doPayment(response?.data?.payment_session_id, response?.data?.order_id, data?.order_id)
 
     }
+     
     const doPayment = async (paymentSessionId, paymentSessionorderId, order_id) => {
 
         let checkoutOptions = {
@@ -193,37 +195,11 @@ const page = () => {
 
         }
         if (result.paymentDetails) {
-            const tryPaymentStatus = (paymentSessionorderId, order_id, maxAttempts = 3, delay = 3000) => {
-                return new Promise((resolve, reject) => {
-                    let attempts = 0;
-
-                    const interval = setInterval(async () => {
-                        try {
-                            attempts++;
-
-                            const result = await axiosClient.post(`/api/payment/cashfree/${paymentSessionorderId}`, {
-                                order_id: order_id
-                            });
-
-                            if (result?.data?.response?.order_status == "PAID") {
-                                clearInterval(interval);
-                                resolve(result);
-                            } else if (attempts >= maxAttempts) {
-                                clearInterval(interval);
-                                reject(new Error("Max attempts reached. Payment details not available."));
-                            }
-
-                        } catch (err) {
-                            clearInterval(interval);
-                            reject(err);
-                        }
-                    }, delay);
-                });
-            };
+           
             try {
-                const paymentResult = await tryPaymentStatus(paymentSessionorderId, order_id);
+                const paymentResult = await tryPaymentStatus(order_id);
                 setPaymentStatus('success')
-                router.push("/orders")
+                router.push(`/orders/${order_id}`)
             } catch (error) {
                 console.log(error)
             }
