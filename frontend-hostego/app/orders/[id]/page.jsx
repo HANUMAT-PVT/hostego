@@ -195,7 +195,7 @@ const OrderDetailsPage = () => {
             setIsLoading(true)
             const { data } = await axiosClient.get(`/api/order/${id}`)
 
-            await verifythePendingOrder(order)
+            await verifythePendingOrder(data)
 
             setOrder(data)
         } catch (error) {
