@@ -17,5 +17,5 @@ func PaymentRoutes(app *fiber.App) {
 		controllers.InitiateRefundPayment,
 	)
 	paymentRoutes.Post("/cashfree", controllers.InitateCashfreePaymentOrder)
-	paymentRoutes.Post("/cashfree/:cf_order_id", controllers.VerifyCashfreePayment)
+	paymentRoutes.Post("/cashfree/verify-payment", controllers.VerifyCashfreePayment)
 }

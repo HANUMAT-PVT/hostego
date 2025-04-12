@@ -265,7 +265,7 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 
 func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 
-	user_id := c.Locals("user_id")
+	user_id := c.Locals("user_id").(int)
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
@@ -279,6 +279,8 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 	var orderRequest struct {
 		OrderId int `json:"order_id"`
 	}
+	var paymentTransaction models.PaymentTransaction
+
 	err := c.Bind().JSON(&orderRequest)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -294,7 +296,6 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-
 
 	body := map[string]interface{}{
 		"order_amount":   order.FinalOrderValue,
@@ -330,6 +331,29 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 	if err := json.Unmarshal(resp.Body(), &cashfreeResp); err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Invalid response from Cashfree"})
 	}
+	paymentTransaction.OrderId = orderRequest.OrderId
+	paymentTransaction.UserId = user_id
+	paymentTransaction.Amount = order.FinalOrderValue
+	paymentTransaction.PaymentStatus = "pending"
+	paymentTransaction.PaymentMethod = "UPI"
+	paymentTransaction.PaymentOrderId = cashfreeResp["order_id"].(string)
+
+	if err := tx.Create(&paymentTransaction).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
+
+	if err := tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
 	return c.Status(fiber.StatusOK).JSON(cashfreeResp)
 
 }
@@ -340,8 +364,36 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
-	cf_order_id := c.Params("cf_order_id")
 
+	type OrderRequest struct {
+		OrderID int `json:"order_id"` //Only accept Order ID, not amount
+	}
+
+	var order models.Order
+
+	var request OrderRequest
+
+	var cartItem models.CartItem
+
+	// cf_order_id := c.Params("cf_order_id")
+
+	tx := database.DB.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if err := c.Bind().JSON(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	var paymentTransaction models.PaymentTransaction
+
+	if err := tx.Where("order_id=?", request.OrderID).First(&paymentTransaction).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
 	restyClient := resty.New()
 
 	// Cashfree credentials from env
@@ -355,7 +407,7 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 		SetHeader("x-api-version", "2023-08-01").
 		SetHeader("x-client-id", clientId).
 		SetHeader("x-client-secret", clientSecret).
-		Post(cashFreeApiUrl + "/" + cf_order_id)
+		Post(cashFreeApiUrl + "/" + paymentTransaction.PaymentOrderId)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -371,27 +423,6 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"error": "`Payment is not paid yet", "response": cashfreeResp})
 	}
 
-	type OrderRequest struct {
-		OrderID int `json:"order_id"` //Only accept Order ID, not amount
-	}
-	var order models.Order
-
-	var request OrderRequest
-
-	var cartItem models.CartItem
-
-	if err := c.Bind().JSON(&request); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
-	}
-
-	tx := database.DB.Begin()
-
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
 	if err := tx.First(&order, "order_id=?", request.OrderID).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
@@ -406,20 +437,12 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 	walletTransaction.UserId = user_id
 	walletTransaction.TransactionStatus = "success"
 
-	var paymentTransaction models.PaymentTransaction
-
 	if err := tx.Create(&walletTransaction).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
-	paymentTransaction.OrderId = request.OrderID
-	paymentTransaction.UserId = user_id
-	paymentTransaction.Amount = totalAmountToDeduct
 	paymentTransaction.PaymentStatus = "success"
-	paymentTransaction.PaymentMethod = "UPI"
-	paymentTransaction.PaymentOrderId = cf_order_id
-	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
 	order.OrderStatus = "placed"
 
 	// after saving the order
@@ -428,7 +451,7 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 		Content: "A new order has been placed!",
 	})
 
-	if err := tx.Create(&paymentTransaction).Error; err != nil {
+	if err := tx.Save(&paymentTransaction).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
