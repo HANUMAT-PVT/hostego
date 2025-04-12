@@ -178,8 +178,7 @@ const OrderDetailsPage = () => {
     const verifythePendingOrder = async (order) => {
 
         if (order && order.order_status == "pending") {
-            let data = await tryPaymentStatus(order.order_id);
-
+            let {data} = await tryPaymentStatus(order.order_id);
             if (data?.response?.order_status == "PAID") {
                 window.location.reload()
             }
