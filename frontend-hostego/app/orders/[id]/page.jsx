@@ -181,7 +181,7 @@ const OrderDetailsPage = () => {
             let data = await tryPaymentStatus(order.order_id);
             console.log(data)
             if (data?.response?.order_status == "PAID") {
-                fetchOrder()
+                // fetchOrder()
 
             }
         }
@@ -189,6 +189,7 @@ const OrderDetailsPage = () => {
 
     useEffect(() => {
         fetchOrder()
+        
         verifythePendingOrder()
 
     }, [id])
