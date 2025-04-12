@@ -40,6 +40,7 @@ func ConnectDataBase() {
 	err = db.AutoMigrate(&models.DeliveryPartnerWallet{})
 	err = db.AutoMigrate(&models.DeliveryPartnerWalletTransaction{})
 	err = db.AutoMigrate(&models.MessMenu{})
+	err = db.AutoMigrate(&models.ExtrCharge{})
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
 	}
