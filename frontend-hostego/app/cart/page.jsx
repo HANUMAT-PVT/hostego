@@ -395,7 +395,7 @@ const page = () => {
                     </div>
                     {/* Rain extra charge Fee */}
                     <div className='flex justify-between font-normal items-start'>
-                        <span className='text-gray-800 '>🌧️ Rain Chage </span>
+                        <span className='text-gray-800 '>Rain Charge 🌧️ </span>
 
                         {/* // Regular Delivery Fee Display */}
                         <div className='text-right'>
