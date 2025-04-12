@@ -191,7 +191,7 @@ const OrderDetailsPage = () => {
         fetchOrder()
         verifythePendingOrder()
 
-    }, [id,order])
+    }, [id])
 
     const fetchOrder = async () => {
         try {
