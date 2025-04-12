@@ -129,9 +129,7 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 		}
 	}
 	actualShippingFee := shippingFee
-	if rainExtraCharge != 0 {
-		shippingFee += rainExtraCharge
-	}
+
 	if freeDelivery {
 		shippingFee = 0
 	}
@@ -147,7 +145,8 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 		rainExtraCharge = 10.0
 	}
 	if rainExtraCharge != 0 {
-		totalItemSubTotal += 10;
+		shippingFee += rainExtraCharge
+		finalOrderValue += rainExtraCharge;
 	}
 	return FinalOrderValueType{
 		SubTotal:             math.Round(totalItemSubTotal*100) / 100,
