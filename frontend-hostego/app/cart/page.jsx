@@ -423,7 +423,7 @@ const page = () => {
                             // Regular Delivery Fee Display
                             <div className='text-right'>
                                 <div className='flex items-center gap-2'>
-                                    <span>₹{cartData?.cart_value?.actual_shipping_fee}</span>
+                                    <span>+₹{cartData?.cart_value?.actual_shipping_fee}</span>
                                 </div>
 
                             </div>
