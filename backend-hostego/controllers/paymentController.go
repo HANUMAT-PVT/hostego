@@ -427,6 +427,9 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
+	if order.OrderStatus != "pending" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Order is already Verifed and Placed !"})
+	}
 
 	totalAmountToDeduct := order.FinalOrderValue
 
