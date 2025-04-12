@@ -394,7 +394,7 @@ const page = () => {
                         <span>₹{cartData?.cart_value?.subtotal}</span>
                     </div>
                     {/* Rain extra charge Fee */}
-                    <div className='flex justify-between font-normal items-start'>
+                    {cartData?.cart_value?.rain_extra_fee != 0 && <div className='flex justify-between font-normal items-start'>
                         <span className='text-gray-800 '>Rain Charge 🌧️ </span>
 
                         {/* // Regular Delivery Fee Display */}
@@ -405,7 +405,7 @@ const page = () => {
 
                         </div>
 
-                    </div>
+                    </div>}
                     {/* Delivery Fee */}
                     <div className='flex justify-between font-normal items-start'>
                         <span className='text-gray-800'>Delivery Fee <br /><span className='text-xs flex items-center'>   Includes delivery & payment fees</span></span>
