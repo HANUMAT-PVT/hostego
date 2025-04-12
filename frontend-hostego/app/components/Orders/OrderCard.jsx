@@ -55,7 +55,7 @@ const OrderCard = ({ order, onRefresh }) => {
     const [isEditable, setIsEditable] = useState({})
 
     const { userRoles } = useSelector(state => state.user)
-   
+
 
     const checkIsSuperAdmin = () => {
         for (let el of userRoles) {
@@ -69,13 +69,14 @@ const OrderCard = ({ order, onRefresh }) => {
 
                 return
             }
+            let canelNoRefund = false;
 
-            if (newStatus==="cancelled-no-refund"){
+            if (newStatus === "cancelled-no-refund") {
                 setIsUpdating(true)
-                newStatus="cancelled";
                 await axiosClient.post(`/api/order/cancel-no-refund`, {
                     order_id: order?.order_id
                 })
+                canelNoRefund = true
                 onRefresh(true)
             }
             if (newStatus == "cancelled") {
@@ -90,7 +91,7 @@ const OrderCard = ({ order, onRefresh }) => {
                 delivery_partner_id = order?.delivery_partner?.delivery_partner_id;
             }
             await axiosClient.patch(`/api/order/${order.order_id}`, {
-                order_status: newStatus,
+                order_status: canelNoRefund ? "cancelled" : newStatus,
                 delivery_partner_id // Reset delivery partner ID
             })
             setSelectedStatus("")
@@ -112,7 +113,7 @@ const OrderCard = ({ order, onRefresh }) => {
         }
     }
 
-    
+
 
 
 
@@ -273,7 +274,7 @@ const OrderCard = ({ order, onRefresh }) => {
                                     </div>
                                 </div>
                                 {checkIsSuperAdmin() && <> <button onClick={() => setIsEditable({ product_id: item?.product_id, order_id: order?.order_id, quantity: item?.quantity })} >Edit</button>
-                                    {isEditable?.product_id==item.product_id && <input type="number" value={isEditable?.quantity || 0} onChange={(e) => setIsEditable({ ...isEditable, quantity: Number(e.target.value) })} />}
+                                    {isEditable?.product_id == item.product_id && <input type="number" value={isEditable?.quantity || 0} onChange={(e) => setIsEditable({ ...isEditable, quantity: Number(e.target.value) })} />}
                                     <button onClick={handleOrderItemRefund}>Submit</button></>}
                             </div>
 
