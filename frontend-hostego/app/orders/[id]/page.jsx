@@ -175,30 +175,28 @@ const OrderDetailsPage = () => {
         return !['delivered', 'cancelled'].includes(status?.toLowerCase());
     };
 
-    const verifythePendingOrder = async () => {
-        console.log(order,"hello order")
+    const verifythePendingOrder = async (order) => {
+
         if (order && order.order_status == "pending") {
             let data = await tryPaymentStatus(order.order_id);
-            console.log(data)
-            if (data?.response?.order_status == "PAID") {
-                // fetchOrder()
 
+            if (data?.response?.order_status == "PAID") {
+                window.location.reload()
             }
         }
     }
 
     useEffect(() => {
         fetchOrder()
-        
-        verifythePendingOrder()
-
     }, [id])
 
     const fetchOrder = async () => {
         try {
             setIsLoading(true)
             const { data } = await axiosClient.get(`/api/order/${id}`)
-            console.log(data, "order data")
+
+            await verifythePendingOrder(order)
+
             setOrder(data)
         } catch (error) {
             console.error('Error fetching order:', error)
@@ -221,6 +219,8 @@ const OrderDetailsPage = () => {
             setIsConfirmationPopupOpen(false)
         }
     }
+
+  
 
     if (isLoading) return <HostegoLoader />
     if (!order) return <div>Order not found</div>
@@ -248,7 +248,7 @@ const OrderDetailsPage = () => {
                         </p>
                     </div>
                     <div className='flex items-center justify-end'>
-                        <RefreshCcw onClick={() => fetchOrder()} className="w-4 h-4 text-[var(--primary-color)] cursor-pointer" />
+                        <RefreshCcw onClick={()=>fetchOrder()} className="w-4 h-4 text-[var(--primary-color)] cursor-pointer" />
                     </div>
                 </div>
 
