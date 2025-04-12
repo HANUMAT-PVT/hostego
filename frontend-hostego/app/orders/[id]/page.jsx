@@ -176,7 +176,7 @@ const OrderDetailsPage = () => {
     };
 
     const verifythePendingOrder = async () => {
-console.log(order,"hello order")
+        console.log(order,"hello order")
         if (order && order.order_status == "pending") {
             let data = await tryPaymentStatus(order.order_id);
             console.log(data)
@@ -191,7 +191,7 @@ console.log(order,"hello order")
         fetchOrder()
         verifythePendingOrder()
 
-    }, [id,])
+    }, [id,order])
 
     const fetchOrder = async () => {
         try {
