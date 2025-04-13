@@ -120,7 +120,10 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 	shippingFee += platformFee
 
 	if totalItemSubTotal <= 150.0 {
-		shippingFee += 150 * 0.15
+		 shippingFee+= 150 * 0.15
+		 if(shippingFee>=20){
+			shippingFee=19;
+		 }
 	} else {
 		charge := totalItemSubTotal * 0.15
 		if charge > 39.0 {
