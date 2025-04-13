@@ -177,7 +177,7 @@ const page = () => {
         await doPayment(response?.data?.payment_session_id, response?.data?.order_id, data?.order_id)
 
     }
-     
+
     const doPayment = async (paymentSessionId, paymentSessionorderId, order_id) => {
 
         let checkoutOptions = {
@@ -195,7 +195,7 @@ const page = () => {
 
         }
         if (result.paymentDetails) {
-           
+
             try {
                 const paymentResult = await tryPaymentStatus(order_id);
                 setPaymentStatus('success')
@@ -356,6 +356,16 @@ const page = () => {
                     />
                 </div>
             </div>
+            <div className="bg-yellow-50 rounded-xl p-4 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                <div>
+                    <p className="font-medium text-yellow-800 mb-1">Delivery Update</p>
+                    <p className="text-sm text-yellow-700">
+                        We are currently delivering to all  <strong>All Boys hostels Only</strong> . We will start operations soon in Tagore and LC, Please note that if you're ordering from outside the Boys hostels, your order will be canceled.
+                    </p>
+                </div>
+            </div>
+
             {/* Bill Details */}
             <div className='bg-white mx-2 mt-4 rounded-xl p-4 shadow-sm'>
                 <div className='flex items-center gap-2 mb-4'>
