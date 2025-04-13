@@ -71,7 +71,7 @@ func CreateNewOrder(c fiber.Ctx) error {
 	}
 	order.OrderItems = jsonCartItems
 	order.UserId = user_id
-	totalCharges := CalculateFinalOrderValue(cartItems, freeDelivery)
+	totalCharges := CalculateFinalOrderValue(cartItems, false)
 	order.PlatformFee = totalCharges.PlatformFee
 	order.ShippingFee = totalCharges.ShippingFee
 	order.FinalOrderValue = totalCharges.FinalOrderValue
