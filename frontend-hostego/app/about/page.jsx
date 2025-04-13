@@ -4,6 +4,7 @@ import React from "react";
 import { Package, Clock, Printer, CheckCircle, Building, Coffee, Heart, MapPin, } from "lucide-react";
 import BackNavigationButton from "../components/BackNavigationButton";
 import Head from "next/head";
+import { Linkedin } from "react-feather";
 
 const FeatureCard = ({ icon: Icon, title, description }) => (
     <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all">
@@ -64,7 +65,7 @@ const AboutPage = () => {
                     <FeatureCard
                         icon={Package}
                         title="Late Night Deliveries"
-                        description="Get your midnight cravings satisfied with our 24/7 delivery service. From Maggi to snacks, we've got you covered."
+                        description="Get your midnight cravings satisfied with our delivery service. From Maggi to snacks, we've got you covered."
                     />
                     <FeatureCard
                         icon={Printer}
@@ -110,7 +111,7 @@ const AboutPage = () => {
                         <div className="w-8 h-8 rounded-full bg-[#655df0] text-white flex items-center justify-center flex-shrink-0">
                             3
                         </div>
-        <div>
+                        <div>
                             <h3 className="font-medium mb-1">Room Delivery</h3>
                             <p className="text-gray-600">Relax while we deliver right to your room</p>
                         </div>
@@ -182,12 +183,13 @@ const AboutPage = () => {
                                 {[1, 2, 3].map((_, idx) => (
                                     <a
                                         key={idx}
-                                        href="#"
+                                        href="https://www.linkedin.com/in/hanumat-sharan-168548258"
                                         className="group relative w-12 h-12 rounded-full bg-gradient-to-br from-[#655df0] to-[#9333ea] p-[2px] transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#655df0]/20"
                                     >
                                         <div className="absolute inset-[2px] bg-white rounded-full transition-colors group-hover:bg-gradient-to-br group-hover:from-[#655df0]/10 group-hover:to-[#9333ea]/10"></div>
                                         <div className="relative w-full h-full flex items-center justify-center text-[#655df0] group-hover:text-white transition-colors">
                                             {/* Icon will go here */}
+                                            <Linkedin />
                                         </div>
                                     </a>
                                 ))}
