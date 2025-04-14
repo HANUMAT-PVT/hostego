@@ -3,9 +3,8 @@ package controllers
 import (
 	"backend-hostego/database"
 	"backend-hostego/models"
-	natsclient "backend-hostego/nats"
 	"encoding/json"
-	"log"
+
 	"strconv"
 
 	"math"
@@ -25,6 +24,8 @@ type FinalOrderValueType struct {
 	ActualShippingFee    float64 `json:"actual_shipping_fee"`
 	RainExtraFee         float64 `json:"rain_extra_fee"`
 }
+
+var orderManagerRoles = []string{"admin", "order_assign_manager", "super_admin", "order_manager"}
 
 // Move struct definition outside the function
 type requestCreateOrder struct {
@@ -245,9 +246,9 @@ func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
 	if err := database.DB.Where("order_id=?", request_assign.OrderId).Save(&order).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	message := "Your order has been assigned to a delivery partner!"
-	natsclient.SendMessageToUser("1", message)
-	log.Print("paylod succesfuly sent to teh forne")
+	// message := "Your order has been assigned to a delivery partner!"
+
+	// natsclient.SendMessageToUser(user_id.(string), message, "", orderManagerRoles)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order assigned succefully to" + " " + delivery_partner.User.FirstName})
 

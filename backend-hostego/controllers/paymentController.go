@@ -4,9 +4,11 @@ import (
 	"backend-hostego/config"
 	"backend-hostego/database"
 	"backend-hostego/models"
+	natsclient "backend-hostego/nats"
 	websocket "backend-hostego/websocket"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -141,6 +143,8 @@ func InitiatePayment(c fiber.Ctx) error {
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
 	}
+	natsclient.SendMessageToUsersByRole(orderManagerRoles,"New Order Placed", "Please check the details and take the necessary action.")
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Payment Completed", "payment_transaction": paymentTransaction, "order": order, "wallet_transaction": walletTransaction})
 }
 
@@ -512,6 +516,9 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
 	}
+	natsclient.SendMessageToUsersByRole(orderManagerRoles,"New Order Placed", "Please check the details and take the necessary action.")
+	log.Print("Payload sent to the frontend")
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Payment Completed", "payment_transaction": paymentTransaction, "order": order, "wallet_transaction": walletTransaction, "response": cashfreeResp})
 
 }
