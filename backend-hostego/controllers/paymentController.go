@@ -5,7 +5,7 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 	natsclient "backend-hostego/nats"
-	websocket "backend-hostego/websocket"
+
 	"encoding/json"
 	"fmt"
 	"log"
@@ -451,12 +451,6 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 
 	paymentTransaction.PaymentStatus = "success"
 	order.OrderStatus = "placed"
-
-	// after saving the order
-	websocket.SendMessage(websocket.Message{
-		Role:    "admin", // or "delivery", "shop", etc.
-		Content: "A new order has been placed!",
-	})
 
 	if err := tx.Save(&paymentTransaction).Error; err != nil {
 		tx.Rollback()
