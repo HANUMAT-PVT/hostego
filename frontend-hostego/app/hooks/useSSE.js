@@ -27,7 +27,7 @@ export function usePolling(userId, onMessage) {
     };
 
     // Start polling every 2 minutes
-    intervalId = setInterval(fetchData, 3 * 1000);
+    intervalId = setInterval(fetchData, 60 * 1000);
 
     // Run once immediately
     fetchData();
