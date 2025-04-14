@@ -3,7 +3,9 @@ package controllers
 import (
 	"backend-hostego/database"
 	"backend-hostego/models"
+	natsclient "backend-hostego/nats"
 	"encoding/json"
+	"log"
 	"strconv"
 
 	"math"
@@ -120,10 +122,10 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 	shippingFee += platformFee
 
 	if totalItemSubTotal <= 150.0 {
-		shippingFee+= 150 * 0.15;
-		if(shippingFee>=19){
-		
-			shippingFee=19;
+		shippingFee += 150 * 0.15
+		if shippingFee >= 19 {
+
+			shippingFee = 19
 		}
 	} else {
 		charge := totalItemSubTotal * 0.15
@@ -243,6 +245,9 @@ func AssignOrderToDeliveryPartner(c fiber.Ctx) error {
 	if err := database.DB.Where("order_id=?", request_assign.OrderId).Save(&order).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
+	message := "Your order has been assigned to a delivery partner!"
+	natsclient.SendMessageToUser("1", message)
+	log.Print("paylod succesfuly sent to teh forne")
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order assigned succefully to" + " " + delivery_partner.User.FirstName})
 
