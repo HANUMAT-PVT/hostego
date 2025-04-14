@@ -2,12 +2,12 @@
 
 import { usePolling } from '../hooks/useSSE'
 import { useEffect } from 'react'
+import { subscribeToNotifications } from '../utils/webNotifications'
 
 
-const SSEHandler = ({userId}) => {
-    usePolling(userId, (data) => {
-        // data = { userId, type, msg }
-        // alert("Order assingned")
+const SSEHandler = ({ userId }) => {
+    usePolling(userId, ({title,body,roles}) => {
+        subscribeToNotifications(title,body)
     })
 
     return null
