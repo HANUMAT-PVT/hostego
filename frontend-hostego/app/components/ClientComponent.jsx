@@ -7,37 +7,14 @@ import { useEffect } from 'react'
 import { setUserAccount, setCartData, setFetchCartData, setUserAddresses, setUserRoles, setUserAccountWallet, setFetchUserAccount } from '../lib/redux/features/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { subscribeToNotifications } from '../utils/webNotifications'
+import  SSEHandler  from '../components/SSEHandler'
 
 const ClientComponent = ({ children }) => {
 
     const dispatch = useDispatch();
-    const { fetchCartData, fetchUser } = useSelector((state) => state.user)
+    const { fetchCartData, fetchUser,userAccount } = useSelector((state) => state.user)
     const router = useRouter()
-    useEffect(() => {
-        const socket = new WebSocket("wss://backend.hostego.in/ws?role=admin");
-        console.log("socketn  implementation starts")
-        socket.onopen = () => {
-            console.log("✅ Connected");
-            socket.send("Hello from client!");
-        };
-
-        socket.onmessage = (msg) => {
-            subscribeToNotifications("New Order Placed !", "Please assign the order")
-            console.log("📨", msg.data);
-        };
-
-        socket.onclose = (event) => {
-            console.log("🔌 Disconnected", event);
-        };
-
-        socket.onerror = (err) => {
-            console.error("⚠️ WebSocket Error", err);
-        };
-
-        return () => socket.close();
-    }, []);
-
-
+   
     useEffect(() => {
 
         if (fetchUser) {
@@ -138,7 +115,7 @@ const ClientComponent = ({ children }) => {
     return (
 
         <>
-
+            <SSEHandler userId={userAccount?.user_id ||""} />
             {children}
         </>
 
