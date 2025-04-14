@@ -115,7 +115,7 @@ const ClientComponent = ({ children }) => {
     return (
 
         <>
-            <SSEHandler userId={userAccount?.user_id ||""} />
+            {/* <SSEHandler userId={userAccount?.user_id ||""} /> */}
             {children}
         </>
 
