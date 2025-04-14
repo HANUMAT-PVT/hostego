@@ -15,10 +15,11 @@ import Dashboard from "./Dashboard";
 import axiosClient from "@/app/utils/axiosClient";
 import DeliveryPartnerPaymentManager from "./DeliveryPartnerPaymentManager";
 import CuMessManager from "./CuMessManager";
+import SSEHandler from '../SSEHandler'
 
 export default function AdminPanel() {
     const router = useRouter();
-    const { userRoles } = useSelector(state => state.user)
+    const { userRoles, userAccount } = useSelector(state => state.user)
     const searchParams = useSearchParams();
     const [dashboardStats, setDashboardStats] = useState({ product_stats: [], overall_stats: [] })
 
@@ -133,13 +134,14 @@ export default function AdminPanel() {
                 {currentPage === "order-assign" && (checkUserRole("super_admin") || checkUserRole("order_assign_manager") || checkUserRole("admin")) && <OrderAssignment />}
                 {currentPage === "orders" && (checkUserRole("super_admin") || checkUserRole("order_manager")) && <OrdersList />}
                 {currentPage === "partners" && (checkUserRole("super_admin") || checkUserRole("delivery_partner_manager") || checkUserRole("admin")) && <DeliveryPartnerManagement />}
-                {currentPage === "wallet_payment_verification" && checkUserRole("super_admin")  && <WalletPaymentVerfication />}
+                {currentPage === "wallet_payment_verification" && checkUserRole("super_admin") && <WalletPaymentVerfication />}
                 {currentPage === "users" && (checkUserRole("super_admin")) && <UserManager />}
                 {currentPage === "products" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <ProductsManager />}
                 {currentPage === "shops" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <ShopsManager />}
                 {currentPage === "cu_mess" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <CuMessManager />}
                 {currentPage === "delivery_partner_payment" && (checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <DeliveryPartnerPaymentManager />}
             </main>
+            <SSEHandler  userId={userAccount?.user_id || ""} />
         </div>
     );
 }

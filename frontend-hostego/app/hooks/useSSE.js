@@ -6,29 +6,28 @@ import axios from "../utils/axiosClient";
 export function usePolling(userId, onMessage) {
   useEffect(() => {
     if (!userId) return;
-
-    console.log("📡 Polling started for user:", userId);
-
-
     let intervalId;
 
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/events?user=${userId}`);
+        const response = await axios.get(
+          `/events?user=${userId}&roles=super_admin,order_manager,order_assign_manager`
+        );
 
         if (response?.data && response.data.message) {
-          console.log("✅ Polling message received:", response.data.message);
-          onMessage(response.data.message);
+          const jsonResp = JSON.parse(response.data.message);
+          console.log("✅ Polling message received:", jsonResp);
+          onMessage(jsonResp);
         } else {
           console.log("🔄 No new message");
         }
       } catch (error) {
-        console.error("❌ Polling error:", error.message);
+        console.log("❌ Polling error:", error);
       }
     };
 
-    // Start polling every 5 seconds
-    intervalId = setInterval(fetchData, 5000);
+    // Start polling every 2 minutes
+    intervalId = setInterval(fetchData, 5 * 1000);
 
     // Run once immediately
     fetchData();
