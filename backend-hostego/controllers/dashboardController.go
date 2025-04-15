@@ -38,15 +38,17 @@ func GetDashBoardStats(c fiber.Ctx) error {
 	// Repeat customer stats via raw SQL
 	query := `
 	SELECT
-	  COUNT(DISTINCT o.user_id) AS total_customers,
-	  COUNT(DISTINCT CASE WHEN user_order_count > 1 THEN o.user_id END) AS repeat_customers,
-	  SUM(CASE WHEN user_order_count > 1 THEN o.final_order_value ELSE 0 END) AS repeat_customers_revenue
+	COUNT(DISTINCT oi.user_id) AS total_customers,
+	COUNT(DISTINCT CASE WHEN user_order_count > 1 THEN oi.user_id END) AS repeat_customers,
+	SUM(CASE WHEN user_order_count > 1 THEN oi.sub_total ELSE 0 END) AS repeat_customers_revenue,
+	COUNT(DISTINCT CASE WHEN user_order_count = 1 THEN oi.user_id END) AS one_time_customers,
+	SUM(CASE WHEN user_order_count = 1 THEN oi.sub_total ELSE 0 END) AS one_time_customers_revenue
 	FROM (
-	  SELECT user_id, COUNT(*) AS user_order_count
-	  FROM orders
-	  GROUP BY user_id
+	SELECT user_id, COUNT(DISTINCT order_id) AS user_order_count
+	FROM order_items
+	GROUP BY user_id
 	) AS user_orders
-	JOIN orders o ON o.user_id = user_orders.user_id;
+	JOIN order_items oi ON oi.user_id = user_orders.user_id
 	`
 	err = database.DB.Raw(query).Scan(&result).Error
 	if err != nil {
