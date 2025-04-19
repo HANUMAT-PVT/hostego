@@ -117,7 +117,7 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 	platformFee := 1.0
 	// rainExtraCharge := 10.0
 	// Distribution of charge (80% for delivery partner, 20% for company)
-	if shippingFee == 30 {
+	if shippingFee > 24 {
 		deliveryPartnerShare = math.Round((shippingFee*0.67)*100) / 100
 
 	} else {
@@ -389,6 +389,18 @@ func FetchAllOrders(c fiber.Ctx) error {
 
 func FetchAllOrdersByDeliveryPartner(c fiber.Ctx) error {
 	user_id := c.Locals("user_id")
+	queryPage := c.Query("page", "1")
+	queryLimit := c.Query("limit", "10")
+	page, err := strconv.Atoi(queryPage)
+	if err != nil || page < 1 {
+		page = 1
+	}
+	limit, err := strconv.Atoi(queryLimit)
+	if err != nil || limit < 1 {
+		limit = 10
+	}
+	offset := (page - 1) * limit
+
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
@@ -428,7 +440,7 @@ func FetchAllOrdersByDeliveryPartner(c fiber.Ctx) error {
 	}
 
 	var orders []models.Order
-	if err := dbQuery.Order("created_at desc").Find(&orders).Error; err != nil {
+	if err := dbQuery.Order("created_at desc").Limit(limit).Offset(offset).Find(&orders).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
