@@ -94,7 +94,7 @@ func CreateNewOrder(c fiber.Ctx) error {
 // CalculateFinalOrderValue calculates the total order cost including charges
 func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) FinalOrderValueType {
 	totalItemSubTotal := 0.0
-
+	var deliveryPartnerShare = 0.0
 	// Calculate the subtotal of all cart items
 	for _, item := range cartItems {
 		totalItemSubTotal = item.SubTotal + totalItemSubTotal
@@ -117,7 +117,12 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 	platformFee := 1.0
 	// rainExtraCharge := 10.0
 	// Distribution of charge (80% for delivery partner, 20% for company)
-	deliveryPartnerShare := math.Round((shippingFee*0.8)*100) / 100
+	if shippingFee == 30 {
+		deliveryPartnerShare = math.Round((shippingFee*0.67)*100) / 100
+
+	} else {
+		deliveryPartnerShare = math.Round((shippingFee*0.8)*100) / 100
+	}
 	// deliveryPartnerShare += rainExtraCharge * 0.7
 	shippingFee = 0
 	shippingFee += platformFee
