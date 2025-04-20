@@ -57,9 +57,9 @@ export default function ShippingPolicy() {
           <li>If delivery is still unsuccessful, the order will be returned and no refund will be issued for perishable items.</li>
         </ul>
 
-        <h3 className="text-xl font-semibold mt-6 mb-2">Cashfree Payment Gateway</h3>
+        <h3 className="text-xl font-semibold mt-6 mb-2">Razorpay Payment Gateway</h3>
         <p className="mb-4">
-          We use <strong>Cashfree Payment Gateway</strong> to handle all online transactions securely. 
+          We use <strong>Razorpay Payment Gateway</strong> to handle all online transactions securely. 
           Once payment is successful, the order is processed immediately for delivery. Refunds (if applicable) are processed 
           in 3–5 business days through the same payment method.
         </p>

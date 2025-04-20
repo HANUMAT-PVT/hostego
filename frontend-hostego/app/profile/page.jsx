@@ -201,6 +201,18 @@ const Profile = () => {
             </div>
             <ChevronRight size={20} className="text-gray-400" />
           </div>
+          <div
+            onClick={() => router.push("/ship-and-delivery")}
+            className="nav-account-bar flex items-center justify-between "
+          >
+            <div className="flex items-center gap-3">
+              <div className="nav-account-item-icon bg-gray-200 p-2 rounded-full ">
+                <Wallet size={14} className="text-gray-500" />
+              </div>
+              <p className="text-md font-normal">Shipping Policy</p>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
           {/* Logout */}
           <div
             onClick={() => handleUserLogout()}

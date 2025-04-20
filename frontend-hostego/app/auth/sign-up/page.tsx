@@ -2,10 +2,29 @@
 
 import React from "react";
 import PhoneEmailAuthButton from "../../components/PhoneEmailAuth";
-import { Clock, Package, Shield, Smartphone, } from "lucide-react";
+import { Clock, Package, Shield, Smartphone } from "lucide-react";
 import Image from "next/image";
-
+import axiosClient from "@/app/utils/axiosClient";
+import { setFetchUserAccount } from "@/app/lib/redux/features/user/userSlice";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
 const Page = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const handleDemoLogin = async () => {
+    const response = await axiosClient.post("/api/auth/signup", {
+      mobile_number: "+91-9876543219",
+      first_name: "Test",
+      last_name: "User",
+      email: `test${Math.random() * 2323 + Date.now()}@hostego.in`,
+    });
+
+    localStorage.setItem("auth-response", JSON.stringify(response.data));
+
+    dispatch(setFetchUserAccount(true));
+    router.push("/");
+  };
   return (
     <div className="relative h-screen gradient-background">
       {/* Floating Circles Background */}
@@ -23,7 +42,13 @@ const Page = () => {
             {/* Heading and Tagline */}
             <div className="text-center space-y-3 mb-8">
               <div className="w-16 h-16  from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-2">
-                <Image src="/hostego_logo.svg" alt="Hostego" className="w-16 h-16" width={50} height={50} />
+                <Image
+                  src="/hostego_logo.svg"
+                  alt="Hostego"
+                  className="w-16 h-16"
+                  width={50}
+                  height={50}
+                />
               </div>
               <h1 className="text-2xl font-bold gradient-background-text text-transparent bg-clip-text">
                 Welcome to Hostego
@@ -77,19 +102,25 @@ const Page = () => {
               </div>
 
               <PhoneEmailAuthButton />
+              <p
+                onClick={handleDemoLogin}
+                className="text-gray-500 text-center text-xs pb-4"
+              >
+                Demo Login
+              </p>
 
               <p className="text-gray-500 text-center text-xs pb-4">
                 By continuing, you agree to our{" "}
                 <a
                   className="text-blue-600 font-medium hover:underline"
-                  href="#"
+                  href="/terms-conditons"
                 >
                   Terms of Service
                 </a>{" "}
                 and{" "}
                 <a
                   className="text-blue-600 font-medium hover:underline"
-                  href="#"
+                  href="/privacy-policy"
                 >
                   Privacy Policy
                 </a>
