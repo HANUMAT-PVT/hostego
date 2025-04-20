@@ -146,7 +146,7 @@ const Page = () => {
     const fetchDeliveryPartnerOrders = async () => {
         try {
             if (!deliveryPartner?.delivery_partner_id) return
-            let { data } = await axiosClient.get(`/api/order/delivery-partner/${deliveryPartner?.delivery_partner_id}?status=${selectedFilter}`);
+            let { data } = await axiosClient.get(`/api/order/delivery-partner/${deliveryPartner?.delivery_partner_id}?status=${selectedFilter}&page=1&limit=2`);
             setDeliveryPartnerOrders(data?.orders);
         } catch (error) {
             console.error('Error fetching orders:', error);

@@ -225,7 +225,7 @@ const page = () => {
                 dispatch(setFetchCartData(true))
                 subscribeToNotifications("Payment Success", "Your order has been placed successfully")
                 setTimeout(() => {
-                    router.push('/orders')
+                    router.push(`/orders/${data?.order_id}`)
                 }, 2000)
 
             } else {
@@ -408,13 +408,13 @@ const page = () => {
                         ) : (
                            
                         )} */}
-                         {/* Regular Delivery Fee Display */}
-                            <div className='text-right'>
-                                <div className='flex items-center gap-2'>
-                                    <span>₹{cartData?.cart_value?.actual_shipping_fee}</span>
-                                </div>
-
+                        {/* Regular Delivery Fee Display */}
+                        <div className='text-right'>
+                            <div className='flex items-center gap-2'>
+                                <span>₹{cartData?.cart_value?.actual_shipping_fee}</span>
                             </div>
+
+                        </div>
                     </div>
 
                     {/* Additional Savings Banner for Free Delivery */}
@@ -527,12 +527,12 @@ const page = () => {
                             <button
                                 onClick={() => {
                                     setShowPaymentDrawer(false);
-                                    handleCreateOrder()
+                                    router.push("/wallet")
 
                                 }}
                                 className="w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium  transition-colors flex items-center justify-center gap-2"
                             >
-                                Pay Online
+                                Add Money
                                 <ArrowRight size={18} />
                             </button>
                         ) : (
