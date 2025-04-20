@@ -1,18 +1,11 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Truck } from "lucide-react";
-import { useEffect } from "react";
+import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();
 
-  useEffect(() => {
-
-    setTimeout(() => {
-     // router.push("/home");
-    },3000);
-
-  }, []);
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen gradient-background text-white p-4 sm:p-8">
       {/* Subtle Background Elements */}
@@ -79,12 +72,32 @@ export default function Home() {
         </button>
 
         {/* Stats Grid */}
-        {/* <div className="grid grid-cols-3 gap-4 mt-8 w-full max-w-2xl"> */}
-        {/* <StatsCard icon={ShoppingBag} value="500+" label="Daily Orders" /> */}
-        {/* <StatsCard icon={Users} value="50+" label="Partner Shops" /> */}
-        {/* <StatsCard icon={Star} value="4.8" label="User Rating" /> */}
-        {/* </div> */}
+        <div className="grid grid-cols-3 gap-4 mt-8 w-full max-w-2xl">
+          {/* { <StatsCard icon={ShoppingBag} value="500+" label="Daily Orders" /> }
+        { <StatsCard icon={Users} value="50+" label="Partner Shops" /> }
+        { <StatsCard icon={Star} value="4.8" label="User Rating" /> } */}
+        </div>
       </main>
+      <footer className="relative z-10 mt-16 text-sm text-white/70 flex flex-col sm:flex-row gap-3 sm:gap-6 justify-center items-center py-6 border-t border-white/10 w-full max-w-4xl mx-auto">
+        <Link href="/privacy-policy" className="hover:text-white transition">
+          Privacy Policy
+        </Link>
+        <Link href="/terms-conditons" className="hover:text-white transition">
+          Terms & Conditions
+        </Link>
+        <Link
+          href="/refund-and-cancellation"
+          className="hover:text-white transition"
+        >
+          Refund & Cancellation
+        </Link>
+        <Link href="/support" className="hover:text-white transition">
+          Support
+        </Link>
+        <Link href="/ship-and-delivery" className="hover:text-white transition">
+          Shipping & Delivery
+        </Link>
+      </footer>
     </div>
   );
 }
