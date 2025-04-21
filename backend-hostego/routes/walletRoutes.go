@@ -26,6 +26,6 @@ func WalletRoutes(app *fiber.App) {
 	)
 	walletRoutes.Get("/users-wallet-balances",
 		middlewares.VerifyUserAuthCookieMiddleware(),
-		middlewares.RoleMiddleware("super_admin", "payments_manager"),
+		middlewares.RoleMiddleware("super_admin", "payments_manager","admin"),
 		controllers.FetchUsersWithPositiveWalletBalance)
 }
