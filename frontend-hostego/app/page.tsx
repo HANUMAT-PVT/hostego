@@ -82,7 +82,7 @@ export default function Home() {
         <Link href="/privacy-policy" className="hover:text-white transition">
           Privacy Policy
         </Link>
-        <Link href="/terms-conditons" className="hover:text-white transition">
+        <Link href="/terms-conditions" className="hover:text-white transition">
           Terms & Conditions
         </Link>
         <Link

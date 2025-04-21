@@ -113,7 +113,7 @@ const Page = () => {
                 By continuing, you agree to our{" "}
                 <a
                   className="text-blue-600 font-medium hover:underline"
-                  href="/terms-conditons"
+                  href="/terms--conditons"
                 >
                   Terms of Service
                 </a>{" "}
