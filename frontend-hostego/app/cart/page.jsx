@@ -581,13 +581,14 @@ const page = () => {
                             <button
                                 onClick={() => {
                                     setShowPaymentDrawer(false);
-                                    handleRazorpayPayment()
+                                    // handleRazorpayPayment()
+                                    router.push("/wallet")
 
                                 }}
                                 className="w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium  transition-colors flex items-center justify-center gap-2"
                             >
-                                {/* Add Money */}
-                                Pay Online
+                                Add Money
+                                {/* Pay Online */}
                                 <ArrowRight size={18} />
                             </button>
                         ) : (
