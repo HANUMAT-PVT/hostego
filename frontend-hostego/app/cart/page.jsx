@@ -272,19 +272,11 @@ const page = () => {
     }
 
     const doRazorpayPayment = async (order_id, orderAmount, key, hostego_order_id) => {
-        // 2. Load Razorpay script
-        const loaded = await new Promise((resolve) => {
-            const script = document.createElement('script');
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-            script.onload = () => resolve(true);
-            script.onerror = () => resolve(false);
-            document.body.appendChild(script);
-        });
-
-        if (!loaded) {
-            alert('Failed to load Razorpay SDK. Are you online?');
-            return;
-        }
+      // Razorpay SDK already loaded via <Script> component
+    if (typeof window === 'undefined' || !window.Razorpay) {
+        alert("Razorpay SDK not available");
+        return;
+      }
 
         // 3. Configure checkout
         const options = {
