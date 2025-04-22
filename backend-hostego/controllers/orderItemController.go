@@ -111,3 +111,22 @@ func CancelOrderItemAndInitiateRefund(c fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Refund Completed", "wallet_transaction": walletTransaction, "wallet": wallet})
 }
+
+func FetchOrderItems(c fiber.Ctx) error {
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+	var query = database.DB
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
+
+	if startDate != "" && endDate != "" {
+		query = query.Where("order_items.created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
+	}
+	var orderItems []models.OrderItem
+
+	query.Find(&orderItems).Order("created_at DESC")
+
+	return c.Status(fiber.StatusOK).JSON(orderItems)
+}

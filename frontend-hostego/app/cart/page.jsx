@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setFetchCartData, setFetchUserWalletBool, setUserAccountWallet } from '../lib/redux/features/user/userSlice'
 import { subscribeToNotifications } from '../utils/webNotifications'
 import { load } from "@cashfreepayments/cashfree-js";
-import { tryPaymentStatus } from '../utils/helper'
+import { tryPaymentStatus, tryRazorpayPaymentStatus } from '../utils/helper'
 
 
 const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
@@ -65,17 +65,6 @@ const AddressSection = ({ selectedAddress, setOpenAddressList }) => {
 }
 
 const page = () => {
-    // Hostego – Simplify Your Hostel Life"
-
-
-    let cashfree;
-    var initializeSDK = async function () {
-        cashfree = await load({
-            mode: process.env.NODE_ENV == "production" ? "production" : "sandbox",
-        });
-    };
-    initializeSDK();
-
 
 
     const [openAddressList, setOpenAddressList] = useState(false);
@@ -90,7 +79,7 @@ const page = () => {
     const [showPaymentDrawer, setShowPaymentDrawer] = useState(false);
 
     const dispatch = useDispatch()
-    const { cartData, userWallet } = useSelector((state) => state.user)
+    const { cartData, userWallet, userAccount } = useSelector((state) => state.user)
     const router = useRouter()
 
     // Calculate wallet status
@@ -261,6 +250,71 @@ const page = () => {
     };
 
 
+    const handleRazorpayPayment = async () => {
+        try {
+            setPaymentStatus('processing')
+            const { data } = await axiosClient.post('/api/order', {
+                address_id: selectedAddress?.address_id,
+                cooking_requests: cookingRequests
+            })
+
+            const response = await axiosClient.post(`/api/payment/razorpay`, {
+                order_id: data?.order_id
+            })
+
+            const { order_id, key } = response.data
+
+
+            await doRazorpayPayment(order_id, data.final_order_value, key, data.order_id)
+        } catch (error) {
+            console.log("error", error)
+        }
+    }
+
+    const doRazorpayPayment = async (order_id, orderAmount, key, hostego_order_id) => {
+        // 2. Load Razorpay script
+        const loaded = await new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+
+        if (!loaded) {
+            alert('Failed to load Razorpay SDK. Are you online?');
+            return;
+        }
+
+        // 3. Configure checkout
+        const options = {
+            key, // from backend
+            amount: orderAmount * 100,
+            currency: "INR",
+            name: 'Hostego',
+            description: 'Pay for order',
+            order_id,
+            handler: async function (response) {
+                console.log('Payment response:', response);
+                await tryRazorpayPaymentStatus(hostego_order_id, response)
+                setPaymentStatus('success')
+                router.push(`/orders/${hostego_order_id}`)
+            },
+            prefill: {
+                name: userAccount?.first_name + userAccount?.last_name,
+                email: 'you@example.com',
+                contact: userAccount?.mobile_number,
+            },
+            theme: {
+                color: '#9333ea',
+            },
+        };
+
+        const rzp = new (window).Razorpay(options);
+        rzp.open();
+
+
+    }
 
     if (isPageLoading) {
         return <HostegoLoader />
@@ -527,12 +581,13 @@ const page = () => {
                             <button
                                 onClick={() => {
                                     setShowPaymentDrawer(false);
-                                    router.push("/wallet")
+                                    handleRazorpayPayment()
 
                                 }}
                                 className="w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium  transition-colors flex items-center justify-center gap-2"
                             >
-                                Add Money
+                                {/* Add Money */}
+                                Pay Online
                                 <ArrowRight size={18} />
                             </button>
                         ) : (

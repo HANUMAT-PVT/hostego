@@ -266,3 +266,40 @@ export const tryPaymentStatus = (order_id, maxAttempts = 3, delay = 2500) => {
     }, delay);
   });
 };
+
+
+export const tryRazorpayPaymentStatus = (order_id,response, maxAttempts = 3, delay = 2500) => {
+    console.log(order_id,response,"hello orde_id , response")
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+
+    const interval = setInterval(async () => {
+      try {
+        attempts++;
+
+        const result = await axiosClient.post(
+          `/api/payment/razorpay/verify-payment`,
+          {
+            order_id: order_id,
+            razorpay_order_id:response.razorpay_order_id,
+            razorpay_payment_id:response.razorpay_payment_id,
+            razorpay_signature:response.razorpay_signature
+          }
+        );
+
+        if (result?.data?.response?.order_status == "PAID") {
+          clearInterval(interval);
+          resolve(result);
+        } else if (attempts >= maxAttempts) {
+          clearInterval(interval);
+          reject(
+            new Error("Max attempts reached. Payment details not available.")
+          );
+        }
+      } catch (err) {
+        clearInterval(interval);
+        reject(err);
+      }
+    }, delay);
+  });
+};

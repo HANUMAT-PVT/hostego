@@ -5,7 +5,10 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 	natsclient "backend-hostego/nats"
+	"crypto/hmac"
+	"crypto/sha256"
 
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -14,8 +17,13 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v3"
+	razorpay "github.com/razorpay/razorpay-go"
 	"gorm.io/gorm"
 )
+
+var rz_key_id = config.GetEnv("RAZORPAY_KEY_ID_")
+var rz_key_secret = config.GetEnv("RAZORPAY_KEY_SECRET_")
+var rz_client = razorpay.NewClient(rz_key_id, rz_key_secret)
 
 func InitiatePayment(c fiber.Ctx) error {
 	userId := c.Locals("user_id").(int)
@@ -143,7 +151,7 @@ func InitiatePayment(c fiber.Ctx) error {
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
 	}
-	natsclient.SendMessageToUsersByRole(orderManagerRoles,"New Order Placed", "Please check the details and take the necessary action.")
+	natsclient.SendMessageToUsersByRole(orderManagerRoles, "New Order Placed", "Please check the details and take the necessary action.")
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Payment Completed", "payment_transaction": paymentTransaction, "order": order, "wallet_transaction": walletTransaction})
 }
@@ -510,9 +518,231 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
 	}
-	natsclient.SendMessageToUsersByRole(orderManagerRoles,"New Order Placed", "Please check the details and take the necessary action.")
+	natsclient.SendMessageToUsersByRole(orderManagerRoles, "New Order Placed", "Please check the details and take the necessary action.")
 	log.Print("Payload sent to the frontend")
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Payment Completed", "payment_transaction": paymentTransaction, "order": order, "wallet_transaction": walletTransaction, "response": cashfreeResp})
 
+}
+
+func InitateRazorpayPaymentOrder(c fiber.Ctx) error {
+
+	user_id := c.Locals("user_id").(int)
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+	tx := database.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	var orderRequest struct {
+		OrderId int `json:"order_id"`
+	}
+	var paymentTransaction models.PaymentTransaction
+
+	err := c.Bind().JSON(&orderRequest)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	var user models.User
+	if err := tx.First(&user, "user_id = ?", user_id).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	var order models.Order
+	if err := tx.First(&order, "order_id = ?", orderRequest.OrderId).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	data := map[string]interface{}{
+		"amount":   order.FinalOrderValue * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+		"currency": "INR",
+		"receipt":  "some_receipt_id",
+	}
+	fmt.Print("rz_client", rz_key_id, "client secret", rz_key_secret)
+	body, err := rz_client.Order.Create(data, nil)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to create order", "message": err.Error()})
+	}
+	fmt.Print("created order")
+	paymentTransaction.OrderId = orderRequest.OrderId
+	paymentTransaction.UserId = user_id
+	paymentTransaction.Amount = order.FinalOrderValue
+	paymentTransaction.PaymentStatus = "pending"
+	paymentTransaction.PaymentMethod = "UPI"
+	paymentTransaction.PaymentOrderId = body["id"].(string)
+
+	if err := tx.Create(&paymentTransaction).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
+
+	if err := tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"order_id": body["id"],
+		"amount":   order.FinalOrderValue,
+		"currency": "INR",
+		"key":      rz_key_id,
+	})
+
+}
+
+func VerifyRazorpayPayment(c fiber.Ctx) error {
+
+	type OrderRequest struct {
+		OrderID           int    `json:"order_id"` //Only accept Order ID, not amount
+		RazorpayOrderID   string `json:"razorpay_order_id"`
+		PaymentID         string `json:"razorpay_payment_id"`
+		RazorpaySignature string `json:"razorpay_signature"`
+	}
+
+	var order models.Order
+
+	var request OrderRequest
+
+	var cartItem models.CartItem
+
+	// cf_order_id := c.Params("cf_order_id")
+
+	tx := database.DB.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if err := c.Bind().JSON(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	var paymentTransaction models.PaymentTransaction
+
+	if err := tx.Where("order_id=?", request.OrderID).First(&paymentTransaction).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	// here razorpay secret
+
+	if VerifyRazorpaySignature(request.RazorpayOrderID, request.PaymentID, request.RazorpaySignature, rz_key_secret) != true {
+
+		return c.Status(400).JSON(fiber.Map{"error": "Signature verification failed"})
+	}
+
+	if err := tx.First(&order, "order_id=?", request.OrderID).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	if order.OrderStatus != "pending" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Order is already Verifed and Placed !"})
+	}
+
+	totalAmountToDeduct := order.FinalOrderValue
+
+	var walletTransaction models.WalletTransaction
+
+	walletTransaction.Amount = totalAmountToDeduct
+	walletTransaction.TransactionType = "debit"
+	walletTransaction.UserId = order.UserId
+	walletTransaction.TransactionStatus = "success"
+
+	if err := tx.Create(&walletTransaction).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	paymentTransaction.PaymentStatus = "success"
+	order.OrderStatus = "placed"
+
+	if err := tx.Save(&paymentTransaction).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
+
+	if err := tx.Preload("User").Where("order_id=?", request.OrderID).Save(&order).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	if err := tx.Where("user_id = ?", order.UserId).Delete(&cartItem).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove cart items"})
+	}
+
+	// Create order items from cart items
+	var orderItems []models.CartItem
+	if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse order items"})
+	}
+
+	// Store each cart item as an order item
+	for _, item := range orderItems {
+		orderItem := models.OrderItem{
+			OrderId:   order.OrderId,
+			ProductId: item.ProductId,
+			Quantity:  item.Quantity,
+			SubTotal:  item.SubTotal,
+			UserId:    order.UserId,
+		}
+
+		if err := tx.Create(&orderItem).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		}
+
+		// Update product stock
+		if err := tx.Model(&models.Product{}).
+			Where("product_id = ?", item.ProductId).
+			Update("stock_quantity", gorm.Expr("stock_quantity - ?", item.Quantity)).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		}
+	}
+
+	// Mark cart items as deleted
+	if err := tx.
+		Where("user_id = ?", order.UserId).
+		Delete(&models.CartItem{}).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete cart items"})
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
+	}
+	natsclient.SendMessageToUsersByRole(orderManagerRoles, "New Order Placed", "Please check the details and take the necessary action.")
+	log.Print("Payload sent to the frontend")
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Payment Completed", "payment_transaction": paymentTransaction, "order": order, "wallet_transaction": walletTransaction, "response": fiber.Map{"order_status": "PAID"}})
+
+}
+
+func VerifyRazorpaySignature(orderID, paymentID, razorpaySignature, secret string) bool {
+	// Concatenate order_id and payment_id as per Razorpay docs
+	data := orderID + "|" + paymentID
+
+	// Generate HMAC-SHA256
+	h := hmac.New(sha256.New, []byte(secret))
+	h.Write([]byte(data))
+	generatedSignature := hex.EncodeToString(h.Sum(nil))
+
+	// Compare signatures
+	return generatedSignature == razorpaySignature
 }
