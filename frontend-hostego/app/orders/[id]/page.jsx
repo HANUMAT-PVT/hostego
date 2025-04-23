@@ -193,10 +193,10 @@ const OrderDetailsPage = () => {
         try {
             setIsLoading(true)
             const { data } = await axiosClient.get(`/api/order/${id}`)
+            setOrder(data)
 
             await verifythePendingOrder(data)
 
-            setOrder(data)
         } catch (error) {
             console.error('Error fetching order:', error)
         } finally {
