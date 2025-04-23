@@ -56,6 +56,7 @@ func main() {
 	routes.MessMenuRoutes(app)
 	routes.OrderItemRoutes(app)
 	routes.DashboardRoutes(app)
+	routes.PaymentWebhookRoutes(app)
 	// Default Route
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "Welcome to the Hostego Backend Server!"})
