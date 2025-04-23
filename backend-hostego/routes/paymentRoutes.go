@@ -31,5 +31,7 @@ func PaymentRoutes(app *fiber.App) {
 
 
 func PaymentWebhookRoutes(app * fiber.App){
-	// webhookRoutes := app.Group("/api/payment/webhook")
+	webhookRoutes := app.Group("/api/razorpay/webhook")
+	// https://backend.hostego.in/api/razorpay/webhook/payment/verify
+	webhookRoutes.Post("/payment/verify",controllers.RazorpayWebhookHandler);
 }
