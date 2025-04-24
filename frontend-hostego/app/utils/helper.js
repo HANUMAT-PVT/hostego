@@ -200,21 +200,32 @@ export const transformOrdersByDate = (orders) => {
 };
 
 export const convertToCSV = (data) => {
-  if (!data || !data.length) return "";
+  if (!Array.isArray(data) || data.length === 0) return "";
 
-  // Define CSV headers based on your SearchQuery model
-  const headers = ["Search Test", "User ID", "Created At"];
+  // Dynamically get all unique keys (even if some keys are missing in some rows)
+  const headersSet = new Set();
+  data.forEach((item) => Object.keys(item).forEach((key) => headersSet.add(key)));
+  const headers = Array.from(headersSet);
 
-  // Convert data to CSV rows
-  const rows = data.map((item) => [
-    item?.query,
-    item?.user_id,
-    formatDate(new Date(item.created_at), "yyyy-MM-dd HH:mm:ss"),
-  ]);
+  // Helper to stringify values safely
+  const safeStringify = (value) => {
+    if (value === null || value === undefined) return "";
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  };
 
-  // Combine headers and rows
-  return [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
+  // Build CSV rows
+  const rows = data.map((item) =>
+    headers.map((key) => {
+      const raw = safeStringify(item[key]);
+      const safe = raw.replace(/"/g, '""'); // escape quotes
+      return `"${safe}"`; // wrap in quotes for CSV
+    }).join(",")
+  );
+
+  return [headers.join(","), ...rows].join("\n");
 };
+
 
 // Helper function to download CSV
 export const downloadCSV = (csvContent, fileName) => {
