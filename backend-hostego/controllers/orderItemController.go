@@ -122,11 +122,11 @@ func FetchOrderItems(c fiber.Ctx) error {
 	endDate := c.Query("end_date")
 
 	if startDate != "" && endDate != "" {
-		query = query.Where("order_items.created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
+		query = query.Where("orders.created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
 	}
-	var orderItems []models.OrderItem
+	var orders []models.Order
 
-	query.Find(&orderItems).Order("created_at DESC")
+	query.Preload("Product").Preload("Product.Shop").Where("order_status=?","delivered").Find(&orders).Order("created_at DESC")
 
-	return c.Status(fiber.StatusOK).JSON(orderItems)
+	return c.Status(fiber.StatusOK).JSON(orders)
 }
