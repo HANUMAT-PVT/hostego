@@ -126,7 +126,7 @@ func FetchOrderItems(c fiber.Ctx) error {
 	}
 	var orders []models.Order
 
-	query.Preload("Product").Preload("Product.Shop").Where("order_status=?","delivered").Order("created_at asc").Find(&orders)
+	query.Preload("Product").Preload("User").Preload("Product.Shop").Where("order_status=?","delivered").Order("created_at ASC").Find(&orders)
 
 	return c.Status(fiber.StatusOK).JSON(orders)
 }
