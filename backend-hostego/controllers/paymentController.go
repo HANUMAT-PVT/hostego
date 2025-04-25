@@ -749,28 +749,30 @@ func VerifyRazorpaySignature(orderID, paymentID, razorpaySignature, secret strin
 
 func RazorpayWebhookHandler(c fiber.Ctx) error {
 
-	// 1. Verify signature
-	signature := c.Get("X-Razorpay-Signature")
 	body := c.Body()
-	// 2. Parse payload
+
 	var payload map[string]interface{}
 	if err := json.Unmarshal(body, &payload); err != nil {
 		return c.Status(500).SendString("Failed to parse webhook body")
 	}
 
 	event := payload["event"].(string)
+
 	if event == "payment.captured" {
 		payment := payload["payload"].(map[string]interface{})["payment"].(map[string]interface{})["entity"].(map[string]interface{})
 
 		orderID := payment["order_id"].(string)
-		paymentID := payment["id"].(string)
 
+		body, err := rz_client.Order.Fetch(orderID, nil, nil)
 		tx := database.DB.Begin()
 
 		var paymentTransaction models.PaymentTransaction
 
-		if paymentTransaction.PaymentStatus == "success" {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Payment Already Completed"})
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		}
+		if body["status"] != "paid" {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Order is not paid  yet "})
 		}
 
 		defer func() {
@@ -792,22 +794,21 @@ func RazorpayWebhookHandler(c fiber.Ctx) error {
 
 		// cf_order_id := c.Params("cf_order_id"
 
-		if err := tx.Where("order_id=?", paymentTransaction.OrderId).First(&paymentTransaction).Error; err != nil {
+		if err := tx.Where("payment_order_id=?", orderID).First(&paymentTransaction).Error; err != nil {
 			tx.Rollback()
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 		}
-		// here razorpay secret
 
-		if VerifyRazorpaySignature(orderID, paymentID, signature, rz_key_secret) != true {
-
-			return c.Status(400).JSON(fiber.Map{"error": "Signature verification failed"})
+		if paymentTransaction.PaymentStatus == "success" {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Payment Already Completed"})
 		}
 
 		if err := tx.First(&order, "order_id=?", paymentTransaction.OrderId).Error; err != nil {
 			tx.Rollback()
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 		}
-		if order.OrderStatus != "pending" {
+
+		if order.OrderStatus != "pending" && order.OrderStatus == "placed" {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Order is already Verifed and Placed !"})
 		}
 
