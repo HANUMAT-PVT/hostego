@@ -134,12 +134,17 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 			shippingFee = 19
 		}
 	} else {
-		charge := totalItemSubTotal * 0.15
-		if charge >= 39.0 {
-			shippingFee = 39.0
+		if totalItemSubTotal > 350 {
+			shippingFee = 49.0
 		} else {
-			shippingFee += math.Round(charge*100) / 100 // Round to 2 decimal places
+			charge := totalItemSubTotal * 0.15
+			if charge >= 39.0 {
+				shippingFee = 39.0
+			} else {
+				shippingFee += math.Round(charge*100) / 100 // Round to 2 decimal places
+			}
 		}
+		
 	}
 	actualShippingFee := shippingFee
 
