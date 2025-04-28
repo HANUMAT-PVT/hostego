@@ -253,6 +253,25 @@ const Dashboard = ({ dashboardStats }) => {
                 setIsDownloading(false)
             }
         }
+        const handleTotalItemsSoldListDownload=async()=>{
+            try {
+                setIsDownloading(true)
+    
+                // Fetch search queries
+                
+    
+                // Convert the data to CSV format
+                const csvData = convertToCSV(product_stats)
+    
+                // Create and download the CSV file
+                downloadCSV(csvData, `products-items-stats-${formatDate(new Date(), 'yyyy-MM-dd')}.csv`)
+            } catch (error) {
+    
+            } finally {
+                setIsDownloading(false)
+            }
+        }
+
     return (
         <div className="p-6 max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-6">
@@ -514,6 +533,22 @@ const Dashboard = ({ dashboardStats }) => {
                             'Download Order Item List'
                         )}
                     </button>
+                    <button
+                        onClick={handleTotalItemsSoldListDownload}
+                        disabled={isDownloading || !startDate || !endDate}
+                        className="bg-[var(--primary-color)] text-white px-6 py-2 rounded-lg disabled:opacity-50 
+                                 flex items-center gap-2"
+                    >
+                        {isDownloading ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                Downloading...
+                            </>
+                        ) : (
+                            'Download Products Item List'
+                        )}
+                    </button>
+                    {/* handleTotalItemsSoldListDownload */}
                 </div>
             </div>
         </div>
