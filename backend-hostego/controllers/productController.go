@@ -3,6 +3,7 @@ package controllers
 import (
 	"backend-hostego/database"
 	"backend-hostego/models"
+	"encoding/json"
 
 	"strconv"
 
@@ -10,20 +11,58 @@ import (
 )
 
 func CreateNewProduct(c fiber.Ctx) error {
-	user_id := c.Locals("user_id")
-	if user_id == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
-	}
-	if user_id == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
-	}
-	var product models.Product
-	if err := c.Bind().JSON(&product); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
-	database.DB.Create(&product)
-	return c.Status(fiber.StatusCreated).JSON(product)
-
+	
+		userID := c.Locals("user_id")
+		if userID == 0 {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+		}
+	
+		var product models.Product
+		if err := c.Bind().JSON(&product); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		}
+		var tags []string
+		if err := json.Unmarshal(product.Tags, &tags); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid tags format"})
+		}
+		
+		
+		// Check if tags contain "food"
+		hasFoodTag := false
+		for _, tag := range tags {
+			if tag == "food" {
+				hasFoodTag = true
+				break
+			}
+		}
+	
+		// Set selling price based on food_price if "food" tag is present
+		if hasFoodTag {
+			switch {
+			case product.FoodPrice > 25 && product.FoodPrice < 50:
+				product.SellingPrice = product.FoodPrice + 5
+			case product.FoodPrice >= 50 && product.FoodPrice <= 100:
+				product.SellingPrice = product.FoodPrice + 10
+			case product.FoodPrice >= 100 && product.FoodPrice <= 150:
+				product.SellingPrice = product.FoodPrice + 15
+			case product.FoodPrice >= 150:
+				product.SellingPrice = product.FoodPrice + 20
+			default:
+				product.SellingPrice = product.FoodPrice
+			}
+		} else {
+			// if no "food" tag, just set selling_price same as food_price (optional)
+			product.SellingPrice = product.FoodPrice
+		}
+	
+		// Save product
+		if err := database.DB.Create(&product).Error; err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create product"})
+		}
+	
+		return c.Status(fiber.StatusCreated).JSON(product)
+	
+	
 }
 
 func FetchProducts(c fiber.Ctx) error {

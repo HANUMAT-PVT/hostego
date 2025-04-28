@@ -34,7 +34,7 @@ func AddProductInUserCart(c fiber.Ctx) error {
 	if result.Error == nil {
 		// Item exists, update quantity
 		existingItem.Quantity += cartItem.Quantity
-		existingItem.SubTotal = float64(existingItem.Quantity) * product.FoodPrice
+		existingItem.SubTotal = float64(existingItem.Quantity) * product.SellingPrice
 
 		if err := database.DB.Save(&existingItem).Error; err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -47,7 +47,7 @@ func AddProductInUserCart(c fiber.Ctx) error {
 
 	// Create new cart item if it doesn't exist
 	cartItem.UserId = user_id.(int)
-	cartItem.SubTotal = float64(cartItem.Quantity) * product.FoodPrice
+	cartItem.SubTotal = float64(cartItem.Quantity) * product.SellingPrice;
 
 	if err := database.DB.Create(&cartItem).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -93,7 +93,7 @@ func UpdateProductInUserCart(c fiber.Ctx) error {
 	if err := database.DB.First(&product, "product_id = ?", cartItem.ProductId).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 	}
-	cartItem.SubTotal = float64(cartItem.Quantity) * product.FoodPrice
+	cartItem.SubTotal = float64(cartItem.Quantity) * product.SellingPrice
 
 	// Save the updates
 	if err := database.DB.Save(&cartItem).Error; err != nil {
