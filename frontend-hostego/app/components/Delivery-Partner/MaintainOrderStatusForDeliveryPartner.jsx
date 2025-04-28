@@ -120,6 +120,22 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
     return !['reached_door', 'delivered', 'cancelled'].includes(status?.toLowerCase());
   };
 
+  const findOutCorrectDeliveryPartnerCost = (orderItems) => {
+    let totalCost = 0;
+  
+    for (let shop of orderItems) {
+      for (let product of shop.shop_products) {
+        const quantity = product.quantity || 0;
+        const foodPrice = product.product_item?.food_price || 0;
+  
+        totalCost += quantity * foodPrice;
+      }
+    }
+  
+    return totalCost;
+  };
+  
+
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
 
@@ -241,7 +257,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
                         {product?.quantity} × ₹{product?.product_item?.food_price}
                       </span>
                       <span className="text-sm font-medium text-[var(--primary-color)]">
-                        ₹{product?.sub_total}
+                        ₹{product?.quantity*product?.product_item?.food_price}
                       </span>
                     </div>
                   </div>
@@ -267,7 +283,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
 
           title={"Total Order Amount"}
           icon={ShoppingBag}
-          count={`₹ ${activeOrder?.final_order_value - activeOrder?.shipping_fee}`}
+          count={`₹ ${findOutCorrectDeliveryPartnerCost(activeOrder?.order_items||[])}`}
 
           defaultOpen={false}
         >

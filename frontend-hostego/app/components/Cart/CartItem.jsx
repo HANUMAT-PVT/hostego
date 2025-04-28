@@ -50,7 +50,7 @@ const CartItem = ({ product_item, quantity, cart_item_id, fetchCartAgain }) => {
                                 {product_item?.product_name} <span className='text-gray-600 text-xs'>( {product_item?.shop?.shop_name} )</span>
                             </h3>
                             <p className='text-sm font-semibold text-gray-500'>
-                                ₹{product_item?.food_price} × {quantity}
+                                ₹{product_item?.selling_price} × {quantity}
                             </p>
                         </div>
                     </div>
@@ -84,7 +84,7 @@ const CartItem = ({ product_item, quantity, cart_item_id, fetchCartAgain }) => {
 
                     {/* Total Price */}
                     <p className='font-semibold text-[var(--primary-color)]'>
-                        ₹{product_item?.food_price * cartItemQuantity}
+                        ₹{product_item?.selling_price * cartItemQuantity}
                     </p>
                 </div>
             </div>
