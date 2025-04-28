@@ -155,30 +155,77 @@ func FetchProducts(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(products)
 }
 
+
 func UpdateProductById(c fiber.Ctx) error {
-	user_id := c.Locals("user_id")
-	if user_id == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
-	}
-	if user_id == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+	userID := c.Locals("user_id")
+	if userID == 0 {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 
-	product_id := c.Params("id")
+	productID := c.Params("id")
 	var product models.Product
 
-	// First find existing product
-	if err := database.DB.First(&product, "product_id = ?", product_id).Error; err != nil {
+	// Find existing product
+	if err := database.DB.First(&product, "product_id = ?", productID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 	}
 
-	// Get update data and update directly
-	if err := c.Bind().JSON(&product); err != nil {
+	// Parse incoming update data into a separate struct
+	var updateData models.Product
+	if err := c.Bind().JSON(&updateData); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	// Save all changes
-	if err := database.DB.Save(&product).Error; err != nil {
+	// ✅ Unmarshal current product.Tags if needed
+	var existingTags []string
+	if err := json.Unmarshal(product.Tags, &existingTags); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid current tags format"})
+	}
+
+	// ✅ Unmarshal updateData.Tags if needed
+	var incomingTags []string
+	if err := json.Unmarshal(updateData.Tags, &incomingTags); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid incoming tags format"})
+	}
+
+	// ✅ Check if "food" tag exists
+	hasFoodTag := false
+
+	for _, tag := range existingTags {
+		if tag == "food" {
+			hasFoodTag = true
+			break
+		}
+	}
+	if !hasFoodTag {
+		for _, tag := range incomingTags {
+			if tag == "food" {
+				hasFoodTag = true
+				break
+			}
+		}
+	}
+
+	// ✅ Calculate selling price
+	if hasFoodTag {
+		switch {
+		case updateData.FoodPrice > 25 && updateData.FoodPrice < 50:
+			updateData.SellingPrice = updateData.FoodPrice + 5
+		case updateData.FoodPrice >= 50 && updateData.FoodPrice <= 100:
+			updateData.SellingPrice = updateData.FoodPrice + 10
+		case updateData.FoodPrice >= 100 && updateData.FoodPrice <= 150:
+			updateData.SellingPrice = updateData.FoodPrice + 15
+		case updateData.FoodPrice > 150:
+			updateData.SellingPrice = updateData.FoodPrice + 20
+		default:
+			updateData.SellingPrice = updateData.FoodPrice
+		}
+	} else {
+		updateData.SellingPrice = updateData.FoodPrice
+	}
+
+	// ✅ Update the product
+	if err := database.DB.Model(&product).Updates(updateData).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
