@@ -14,6 +14,7 @@ const ProductCard = ({
     product_id,
     isAlreadyInCart,
     food_category,
+    selling_price,
     shop
 }) => {
     const [isInCart, setIsInCart] = useState(isAlreadyInCart);
@@ -91,7 +92,7 @@ const ProductCard = ({
                 <div className='flex items-center justify-between'>
                     <div>
                         <span className={`text-lg font-semibold ${isShopClosed ? 'text-gray-400' : 'text-gray-900'}`}>
-                            ₹{food_price}
+                            ₹{selling_price}
                         </span>
                     </div>
 

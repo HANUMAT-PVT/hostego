@@ -266,7 +266,7 @@ const OrderCard = ({ order, onRefresh }) => {
                                     <p className="font-medium text-xs text-gray-600">{item?.product_item?.shop?.shop_name}</p>
                                     <div className="flex items-center gap-2 mt-1">
                                         <span eid className="text-sm text-gray-600">
-                                            {item?.quantity} × ₹{item?.product_item?.food_price}
+                                            {item?.quantity} × ₹{item?.product_item?.selling_price}
                                         </span>
                                         <span className="text-sm font-medium text-[var(--primary-color)]">
                                             ₹{item?.sub_total}

@@ -273,7 +273,7 @@ const OrderDetailsPage = () => {
                                         {item?.product_item?.weight}
                                     </p>
                                     <div className="flex items-center gap-2 mt-1">
-                                        <span className="text-sm">₹{item?.product_item?.food_price}</span>
+                                        <span className="text-sm">₹{item?.product_item?.selling_price}</span>
                                         <span className="text-gray-400">×</span>
                                         <span className="text-sm">{item?.quantity}</span>
                                     </div>
