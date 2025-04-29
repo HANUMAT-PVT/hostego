@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Phone, Navigation, Clock, Check, ChevronDown, ChevronUp, ShoppingBag, ArrowRight, IndianRupee, User, Package, MapPin, AlertCircle } from 'lucide-react';
-import { transformOrder } from '../../utils/helper'
+import { findOutCorrectDeliveryPartnerCost, transformOrder } from '../../utils/helper'
 import SliderStatusTracker from "./SliderStatusTracker"
 import StatusTimeLine from '../Orders/StatusTimeLine';
 import ConfirmationPopup from '../ConfirmationPopup';
@@ -120,21 +120,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
     return !['reached_door', 'delivered', 'cancelled'].includes(status?.toLowerCase());
   };
 
-  const findOutCorrectDeliveryPartnerCost = (orderItems) => {
-    let totalCost = 0;
-  
-    for (let shop of orderItems) {
-      for (let product of shop.shop_products) {
-        const quantity = product.quantity || 0;
-        const foodPrice = product.product_item?.food_price || 0;
-  
-        totalCost += quantity * foodPrice;
-      }
-    }
-  
-    return totalCost;
-  };
-  
+
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
