@@ -649,7 +649,7 @@ func VerifyRazorpayPayment(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 	if order.OrderStatus != "pending" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Order is already Verifed and Placed !"})
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": "Order is already Verifed and Placed !"})
 	}
 
 	totalAmountToDeduct := order.FinalOrderValue
