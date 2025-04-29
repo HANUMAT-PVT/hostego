@@ -314,3 +314,19 @@ export const tryRazorpayPaymentStatus = (order_id,response, maxAttempts = 3, del
     }, delay);
   });
 };
+
+
+export const findOutCorrectDeliveryPartnerCost = (orderItems) => {
+  let totalCost = 0;
+
+  for (let shop of orderItems) {
+    for (let product of shop.shop_products) {
+      const quantity = product.quantity || 0;
+      const foodPrice = product.product_item?.food_price || 0;
+
+      totalCost += quantity * foodPrice;
+    }
+  }
+
+  return totalCost;
+};

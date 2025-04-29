@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import { Package, User, MapPin, IndianRupee, Clock, ChevronDown, ChevronUp, Phone, CheckCircle2, AlertCircle, Search, Filter, RefreshCw } from 'lucide-react'
-import { formatDate } from '@/app/utils/helper'
+import { findOutCorrectDeliveryPartnerCost, formatDate } from '@/app/utils/helper'
 import ConfirmationPopup from '../ConfirmationPopup'
 import axiosClient from "@/app/utils/axiosClient"
 import { useSelector } from "react-redux"
@@ -266,7 +266,7 @@ const OrderCard = ({ order, onRefresh }) => {
                                     <p className="font-medium text-xs text-gray-600">{item?.product_item?.shop?.shop_name}</p>
                                     <div className="flex items-center gap-2 mt-1">
                                         <span eid className="text-sm text-gray-600">
-                                            {item?.quantity} × ₹{item?.product_item?.selling_price}
+                                            {item?.quantity} × ₹{item?.product_item?.food_price}
                                         </span>
                                         <span className="text-sm font-medium text-[var(--primary-color)]">
                                             ₹{item?.sub_total}
@@ -285,7 +285,7 @@ const OrderCard = ({ order, onRefresh }) => {
                         <div className="bg-gray-50 p-4 rounded-xl space-y-3 mt-4">
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Items Total</span>
-                                <span className="font-medium">₹{order?.order_items.reduce((acc, item) => acc + item.sub_total, 0)}</span>
+                                <span className="font-medium">₹{findOutCorrectDeliveryPartnerCost(order?.order_items)}</span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Delivery Fee</span>
