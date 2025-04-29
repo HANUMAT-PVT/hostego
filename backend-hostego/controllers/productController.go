@@ -225,7 +225,7 @@ func UpdateProductById(c fiber.Ctx) error {
 	}
 
 	// ✅ Update the product
-	if err := database.DB.Model(&product).Updates(updateData).Error; err != nil {
+	if err := database.DB.Model(&product).Save(updateData).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
