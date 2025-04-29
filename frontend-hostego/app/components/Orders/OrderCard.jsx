@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import { Package, User, MapPin, IndianRupee, Clock, ChevronDown, ChevronUp, Phone, CheckCircle2, AlertCircle, Search, Filter, RefreshCw } from 'lucide-react'
-import { findOutCorrectDeliveryPartnerCost, formatDate } from '@/app/utils/helper'
+import { formatDate } from '@/app/utils/helper'
 import ConfirmationPopup from '../ConfirmationPopup'
 import axiosClient from "@/app/utils/axiosClient"
 import { useSelector } from "react-redux"
@@ -285,7 +285,7 @@ const OrderCard = ({ order, onRefresh }) => {
                         <div className="bg-gray-50 p-4 rounded-xl space-y-3 mt-4">
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Items Total</span>
-                                <span className="font-medium">₹{findOutCorrectDeliveryPartnerCost(order?.order_items)}</span>
+                                <span className="font-medium">₹{order?.order_items?.reduce((acc, item) => acc + item.sub_total, 0)}</span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Delivery Fee</span>
