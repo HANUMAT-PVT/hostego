@@ -2,7 +2,6 @@ package config
 
 import (
 	"context"
-	"log"
 
 	firebase "firebase.google.com/go"
 	"google.golang.org/api/option"

@@ -1,0 +1,25 @@
+package logger
+
+type Logger interface {
+	Info(msg string)
+	Warn(msg string)
+	Error(msg string)
+	Fatal(msg string)
+	Debug(msg string)
+	Infof(msg string, args ...interface{})
+	Warnf(msg string, args ...interface{})
+	Errorf(msg string, args ...interface{})
+	Fatalf(msg string, args ...interface{})
+	Debugf(msg string, args ...interface{})
+	InfoCf(msg string)
+	WarnCf(msg string)
+	ErrorCf(msg string)
+	FatalCf(msg string)
+	DebugCf(msg string)
+	InfofCf(msg string, args ...interface{})
+	WarnfCf(msg string, args ...interface{})
+	ErrorfCf(msg string, args ...interface{})
+	FatalfCf(msg string, args ...interface{})
+	DebugfCf(msg string, args ...interface{})
+	AddFields(fields map[string]interface{})
+}

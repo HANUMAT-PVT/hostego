@@ -1,0 +1,147 @@
+acHOST_TYPE: "local"
+
+host:
+  ip: "0.0.0.0"
+  port: "8080"
+  type: "local"
+
+database:
+  postgres:
+    max_idle_connections: 2
+    max_open_connections: 10
+    max_connection_lifetime: 1       # maximum amount of time a connection may be reused (in hour)
+    source:
+      host: localhost
+      port: 5432
+      user: postgres
+      password: postgres
+      db_name: pro_backend
+
+aws:
+  region: "ap-southeast-1"
+
+kms:
+  key_id: "6031b77e-aec7-465d-8013-0c549436c3c3"
+
+redis_cluster:
+  host_cluster_url: "127.0.0.1:6379"
+  pool_size: 50
+
+interceptor-redis-cluster:
+  host: "0.0.0.0"
+  port: "6379"
+  pool_size:  200
+  min_idle_conns:  1
+  max_conn_age:  5
+
+interceptor_redis_cluster:
+  host_cluster_url: "0.0.0.0:6379"
+
+logging:
+  format: "text"
+  level: "info"
+cors:
+  origins: [ "http://localhost:8000","http://localhost:9000","https://cs-india-stage.coinswitch.co" ]
+
+server:
+  method_allows: [ "GET", "POST", "PUT", "DELETE" ]
+  header_allows: [ "Origin", "Content-Length", "Content-Type", "X-User-Platform", "X-User-Agent", "X-App-Version", "X-AUTH-TOKEN", "X-Request-ID" ]
+  exposed_headers: [ "Origin", "Content-Length", "Content-Type" ]
+  idle_timeout: 5    # in minutes
+  read_write_timeout: 150
+
+new_relic:
+  enabled: false
+  license: $NEW_RELIC_LICENSE_KEY
+  app_name: "drogon"
+
+db_config_timeout: 1
+
+admin:
+  token: $ADMIN_TOKEN
+
+drogon_service_auth_token:
+  token: "test"
+
+auth_service:
+  base_url: "http://auth-bk-stage.internal-prod.switchco.in/"
+  token: $AUTH_SERVICE_TOKEN
+
+cs_india:
+  base_url: "https://cs-india-uat.coinswitch.co"
+  auth_token: "XAltGqMJWFJIxdUVcB5VG34D8ElbaOLuQvR0zle7hx0Dwrdef4BuYx4QYSHA3U6O"
+  portfolio_auth_token: "YnzZx1t1Twmk1gAANsICMQ"
+
+asset_service:
+  base_url: "https://uat-eks-proxy.coinswitch.co/asset-service"
+  auth_token: "995ddff75421a80c6b932292422ab336"
+  stream_enable: true
+  redis_host: $ASSET_SERVICE_REDIS_HOST
+  stream_name: $ASSET_SERVICE_STREAM_NAME
+
+rate_service:
+  base_url: "https://cs-india-uat.coinswitch.co/rate-service/"
+  token: $RATE_SERVICE_TOKEN
+
+proxy:
+  username: "csk-user"
+  password: "Lh7uCq$DrPW$GFBH"
+  url: "squid-proxy-1914806168.ap-south-1.elb.amazonaws.com:3128"
+
+binance:
+  api_key: ""
+  api_secret: ""
+  base_url: "https://testnet.binancefuture.com"
+
+zappa_token: ""
+
+ledger:
+  secret: "e60087d8-dd6b-11eb-ba80-0242ac130004"
+  endpoint: "http://frontend-coinswitch-dev-alb-1482246455.ap-southeast-1.elb.amazonaws.com:8080"
+  read_only_endpoint : "http://frontend-coinswitch-dev-alb-1482246455.ap-southeast-1.elb.amazonaws.com:8080"
+
+futures_user_service:
+  region: ap-south-1
+  account_id: 162877423038
+  subscription_queue: futures-event-subscription
+
+tds_service:
+  base_url: "https://uat-eks-proxy.coinswitch.co/tds-service"
+  auth_token: "be780f5ceb1ed17d50304b88e6e10276"
+
+config_service:
+  config_reader:
+    host: "https://uat-eks-proxy.coinswitch.co/config-service"
+    host_type: "uat"
+    tenant: "CRYPTO"
+    service_name: "drogon"
+    timeout: 10
+    local_file_path: "configs/localConfig.json"
+  config_writer:
+    host: "https://uat-eks-proxy.coinswitch.co/config-service"
+    host_type: "uat"
+    tenant: "CRYPTO"
+    service_name: "drogon"
+    timeout: 2
+
+order_service:
+  base_url: "https://uat-eks-proxy.coinswitch.co/order-service"
+  api_key_id: "CSK"
+  api_key_secret: "OS4e9fef52f879e0d2174c1b8bb7819426"
+  tenant: "CRYPTO"
+
+custom_metrics:
+  sample_percentage: 100
+
+alpha_service:
+  base_url: "https://uat-eks-proxy.coinswitch.co/alpha-service"
+  auth_token: "177ab55d818903532449e1157f45fdaaf61e7a43"
+
+pro_backend:
+  base_url: "https://uat-eks-proxy.coinswitch.co/pro-backend"
+  auth_token: "test"
+
+futures_os:
+  base_url: "https://uat-eks-proxy.coinswitch.co/futures-os"
+  auth_token: ""
+  timeout: 10

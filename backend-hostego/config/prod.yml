@@ -1,0 +1,123 @@
+HOST_TYPE: "prod"
+
+host:
+  ip: "0.0.0.0"
+  port: "8080"
+  type: "prod"
+
+database:
+  postgres:
+    max_idle_connections: 50
+    max_open_connections: 100
+    max_connection_lifetime: 30       # maximum amount of time a connection may be reused (in hour)
+    source:
+      host: $POSTGRES_HOST
+      port: $POSTGRES_PORT
+      user: $POSTGRES_USER
+      password: $POSTGRES_PASSWORD
+      db_name: $POSTGRES_DB
+
+redis_cluster:
+  host_cluster_url: $REDIS_HOST
+  pool_size: 50
+
+interceptor-redis-cluster:
+  host: $INTERCEPTOR_REDIS_HOST
+  port: "6379"
+  pool_size:  200
+  min_idle_conns:  1
+  max_conn_age:  5
+
+logging:
+  format: "json"
+  level: "warn"
+
+cors:
+  origins: [ "https://cs-india.coinswitch.co" ]
+
+server:
+  method_allows: [ "GET", "POST", "PUT", "DELETE" ]
+  header_allows: [ "Origin", "Content-Length", "Content-Type", "X-User-Platform", "X-User-Agent", "X-App-Version", "X-AUTH-TOKEN", "X-Request-ID" ]
+  exposed_headers: [ "Origin", "Content-Length", "Content-Type" ]
+  idle_timeout: 5    # in minutes
+  read_write_timeout: 150
+
+new_relic:
+  enabled: true
+  license: $NEW_RELIC_LICENSE_KEY
+  app_name: "drogon"
+
+db_config_timeout: 300
+
+drogon_service_auth_token:
+  token: $DROGON_SER_AUTH_TOKEN
+
+admin:
+  token: $ADMIN_TOKEN
+
+auth_service:
+  base_url: "http://auth-bk.internal-prod.switchco.in/"
+  token: $AUTH_SERVICE_TOKEN
+
+rate_service:
+  base_url: "http://internal.coinswitch.co/rate-service"
+  token: $RATE_SERVICE_TOKEN
+
+cs_india:
+  base_url: "$CS_INDIA_BASE_URL"
+  auth_token: "$CS_INDIA_AUTH_TOKEN"
+  portfolio_auth_token: "$CS_INDIA_PORTFOLIO_AUTH_TOKEN"
+
+tds_service:
+  base_url: "$TDS_SERVICE_BASE_URL"
+  auth_token: "$TDS_SERVICE_AUTH_TOKEN"
+
+asset_service:
+  base_url: "$ASSET_SERVICE_URL"
+  auth_token: "$ASSET_AUTH_TOKEN"
+  stream_enable: true
+  redis_host: $ASSET_SERVICE_REDIS_HOST
+  stream_name: $ASSET_SERVICE_STREAM_NAME
+
+order_service:
+  base_url: $ORDER_SERVICE_BASE_URL
+  api_key_id: $ORDER_SERVICE_API_KEY_ID
+  api_key_secret: $ORDER_SERVICE_API_SECRET
+  tenant: $ORDER_SERVICE_TENANT
+
+zappa_token: $ZAPPA_TOKEN
+
+ledger:
+  secret: "$LEDGER_SECRET"
+  endpoint: "http://internal-prod-internal-loadbalancer-1935125771.ap-south-1.elb.amazonaws.com:8088"
+  read_only_endpoint : "http://internal-prod-internal-loadbalancer-1935125771.ap-south-1.elb.amazonaws.com:8088"
+
+custom_metrics:
+  sample_percentage: 100
+
+alpha_service:
+  base_url: $ALPHA_SERVICE_BASE_URL
+  auth_token: $ALPHA_SERVICE_AUTH_TOKEN
+
+config_service:
+  config_reader:
+    host: "$CONFIG_SERVICE_READER_HOST"
+    host_type: "$CONFIG_SERVICE_HOST_TYPE"
+    tenant: "$CONFIG_SERVICE_TENANT"
+    service_name: "$CONFIG_SERVICE_NAME"
+    timeout: 10
+  config_writer:
+    host: "$CONFIG_SERVICE_WRITER_HOST"
+    host_type: "$CONFIG_SERVICE_HOST_TYPE"
+    tenant: "$CONFIG_SERVICE_TENANT"
+    service_name: "$CONFIG_SERVICE_NAME"
+    timeout: 2
+
+pro_backend:
+  base_url: $PRO_BACKEND_SERVICE_URL
+  auth_token: $PRO_BACKEND_TOKEN
+
+futures_os:
+  base_url: $FUTURE_OS_URL
+  auth_token: $FUTURE_OS_TOKEN,
+  timeout: 10
