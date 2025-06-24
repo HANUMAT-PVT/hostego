@@ -14,10 +14,10 @@ import (
 var DB *gorm.DB
 
 func ConnectDataBase() {
-// hostego_user_dev for prod 
-// postgres for prod
-	dsn := "host=localhost user=postgres password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
-
+	// hostego_user_dev for prod
+	// postgres for prod
+	// dsn := "host=localhost user=postgres password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
+	dsn := "host=localhost user=hostego_user_dev password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -28,8 +28,8 @@ func ConnectDataBase() {
 	if err != nil {
 		log.Fatal("Failed to get underlying sql.DB:", err)
 	}
-	sqlDB.SetMaxOpenConns(10) // max total DB connections
-	sqlDB.SetMaxIdleConns(5)  // max idle connections
+	sqlDB.SetMaxOpenConns(10)               // max total DB connections
+	sqlDB.SetMaxIdleConns(5)                // max idle connections
 	sqlDB.SetConnMaxLifetime(1 * time.Hour) // max lifetime of a connection
 
 	DB = db
