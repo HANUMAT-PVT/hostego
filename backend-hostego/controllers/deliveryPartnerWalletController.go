@@ -4,10 +4,10 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func FetchDeliveryPartnerWallet(c fiber.Ctx) error {
+func FetchDeliveryPartnerWallet(c *fiber.Ctx) error {
 	deliveryPartnerId := c.Params("id")
 	user_id := c.Locals("user_id")
 	var deliveryPartnerWallet models.DeliveryPartnerWallet
@@ -29,7 +29,7 @@ func FetchDeliveryPartnerWallet(c fiber.Ctx) error {
 
 }
 
-func FetchDeliveryPartnerWalletTransactions(c fiber.Ctx) error {
+func FetchDeliveryPartnerWalletTransactions(c *fiber.Ctx) error {
 
 	deliveryPartnerId := c.Params("id")
 	user_id := c.Locals("user_id")
@@ -95,7 +95,7 @@ func AddEarningsToDeliveryPartnerWallet(currentOrder models.Order) error {
 	return nil
 }
 
-func CreateWalletWithdrawalRequests(c fiber.Ctx) error {
+func CreateWalletWithdrawalRequests(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -157,7 +157,7 @@ func CreateWalletWithdrawalRequests(c fiber.Ctx) error {
 	})
 }
 
-func VerifyDeliveryPartnerWithdrawalRequest(c fiber.Ctx) error {
+func VerifyDeliveryPartnerWithdrawalRequest(c *fiber.Ctx) error {
 	transactionId := c.Params("transaction_id")
 	user_id := c.Locals("user_id").(int)
 	if user_id == 0 {
@@ -196,7 +196,7 @@ func VerifyDeliveryPartnerWithdrawalRequest(c fiber.Ctx) error {
 		UniqueTransactionID          string `json:"unique_transaction_id"`
 		TransactionStatusTypePayment string `json:"transaction_status"`
 	}
-	if err := c.Bind().JSON(&requestData); err != nil {
+	if err := c.BodyParser(&requestData); err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request body",
@@ -244,7 +244,7 @@ func VerifyDeliveryPartnerWithdrawalRequest(c fiber.Ctx) error {
 	})
 }
 
-func FetchAllDeliveryPartnersTransactions(c fiber.Ctx) error {
+func FetchAllDeliveryPartnersTransactions(c *fiber.Ctx) error {
 
 	user_id := c.Locals("user_id")
 	if user_id == 0 {

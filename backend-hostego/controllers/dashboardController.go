@@ -4,10 +4,10 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func GetDashBoardStats(c fiber.Ctx) error {
+func GetDashBoardStats(c *fiber.Ctx) error {
 	var result struct {
 		TotalCustomers         int     `json:"total_customers"`
 		RepeatCustomers        int     `json:"repeat_customers"`

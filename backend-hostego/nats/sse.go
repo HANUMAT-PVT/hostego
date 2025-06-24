@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/nats.go"
 )
 
@@ -25,7 +25,7 @@ var clients = struct {
 }
 
 // Polling handler for receiving messages
-func PollingHandler(c fiber.Ctx) error {
+func PollingHandler(c *fiber.Ctx) error {
 	userID := c.Query("user")
 	if userID == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -71,9 +71,6 @@ func PollingHandler(c fiber.Ctx) error {
 	}
 }
 
-
-
-
 // Start subscriber for NATS events
 func StartNATSSubscriber() {
 	_, err := NatsConn.Subscribe("orders.events", func(m *nats.Msg) {
@@ -117,8 +114,6 @@ func StartNATSSubscriber() {
 	log.Println("✅ Subscribed to NATS events")
 }
 
-
-
 type UserMessage struct {
 	Title string   `json:"title"`
 	Body  string   `json:"body"`
@@ -158,4 +153,3 @@ func SendMessageToUsersByRole(roles []string, title string, body string) {
 	}
 	clients.RUnlock()
 }
-

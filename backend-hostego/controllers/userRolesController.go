@@ -4,10 +4,10 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func CreateUserRole(c fiber.Ctx) error {
+func CreateUserRole(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -20,7 +20,7 @@ func CreateUserRole(c fiber.Ctx) error {
 
 	userRole := new(models.UserRole)
 
-	if err := c.Bind().JSON(userRole); err != nil {
+	if err := c.BodyParser(userRole); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
@@ -37,7 +37,7 @@ func CreateUserRole(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User role created successfully"})
 }
 
-func FetchUserRoles(c fiber.Ctx) error {
+func FetchUserRoles(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 
 	if user_id == 0 {
@@ -51,7 +51,7 @@ func FetchUserRoles(c fiber.Ctx) error {
 
 }
 
-func DeleteUserRole(c fiber.Ctx) error {
+func DeleteUserRole(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 
 	if user_id == 0 {

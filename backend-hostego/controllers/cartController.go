@@ -4,17 +4,17 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func AddProductInUserCart(c fiber.Ctx) error {
+func AddProductInUserCart(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 
 	var cartItem models.CartItem
 	var product models.Product
 
 	// Bind the incoming cart item data
-	if err := c.Bind().JSON(&cartItem); err != nil {
+	if err := c.BodyParser(&cartItem); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
@@ -47,7 +47,7 @@ func AddProductInUserCart(c fiber.Ctx) error {
 
 	// Create new cart item if it doesn't exist
 	cartItem.UserId = user_id.(int)
-	cartItem.SubTotal = float64(cartItem.Quantity) * product.SellingPrice;
+	cartItem.SubTotal = float64(cartItem.Quantity) * product.SellingPrice
 
 	if err := database.DB.Create(&cartItem).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -59,10 +59,9 @@ func AddProductInUserCart(c fiber.Ctx) error {
 	})
 }
 
-func UpdateProductInUserCart(c fiber.Ctx) error {
+func UpdateProductInUserCart(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	cart_item_id := c.Params("id")
-	
 
 	var cartItem models.CartItem
 	// First find the existing cart item
@@ -74,7 +73,7 @@ func UpdateProductInUserCart(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Shop is closed!"})
 	}
 	// Bind updated data directly to cartItem
-	if err := c.Bind().JSON(&cartItem); err != nil {
+	if err := c.BodyParser(&cartItem); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
@@ -106,12 +105,12 @@ func UpdateProductInUserCart(c fiber.Ctx) error {
 	})
 }
 
-func FetchUserCart(c fiber.Ctx) error {
+func FetchUserCart(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	var cartItems []models.CartItem
 	var orderItems []models.Order
 	freeDelivery := false
-	
+
 	if err := database.DB.Where("user_id = ?", user_id).Find(&orderItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
@@ -145,7 +144,7 @@ func FetchUserCart(c fiber.Ctx) error {
 	})
 }
 
-func DeleteCartItem(c fiber.Ctx) error {
+func DeleteCartItem(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 
 	cart_item_id := c.Params("id")

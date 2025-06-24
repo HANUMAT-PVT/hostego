@@ -3,7 +3,7 @@ package routes
 import (
 	"backend-hostego/controllers"
 	"backend-hostego/middlewares"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
 func ProductRoutes(app *fiber.App) error {

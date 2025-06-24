@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func VerifyUserAuthCookie(c fiber.Ctx) (int, error) {
+func VerifyUserAuthCookie(c *fiber.Ctx) (int, error) {
 
 	authHeader := c.Get("Authorization")
 
@@ -52,7 +52,7 @@ func VerifyUserAuthCookie(c fiber.Ctx) (int, error) {
 // test
 
 func VerifyUserAuthCookieMiddleware() fiber.Handler {
-	return func(c fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
 
 		authHeader := c.Get("Authorization")
 

@@ -5,10 +5,10 @@ import (
 	"backend-hostego/models"
 	"math"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func CreateNewDeliveryPartner(c fiber.Ctx) error {
+func CreateNewDeliveryPartner(c *fiber.Ctx) error {
 	var delivery_partner models.DeliveryPartner
 	user_id := c.Locals("user_id").(int)
 	if err := database.DB.Where("user_id=?", user_id).Find(&delivery_partner).Error; err != nil {
@@ -18,7 +18,7 @@ func CreateNewDeliveryPartner(c fiber.Ctx) error {
 	}
 
 	delivery_partner.UserId = user_id
-	if err := c.Bind().JSON(&delivery_partner); err != nil {
+	if err := c.BodyParser(&delivery_partner); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
 	}
 	if err := database.DB.Preload("User").Create(&delivery_partner).Error; err != nil {
@@ -28,7 +28,7 @@ func CreateNewDeliveryPartner(c fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"delivery_partner": delivery_partner})
 }
 
-func UpdateDeliveryPartner(c fiber.Ctx) error {
+func UpdateDeliveryPartner(c *fiber.Ctx) error {
 	var delivery_partner models.DeliveryPartner
 	delivery_partner_id := c.Params("id")
 	user_id := c.Locals("user_id")
@@ -41,7 +41,7 @@ func UpdateDeliveryPartner(c fiber.Ctx) error {
 	}
 
 	// Bind the updated data
-	if err := c.Bind().JSON(&delivery_partner); err != nil {
+	if err := c.BodyParser(&delivery_partner); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
@@ -56,7 +56,7 @@ func UpdateDeliveryPartner(c fiber.Ctx) error {
 	})
 }
 
-func FetchDeliveryPartnerByUserId(c fiber.Ctx) error {
+func FetchDeliveryPartnerByUserId(c *fiber.Ctx) error {
 
 	user_id := c.Locals("user_id")
 
@@ -71,7 +71,7 @@ func FetchDeliveryPartnerByUserId(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(delivery_partner)
 }
 
-func FetchAllDeliveryPartners(c fiber.Ctx) error {
+func FetchAllDeliveryPartners(c *fiber.Ctx) error {
 	var delivery_partners []models.DeliveryPartner
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
@@ -106,7 +106,7 @@ type DeliveryEarningStats struct {
 	Orders          []models.Order `json:"orders"`
 }
 
-func FetchDeliveryPartnerEarnings(c fiber.Ctx) error {
+func FetchDeliveryPartnerEarnings(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "You are not Authenticated!"})

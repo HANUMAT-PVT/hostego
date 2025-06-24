@@ -4,10 +4,10 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func FetchSearchQuery(c fiber.Ctx) error {
+func FetchSearchQuery(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})

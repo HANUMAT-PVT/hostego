@@ -4,10 +4,10 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func GetUsers(c fiber.Ctx) error {
+func GetUsers(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -35,7 +35,7 @@ func GetUsers(c fiber.Ctx) error {
 	return c.Status(200).JSON(usersWithRoles)
 }
 
-func GetUserById(c fiber.Ctx) error {
+func GetUserById(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -49,7 +49,7 @@ func GetUserById(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
-func UpdateUserById(c fiber.Ctx) error {
+func UpdateUserById(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -61,7 +61,7 @@ func UpdateUserById(c fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	if err := c.Bind().JSON(&user); err != nil {
+	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
 
@@ -72,7 +72,7 @@ func UpdateUserById(c fiber.Ctx) error {
 
 }
 
-func FetchUserByMobileNumber(c fiber.Ctx) error {
+func FetchUserByMobileNumber(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})

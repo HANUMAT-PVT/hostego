@@ -4,10 +4,10 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func UpdateMessMenu(c fiber.Ctx) error {
+func UpdateMessMenu(c *fiber.Ctx) error {
 	var id = c.Params("id")
 	user_id := c.Locals("user_id")
 
@@ -18,7 +18,7 @@ func UpdateMessMenu(c fiber.Ctx) error {
 	}
 
 	var messMenu models.MessMenu
-	if err := c.Bind().JSON(&messMenu); err != nil {
+	if err := c.BodyParser(&messMenu); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request body",
 		})
@@ -31,7 +31,7 @@ func UpdateMessMenu(c fiber.Ctx) error {
 	})
 }
 
-func FetchMessMenu(c fiber.Ctx) error {
+func FetchMessMenu(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -45,7 +45,7 @@ func FetchMessMenu(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(messMenuItems)
 }
 
-func CreateMessMenuDate(c fiber.Ctx) error {
+func CreateMessMenuDate(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -54,7 +54,7 @@ func CreateMessMenuDate(c fiber.Ctx) error {
 	}
 
 	var messMenu models.MessMenu
-	if err := c.Bind().JSON(&messMenu); err != nil {
+	if err := c.BodyParser(&messMenu); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request body",
 		})

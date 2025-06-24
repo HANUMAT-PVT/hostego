@@ -4,10 +4,10 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func CancelOrderItemAndInitiateRefund(c fiber.Ctx) error {
+func CancelOrderItemAndInitiateRefund(c *fiber.Ctx) error {
 
 	current_user_id := c.Locals("user_id").(int)
 	if current_user_id == 0 {
@@ -21,7 +21,7 @@ func CancelOrderItemAndInitiateRefund(c fiber.Ctx) error {
 
 	var request OrderRequest
 
-	if err := c.Bind().JSON(&request); err != nil {
+	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 	if current_user_id == 0 {
@@ -112,7 +112,7 @@ func CancelOrderItemAndInitiateRefund(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Refund Completed", "wallet_transaction": walletTransaction, "wallet": wallet})
 }
 
-func FetchOrderItems(c fiber.Ctx) error {
+func FetchOrderItems(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -126,7 +126,7 @@ func FetchOrderItems(c fiber.Ctx) error {
 	}
 	var orders []models.Order
 
-	query.Preload("Product").Preload("User").Preload("Product.Shop").Where("order_status=?","delivered").Order("created_at ASC").Find(&orders)
+	query.Preload("Product").Preload("User").Preload("Product.Shop").Where("order_status=?", "delivered").Order("created_at ASC").Find(&orders)
 
 	return c.Status(fiber.StatusOK).JSON(orders)
 }

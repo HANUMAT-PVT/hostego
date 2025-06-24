@@ -4,15 +4,15 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func CreateNewAddress(c fiber.Ctx) error {
+func CreateNewAddress(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	var address models.Address
 	var user models.User
 
-	if err := c.Bind().JSON(&address); err != nil {
+	if err := c.BodyParser(&address); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
@@ -26,13 +26,13 @@ func CreateNewAddress(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Address added succesfully !"})
 }
 
-func UpdateAddress(c fiber.Ctx) error {
+func UpdateAddress(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	var address models.Address
 	var user models.User
 	address_id := c.Params("id")
 
-	if err := c.Bind().JSON(&address); err != nil {
+	if err := c.BodyParser(&address); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
@@ -45,7 +45,7 @@ func UpdateAddress(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Address updated succesfully !"})
 }
 
-func DeleteAddress(c fiber.Ctx) error {
+func DeleteAddress(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	var address models.Address
 	address_id := c.Params("id")
@@ -61,7 +61,7 @@ func DeleteAddress(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Address updated succesfully !"})
 }
 
-func FetchUserAddress(c fiber.Ctx) error {
+func FetchUserAddress(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	var address []models.Address
 	if err := database.DB.Where("user_id = ?", user_id).Order("created_at desc").Find(&address).Error; err != nil {

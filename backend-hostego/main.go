@@ -5,10 +5,13 @@ import (
 	"backend-hostego/database"
 	natsclient "backend-hostego/nats"
 	"backend-hostego/routes"
+
+	websocket "github.com/gofiber/websocket/v2"
+
 	"log"
 
-	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/middleware/cors"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"gorm.io/gorm"
 )
 
@@ -23,11 +26,11 @@ func main() {
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "https://hostego.in","https://www.hostego.in"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
-		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		AllowOrigins:     "http://localhost:3000, https://hostego.in,https://www.hostego.in",
+		AllowMethods:     "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+		AllowHeaders:     "Content-Type, Authorization",
 		AllowCredentials: false,
-		ExposeHeaders:    []string{"Authorization"},
+		ExposeHeaders:    "Authorization",
 	}))
 
 	// Connect Database
@@ -37,7 +40,29 @@ func main() {
 	natsclient.StartNATSSubscriber()
 
 	// Add SSE route
-	
+
+	// WebSocket route
+	app.Get("/ws", websocket.New(func(c *websocket.Conn) {
+		defer c.Close()
+
+		for {
+			// Read message from client
+			mt, msg, err := c.ReadMessage()
+			if err != nil {
+				log.Println("read error:", err)
+				break
+			}
+			log.Printf("recv: %s", msg)
+
+			// Echo the message back
+			err = c.WriteMessage(mt, msg)
+			if err != nil {
+				log.Println("write error:", err)
+				break
+			}
+		}
+	}))
+
 	// Setup All Routes
 	routes.AuthRoutes(app)
 	routes.ShopRoutes(app)
@@ -58,7 +83,7 @@ func main() {
 	routes.DashboardRoutes(app)
 	routes.PaymentWebhookRoutes(app)
 	// Default Route
-	app.Get("/", func(c fiber.Ctx) error {
+	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "Welcome to the Hostego Backend Server!"})
 	})
 	app.Get("/events", natsclient.PollingHandler)

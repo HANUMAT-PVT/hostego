@@ -3,15 +3,16 @@ package middlewares
 import (
 	"backend-hostego/database"
 	"backend-hostego/models"
-	"github.com/gofiber/fiber/v3"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 // Role-based middleware
 func RoleMiddleware(allowedRoles ...string) fiber.Handler {
-	return func(c fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
 
 		user_id := c.Locals("user_id")
-		
+
 		db := database.DB
 		var userRoles []models.UserRole
 		err := db.Preload("Role").Where("user_id = ?", user_id).Find(&userRoles).Error
@@ -20,7 +21,6 @@ func RoleMiddleware(allowedRoles ...string) fiber.Handler {
 				"error": "Failed to fetch user roles",
 			})
 		}
-		
 
 		for _, userRole := range userRoles {
 			for _, allowedRole := range allowedRoles {

@@ -5,10 +5,10 @@ import (
 	"backend-hostego/models"
 	"strconv"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func CreditWalletTransaction(c fiber.Ctx) error {
+func CreditWalletTransaction(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id").(int)
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
@@ -21,11 +21,11 @@ func CreditWalletTransaction(c fiber.Ctx) error {
 		UniqueTransactionID     string  `json:"unique_transaction_id"`
 	}
 
-	if err := c.Bind().JSON(&requestData); err != nil {
+	if err := c.BodyParser(&requestData); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
 	}
 
-	// if err := c.Bind().JSON(&wallet_transaction).Error; err != nil {
+	// if err := c.BodyParser(&wallet_transaction).Error; err != nil {
 	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	// }
 	if err := database.DB.First(&user).Error; err != nil {
@@ -46,14 +46,14 @@ func CreditWalletTransaction(c fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Wallet Transaction Created"})
 }
 
-func VerifyWalletTransactionById(c fiber.Ctx) error {
+func VerifyWalletTransactionById(c *fiber.Ctx) error {
 	userID := c.Locals("user_id").(int)
 
 	type verifyWalletTransactionRequest struct {
 		TransactionStatus string `json:"transaction_status"`
 	}
 	var requestData verifyWalletTransactionRequest
-	if err := c.Bind().JSON(&requestData); err != nil {
+	if err := c.BodyParser(&requestData); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	walletTransactionID := c.Params("id")
@@ -108,7 +108,7 @@ func VerifyWalletTransactionById(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Wallet transaction verified successfully"})
 }
 
-func FetchUserWallet(c fiber.Ctx) error {
+func FetchUserWallet(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	var wallet models.Wallet
 	if user_id == 0 {
@@ -120,7 +120,7 @@ func FetchUserWallet(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(wallet)
 }
 
-func FetchUserWalletTransactions(c fiber.Ctx) error {
+func FetchUserWalletTransactions(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	queryPage := c.Query("page", "1")
 	queryLimit := c.Query("limit", "10")
@@ -142,7 +142,7 @@ func FetchUserWalletTransactions(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(wallet_transactions)
 }
 
-func FetchAllWalletTransactions(c fiber.Ctx) error {
+func FetchAllWalletTransactions(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 
 	dbQuery := database.DB
@@ -185,7 +185,7 @@ func FetchAllWalletTransactions(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(wallet_transactions)
 }
 
-func FetchUsersWithPositiveWalletBalance(c fiber.Ctx) error {
+func FetchUsersWithPositiveWalletBalance(c *fiber.Ctx) error {
 	type WalletUser struct {
 		UserID             uint    `json:"user_id"`
 		Balance            float64 `json:"balance"`

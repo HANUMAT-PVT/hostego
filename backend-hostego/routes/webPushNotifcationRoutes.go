@@ -3,7 +3,7 @@ package routes
 import (
 	"backend-hostego/controllers"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
 func WebPushNotificationRoutes(app *fiber.App) {

@@ -16,7 +16,7 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	razorpay "github.com/razorpay/razorpay-go"
 	"gorm.io/gorm"
 )
@@ -25,7 +25,7 @@ var rz_key_id = config.GetEnv("RAZORPAY_KEY_ID_")
 var rz_key_secret = config.GetEnv("RAZORPAY_KEY_SECRET_")
 var rz_client = razorpay.NewClient(rz_key_id, rz_key_secret)
 
-func InitiatePayment(c fiber.Ctx) error {
+func InitiatePayment(c *fiber.Ctx) error {
 	userId := c.Locals("user_id").(int)
 	if userId == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -40,7 +40,7 @@ func InitiatePayment(c fiber.Ctx) error {
 
 	var cartItem models.CartItem
 
-	if err := c.Bind().JSON(&request); err != nil {
+	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 	var wallet models.Wallet
@@ -156,7 +156,7 @@ func InitiatePayment(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Payment Completed", "payment_transaction": paymentTransaction, "order": order, "wallet_transaction": walletTransaction})
 }
 
-func FetchUserPaymentTransactions(c fiber.Ctx) error {
+func FetchUserPaymentTransactions(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -170,7 +170,7 @@ func FetchUserPaymentTransactions(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(payment_transactions)
 }
 
-func InitiateRefundPayment(c fiber.Ctx) error {
+func InitiateRefundPayment(c *fiber.Ctx) error {
 	current_user_id := c.Locals("user_id").(int)
 	if current_user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -181,7 +181,7 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 
 	var request OrderRequest
 
-	if err := c.Bind().JSON(&request); err != nil {
+	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 	if current_user_id == 0 {
@@ -275,7 +275,7 @@ func InitiateRefundPayment(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Refund Completed", "wallet_transaction": walletTransaction, "wallet": wallet})
 }
 
-func InitateCashfreePaymentOrder(c fiber.Ctx) error {
+func InitateCashfreePaymentOrder(c *fiber.Ctx) error {
 
 	user_id := c.Locals("user_id").(int)
 	if user_id == 0 {
@@ -293,7 +293,7 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 	}
 	var paymentTransaction models.PaymentTransaction
 
-	err := c.Bind().JSON(&orderRequest)
+	err := c.BodyParser(&orderRequest)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -370,7 +370,7 @@ func InitateCashfreePaymentOrder(c fiber.Ctx) error {
 
 }
 
-func VerifyCashfreePayment(c fiber.Ctx) error {
+func VerifyCashfreePayment(c *fiber.Ctx) error {
 
 	user_id := c.Locals("user_id").(int)
 	if user_id == 0 {
@@ -396,7 +396,7 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 			tx.Rollback()
 		}
 	}()
-	if err := c.Bind().JSON(&request); err != nil {
+	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
@@ -525,7 +525,7 @@ func VerifyCashfreePayment(c fiber.Ctx) error {
 
 }
 
-func InitateRazorpayPaymentOrder(c fiber.Ctx) error {
+func InitateRazorpayPaymentOrder(c *fiber.Ctx) error {
 
 	user_id := c.Locals("user_id").(int)
 	if user_id == 0 {
@@ -543,7 +543,7 @@ func InitateRazorpayPaymentOrder(c fiber.Ctx) error {
 	}
 	var paymentTransaction models.PaymentTransaction
 
-	err := c.Bind().JSON(&orderRequest)
+	err := c.BodyParser(&orderRequest)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -603,7 +603,7 @@ func InitateRazorpayPaymentOrder(c fiber.Ctx) error {
 
 }
 
-func VerifyRazorpayPayment(c fiber.Ctx) error {
+func VerifyRazorpayPayment(c *fiber.Ctx) error {
 
 	type OrderRequest struct {
 		OrderID           int    `json:"order_id"` //Only accept Order ID, not amount
@@ -627,7 +627,7 @@ func VerifyRazorpayPayment(c fiber.Ctx) error {
 			tx.Rollback()
 		}
 	}()
-	if err := c.Bind().JSON(&request); err != nil {
+	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
@@ -649,7 +649,7 @@ func VerifyRazorpayPayment(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 	if order.OrderStatus != "pending" {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order is already Verifed and Placed !","response":fiber.Map{"order_status":"PAID"}})
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order is already Verifed and Placed !", "response": fiber.Map{"order_status": "PAID"}})
 	}
 
 	totalAmountToDeduct := order.FinalOrderValue
@@ -747,7 +747,7 @@ func VerifyRazorpaySignature(orderID, paymentID, razorpaySignature, secret strin
 	return generatedSignature == razorpaySignature
 }
 
-func RazorpayWebhookHandler(c fiber.Ctx) error {
+func RazorpayWebhookHandler(c *fiber.Ctx) error {
 
 	body := c.Body()
 
@@ -809,7 +809,7 @@ func RazorpayWebhookHandler(c fiber.Ctx) error {
 		}
 
 		if order.OrderStatus != "pending" && order.OrderStatus == "placed" {
-			return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order is already Verifed and Placed !","response":fiber.Map{"order_status":"PAID"}})
+			return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order is already Verifed and Placed !", "response": fiber.Map{"order_status": "PAID"}})
 		}
 
 		totalAmountToDeduct := order.FinalOrderValue

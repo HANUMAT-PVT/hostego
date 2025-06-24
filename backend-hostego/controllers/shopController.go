@@ -4,17 +4,17 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func CreateShop(c fiber.Ctx) error {
+func CreateShop(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	var shop models.Shop
 
-	if err := c.Bind().JSON(&shop); err != nil {
+	if err := c.BodyParser(&shop); err != nil {
 		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
 	}
 	database.DB.Create(&shop)
@@ -23,7 +23,7 @@ func CreateShop(c fiber.Ctx) error {
 
 }
 
-func FetchShopById(c fiber.Ctx) error {
+func FetchShopById(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -39,7 +39,7 @@ func FetchShopById(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"shop": shop, "products": products})
 }
 
-func FetchShops(c fiber.Ctx) error {
+func FetchShops(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -51,7 +51,7 @@ func FetchShops(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(shops)
 }
 
-func UpdateShopById(c fiber.Ctx) error {
+func UpdateShopById(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
@@ -63,7 +63,7 @@ func UpdateShopById(c fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": "Shop not found!"})
 
 	}
-	if err := c.Bind().JSON(&shop); err != nil {
+	if err := c.BodyParser(&shop); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 

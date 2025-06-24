@@ -6,7 +6,7 @@ import (
 	"os"
 
 	webpush "github.com/SherClockHolmes/webpush-go"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
 // =============================
@@ -17,7 +17,7 @@ import (
 const publicKey = "BGQRMk6dwGjrQHY47G4g1gphFGBdK11REbNsz8qUkMq9XJVkLO9VWs3a72ntetjKO5PRFEyRYrWggs8VJefqr7A"
 const privateKey = "W8PauXVtgDPZ8RHYulzVXEFd8uEawUwlPx8xGzMXg4w"
 
-func SendWebPushNotification(c fiber.Ctx) error {
+func SendWebPushNotification(c *fiber.Ctx) error {
 
 	var payload struct {
 		Title   string `json:"title"`
@@ -25,7 +25,7 @@ func SendWebPushNotification(c fiber.Ctx) error {
 		SubJSON string `json:"subscription"`
 	}
 
-	if err := c.Bind().JSON(&payload); err != nil {
+	if err := c.BodyParser(&payload); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
 	}
 
@@ -52,12 +52,11 @@ func SendWebPushNotification(c fiber.Ctx) error {
 
 }
 
-
 // SendWebPushNotification sends a push notification with the given title and body
 func CreateWebPushNotification(title, body string) error {
 	// Step 1: Read subscription data from a file
 	data, err := os.ReadFile("subscriptions.json")
-	
+
 	if err != nil {
 		return fmt.Errorf("failed to read subscription file: %w", err)
 	}
@@ -96,5 +95,3 @@ func CreateWebPushNotification(title, body string) error {
 
 	return nil
 }
-
-
