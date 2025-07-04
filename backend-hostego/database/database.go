@@ -15,10 +15,12 @@ var DB *gorm.DB
 
 func ConnectDataBase() {
 	// postgres for dev
-	// dsn := "host=localhost user=postgres password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
+	dsn := "host=localhost user=postgres password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
 	// hostego_user_dev for prod
-	dsn := "host=localhost user=hostego_user_dev password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	// dsn := "host=localhost user=hostego_user_dev password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		DisableForeignKeyConstraintWhenMigrating: true,
+	})
 
 	if err != nil {
 		log.Fatal("Failed to connect database", err)
@@ -35,11 +37,26 @@ func ConnectDataBase() {
 	DB = db
 	DB = DB.Debug()
 
-	err = db.AutoMigrate(&models.User{}, &models.Address{}, &models.Wallet{}, &models.WalletTransaction{},
-		&models.PaymentTransaction{}, &models.Shop{}, &models.Product{}, &models.CartItem{}, &models.Rating{},
-		&models.Order{}, &models.Role{}, &models.UserRole{}, &models.DeliveryPartner{}, &models.SearchQuery{}, &models.OrderItem{}, &models.DeliveryPartnerWallet{}, &models.DeliveryPartnerWalletTransaction{}, &models.MessMenu{}, &models.ExtrCharge{}, &models.ProductCategory{},
-	)
-
+	err = db.AutoMigrate(&models.User{})
+	err = db.AutoMigrate(&models.Address{})
+	err = db.AutoMigrate(&models.Wallet{})
+	err = db.AutoMigrate(&models.WalletTransaction{})
+	err = db.AutoMigrate(&models.PaymentTransaction{})
+	err = db.AutoMigrate(&models.Shop{})
+	err = db.AutoMigrate(&models.Product{})
+	err = db.AutoMigrate(&models.CartItem{})
+	err = db.AutoMigrate(&models.Rating{})
+	err = db.AutoMigrate(&models.Order{})
+	err = db.AutoMigrate(&models.Role{})
+	err = db.AutoMigrate(&models.UserRole{})
+	err = db.AutoMigrate(&models.DeliveryPartner{})
+	err = db.AutoMigrate(&models.SearchQuery{})
+	err = db.AutoMigrate(&models.OrderItem{})
+	err = db.AutoMigrate(&models.DeliveryPartnerWallet{})
+	err = db.AutoMigrate(&models.DeliveryPartnerWalletTransaction{})
+	err = db.AutoMigrate(&models.MessMenu{})
+	err = db.AutoMigrate(&models.ExtrCharge{})
+	err = db.AutoMigrate(&models.ProductCategory{})
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
 	}
