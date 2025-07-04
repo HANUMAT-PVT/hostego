@@ -1,2 +1,3 @@
 hostego-firebase-secret
 .env
+config/firebase-service-account.json
