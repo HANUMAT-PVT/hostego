@@ -15,9 +15,9 @@ var DB *gorm.DB
 
 func ConnectDataBase() {
 	// postgres for dev
-	dsn := "host=localhost user=postgres password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
+	// dsn := "host=localhost user=postgres password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
 	// hostego_user_dev for prod
-	// dsn := "host=localhost user=hostego_user_dev password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
+	dsn := "host=localhost user=hostego_user_dev password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
@@ -35,8 +35,7 @@ func ConnectDataBase() {
 	sqlDB.SetConnMaxLifetime(1 * time.Hour) // max lifetime of a connection
 
 	DB = db
-	DB = DB.Debug()
-
+	db = db.Debug()
 	err = db.AutoMigrate(&models.User{})
 	err = db.AutoMigrate(&models.Address{})
 	err = db.AutoMigrate(&models.Wallet{})
