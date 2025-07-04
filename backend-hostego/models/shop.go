@@ -31,5 +31,5 @@ type Shop struct {
 	BankAccountType        string       `gorm:"type:varchar(255);" json:"bank_account_type"`
 	Pancardcopy            string       `gorm:"type:varchar(255);" json:"pancard_copy"`
 	ShopVerificationStatus string       `gorm:"type:varchar(255);" json:"shop_verification_status"`
-	OwnerId                int          `gorm:"type:int;not null;" json:"owner_id"`
+	OwnerId                int          `gorm:"type:int;" json:"owner_id"`
 }

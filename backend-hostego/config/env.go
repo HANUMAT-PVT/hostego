@@ -1,7 +1,7 @@
 package config
 
 import (
-
+	"fmt"
 	"log"
 	"os"
 
@@ -19,9 +19,10 @@ func LoadEnv() {
 // GetEnv fetches an environment variable with a default fallback
 func GetEnv(key string) string {
 	LoadEnv()
-	appEnv,exists:=os.LookupEnv("APP_ENV")
+	appEnv, exists := os.LookupEnv("APP_ENV")
+	fmt.Println(appEnv, "ap env")
 
-	value, exists := os.LookupEnv(key+appEnv)
+	value, exists := os.LookupEnv(key + appEnv)
 	if !exists {
 		return ""
 	}

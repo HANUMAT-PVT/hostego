@@ -37,5 +37,5 @@ type Product struct {
 	StockQuantity   int            `gorm:"type:int;not null;default:0" json:"stock_quantity"`
 	Weight          string         `gorm:"type:varchar(255);" json:"weight"`
 	SellingPrice    float64        `gorm:"type:double precision" json:"selling_price"`
-	Category        string         `gorm:"type:varchar(255);not null" json:"category"`
+	Category        string         `gorm:"type:varchar(255);" json:"category"`
 }
