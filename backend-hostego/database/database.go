@@ -33,26 +33,13 @@ func ConnectDataBase() {
 	sqlDB.SetConnMaxLifetime(1 * time.Hour) // max lifetime of a connection
 
 	DB = db
-	err = db.AutoMigrate(&models.User{})
-	err = db.AutoMigrate(&models.Address{})
-	err = db.AutoMigrate(&models.Wallet{})
-	err = db.AutoMigrate(&models.WalletTransaction{})
-	err = db.AutoMigrate(&models.PaymentTransaction{})
-	err = db.AutoMigrate(&models.Shop{})
-	err = db.AutoMigrate(&models.Product{})
-	err = db.AutoMigrate(&models.CartItem{})
-	err = db.AutoMigrate(&models.Rating{})
-	err = db.AutoMigrate(&models.Order{})
-	err = db.AutoMigrate(&models.Role{})
-	err = db.AutoMigrate(&models.UserRole{})
-	err = db.AutoMigrate(&models.DeliveryPartner{})
-	err = db.AutoMigrate(&models.SearchQuery{})
-	err = db.AutoMigrate(&models.OrderItem{})
-	err = db.AutoMigrate(&models.DeliveryPartnerWallet{})
-	err = db.AutoMigrate(&models.DeliveryPartnerWalletTransaction{})
-	err = db.AutoMigrate(&models.MessMenu{})
-	err = db.AutoMigrate(&models.ExtrCharge{})
-	err = db.AutoMigrate(&models.ProductCategory{})
+	DB = DB.Debug()
+
+	err = db.AutoMigrate(&models.User{}, &models.Address{}, &models.Wallet{}, &models.WalletTransaction{},
+		&models.PaymentTransaction{}, &models.Shop{}, &models.Product{}, &models.CartItem{}, &models.Rating{},
+		&models.Order{}, &models.Role{}, &models.UserRole{}, &models.DeliveryPartner{}, &models.SearchQuery{}, &models.OrderItem{}, &models.DeliveryPartnerWallet{}, &models.DeliveryPartnerWalletTransaction{}, &models.MessMenu{}, &models.ExtrCharge{}, &models.ProductCategory{},
+	)
+
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
 	}
