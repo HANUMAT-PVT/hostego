@@ -8,5 +8,6 @@ import (
 
 func WebPushNotificationRoutes(app *fiber.App) {
 	webPushNotification := app.Group("/api/notifications")
-	webPushNotification.Post("/", controllers.SendWebPushNotification)
+	webPushNotification.Post("/fcm", controllers.SendFCMNotification)
+	// webPushNotification.Post("/", controllers.SendWebPushNotification)
 }

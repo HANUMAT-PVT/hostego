@@ -30,11 +30,12 @@ type Product struct {
 	Discount        Discount       `gorm:"embedded" json:"discount"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
-	PreparationTime string         `gorm:"type:varchar(255);not null" json:"preparation_time"`
+	PreparationTime string         `gorm:"type:varchar(255);" json:"preparation_time"`
 	ShopId          int            `gorm:"type:int;not null;index" json:"shop_id"`
 	Shop            Shop           `gorm:"foreignKey:ShopId;references:ShopId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"shop"`
 	Tags            datatypes.JSON `gorm:"type:jsonB;" json:"tags"`
 	StockQuantity   int            `gorm:"type:int;not null;default:0" json:"stock_quantity"`
 	Weight          string         `gorm:"type:varchar(255);" json:"weight"`
 	SellingPrice    float64        `gorm:"type:double precision" json:"selling_price"`
+	Category        string         `gorm:"type:varchar(255);not null" json:"category"`
 }

@@ -3,19 +3,20 @@ package routes
 import (
 	"backend-hostego/controllers"
 	"backend-hostego/middlewares"
+
 	"github.com/gofiber/fiber/v2"
 )
 
 func UserRoutes(app *fiber.App) {
 	userRoutes := app.Group("/api/users", middlewares.VerifyUserAuthCookieMiddleware())
-	
+
 	userRoutes.Patch("/me", controllers.UpdateUserById)
 
 	userRoutes.Get("/me", controllers.GetUserById)
 
 	userRoutes.Get("/",
 		middlewares.VerifyUserAuthCookieMiddleware(),
-		middlewares.RoleMiddleware("super_admin","admin"),
+		middlewares.RoleMiddleware("super_admin", "admin"),
 		controllers.GetUsers,
 	)
 }

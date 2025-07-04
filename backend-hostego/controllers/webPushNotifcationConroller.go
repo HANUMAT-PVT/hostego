@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"backend-hostego/services"
+	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 
 	webpush "github.com/SherClockHolmes/webpush-go"
@@ -94,4 +97,24 @@ func CreateWebPushNotification(title, body string) error {
 	fmt.Println("Notification sent with status:", resp.Status)
 
 	return nil
+}
+func SendFCMNotification(c *fiber.Ctx) error {
+	token := "caUIC41GTW28YBvhq-uq_Z:APA91bELhZCVExE5bgqCb9Cf5OzFlyXiMLnVEsemznio7ywKLhKKBHW2AqHXv3ng-oAsnf3jtcFtRlszalsjzgMF5NJs6xzVckQ6b55nWzMZB8diwdS8Uk0"
+
+	msgID, err := services.SendToToken(
+		context.Background(), // ← use a real ctx, not Fiber’s
+		token,
+		"Test",
+		"Test from backend",
+		nil, // data map
+	)
+	if err != nil {
+		// Log the exact FCM error → tells you why it wasn’t delivered
+		log.Printf("❌ FCM send failed: %v", err)
+		return c.Status(fiber.StatusInternalServerError).
+			JSON(fiber.Map{"error": err.Error()})
+	}
+
+	log.Printf("✅ FCM sent, id=%s", msgID)
+	return c.JSON(fiber.Map{"message": "Notification sent", "id": msgID})
 }

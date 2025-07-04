@@ -4,7 +4,6 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 	"encoding/json"
-
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -222,7 +221,10 @@ func UpdateProductById(c *fiber.Ctx) error {
 	}
 
 	// ✅ Update the product
-	if err := database.DB.Model(&product).Save(updateData).Error; err != nil {
+	if err := database.DB.
+		Model(&product).      // the row you want to modify
+		Updates(&updateData). // 👈 pointer, not value
+		Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
@@ -247,4 +249,28 @@ func FetchProductById(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"erorr": err})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"product": product})
+}
+
+func FetchProductsByShopId(c *fiber.Ctx) error {
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+	limit := c.Query("limit", "50")
+	page := c.Query("page", "1")
+	shop_id := c.Params("shop_id")
+	limitInt, err := strconv.Atoi(limit)
+	if err != nil {
+		limitInt = 50
+	}
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		pageInt = 1
+	}
+	offset := (pageInt - 1) * limitInt
+	var products []models.Product
+	if err := database.DB.Where("shop_id = ?", shop_id).Offset(offset).Limit(limitInt).Find(&products).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "No product found !"})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"products": products})
 }

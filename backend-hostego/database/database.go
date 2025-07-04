@@ -14,10 +14,10 @@ import (
 var DB *gorm.DB
 
 func ConnectDataBase() {
+	// postgres for dev
+	dsn := "host=localhost user=postgres password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
 	// hostego_user_dev for prod
-	// postgres for prod
-	// dsn := "host=localhost user=postgres password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
-	dsn := "host=localhost user=hostego_user_dev password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
+	// dsn := "host=localhost user=hostego_user_dev password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -52,6 +52,7 @@ func ConnectDataBase() {
 	err = db.AutoMigrate(&models.DeliveryPartnerWalletTransaction{})
 	err = db.AutoMigrate(&models.MessMenu{})
 	err = db.AutoMigrate(&models.ExtrCharge{})
+	err = db.AutoMigrate(&models.ProductCategory{})
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
 	}

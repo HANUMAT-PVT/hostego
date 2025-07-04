@@ -46,6 +46,7 @@ func GetUserById(c *fiber.Ctx) error {
 	if err := database.DB.First(&user, "user_id = ?", user_id).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
+
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 

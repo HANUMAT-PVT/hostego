@@ -13,6 +13,7 @@ func CreateShop(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	var shop models.Shop
+	shop.OwnerId = user_id.(int)
 
 	if err := c.BodyParser(&shop); err != nil {
 		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
