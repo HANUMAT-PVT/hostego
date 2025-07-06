@@ -72,6 +72,9 @@ func CreateNewOrder(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to serialize cart items"})
 	}
+	if len(cartItems) == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "No items in cart"})
+	}
 	order.OrderItems = jsonCartItems
 	order.UserId = user_id
 	totalCharges := CalculateFinalOrderValue(cartItems, false)
@@ -83,6 +86,7 @@ func CreateNewOrder(c *fiber.Ctx) error {
 	order.AddressID = requestOrder.AddressId
 	order.FreeDelivery = freeDelivery
 	order.CookingRequests = requestOrder.CookingRequests
+	order.ShopId = int(cartItems[0].ProductItem.ShopId)
 
 	if err := database.DB.Preload("User").Create(&order).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -282,8 +286,14 @@ func UpdateOrderById(c *fiber.Ctx) error {
 	// }
 
 	var updateData struct {
-		OrderStatus       models.OrderStatusType `json:"order_status"`
-		DeliveryPartnerId int                    `json:"delivery_partner_id"`
+		OrderStatus            models.OrderStatusType `json:"order_status"`
+		DeliveryPartnerId      int                    `json:"delivery_partner_id"`
+		IsAcceptedByRestaurant bool                   `json:"is_accepted_by_restaurant"`
+		ExpectedReadyInMins    int                    `json:"expected_ready_in_mins"`
+		ActualReadyInMins      int                    `json:"actual_ready_in_mins"`
+		ActualReadyAt          time.Time              `json:"actual_ready_at"`
+		RestaurantRespondedAt  time.Time              `json:"restaurant_responded_at"`
+		IsRejectedByRestaurant bool                   `json:"is_rejected_by_restaurant"`
 	}
 	if err := c.BodyParser(&updateData); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -298,6 +308,19 @@ func UpdateOrderById(c *fiber.Ctx) error {
 			})
 		}
 	}
+
+	if updateData.IsAcceptedByRestaurant {
+		existingOrder.IsAcceptedByRestaurant = true
+		existingOrder.RestaurantRespondedAt = time.Now()
+		existingOrder.ExpectedReadyInMins = updateData.ExpectedReadyInMins
+		NotifyOrderAcceptedOrRejectedByRestaurant(existingOrder.OrderId, true, updateData.ExpectedReadyInMins)
+	}
+	if updateData.IsRejectedByRestaurant {
+		existingOrder.IsAcceptedByRestaurant = false
+		existingOrder.RestaurantRespondedAt = time.Now()
+		NotifyOrderAcceptedOrRejectedByRestaurant(existingOrder.OrderId, false, 0)
+	}
+
 	if updateData.OrderStatus == models.DeliveredOrderStatus {
 		// delivered status only when order is not delivered yet
 		if existingOrder.OrderStatus != models.DeliveredOrderStatus {
@@ -315,6 +338,26 @@ func UpdateOrderById(c *fiber.Ctx) error {
 	// Save the changes
 	if err := database.DB.Save(&existingOrder).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if updateData.OrderStatus == models.DeliveredOrderStatus || updateData.OrderStatus == models.CanceledOrderStatus || updateData.OrderStatus == models.ReadyOrderStatus {
+		var orderTitle string
+		var orderBody string
+		switch updateData.OrderStatus {
+		case models.DeliveredOrderStatus:
+			orderTitle = "Order Delivered"
+			orderBody = "Your order has been delivered. Please check your order details."
+
+		case models.CanceledOrderStatus:
+			orderTitle = "Order Canceled"
+			orderBody = "Your order has been canceled. Please check your order details."
+
+		case models.ReadyOrderStatus:
+			orderTitle = "Order Ready"
+			orderBody = "Your order is ready. Please check your order details."
+
+		}
+		NotifyOrderToCustomerByRestaurant(existingOrder.OrderId, orderBody, orderTitle)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -638,4 +681,14 @@ func CancelOrder(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order  Cancelled/without refund"})
 
+}
+
+func FetchAllOrdersByShopId(c *fiber.Ctx) error {
+	shop_id := c.Params("id")
+
+	var orders []models.Order
+	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("shop_id = ?", shop_id).Find(&orders).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(orders)
 }

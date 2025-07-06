@@ -32,4 +32,5 @@ type Shop struct {
 	Pancardcopy            string       `gorm:"type:varchar(255);" json:"pancard_copy"`
 	ShopVerificationStatus string       `gorm:"type:varchar(255);" json:"shop_verification_status"`
 	OwnerId                int          `gorm:"type:int;" json:"owner_id"`
+	// Owner                  User         `gorm:"foreignKey:OwnerId" json:"owner"`
 }

@@ -7,13 +7,13 @@ import (
 	natsclient "backend-hostego/nats"
 	"crypto/hmac"
 	"crypto/sha256"
+	"strconv"
+	"time"
 
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
-	"strconv"
-	"time"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
@@ -724,11 +724,15 @@ func VerifyRazorpayPayment(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete cart items"})
 	}
 
+	var user models.User
+	if err := tx.First(&user, "user_id = ?", order.UserId).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	NotifyOrderPlaced(order.OrderId)
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
 	}
-	natsclient.SendMessageToUsersByRole(orderManagerRoles, "New Order Placed", "Please check the details and take the necessary action.")
-	log.Print("Payload sent to the frontend")
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Payment Completed", "payment_transaction": paymentTransaction, "order": order, "wallet_transaction": walletTransaction, "response": fiber.Map{"order_status": "PAID"}})
 
@@ -883,11 +887,11 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete cart items"})
 		}
+		NotifyOrderPlaced(order.OrderId)
 
 		if err := tx.Commit().Error; err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
 		}
-		natsclient.SendMessageToUsersByRole(orderManagerRoles, "New Order Placed", "Please check the details and take the necessary action.")
 
 	}
 

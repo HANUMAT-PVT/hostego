@@ -74,3 +74,15 @@ func UpdateShopById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Shop updated succesfully", "shop": shop})
 
 }
+
+func FetchShopByOwnerId(c *fiber.Ctx) error {
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+	var shop models.Shop
+
+	database.DB.Where("owner_id = ?", user_id).First(&shop)
+
+	return c.Status(fiber.StatusOK).JSON(shop)
+}

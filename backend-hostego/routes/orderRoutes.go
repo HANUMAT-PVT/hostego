@@ -10,6 +10,8 @@ import (
 func OrderRoutes(app *fiber.App) {
 	orderRoutes := app.Group("/api/order", middlewares.VerifyUserAuthCookieMiddleware())
 
+	orderRoutes.Get("/shop/:id", controllers.FetchAllOrdersByShopId)
+
 	orderRoutes.Get("/order-items",
 		middlewares.VerifyUserAuthCookieMiddleware(),
 		middlewares.RoleMiddleware("super_admin", "admin", "inventory_manager"),

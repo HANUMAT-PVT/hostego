@@ -14,8 +14,9 @@ var Client *messaging.Client
 
 // Load once at startup
 func Init(ctx context.Context, credentialFile string) error {
+	var pathForProd = "/etc/hostego/firebase.json"
 
-	opt := option.WithCredentialsFile("/etc/hostego/firebase.json")
+	opt := option.WithCredentialsFile(pathForProd)
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
 		return err

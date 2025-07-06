@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -20,7 +19,6 @@ func LoadEnv() {
 func GetEnv(key string) string {
 	LoadEnv()
 	appEnv, exists := os.LookupEnv("APP_ENV")
-	fmt.Println(appEnv, "ap env")
 
 	value, exists := os.LookupEnv(key + appEnv)
 	if !exists {

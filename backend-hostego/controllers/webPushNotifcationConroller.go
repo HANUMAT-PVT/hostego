@@ -99,8 +99,8 @@ func CreateWebPushNotification(title, body string) error {
 	return nil
 }
 func SendFCMNotification(c *fiber.Ctx) error {
-	token := "caUIC41GTW28YBvhq-uq_Z:APA91bELhZCVExE5bgqCb9Cf5OzFlyXiMLnVEsemznio7ywKLhKKBHW2AqHXv3ng-oAsnf3jtcFtRlszalsjzgMF5NJs6xzVckQ6b55nWzMZB8diwdS8Uk0"
-
+	// token := "caUIC41GTW28YBvhq-uq_Z:APA91bELhZCVExE5bgqCb9Cf5OzFlyXiMLnVEsemznio7ywKLhKKBHW2AqHXv3ng-oAsnf3jtcFtRlszalsjzgMF5NJs6xzVckQ6b55nWzMZB8diwdS8Uk0"
+	token := "fgcxOaHZSk25FhI0yq0sIc:APA91bHF8j0jDa5qK6vTcIWbA9ROIuMAtVZUIZjPfa1CvDm4v5ZBiIMvxrmJHgWhj9_yfh0QneS9xkdR6nfsrBv_jqy0wESeCR00jD_QPhkZw5v1snktqRU"
 	msgID, err := services.SendToToken(
 		context.Background(), // ← use a real ctx, not Fiber’s
 		token,
