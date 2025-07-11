@@ -105,7 +105,7 @@ func NotifyOrderAcceptedOrRejectedByRestaurant(orderID int, isAccepted bool, exp
 	payload = map[string]any{
 		"title": map[bool]string{true: "Order Accepted", false: "Order Rejected"}[isAccepted],
 		"body":  map[bool]string{true: "Your order #" + strconv.Itoa(order.OrderId) + " has been accepted by the restaurant. Expected ready in " + strconv.Itoa(expectedReadyInMins) + " mins.", false: "Your order #" + strconv.Itoa(order.OrderId) + " has been rejected by the restaurant."}[isAccepted],
-		"content": map[string]string{
+		"data": map[string]string{
 			"type":     "new_order",
 			"order_id": strconv.Itoa(order.OrderId),
 		},
@@ -119,7 +119,7 @@ func NotifyOrderAcceptedOrRejectedByRestaurant(orderID int, isAccepted bool, exp
 				customer.FCMToken,
 				payload["title"].(string),
 				payload["body"].(string),
-				payload["content"].(map[string]string),
+				payload["data"].(map[string]string),
 			)
 			return err
 		})

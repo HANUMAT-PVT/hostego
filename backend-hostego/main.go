@@ -3,6 +3,7 @@ package main
 import (
 	"backend-hostego/cron"
 	"backend-hostego/database"
+	"backend-hostego/logs"
 	natsclient "backend-hostego/nats"
 	"backend-hostego/routes"
 	"backend-hostego/services"
@@ -14,6 +15,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"gorm.io/gorm"
 )
 
@@ -35,6 +38,8 @@ func main() {
 		ExposeHeaders:    "Authorization",
 	}))
 
+	app.Use(recover.New()) // Logs panics
+	app.Use(logger.New())  // Logs requests: method, path, status, latency
 	// Connect Database
 	database.ConnectDataBase()
 
@@ -99,6 +104,8 @@ func main() {
 
 	// Initialize cron jobs
 	cron.InitCronJobs()
+
+	logs.InitLogger()
 
 	// Start the server
 	log.Fatal(app.Listen("0.0.0.0:8000"))
