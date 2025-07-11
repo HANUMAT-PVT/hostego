@@ -9,8 +9,7 @@ import (
 
 func ShopRoutes(app *fiber.App) {
 
-	shopRoutes := app.Group("/api/shop", middlewares.VerifyUserAuthCookieMiddleware(),
-		middlewares.RoleMiddleware("super_admin", "admin", "inventory_manager"))
+	shopRoutes := app.Group("/api/shop", middlewares.VerifyUserAuthCookieMiddleware())
 	shopRoutes.Get("/owner", controllers.FetchShopByOwnerId)
 	shopRoutes.Post("/", controllers.CreateShop)
 
