@@ -11,7 +11,7 @@ func ProductRoutes(app *fiber.App) error {
 	productRoutes := app.Group("/api/products", middlewares.VerifyUserAuthCookieMiddleware())
 
 	productRoutes.Get("/shop/:shop_id", middlewares.VerifyUserAuthCookieMiddleware(),
-		middlewares.RoleMiddleware("super_admin", "admin", "inventory_manager"),
+
 		controllers.FetchProductsByShopId,
 	)
 	productRoutes.Get("/all", controllers.FetchProducts)
@@ -20,13 +20,13 @@ func ProductRoutes(app *fiber.App) error {
 
 	productRoutes.Post("/",
 		middlewares.VerifyUserAuthCookieMiddleware(),
-		middlewares.RoleMiddleware("super_admin", "admin", "inventory_manager"),
+
 		controllers.CreateNewProduct,
 	)
 
 	productRoutes.Patch("/:id",
 		middlewares.VerifyUserAuthCookieMiddleware(),
-		middlewares.RoleMiddleware("super_admin", "admin", "inventory_manager"),
+
 		controllers.UpdateProductById,
 	)
 
