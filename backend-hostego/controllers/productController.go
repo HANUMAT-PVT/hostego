@@ -151,7 +151,6 @@ func FetchProducts(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(products)
 }
-
 func UpdateProductById(c *fiber.Ctx) error {
 	userID := c.Locals("user_id")
 	if userID == 0 {
@@ -161,32 +160,40 @@ func UpdateProductById(c *fiber.Ctx) error {
 	productID := c.Params("id")
 	var product models.Product
 
-	// Find existing product
+	// Find the product
 	if err := database.DB.First(&product, "product_id = ?", productID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 	}
 
-	// Parse incoming update data into a separate struct
-	var updateData models.Product
+	// Use map to only update fields provided in the request
+	var updateData map[string]interface{}
 	if err := c.BodyParser(&updateData); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
 
-	// ✅ Unmarshal current product.Tags if needed
+	// Decode existing tags
 	var existingTags []string
-	if err := json.Unmarshal(product.Tags, &existingTags); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid current tags format"})
+	if product.Tags != nil {
+		if err := json.Unmarshal(product.Tags, &existingTags); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid current tags format"})
+		}
 	}
 
-	// ✅ Unmarshal updateData.Tags if needed
+	// Decode incoming tags (if provided)
 	var incomingTags []string
-	if err := json.Unmarshal(updateData.Tags, &incomingTags); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid incoming tags format"})
+	hasFoodTag := false
+	if tagsRaw, ok := updateData["tags"]; ok {
+		tagsJSON, err := json.Marshal(tagsRaw)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid incoming tags format"})
+		}
+		if err := json.Unmarshal(tagsJSON, &incomingTags); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid incoming tags format"})
+		}
+		updateData["tags"] = tagsJSON // store as json.RawMessage
 	}
 
-	// ✅ Check if "food" tag exists
-	hasFoodTag := false
-
+	// Check if "food" tag is present
 	for _, tag := range existingTags {
 		if tag == "food" {
 			hasFoodTag = true
@@ -202,30 +209,31 @@ func UpdateProductById(c *fiber.Ctx) error {
 		}
 	}
 
-	// ✅ Calculate selling price
+	// Calculate SellingPrice only if FoodPrice is provided
 	if hasFoodTag {
-		switch {
-		case updateData.FoodPrice > 25 && updateData.FoodPrice < 50:
-			updateData.SellingPrice = updateData.FoodPrice + 5
-		case updateData.FoodPrice >= 50 && updateData.FoodPrice <= 100:
-			updateData.SellingPrice = updateData.FoodPrice + 10
-		case updateData.FoodPrice >= 100 && updateData.FoodPrice <= 150:
-			updateData.SellingPrice = updateData.FoodPrice + 15
-		case updateData.FoodPrice > 150:
-			updateData.SellingPrice = updateData.FoodPrice + 20
-		default:
-			updateData.SellingPrice = updateData.FoodPrice
+		if foodPriceRaw, ok := updateData["food_price"]; ok {
+			if foodPrice, ok := foodPriceRaw.(float64); ok {
+				var sellingPrice float64
+				switch {
+				case foodPrice > 25 && foodPrice < 50:
+					sellingPrice = foodPrice + 5
+				case foodPrice >= 50 && foodPrice <= 100:
+					sellingPrice = foodPrice + 10
+				case foodPrice > 100 && foodPrice <= 150:
+					sellingPrice = foodPrice + 15
+				case foodPrice > 150:
+					sellingPrice = foodPrice + 20
+				default:
+					sellingPrice = foodPrice
+				}
+				updateData["selling_price"] = sellingPrice
+			}
 		}
-	} else {
-		updateData.SellingPrice = updateData.FoodPrice
 	}
 
-	// ✅ Update the product
-	if err := database.DB.
-		Model(&product).      // the row you want to modify
-		Updates(&updateData). // 👈 pointer, not value
-		Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	// Perform the update
+	if err := database.DB.Model(&product).Updates(updateData).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update product"})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{

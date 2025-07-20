@@ -3,6 +3,7 @@ package controllers
 import (
 	"backend-hostego/database"
 	"backend-hostego/models"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -29,13 +30,17 @@ func FetchShopById(c *fiber.Ctx) error {
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	page, _ := strconv.Atoi(c.Query("page"))
+	offset := (page - 1) * limit
+
 	var products []models.Product
 	shop_id := c.Params("id")
 	var shop models.Shop
 
 	database.DB.Where("shop_id = ?", shop_id).First(&shop)
 
-	database.DB.Where("shop_id = ?", shop_id).Find(&products)
+	database.DB.Where("shop_id = ?", shop_id).Limit(limit).Offset(offset).Find(&products)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"shop": shop, "products": products})
 }

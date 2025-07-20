@@ -30,7 +30,7 @@ type Shop struct {
 	BankAccountHolderName  string       `gorm:"type:varchar(255);" json:"bank_account_holder_name"`
 	BankAccountType        string       `gorm:"type:varchar(255);" json:"bank_account_type"`
 	Pancardcopy            string       `gorm:"type:varchar(255);" json:"pancard_copy"`
-	ShopVerificationStatus string       `gorm:"type:varchar(255);" json:"shop_verification_status"`
+	ShopVerificationStatus bool         `gorm:"type:boolean;default:false;" json:"shop_verification_status"`
 	OwnerId                int          `gorm:"type:int;" json:"owner_id"`
 	// Owner                  User         `gorm:"foreignKey:OwnerId" json:"owner"`
 }
