@@ -5,6 +5,7 @@ import (
 	"backend-hostego/models"
 	"backend-hostego/services"
 	"context"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -67,6 +68,8 @@ func NotifyOrderPlaced(orderID int) error {
 	}
 
 	// Notification to Restaurant Owner
+	fmt.Println("shop.OwnerId", shop.OwnerId)
+
 	if shop.OwnerId != 0 {
 		if owner.FCMToken != "" {
 			g.Go(func() error {

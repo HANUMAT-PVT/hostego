@@ -887,8 +887,10 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete cart items"})
 		}
-		NotifyOrderPlaced(order.OrderId)
-		
+
+		if err := NotifyOrderPlaced(order.OrderId); err != nil {
+			log.Println("Error sending order placed notification:", err)
+		}
 
 		if err := tx.Commit().Error; err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
