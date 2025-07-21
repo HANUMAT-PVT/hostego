@@ -67,20 +67,22 @@ func NotifyOrderPlaced(orderID int) error {
 	}
 
 	// Notification to Restaurant Owner
-	if owner.FCMToken != "" {
-		g.Go(func() error {
-			_, err := services.SendToToken(
-				ctx,
-				owner.FCMToken,
-				"New Order Received",
-				"Order #"+strconv.Itoa(order.OrderId)+" has been placed. Please confirm it.",
-				map[string]string{
-					"type":     "new_order_request",
-					"order_id": strconv.Itoa(order.OrderId),
-				},
-			)
-			return err
-		})
+	if shop.OwnerId != 0 {
+		if owner.FCMToken != "" {
+			g.Go(func() error {
+				_, err := services.SendToToken(
+					ctx,
+					owner.FCMToken,
+					"New Order Received",
+					"Order #"+strconv.Itoa(order.OrderId)+" has been placed. Please confirm it.",
+					map[string]string{
+						"type":     "new_order_request",
+						"order_id": strconv.Itoa(order.OrderId),
+					},
+				)
+				return err
+			})
+		}
 	}
 
 	for _, userRole := range userRoles {
