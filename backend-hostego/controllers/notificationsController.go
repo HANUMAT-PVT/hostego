@@ -16,6 +16,7 @@ func NotifyOrderPlaced(orderID int) error {
 	db := database.DB
 	// 1. Get order
 	var order models.Order
+	var owner models.User
 	var userRoles []models.UserRole
 
 	if err := db.Table("user_roles").Preload("User").Where("role_id = ?", 6).Find(&userRoles).Error; err != nil {
@@ -36,14 +37,6 @@ func NotifyOrderPlaced(orderID int) error {
 	var customer models.User
 	if err := db.First(&customer, order.UserId).Error; err != nil {
 		return err
-	}
-
-	// 4. Get Shop Owner using OwnerId
-	if shop.OwnerId != 0 {
-		var owner models.User
-		if err := db.First(&owner, shop.OwnerId).Error; err != nil {
-			return err
-		}
 	}
 
 	// 5. Send notifications
@@ -73,6 +66,12 @@ func NotifyOrderPlaced(orderID int) error {
 	fmt.Println("shop.OwnerId", shop.OwnerId)
 
 	if shop.OwnerId != 0 {
+		// 4. Get Shop Owner using OwnerId
+
+		if err := db.First(&owner, shop.OwnerId).Error; err != nil {
+			return err
+		}
+
 		if owner.FCMToken != "" {
 			g.Go(func() error {
 				_, err := services.SendToToken(
