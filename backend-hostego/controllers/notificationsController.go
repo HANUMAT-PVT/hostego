@@ -195,7 +195,10 @@ func NotifyPersonByUserIdAndOrderID(orderID int, message string, title string, u
 	}
 
 	if user.FCMToken != "" {
-		services.SendToToken(context.Background(), user.FCMToken, title, message, map[string]string{"order_id": strconv.Itoa(order.OrderId), "type": "new_order"})
+		_, err := services.SendToToken(context.Background(), user.FCMToken, title, message, map[string]string{"order_id": strconv.Itoa(order.OrderId), "type": "new_order"})
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
