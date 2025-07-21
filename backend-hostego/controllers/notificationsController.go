@@ -15,6 +15,12 @@ func NotifyOrderPlaced(orderID int) error {
 	db := database.DB
 	// 1. Get order
 	var order models.Order
+	var userRoles []models.UserRole
+
+	if err := db.Table("user_roles").Preload("User").Where("role_id = ?", 6).Find(&userRoles).Error; err != nil {
+		return err
+	}
+
 	if err := db.First(&order, orderID).Error; err != nil {
 		return err
 	}
@@ -75,6 +81,15 @@ func NotifyOrderPlaced(orderID int) error {
 			)
 			return err
 		})
+	}
+
+	for _, userRole := range userRoles {
+		if userRole.User.FCMToken != "" {
+			g.Go(func() error {
+				_, err := services.SendToToken(ctx, userRole.User.FCMToken, "New Order Received", "Order #"+strconv.Itoa(order.OrderId)+" has been placed. Please assign it to a delivery partner.", map[string]string{"type": "new_order", "order_id": strconv.Itoa(order.OrderId)})
+				return err
+			})
+		}
 	}
 
 	return g.Wait()
