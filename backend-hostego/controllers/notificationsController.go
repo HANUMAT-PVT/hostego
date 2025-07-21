@@ -39,9 +39,11 @@ func NotifyOrderPlaced(orderID int) error {
 	}
 
 	// 4. Get Shop Owner using OwnerId
-	var owner models.User
-	if err := db.First(&owner, shop.OwnerId).Error; err != nil {
-		return err
+	if shop.OwnerId != 0 {
+		var owner models.User
+		if err := db.First(&owner, shop.OwnerId).Error; err != nil {
+			return err
+		}
 	}
 
 	// 5. Send notifications
