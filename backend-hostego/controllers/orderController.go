@@ -260,7 +260,11 @@ func AssignOrderToDeliveryPartner(c *fiber.Ctx) error {
 	if err := database.DB.Where("order_id=?", request_assign.OrderId).Save(&order).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	// message := "Your order has been assigned to a delivery partner!"
+	//notifiy delivery partner that new order has been assigned to them
+
+	if err := NotifyPersonByUserIdAndOrderID(request_assign.OrderId, "Order #"+strconv.Itoa(request_assign.OrderId)+" is assigned to you!", "Order Assigned", delivery_partner.UserId); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
 
 	// natsclient.SendMessageToUser(user_id.(string), message, "", orderManagerRoles)
 

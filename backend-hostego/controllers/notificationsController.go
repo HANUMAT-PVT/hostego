@@ -178,3 +178,25 @@ func NotifyOrderToCustomerByRestaurant(orderID int, message string, title string
 
 	return nil
 }
+
+// this is used to notify a person by their user id and order id
+// whether they are customer or restaurant owner or delivery partner
+func NotifyPersonByUserIdAndOrderID(orderID int, message string, title string, userID int) error {
+	db := database.DB
+	// 1. Get order
+	var order models.Order
+	if err := db.First(&order, orderID).Error; err != nil {
+		return err
+	}
+
+	var user models.User
+	if err := db.First(&user, userID).Error; err != nil {
+		return err
+	}
+
+	if user.FCMToken != "" {
+		services.SendToToken(context.Background(), user.FCMToken, title, message, map[string]string{"order_id": strconv.Itoa(order.OrderId), "type": "new_order"})
+	}
+
+	return nil
+}
