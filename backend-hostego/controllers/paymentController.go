@@ -558,6 +558,7 @@ func InitateRazorpayPaymentOrder(c *fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
+	
 
 	data := map[string]interface{}{
 		"amount":   order.FinalOrderValue * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
