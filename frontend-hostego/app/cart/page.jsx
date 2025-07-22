@@ -272,11 +272,11 @@ const page = () => {
     }
 
     const doRazorpayPayment = async (order_id, orderAmount, key, hostego_order_id) => {
-      // Razorpay SDK already loaded via <Script> component
-    if (typeof window === 'undefined' || !window.Razorpay) {
-        alert("Razorpay SDK not available");
-        return;
-      }
+        // Razorpay SDK already loaded via <Script> component
+        if (typeof window === 'undefined' || !window.Razorpay) {
+            alert("Razorpay SDK not available");
+            return;
+        }
 
         // 3. Configure checkout
         const options = {
@@ -442,7 +442,7 @@ const page = () => {
                     <div className='flex justify-between font-normal items-start'>
                         <span className='text-gray-800'>Delivery Fee <br /><span className='text-xs flex items-center'>   Includes delivery & payment fees</span></span>
 
-                        {/* {cartData?.free_delivery ? (
+                        {cartData?.free_delivery ? (
 
                             <div className='flex items-center gap-2'>
                                 <p className='line-through'>₹{cartData?.cart_value?.actual_shipping_fee}</p>
@@ -452,32 +452,40 @@ const page = () => {
 
                             </div>
                         ) : (
-                           
-                        )} */}
-                        {/* Regular Delivery Fee Display */}
-                        <div className='text-right'>
                             <div className='flex items-center gap-2'>
-                                <span>₹{cartData?.cart_value?.actual_shipping_fee}</span>
-                            </div>
+                                <p className='line-through'>₹{cartData?.cart_value?.actual_shipping_fee}</p>
+                                <div className='bg-gradient-to-r from-[#655df0] to-[#9333ea] text-white px-3  rounded-md'>
+                                    <span className='font-bold tracking-wide'>FREE</span>
+                                </div>
 
+                            </div>
+                        )}
+                        {/* Regular Delivery Fee Display */}
+                        {/* <div className='text-right'>
+                                <div className='flex items-center gap-2'>
+                                    <span>₹{cartData?.cart_value?.actual_shipping_fee}</span>
+                                </div>
+
+                            </div> */}
+                    </div>
+                    <div className='bg-gradient-to-r from-[#655df0] to-[#9333ea] p-0.5 rounded-lg mt-2'>
+
+
+                        <div className='bg-white rounded-[7px] p-3 flex items-center gap-3 ml-1 mb-1'>
+                            <div className='w-10 h-10 rounded-full bg-gradient-to-r from-[#655df0]/10 to-[#9333ea]/10 flex items-center justify-center'>
+                                <span className='text-[#655df0] font-bold'>₹</span>
+                            </div>
+                            <div>
+                                <p className='font-medium text-gray-800'>Welcome To HOSTEGO !</p>
+                                <p className='text-sm text-gray-600'>
+                                    You saved <span className='font-bold'>₹{cartData?.cart_value?.actual_shipping_fee}</span> with <span className='font-bold'>FREE DELIVERY </span>
+                                </p>
+                            </div>
                         </div>
                     </div>
-
                     {/* Additional Savings Banner for Free Delivery */}
                     {/* {cartData?.free_delivery && (
-                        <div className='bg-gradient-to-r from-[#655df0] to-[#9333ea] p-0.5 rounded-lg mt-2'>
-                            <div className='bg-white rounded-[7px] p-3 flex items-center gap-3'>
-                                <div className='w-10 h-10 rounded-full bg-gradient-to-r from-[#655df0]/10 to-[#9333ea]/10 flex items-center justify-center'>
-                                    <span className='text-[#655df0] font-bold'>₹</span>
-                                </div>
-                                <div>
-                                    <p className='font-medium text-gray-800'>Welcome To HOSTEGO !</p>
-                                    <p className='text-sm text-gray-600'>
-                                        You saved <span className='font-bold'>₹{cartData?.cart_value.actual_shipping_fee}</span> with <span className='font-bold'>FREE DELIVERY </span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                      
                     )} */}
 
                     {/* Total Amount */}
