@@ -13,5 +13,5 @@ type CartItem struct {
 	CreatedAt  time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt  time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 	// Foreign Key Relation
-	ProductItem Product `gorm:"foreignKey:ProductId;references:ProductId" json:"product_item"`
+	ProductItem Product `gorm:"foreignKey:ProductId;references:ProductId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"product_item"`
 }

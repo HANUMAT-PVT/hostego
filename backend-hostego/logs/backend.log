@@ -20,3 +20,17 @@
 2025/07/12 00:41:52 main.go:100: FCM initialized
 2025/07/12 00:44:43 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
 2025/07/12 00:46:45 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
+2025/07/21 19:27:05 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
+2025/07/22 13:33:10 firebase-service.go:73: ❌ error sending message: exactly one of token, topic or condition must be specified
+2025/07/22 13:33:34 firebase-service.go:73: ❌ error sending message: Auth error from APNS or Web Push Service
+2025/07/22 13:34:47 firebase-service.go:77: ❌ error sending message: Auth error from APNS or Web Push Service
+2025/07/22 13:36:18 firebase-service.go:77: ❌ error sending message: Auth error from APNS or Web Push Service
+2025/07/22 13:37:54 firebase-service.go:77: ❌ error sending message: Auth error from APNS or Web Push Service
+2025/07/22 13:39:02 firebase-service.go:77: ❌ error sending message: Auth error from APNS or Web Push Service
+2025/07/22 13:42:28 main.go:110: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
+2025/07/22 13:43:18 main.go:110: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
+2025/07/22 13:47:04 main.go:110: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
+2025/07/22 18:23:03 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
+2025/07/22 18:44:48 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
+2025/07/22 18:45:19 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
+2025/07/22 18:46:50 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use

@@ -35,7 +35,7 @@ type requestCreateOrder struct {
 
 func CreateNewOrder(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id").(int)
-	freeDelivery := false
+	freeDelivery := true
 	var cartItems []models.CartItem
 	var order models.Order
 

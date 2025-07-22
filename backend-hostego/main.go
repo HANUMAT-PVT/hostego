@@ -4,7 +4,6 @@ import (
 	"backend-hostego/cron"
 	"backend-hostego/database"
 	"backend-hostego/logs"
-	natsclient "backend-hostego/nats"
 	"backend-hostego/routes"
 	"backend-hostego/services"
 	"context"
@@ -43,8 +42,8 @@ func main() {
 	// Connect Database
 	database.ConnectDataBase()
 
-	natsclient.ConnectNATS()
-	natsclient.StartNATSSubscriber()
+	// natsclient.ConnectNATS()
+	// natsclient.StartNATSSubscriber()
 
 	// Add SSE route
 
@@ -90,6 +89,7 @@ func main() {
 	routes.DashboardRoutes(app)
 	routes.PaymentWebhookRoutes(app)
 	routes.ProductCategoryRoutes(app)
+	routes.RatingRoutes(app)
 	// Default Route
 
 	if err := services.Init(context.Background(), "config/firebase-service-account.json"); err != nil {
@@ -100,7 +100,7 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "Welcome to the Hostego Backend Server!"})
 	})
-	app.Get("/events", natsclient.PollingHandler)
+	// app.Get("/events", natsclient.PollingHandler)
 
 	// Initialize cron jobs
 	cron.InitCronJobs()

@@ -135,7 +135,7 @@ func FetchUserCart(c *fiber.Ctx) error {
 		Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	cartValue := CalculateFinalOrderValue(cartItems, false)
+	cartValue := CalculateFinalOrderValue(cartItems, true)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"cart_items":    cartItems,
