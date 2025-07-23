@@ -453,10 +453,10 @@ const page = () => {
                             </div>
                         ) : (
                             <div className='flex items-center gap-2'>
-                                <p className='line-through'>₹{cartData?.cart_value?.actual_shipping_fee}</p>
-                                <div className='bg-gradient-to-r from-[#655df0] to-[#9333ea] text-white px-3  rounded-md'>
+                                <p className=''>₹{cartData?.cart_value?.actual_shipping_fee}</p>
+                                {/* <div className='bg-gradient-to-r from-[#655df0] to-[#9333ea] text-white px-3  rounded-md'>
                                     <span className='font-bold tracking-wide'>FREE</span>
-                                </div>
+                                </div> */}
 
                             </div>
                         )}
@@ -468,7 +468,7 @@ const page = () => {
 
                             </div> */}
                     </div>
-                    <div className='bg-gradient-to-r from-[#655df0] to-[#9333ea] p-0.5 rounded-lg mt-2'>
+                    {cartData?.free_delivery && <div className='bg-gradient-to-r from-[#655df0] to-[#9333ea] p-0.5 rounded-lg mt-2'>
 
 
                         <div className='bg-white rounded-[7px] p-3 flex items-center gap-3 ml-1 mb-1'>
@@ -482,7 +482,7 @@ const page = () => {
                                 </p>
                             </div>
                         </div>
-                    </div>
+                    </div>}
                     {/* Additional Savings Banner for Free Delivery */}
                     {/* {cartData?.free_delivery && (
                       
@@ -521,91 +521,93 @@ const page = () => {
             </div>
 
             {/* Payment Confirmation Drawer */}
-            {showPaymentDrawer && (
-                <div className="fixed inset-0 bg-black/50 z-50">
-                    <div
-                        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 animate-slide-up"
-                        style={{ maxHeight: '80vh', overflowY: 'auto' }}
-                    >
-                        {/* Drawer Header */}
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">Payment Confirmation</h3>
-                            <button
-                                onClick={() => setShowPaymentDrawer(false)}
-                                className="p-2 hover:bg-gray-100 rounded-full"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
+            {
+                showPaymentDrawer && (
+                    <div className="fixed inset-0 bg-black/50 z-50">
+                        <div
+                            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 animate-slide-up"
+                            style={{ maxHeight: '80vh', overflowY: 'auto' }}
+                        >
+                            {/* Drawer Header */}
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-semibold">Payment Confirmation</h3>
+                                <button
+                                    onClick={() => setShowPaymentDrawer(false)}
+                                    className="p-2 hover:bg-gray-100 rounded-full"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
 
-                        {/* Wallet Status */}
-                        <div className="bg-gray-50 rounded-xl p-4 mb-4">
-                            <div className="flex justify-between items-center mb-3">
-                                <div className="flex items-center gap-2">
-                                    <Wallet className="text-[var(--primary-color)]" size={20} />
-                                    <span className="font-medium">Wallet Balance</span>
+                            {/* Wallet Status */}
+                            <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                                <div className="flex justify-between items-center mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <Wallet className="text-[var(--primary-color)]" size={20} />
+                                        <span className="font-medium">Wallet Balance</span>
+                                    </div>
+                                    <span className="text-xl font-semibold">₹{(userWallet?.balance).toFixed(1) || 0}</span>
                                 </div>
-                                <span className="text-xl font-semibold">₹{(userWallet?.balance).toFixed(1) || 0}</span>
+                                <div className="flex justify-between items-center text-sm text-gray-600">
+                                    <span>Order Amount</span>
+                                    <span>₹{cartData?.cart_value?.final_order_value}</span>
+                                </div>
                             </div>
-                            <div className="flex justify-between items-center text-sm text-gray-600">
-                                <span>Order Amount</span>
-                                <span>₹{cartData?.cart_value?.final_order_value}</span>
+
+                            {/* Status Message */}
+                            <div className={`rounded-xl p-4 mb-6 ${hasInsufficientBalance ? 'bg-red-50' : 'bg-green-50'}`}>
+                                <div className="flex items-start gap-3">
+                                    {hasInsufficientBalance ? (
+                                        <>
+                                            <AlertCircle className="text-red-600 flex-shrink-0" size={20} />
+                                            <div>
+                                                <p className="font-medium text-red-600">Insufficient Balance</p>
+                                                <p className="text-sm text-red-500">Add ₹{(amountNeeded).toFixed(1)} more to place order</p>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <CheckCircle className="text-green-600 flex-shrink-0" size={20} />
+                                            <div>
+                                                <p className="font-medium text-green-600">Sufficient Balance</p>
+                                                <p className="text-sm text-green-500">Your wallet has enough balance</p>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                             </div>
+
+                            {/* Action Button */}
+                            {hasInsufficientBalance ? (
+                                <button
+                                    onClick={() => {
+                                        setShowPaymentDrawer(false);
+                                        handleRazorpayPayment()
+                                        // router.push("/wallet")
+
+                                    }}
+                                    className="w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium  transition-colors flex items-center justify-center gap-2"
+                                >
+                                    {/* Add Money */}
+                                    Pay Online
+                                    <ArrowRight size={18} />
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => {
+                                        setShowPaymentDrawer(false);
+                                        startOrderTimer()
+                                        handleCreateOrder();
+                                    }}
+                                    className="w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium hover:opacity-90 transition-opacity"
+                                >
+                                    Confirm Order
+                                </button>
+                            )}
                         </div>
-
-                        {/* Status Message */}
-                        <div className={`rounded-xl p-4 mb-6 ${hasInsufficientBalance ? 'bg-red-50' : 'bg-green-50'}`}>
-                            <div className="flex items-start gap-3">
-                                {hasInsufficientBalance ? (
-                                    <>
-                                        <AlertCircle className="text-red-600 flex-shrink-0" size={20} />
-                                        <div>
-                                            <p className="font-medium text-red-600">Insufficient Balance</p>
-                                            <p className="text-sm text-red-500">Add ₹{(amountNeeded).toFixed(1)} more to place order</p>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <>
-                                        <CheckCircle className="text-green-600 flex-shrink-0" size={20} />
-                                        <div>
-                                            <p className="font-medium text-green-600">Sufficient Balance</p>
-                                            <p className="text-sm text-green-500">Your wallet has enough balance</p>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Action Button */}
-                        {hasInsufficientBalance ? (
-                            <button
-                                onClick={() => {
-                                    setShowPaymentDrawer(false);
-                                    handleRazorpayPayment()
-                                    // router.push("/wallet")
-
-                                }}
-                                className="w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium  transition-colors flex items-center justify-center gap-2"
-                            >
-                                {/* Add Money */}
-                                Pay Online
-                                <ArrowRight size={18} />
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => {
-                                    setShowPaymentDrawer(false);
-                                    startOrderTimer()
-                                    handleCreateOrder();
-                                }}
-                                className="w-full bg-[var(--primary-color)] text-white py-3 rounded-xl font-medium hover:opacity-90 transition-opacity"
-                            >
-                                Confirm Order
-                            </button>
-                        )}
                     </div>
-                </div>
-            )}
+                )
+            }
 
             <AddressList
                 showAddressButton={false}
@@ -618,7 +620,7 @@ const page = () => {
             <div className='h-24'></div>
 
             {paymentStatus && <PaymentStatus status={paymentStatus} />}
-        </div>
+        </div >
     )
 }
 
