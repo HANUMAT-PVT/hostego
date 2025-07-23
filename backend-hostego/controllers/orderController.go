@@ -35,7 +35,7 @@ type requestCreateOrder struct {
 
 func CreateNewOrder(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id").(int)
-	freeDelivery := true
+	freeDelivery := false
 	var cartItems []models.CartItem
 	var order models.Order
 
@@ -77,7 +77,7 @@ func CreateNewOrder(c *fiber.Ctx) error {
 	}
 	order.OrderItems = jsonCartItems
 	order.UserId = user_id
-	totalCharges := CalculateFinalOrderValue(cartItems, true)
+	totalCharges := CalculateFinalOrderValue(cartItems, freeDelivery)
 	order.PlatformFee = totalCharges.PlatformFee
 	order.ShippingFee = totalCharges.ShippingFee
 	order.FinalOrderValue = totalCharges.FinalOrderValue
