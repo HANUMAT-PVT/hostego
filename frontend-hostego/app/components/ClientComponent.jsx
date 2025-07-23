@@ -7,14 +7,14 @@ import { useEffect } from 'react'
 import { setUserAccount, setCartData, setFetchCartData, setUserAddresses, setUserRoles, setUserAccountWallet, setFetchUserAccount } from '../lib/redux/features/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { subscribeToNotifications } from '../utils/webNotifications'
-import  SSEHandler  from '../components/SSEHandler'
+import SSEHandler from '../components/SSEHandler'
 
 const ClientComponent = ({ children }) => {
 
     const dispatch = useDispatch();
-    const { fetchCartData, fetchUser,userAccount } = useSelector((state) => state.user)
+    const { fetchCartData, fetchUser, userAccount } = useSelector((state) => state.user)
     const router = useRouter()
-   
+
     useEffect(() => {
 
         if (fetchUser) {
@@ -62,6 +62,11 @@ const ClientComponent = ({ children }) => {
         }
     }
 
+    function isPathInArray(pathname) {
+        let pathnameArr = ['/privacy-policy', '/terms-and-conditions', '/refund-and-cancellation', '/support', '/ship-and-delivery']
+        return pathnameArr.some(p => pathname.includes(p))
+    }
+
     const fetchUserAccount = async () => {
         try {
             const { data } = await axiosClient.get("/api/users/me");
@@ -71,7 +76,9 @@ const ClientComponent = ({ children }) => {
             dispatch(setFetchUserAccount(false))
         } catch (error) {
             console.log(error);
-            router.push('/auth/sign-up')
+            if (!isPathInArray(window.location.pathname)) {
+                router.push('/auth/sign-up')
+            }
         }
     };
 

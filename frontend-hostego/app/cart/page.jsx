@@ -294,7 +294,7 @@ const page = () => {
             },
             prefill: {
                 name: userAccount?.first_name + userAccount?.last_name,
-                email: 'you@example.com',
+                email: userAccount?.email,
                 contact: userAccount?.mobile_number,
             },
             theme: {
