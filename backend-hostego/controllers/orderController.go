@@ -394,7 +394,7 @@ func FetchAllUserOrders(c *fiber.Ctx) error {
 
 	}
 	var orders []models.Order
-	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("user_id=?", user_id ).Order("created_at desc").Limit(limit).Offset(offset).Find(&orders).Error; err != nil {
+	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("user_id=?", user_id).Order("created_at desc").Limit(limit).Offset(offset).Find(&orders).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(orders)
@@ -539,7 +539,7 @@ func FetchAllOrderItemsAccordingToProducts(c *fiber.Ctx) error {
 		Select(`
 			products.product_id,
 			products.product_name,
-			products.product_img,
+			products.product_img_url,
 			products.description,
 			products.stock_quantity,
 			products.availability,
@@ -567,7 +567,7 @@ func FetchAllOrderItemsAccordingToProducts(c *fiber.Ctx) error {
 	err := query.Group(`
 		products.product_id, 
 		products.product_name, 
-		products.product_img, 
+		products.product_img_url, 
 		products.description, 
 		products.stock_quantity, 
 		products.availability, 

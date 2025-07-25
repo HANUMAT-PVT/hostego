@@ -152,95 +152,111 @@ func FetchProducts(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(products)
 }
+func calculateSellingPrice(foodPrice float64) float64 {
+	switch {
+	case foodPrice > 25 && foodPrice < 50:
+		return foodPrice + 5
+	case foodPrice >= 50 && foodPrice <= 100:
+		return foodPrice + 10
+	case foodPrice > 100 && foodPrice <= 150:
+		return foodPrice + 15
+	case foodPrice > 150:
+		return foodPrice + 20
+	default:
+		return foodPrice
+	}
+}
+
 func UpdateProductById(c *fiber.Ctx) error {
-	userID := c.Locals("user_id")
-	if userID == 0 {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
-	}
-
 	productID := c.Params("id")
+
+	// 1. Define request struct inline
+	type DiscountDTO struct {
+		IsAvailable *int     `json:"is_available"`
+		Percentage  *float64 `json:"percentage"`
+	}
+
+	type UpdateProductRequest struct {
+		Name          *string              `json:"name"`
+		FoodPrice     *float64             `json:"food_price"`
+		FoodCategory  *models.FoodCategory `json:"food_category"`
+		Tags          *datatypes.JSON      `json:"tags"`
+		Description   *string              `json:"description"`
+		StockQuantity *int                 `json:"stock_quantity"`
+		AverageRating *float64             `json:"average_rating"`
+		IsVeg         *int                 `json:"is_veg"`
+		IsRecommended *int                 `json:"is_recommended"`
+		Availability  *int                 `json:"availability"`
+		ShopId        *int                 `json:"shop_id"`
+		Discount      *DiscountDTO         `json:"discount"`
+		ProductImgUrl *string              `json:"product_img_url"`
+	}
+
+	// 2. Parse JSON body
+	var req UpdateProductRequest
+	if err := c.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid JSON body")
+	}
+
+	// 3. Load product
 	var product models.Product
-
-	// Find product
 	if err := database.DB.First(&product, "product_id = ?", productID).Error; err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
+		return fiber.NewError(fiber.StatusNotFound, "Product not found")
 	}
 
-	// Parse incoming data
-	var updateData map[string]interface{}
-	if err := c.BodyParser(&updateData); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
+	// 4. Update only the provided fields
+	if req.Name != nil {
+		product.ProductName = *req.Name
+	}
+	if req.FoodPrice != nil {
+		product.FoodPrice = *req.FoodPrice
+		product.SellingPrice = calculateSellingPrice(*req.FoodPrice)
+	}
+	if req.FoodCategory != nil {
+		product.FoodCategory = *req.FoodCategory
+	}
+	if req.Tags != nil {
+		product.Tags = *req.Tags
 	}
 
-	// Handle tags
-	var existingTags, incomingTags []string
-	hasFoodTag := false
-
-	if product.Tags != nil {
-		_ = json.Unmarshal(product.Tags, &existingTags)
+	if req.Description != nil {
+		product.Description = *req.Description
 	}
-	if rawTags, ok := updateData["tags"]; ok {
-		tagsJSON, err := json.Marshal(rawTags)
-		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid tags format"})
+	if req.StockQuantity != nil {
+		product.StockQuantity = *req.StockQuantity
+	}
+	if req.AverageRating != nil {
+		product.AverageRating = *req.AverageRating
+	}
+	if req.IsVeg != nil {
+		product.FoodCategory.IsVeg = *req.IsVeg
+	}
+	if req.IsRecommended != nil {
+		product.FoodCategory.IsCooked = *req.IsRecommended
+	}
+	if req.Availability != nil {
+		product.Availability = *req.Availability
+	}
+	if req.ShopId != nil {
+		product.ShopId = *req.ShopId
+	}
+	if req.Discount != nil {
+		if req.Discount.IsAvailable != nil {
+			product.FoodCategory.IsCooked = *req.Discount.IsAvailable
 		}
-		_ = json.Unmarshal(tagsJSON, &incomingTags)
-		updateData["tags"] = datatypes.JSON(tagsJSON)
-	}
-
-	// Check for "food" tag
-	for _, tag := range append(existingTags, incomingTags...) {
-		if tag == "food" {
-			hasFoodTag = true
-			break
-		}
-	}
-
-	// Handle selling_price if food_price is provided
-	if hasFoodTag {
-		if fpRaw, ok := updateData["food_price"]; ok {
-			// Ensure float64
-			foodPrice, ok := fpRaw.(float64)
-			if !ok {
-				// Try converting from int
-				if fpi, ok := fpRaw.(int); ok {
-					foodPrice = float64(fpi)
-				}
-			}
-			var sellingPrice float64
-			switch {
-			case foodPrice > 25 && foodPrice < 50:
-				sellingPrice = foodPrice + 5
-			case foodPrice >= 50 && foodPrice <= 100:
-				sellingPrice = foodPrice + 10
-			case foodPrice > 100 && foodPrice <= 150:
-				sellingPrice = foodPrice + 15
-			case foodPrice > 150:
-				sellingPrice = foodPrice + 20
-			default:
-				sellingPrice = foodPrice
-			}
-			updateData["selling_price"] = sellingPrice
+		if req.Discount.Percentage != nil {
+			product.FoodCategory.IsCooked = int(*req.Discount.Percentage)
 		}
 	}
-
-	// Convert numeric fields that must be integers
-	numericIntFields := []string{"availability", "shop_id", "stock_quantity", "total_ratings"}
-	for _, key := range numericIntFields {
-		if val, ok := updateData[key]; ok {
-			if f, ok := val.(float64); ok {
-				updateData[key] = int(f)
-			}
-		}
+	if req.ProductImgUrl != nil {
+		product.ProductImgUrl = *req.ProductImgUrl
+	}
+	// 5. Save updated product
+	if err := database.DB.Save(&product).Error; err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed to update product")
 	}
 
-	// Now update the product
-	if err := database.DB.Model(&product).Updates(updateData).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update product"})
-	}
-
-	// Reload the updated product
-
+	// 6. Return response
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Product updated successfully",
 		"product": product,
