@@ -35,3 +35,4 @@
 2025/07/22 18:45:19 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
 2025/07/22 18:46:50 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
 2025/07/24 11:43:33 firebase-service.go:72: ❌ error sending message: The registration token is not a valid FCM registration token
+2025/07/25 21:44:57 main.go:112: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use

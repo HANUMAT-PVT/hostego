@@ -29,6 +29,7 @@ type Product struct {
 	Description     string         `gorm:"type:varchar(255);index;not null" json:"description"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
+	Discount        Discount       `gorm:"embedded" json:"discount"`
 	PreparationTime string         `gorm:"type:varchar(255);" json:"preparation_time"`
 	ShopId          int            `gorm:"type:int;not null;index;default:0" json:"shop_id"`
 	Shop            Shop           `gorm:"foreignKey:ShopId;references:ShopId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"shop"`
