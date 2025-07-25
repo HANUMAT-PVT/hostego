@@ -34,5 +34,7 @@ type Shop struct {
 	OwnerId                int          `gorm:"type:int;" json:"owner_id"`
 	AverageRating          float64      `gorm:"type:double precision;default:0" json:"average_rating"`
 	TotalRatings           int          `gorm:"type:int;default:0" json:"total_ratings"`
+	OutletOpenTime         string       `gorm:"type:varchar(255);" json:"outlet_open_time"`
+	OutletCloseTime        string       `gorm:"type:varchar(255);" json:"outlet_close_time"`
 	// Owner                  User         `gorm:"foreignKey:OwnerId" json:"owner"`
 }

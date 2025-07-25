@@ -61,7 +61,7 @@ func SendFCMNotification() (string, error) {
 	message := &messaging.Message{
 		Notification: &messaging.Notification{
 			Title: "🚀 Hostego Update!",
-			Body:  "We are testing the notification system 🎉",
+			Body:  "We are testing the notification system ios check 🎉",
 		},
 		Topic: "hostego_updates",
 	}

@@ -119,11 +119,12 @@ func InitiatePayment(c *fiber.Ctx) error {
 	// Store each cart item as an order item
 	for _, item := range orderItems {
 		orderItem := models.OrderItem{
-			OrderId:   order.OrderId,
-			ProductId: item.ProductId,
-			Quantity:  item.Quantity,
-			SubTotal:  item.SubTotal,
-			UserId:    order.UserId,
+			OrderId:        order.OrderId,
+			ProductId:      item.ProductId,
+			Quantity:       item.Quantity,
+			SubTotal:       item.SubTotal,
+			UserId:         order.UserId,
+			ActualSubTotal: item.ActualSubTotal,
 		}
 
 		if err := tx.Create(&orderItem).Error; err != nil {
@@ -491,6 +492,7 @@ func VerifyCashfreePayment(c *fiber.Ctx) error {
 			Quantity:  item.Quantity,
 			SubTotal:  item.SubTotal,
 			UserId:    order.UserId,
+			ActualSubTotal: item.ActualSubTotal,
 		}
 
 		if err := tx.Create(&orderItem).Error; err != nil {
@@ -558,7 +560,6 @@ func InitateRazorpayPaymentOrder(c *fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	
 
 	data := map[string]interface{}{
 		"amount":   order.FinalOrderValue * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -700,6 +701,7 @@ func VerifyRazorpayPayment(c *fiber.Ctx) error {
 			ProductId: item.ProductId,
 			Quantity:  item.Quantity,
 			SubTotal:  item.SubTotal,
+			ActualSubTotal: item.ActualSubTotal,
 			UserId:    order.UserId,
 		}
 
@@ -865,6 +867,7 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 				Quantity:  item.Quantity,
 				SubTotal:  item.SubTotal,
 				UserId:    order.UserId,
+				ActualSubTotal: item.ActualSubTotal,
 			}
 
 			if err := tx.Create(&orderItem).Error; err != nil {

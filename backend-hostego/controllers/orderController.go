@@ -334,6 +334,9 @@ func UpdateOrderById(c *fiber.Ctx) error {
 		}
 
 	}
+	if updateData.OrderStatus == models.ReadyOrderStatus {
+		existingOrder.ActualReadyAt = time.Now()
+	}
 	existingOrder.OrderStatus = updateData.OrderStatus
 	if updateData.DeliveryPartnerId != 0 {
 		existingOrder.DeliveryPartnerId = updateData.DeliveryPartnerId
@@ -391,7 +394,7 @@ func FetchAllUserOrders(c *fiber.Ctx) error {
 
 	}
 	var orders []models.Order
-	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("user_id=?", user_id).Order("created_at desc").Limit(limit).Offset(offset).Find(&orders).Error; err != nil {
+	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("user_id=?", user_id ).Order("created_at desc").Limit(limit).Offset(offset).Find(&orders).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(orders)

@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/datatypes"
 )
 
 func CreateNewProduct(c *fiber.Ctx) error {
@@ -160,81 +161,85 @@ func UpdateProductById(c *fiber.Ctx) error {
 	productID := c.Params("id")
 	var product models.Product
 
-	// Find the product
+	// Find product
 	if err := database.DB.First(&product, "product_id = ?", productID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 	}
 
-	// Use map to only update fields provided in the request
+	// Parse incoming data
 	var updateData map[string]interface{}
 	if err := c.BodyParser(&updateData); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
 
-	// Decode existing tags
-	var existingTags []string
-	if product.Tags != nil {
-		if err := json.Unmarshal(product.Tags, &existingTags); err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid current tags format"})
-		}
-	}
-
-	// Decode incoming tags (if provided)
-	var incomingTags []string
+	// Handle tags
+	var existingTags, incomingTags []string
 	hasFoodTag := false
-	if tagsRaw, ok := updateData["tags"]; ok {
-		tagsJSON, err := json.Marshal(tagsRaw)
+
+	if product.Tags != nil {
+		_ = json.Unmarshal(product.Tags, &existingTags)
+	}
+	if rawTags, ok := updateData["tags"]; ok {
+		tagsJSON, err := json.Marshal(rawTags)
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid incoming tags format"})
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid tags format"})
 		}
-		if err := json.Unmarshal(tagsJSON, &incomingTags); err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid incoming tags format"})
-		}
-		updateData["tags"] = tagsJSON // store as json.RawMessage
+		_ = json.Unmarshal(tagsJSON, &incomingTags)
+		updateData["tags"] = datatypes.JSON(tagsJSON)
 	}
 
-	// Check if "food" tag is present
-	for _, tag := range existingTags {
+	// Check for "food" tag
+	for _, tag := range append(existingTags, incomingTags...) {
 		if tag == "food" {
 			hasFoodTag = true
 			break
 		}
 	}
-	if !hasFoodTag {
-		for _, tag := range incomingTags {
-			if tag == "food" {
-				hasFoodTag = true
-				break
-			}
-		}
-	}
 
-	// Calculate SellingPrice only if FoodPrice is provided
+	// Handle selling_price if food_price is provided
 	if hasFoodTag {
-		if foodPriceRaw, ok := updateData["food_price"]; ok {
-			if foodPrice, ok := foodPriceRaw.(float64); ok {
-				var sellingPrice float64
-				switch {
-				case foodPrice > 25 && foodPrice < 50:
-					sellingPrice = foodPrice + 5
-				case foodPrice >= 50 && foodPrice <= 100:
-					sellingPrice = foodPrice + 10
-				case foodPrice > 100 && foodPrice <= 150:
-					sellingPrice = foodPrice + 15
-				case foodPrice > 150:
-					sellingPrice = foodPrice + 20
-				default:
-					sellingPrice = foodPrice
+		if fpRaw, ok := updateData["food_price"]; ok {
+			// Ensure float64
+			foodPrice, ok := fpRaw.(float64)
+			if !ok {
+				// Try converting from int
+				if fpi, ok := fpRaw.(int); ok {
+					foodPrice = float64(fpi)
 				}
-				updateData["selling_price"] = sellingPrice
+			}
+			var sellingPrice float64
+			switch {
+			case foodPrice > 25 && foodPrice < 50:
+				sellingPrice = foodPrice + 5
+			case foodPrice >= 50 && foodPrice <= 100:
+				sellingPrice = foodPrice + 10
+			case foodPrice > 100 && foodPrice <= 150:
+				sellingPrice = foodPrice + 15
+			case foodPrice > 150:
+				sellingPrice = foodPrice + 20
+			default:
+				sellingPrice = foodPrice
+			}
+			updateData["selling_price"] = sellingPrice
+		}
+	}
+
+	// Convert numeric fields that must be integers
+	numericIntFields := []string{"availability", "shop_id", "stock_quantity", "total_ratings"}
+	for _, key := range numericIntFields {
+		if val, ok := updateData[key]; ok {
+			if f, ok := val.(float64); ok {
+				updateData[key] = int(f)
 			}
 		}
 	}
 
-	// Perform the update
+	// Now update the product
 	if err := database.DB.Model(&product).Updates(updateData).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update product"})
 	}
+
+	// Reload the updated product
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Product updated successfully",
@@ -267,6 +272,7 @@ func FetchProductsByShopId(c *fiber.Ctx) error {
 	limit := c.Query("limit", "50")
 	page := c.Query("page", "1")
 	shop_id := c.Params("shop_id")
+	search := c.Query("search")
 	limitInt, err := strconv.Atoi(limit)
 	if err != nil {
 		limitInt = 50
@@ -277,7 +283,7 @@ func FetchProductsByShopId(c *fiber.Ctx) error {
 	}
 	offset := (pageInt - 1) * limitInt
 	var products []models.Product
-	if err := database.DB.Where("shop_id = ?", shop_id).Offset(offset).Limit(limitInt).Find(&products).Error; err != nil {
+	if err := database.DB.Where("shop_id = ?", shop_id).Where("product_name ILIKE ?", "%"+search+"%").Offset(offset).Limit(limitInt).Find(&products).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "No product found !"})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"products": products})

@@ -25,7 +25,7 @@ type Product struct {
 	FoodCategory    FoodCategory   `gorm:"embedded" json:"food_category"`
 	FoodPrice       float64        `gorm:"type:double precision;not null" json:"food_price"`
 	Availability    int            `gorm:"type:int;not null;default:1" json:"availability"`
-	ProductImg      string         `gorm:"type:varchar(255);not null" json:"product_img_url"`
+	ProductImgUrl   string         `gorm:"type:varchar(255);not null" json:"product_img_url"`
 	Description     string         `gorm:"type:varchar(255);index;not null" json:"description"`
 	Discount        Discount       `gorm:"embedded" json:"discount"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime" json:"created_at"`

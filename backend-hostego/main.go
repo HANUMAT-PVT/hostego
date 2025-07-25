@@ -90,6 +90,7 @@ func main() {
 	routes.PaymentWebhookRoutes(app)
 	routes.ProductCategoryRoutes(app)
 	routes.RatingRoutes(app)
+	routes.ShopDashboardRoutes(app)
 	// Default Route
 
 	if err := services.Init(context.Background(), "config/firebase-service-account.json"); err != nil {
