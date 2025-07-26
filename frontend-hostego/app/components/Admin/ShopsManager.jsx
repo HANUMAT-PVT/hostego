@@ -21,8 +21,8 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
         owner_name: '',
         owner_phone: '',
         owner_email: '',
-        latitude: '',
-        longitude: '',
+        latitude: 0.0,
+        longitude: 0.0,
         shop_type: 'Restaurant',
         shop_description: '',
         fssai_license_number: '',
@@ -230,7 +230,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                             type="number"
                             step="any"
                             value={formData.latitude}
-                            onChange={(e) => setFormData(prev => ({ ...prev, latitude: e.target.value }))}
+                            onChange={(e) => setFormData(prev => ({ ...prev, latitude: parseFloat(e.target.value) }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                         />
                     </div>
@@ -241,7 +241,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                             type="number"
                             step="any"
                             value={formData.longitude}
-                            onChange={(e) => setFormData(prev => ({ ...prev, longitude: e.target.value }))}
+                            onChange={(e) => setFormData(prev => ({ ...prev, longitude: parseFloat(e.target.value) }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                         />
                     </div>
