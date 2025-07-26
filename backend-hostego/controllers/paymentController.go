@@ -152,7 +152,9 @@ func InitiatePayment(c *fiber.Ctx) error {
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
 	}
-	natsclient.SendMessageToUsersByRole(orderManagerRoles, "New Order Placed", "Please check the details and take the necessary action.")
+	// send notification to the user
+	NotifyOrderPlaced(order.OrderId)
+	// natsclient.SendMessageToUsersByRole(orderManagerRoles, "New Order Placed", "Please check the details and take the necessary action.")
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Payment Completed", "payment_transaction": paymentTransaction, "order": order, "wallet_transaction": walletTransaction})
 }
@@ -487,11 +489,11 @@ func VerifyCashfreePayment(c *fiber.Ctx) error {
 	// Store each cart item as an order item
 	for _, item := range orderItems {
 		orderItem := models.OrderItem{
-			OrderId:   order.OrderId,
-			ProductId: item.ProductId,
-			Quantity:  item.Quantity,
-			SubTotal:  item.SubTotal,
-			UserId:    order.UserId,
+			OrderId:        order.OrderId,
+			ProductId:      item.ProductId,
+			Quantity:       item.Quantity,
+			SubTotal:       item.SubTotal,
+			UserId:         order.UserId,
 			ActualSubTotal: item.ActualSubTotal,
 		}
 
@@ -697,12 +699,12 @@ func VerifyRazorpayPayment(c *fiber.Ctx) error {
 	// Store each cart item as an order item
 	for _, item := range orderItems {
 		orderItem := models.OrderItem{
-			OrderId:   order.OrderId,
-			ProductId: item.ProductId,
-			Quantity:  item.Quantity,
-			SubTotal:  item.SubTotal,
+			OrderId:        order.OrderId,
+			ProductId:      item.ProductId,
+			Quantity:       item.Quantity,
+			SubTotal:       item.SubTotal,
 			ActualSubTotal: item.ActualSubTotal,
-			UserId:    order.UserId,
+			UserId:         order.UserId,
 		}
 
 		if err := tx.Create(&orderItem).Error; err != nil {
@@ -862,11 +864,11 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 		// Store each cart item as an order item
 		for _, item := range orderItems {
 			orderItem := models.OrderItem{
-				OrderId:   order.OrderId,
-				ProductId: item.ProductId,
-				Quantity:  item.Quantity,
-				SubTotal:  item.SubTotal,
-				UserId:    order.UserId,
+				OrderId:        order.OrderId,
+				ProductId:      item.ProductId,
+				Quantity:       item.Quantity,
+				SubTotal:       item.SubTotal,
+				UserId:         order.UserId,
 				ActualSubTotal: item.ActualSubTotal,
 			}
 

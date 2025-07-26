@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/datatypes"
+	"gorm.io/gorm"
 )
 
 func CreateNewProduct(c *fiber.Ctx) error {
@@ -73,9 +74,16 @@ func FetchProducts(c *fiber.Ctx) error {
 	}
 
 	var products []models.Product
-	dbQuery := database.DB.Preload("Shop")
-
+	// here how to get the products from  shops where the shop is verified
+	var dbQuery *gorm.DB
 	isAdmin := c.Query("admin") == "true"
+
+	if isAdmin {
+		// get all the shops no need to check the is_shop_verified
+		dbQuery = database.DB.Preload("Shop")
+	} else {
+		dbQuery = database.DB.Preload("Shop").Where("shop_id IN (SELECT shop_id FROM shops WHERE is_shop_verified = ?)", true)
+	}
 
 	// Apply stock and availability filters for non-admin users by default
 	if !isAdmin {
@@ -90,6 +98,7 @@ func FetchProducts(c *fiber.Ctx) error {
 	sort := c.Query("sort", "asc")
 	queryLimit := c.Query("limit", "50")
 	queryPage := c.Query("page", "1")
+	var totalProducts int64
 
 	if searchQuery != "" {
 		baseQuery := `(product_name ILIKE ? 
@@ -99,6 +108,7 @@ func FetchProducts(c *fiber.Ctx) error {
 				SELECT 1 FROM jsonb_array_elements_text(tags) tag 
 				WHERE tag ILIKE ?
 			))`
+			
 
 		dbQuery = dbQuery.Where(
 			baseQuery,
@@ -112,6 +122,7 @@ func FetchProducts(c *fiber.Ctx) error {
 			UserId: user_id.(int),
 		})
 	}
+	database.DB.Model(&models.Product{}).Count(&totalProducts)
 
 	// ✅ Filtering by tags
 	if tagsQuery != "" {
@@ -150,7 +161,7 @@ func FetchProducts(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch products", "message": err.Error()})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(products)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"products": products, "total": totalProducts})
 }
 func calculateSellingPrice(foodPrice float64) float64 {
 	switch {

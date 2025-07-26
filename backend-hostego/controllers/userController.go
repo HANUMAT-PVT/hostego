@@ -3,6 +3,8 @@ package controllers
 import (
 	"backend-hostego/database"
 	"backend-hostego/models"
+	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -12,15 +14,24 @@ func GetUsers(c *fiber.Ctx) error {
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
+	page, _ := strconv.Atoi(c.Query("page", "1"))
+	limit, _ := strconv.Atoi(c.Query("limit", "50"))
+	search := c.Query("search", "")
+	offset := (page - 1) * limit
+	var total int64
+	var newUsersTotal int64
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 	var users []models.User
-	database.DB.Find(&users)
+	database.DB.Limit(limit).Offset(offset).Where("first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR mobile_number LIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%").Order("created_at DESC").Find(&users)
+	database.DB.Model(&models.User{}).Count(&total)
+	database.DB.Model(&models.User{}).Where("created_at > ?", time.Now().AddDate(0, 0, -30)).Count(&newUsersTotal)
 
 	type UserWithRoles struct {
 		User  models.User       `json:"user"`
 		Roles []models.UserRole `json:"roles"`
+		Total int64             `json:"total"`
 	}
 
 	// Initialize slice with proper length
@@ -31,8 +42,9 @@ func GetUsers(c *fiber.Ctx) error {
 		database.DB.Preload("Role").Where("user_id = ?", users[i].UserId).Find(&roles)
 		usersWithRoles[i].Roles = roles
 		usersWithRoles[i].User = users[i]
+
 	}
-	return c.Status(200).JSON(usersWithRoles)
+	return c.Status(200).JSON(fiber.Map{"users": usersWithRoles, "total": total, "new_users": newUsersTotal})
 }
 
 func GetUserById(c *fiber.Ctx) error {

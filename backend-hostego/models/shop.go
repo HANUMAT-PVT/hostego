@@ -31,6 +31,7 @@ type Shop struct {
 	BankAccountType        string       `gorm:"type:varchar(255);" json:"bank_account_type"`
 	Pancardcopy            string       `gorm:"type:varchar(255);" json:"pancard_copy"`
 	ShopVerificationStatus string       `gorm:"type:varchar(255);" json:"shop_verification_status"`
+	IsShopVerified         bool         `gorm:"type:boolean;default:false" json:"is_shop_verified"`
 	OwnerId                int          `gorm:"type:int;" json:"owner_id"`
 	AverageRating          float64      `gorm:"type:double precision;default:0" json:"average_rating"`
 	TotalRatings           int          `gorm:"type:int;default:0" json:"total_ratings"`

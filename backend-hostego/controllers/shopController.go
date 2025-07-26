@@ -52,11 +52,16 @@ func FetchShops(c *fiber.Ctx) error {
 	}
 	limit, _ := strconv.Atoi(c.Query("limit", "10"))
 	page, _ := strconv.Atoi(c.Query("page", "1"))
+	admin := c.Query("admin", "false")
 	offset := (page - 1) * limit
 
 	var shops []models.Shop
 
-	database.DB.Limit(limit).Offset(offset).Find(&shops)
+	if admin == "true" {
+		database.DB.Limit(limit).Offset(offset).Find(&shops)
+	} else {
+		database.DB.Limit(limit).Where("is_shop_verified = ?", true).Offset(offset).Find(&shops)
+	}
 
 	return c.Status(fiber.StatusOK).JSON(shops)
 }
