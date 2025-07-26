@@ -6,9 +6,9 @@ import { subscribeToNotifications } from '../utils/webNotifications'
 
 
 const SSEHandler = ({ userId }) => {
-    usePolling(userId, ({title,body,roles}) => {
-        subscribeToNotifications(title,body)
-    })
+    // usePolling(userId, ({title,body,roles}) => {
+    //     subscribeToNotifications(title,body)
+    // })
 
     return null
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Package, Search, Tag, Clock, DollarSign, Info, Image as ImageIcon, Check, X } from 'lucide-react';
+import { Plus, Package, Search, Tag, Clock, DollarSign, Info, Image as ImageIcon, Check, X, Loader2 } from 'lucide-react';
 import axiosClient from '../../utils/axiosClient';
 
 const defaultFormData = {
@@ -34,7 +34,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
     useEffect(() => {
         const fetchShops = async () => {
             try {
-                const { data } = await axiosClient.get('/api/shop');
+                const { data } = await axiosClient.get('/api/shop?admin=true');
                 setShops(data);
 
             } catch (error) {
@@ -133,16 +133,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                                 required
                             />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Weight</label>
-                            <input
-                                type="text"
-                                value={formData?.weight}
-                                onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
-                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
-                                required
-                            />
-                        </div>
+
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Stock Quantity</label>
                             <input
@@ -215,35 +206,7 @@ const ProductForm = ({ onSubmit, onCancel, initialData = null }) => {
                         </div>
                     </div>
                     <div className="flex gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Food Type</label>
-                            <div className="flex gap-3">
-                                <label className="flex items-center gap-2">
-                                    <input
-                                        type="radio"
-                                        checked={formData?.food_category?.is_veg === 1}
-                                        onChange={() => setFormData(prev => ({
-                                            ...prev,
-                                            food_category: { ...prev?.food_category, is_veg: 1 }
-                                        }))}
-                                        className="text-green-600"
-                                    />
-                                    <span>Veg</span>
-                                </label>
-                                <label className="flex items-center gap-2">
-                                    <input
-                                        type="radio"
-                                        checked={formData?.food_category?.is_veg === 0}
-                                        onChange={() => setFormData(prev => ({
-                                            ...prev,
-                                            food_category: { ...prev?.food_category, is_veg: 0 }
-                                        }))}
-                                        className="text-red-600"
-                                    />
-                                    <span>Non-veg</span>
-                                </label>
-                            </div>
-                        </div>
+
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Availability</label>
@@ -363,21 +326,68 @@ const ProductsManager = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [totalProducts, setTotalProducts] = useState(0);
+    const [searchLoading, setSearchLoading] = useState(false);
+
+    const ITEMS_PER_PAGE = 30;
+
+    // Debounce search term
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
+
+    // Reset pagination when search changes
+    useEffect(() => {
+        setCurrentPage(1);
+        setProducts([]);
+        fetchProducts(1, true);
+    }, [debouncedSearchTerm]);
 
     useEffect(() => {
-        fetchProducts();
+        fetchProducts(1, true);
     }, []);
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (page = 1, reset = false) => {
         try {
-            setLoading(true);
-            const { data } = await axiosClient.get('/api/products/all?page=1&limit=500&admin=true');
-            setProducts(data);
+            if (reset) {
+                setLoading(true);
+                setProducts([]);
+            } else {
+                setLoadingMore(true);
+            }
+            setSearchLoading(true);
+            const searchQuery = debouncedSearchTerm ? `&search=${encodeURIComponent(debouncedSearchTerm)}` : '';
+            const { data } = await axiosClient.get(`/api/products/all?page=${page}&limit=${ITEMS_PER_PAGE}&admin=true${searchQuery}`);
+            if (reset) {
+                setProducts(data.products || data);
+                setTotalProducts(data.total || (data.products ? data.products.length : data.length));
+            } else {
+                setProducts(prev => [...prev, ...(data.products || data)]);
+            }
+            // Check if there are more products to load
+            const totalFetched = reset ? (data.products || data).length : products.length + (data.products || data).length;
+            setHasMore(totalFetched < (data.total || (data.products ? data.products.length : data.length)));
         } catch (error) {
             console.error('Error fetching products:', error);
         } finally {
             setLoading(false);
+            setLoadingMore(false);
+            setSearchLoading(false);
         }
+    };
+
+    const loadMore = async () => {
+        if (loadingMore || !hasMore) return;
+        const nextPage = currentPage + 1;
+        setCurrentPage(nextPage);
+        await fetchProducts(nextPage, false);
     };
 
     const handleEditProduct = (product) => {
@@ -396,7 +406,7 @@ const ProductsManager = () => {
             }
             setShowForm(false);
             setEditingProduct(null);
-            fetchProducts();
+            fetchProducts(1, true);
         } catch (error) {
             console.error('Error saving product:', error);
         }
@@ -406,12 +416,6 @@ const ProductsManager = () => {
         setShowForm(false);
         setEditingProduct(null);
     };
-
-    const filteredProducts = products.filter(product =>
-        product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.shop.shop_name.toLowerCase().includes(searchTerm.toLocaleLowerCase())
-    );
 
     return (
         <div className="p-6">
@@ -432,7 +436,7 @@ const ProductsManager = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div className="bg-white p-4 rounded-xl shadow-sm">
                     <h3 className="text-sm text-gray-500">Total Products</h3>
-                    <p className="text-2xl font-semibold">{products.length}</p>
+                    <p className="text-2xl font-semibold">{totalProducts}</p>
                 </div>
                 <div className="bg-white p-4 rounded-xl shadow-sm">
                     <h3 className="text-sm text-gray-500">Available Products</h3>
@@ -450,15 +454,23 @@ const ProductsManager = () => {
 
             <div className="bg-white rounded-xl p-4 shadow-sm mb-6">
                 <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    <Search className={`absolute left-3 top-1/2 -translate-y-1/2 ${searchLoading ? 'text-[var(--primary-color)]' : 'text-gray-400'}`} size={20} />
+                    {searchLoading && (
+                        <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--primary-color)] animate-spin" />
+                    )}
                     <input
                         type="text"
-                        placeholder="Search products..."
+                        placeholder="Search products by name, description, or shop..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
+                        className="w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                     />
                 </div>
+                {debouncedSearchTerm && (
+                    <div className="mt-3 text-sm text-gray-600">
+                        Searching for "{debouncedSearchTerm}"...
+                    </div>
+                )}
             </div>
 
             {showForm && (
@@ -482,9 +494,8 @@ const ProductsManager = () => {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shop</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Availability</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Availability</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</th>
                                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Actions
@@ -492,72 +503,113 @@ const ProductsManager = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 ">
-                            {filteredProducts.map((product) => (
-                                <tr key={product.product_id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center">
-                                            <img
-                                                src={product?.product_img_url}
-                                                alt={product?.product_name}
-                                                className="w-10 h-10 rounded-lg object-cover"
-                                            />
-                                            <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900">{product?.product_name}</div>
-                                                <div className="text-sm text-gray-500">{product?.weight}</div>
+                            {loading ? (
+                                [...Array(5)].map((_, i) => (
+                                    <tr key={i} className="animate-pulse">
+                                        <td className="px-6 py-4" colSpan={9}>
+                                            <div className="h-4 bg-gray-100 rounded w-1/2 mb-2" />
+                                            <div className="h-3 bg-gray-100 rounded w-1/3" />
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : products.length > 0 ? (
+                                products.map((product) => (
+                                    <tr key={product.product_id} className="hover:bg-gray-50">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center">
+                                                <img
+                                                    src={product?.product_img_url}
+                                                    alt={product?.product_name}
+                                                    className="w-10 h-10 rounded-lg object-cover"
+                                                />
+
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className="text-sm text-gray-900">
-                                            {product?.shop?.shop_name || 'Unknown Shop'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`inline-flex text-nowrap items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.food_category.is_veg ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                            }`}>
-                                            {product?.food_category?.is_veg ? 'Veg' : 'Non-veg'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-gray-500">
-                                        ₹{product?.food_price}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-gray-500">
-                                        {product?.weight}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-gray-500">
-                                        {product?.stock_quantity || 0}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`inline-flex text-nowrap items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product?.availability ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                            }`}>
-                                            {product?.availability ? 'Available' : 'Out of Stock'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex flex-wrap gap-1">
-                                            {product?.tags?.map(tag => (
-                                                <span
-                                                    key={tag}
-                                                    className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                                                >
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button
-                                            onClick={() => handleEditProduct(product)}
-                                            className="text-[var(--primary-color)] hover:text-[var(--primary-color)]/80 font-medium text-sm"
-                                        >
-                                            Edit
-                                        </button>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="text-sm text-gray-900">
+                                                {product?.shop?.shop_name || 'Unknown Shop'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`inline-flex text-nowrap items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.food_category.is_veg ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                                }`}>
+                                                {product?.food_category?.is_veg ? 'Veg' : 'Non-veg'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                            ₹{product?.food_price}
+                                        </td>
+
+                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                            {product?.stock_quantity || 0}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`inline-flex text-nowrap items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product?.availability ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                                }`}>
+                                                {product?.availability ? 'Available' : 'Out of Stock'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-wrap gap-1">
+                                                {product?.tags?.map(tag => (
+                                                    <span
+                                                        key={tag}
+                                                        className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                    >
+                                                        {tag}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <button
+                                                onClick={() => handleEditProduct(product)}
+                                                className="text-[var(--primary-color)] hover:text-[var(--primary-color)]/80 font-medium text-sm"
+                                            >
+                                                Edit
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={9} className="text-center py-8 text-gray-500">
+                                        No products found.
                                     </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
                 </div>
+                {/* Load More Button */}
+                {hasMore && !loading && (
+                    <div className="flex justify-center pt-6 pb-4">
+                        <button
+                            onClick={loadMore}
+                            disabled={loadingMore}
+                            className={`px-6 py-3 rounded-lg font-medium transition-all ${loadingMore
+                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                : 'bg-[var(--primary-color)] text-white hover:bg-[var(--primary-color)]/90 shadow-sm hover:shadow-md'
+                                }`}
+                        >
+                            {loadingMore ? (
+                                <div className="flex items-center gap-2">
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    Loading...
+                                </div>
+                            ) : (
+                                'Load More Products'
+                            )}
+                        </button>
+                    </div>
+                )}
+                {/* End of Results */}
+                {!hasMore && products.length > 0 && (
+                    <div className="text-center py-8 text-gray-500 border-t border-gray-100">
+                        <p className="text-sm">You've reached the end of the results</p>
+                        <p className="text-xs mt-1">Showing {products.length} of {totalProducts} products</p>
+                    </div>
+                )}
             </div>
         </div>
     );
