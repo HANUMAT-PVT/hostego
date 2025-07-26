@@ -37,7 +37,7 @@ const page = () => {
         try {
             setLoading(true);
             const { data } = await axiosClient.get(`/api/products/all?page=${currentPage}&limit=50&search=${search}&admin=false`);
-            setProducts(data);
+            setProducts(data?.products);
         } catch (err) {
             setError(err.message);
         } finally {

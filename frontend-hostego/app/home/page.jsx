@@ -42,11 +42,11 @@ const page = () => {
                 `/api/products/all?page=${pageNum}&limit=15&tags=${navItems[activeIndex]?.category}&admin=false`
             )
 
-            if (data.length < 15) {
+            if (data?.products?.length < 15) {
                 setHasMore(false)
             }
 
-            setProducts(prev => isNewCategory ? data : [...prev, ...data])
+            setProducts(prev => isNewCategory ? data?.products : [...prev, ...data?.products])
         } catch (error) {
             console.error('Error fetching products:', error)
         } finally {
