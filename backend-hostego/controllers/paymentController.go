@@ -100,10 +100,6 @@ func InitiatePayment(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
-	if err := tx.Preload("User").Where("order_id=?", request.OrderID).Save(&order).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
 	if err := tx.Where("user_id = ?", userId).Delete(&cartItem).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove cart items"})
@@ -118,6 +114,7 @@ func InitiatePayment(c *fiber.Ctx) error {
 
 	// Store each cart item as an order item
 	for _, item := range orderItems {
+		order.RestaurantPayableAmount += item.ActualSubTotal
 		orderItem := models.OrderItem{
 			OrderId:        order.OrderId,
 			ProductId:      item.ProductId,
@@ -126,7 +123,10 @@ func InitiatePayment(c *fiber.Ctx) error {
 			UserId:         order.UserId,
 			ActualSubTotal: item.ActualSubTotal,
 		}
-
+		if err := tx.Preload("User").Where("order_id=?", request.OrderID).Save(&order).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		}
 		if err := tx.Create(&orderItem).Error; err != nil {
 			tx.Rollback()
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
@@ -568,7 +568,6 @@ func InitateRazorpayPaymentOrder(c *fiber.Ctx) error {
 		"currency": "INR",
 		"receipt":  "some_receipt_id",
 	}
-	fmt.Print("rz_client", rz_key_id, "client secret", rz_key_secret)
 	body, err := rz_client.Order.Create(data, nil)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to create order", "message": err.Error()})
@@ -680,10 +679,6 @@ func VerifyRazorpayPayment(c *fiber.Ctx) error {
 
 	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
 
-	if err := tx.Preload("User").Where("order_id=?", request.OrderID).Save(&order).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
 	if err := tx.Where("user_id = ?", order.UserId).Delete(&cartItem).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove cart items"})
@@ -698,6 +693,7 @@ func VerifyRazorpayPayment(c *fiber.Ctx) error {
 
 	// Store each cart item as an order item
 	for _, item := range orderItems {
+		order.RestaurantPayableAmount += item.ActualSubTotal
 		orderItem := models.OrderItem{
 			OrderId:        order.OrderId,
 			ProductId:      item.ProductId,
@@ -719,6 +715,7 @@ func VerifyRazorpayPayment(c *fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 		}
+
 	}
 
 	// Mark cart items as deleted
@@ -733,7 +730,10 @@ func VerifyRazorpayPayment(c *fiber.Ctx) error {
 	if err := tx.First(&user, "user_id = ?", order.UserId).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-
+	if err := tx.Preload("User").Where("order_id=?", request.OrderID).Save(&order).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
 	NotifyOrderPlaced(order.OrderId)
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
@@ -845,10 +845,6 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 
 		order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
 
-		if err := tx.Preload("User").Where("order_id=?", paymentTransaction.OrderId).Save(&order).Error; err != nil {
-			tx.Rollback()
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-		}
 		if err := tx.Where("user_id = ?", order.UserId).Delete(&cartItem).Error; err != nil {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove cart items"})
@@ -863,6 +859,7 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 
 		// Store each cart item as an order item
 		for _, item := range orderItems {
+			order.RestaurantPayableAmount += item.ActualSubTotal
 			orderItem := models.OrderItem{
 				OrderId:        order.OrderId,
 				ProductId:      item.ProductId,
@@ -894,6 +891,10 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete cart items"})
 		}
 
+		if err := tx.Preload("User").Where("order_id=?", paymentTransaction.OrderId).Save(&order).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		}
 		if err := NotifyOrderPlaced(order.OrderId); err != nil {
 			log.Println("Error sending order placed notification:", err)
 		}

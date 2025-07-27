@@ -108,7 +108,6 @@ func FetchProducts(c *fiber.Ctx) error {
 				SELECT 1 FROM jsonb_array_elements_text(tags) tag 
 				WHERE tag ILIKE ?
 			))`
-			
 
 		dbQuery = dbQuery.Where(
 			baseQuery,

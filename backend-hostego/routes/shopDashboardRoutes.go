@@ -13,4 +13,5 @@ func ShopDashboardRoutes(app *fiber.App) {
 	shopDashboard.Get("/order-analytics/:shop_id", controllers.GetOrderAnalytics)
 	shopDashboard.Get("/customer-insights/:shop_id", controllers.GetCustomerInsights)
 	shopDashboard.Get("/performance-metrics/:shop_id", controllers.GetRestaurantPerformanceMetrics)
+	shopDashboard.Get("/revenue-analytics/:shop_id", controllers.GetRestaurantRevenueAnalytics)
 }

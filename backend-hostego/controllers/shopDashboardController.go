@@ -20,25 +20,29 @@ func GetShopDashboardStats(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid shop_id"})
 	}
 
-	timeRange := c.Query("range", "day") // default range
+	timeRange := c.Query("range") // no default; "all time" if not provided
 	var startTime time.Time
-	now := time.Now()
+	var filterByTime bool
 
+	now := time.Now()
 	switch timeRange {
 	case "day":
 		startTime = now.Add(-24 * time.Hour)
+		filterByTime = true
 	case "week":
 		startTime = now.AddDate(0, 0, -7)
+		filterByTime = true
 	case "month":
 		startTime = now.AddDate(0, -1, 0)
+		filterByTime = true
 	default:
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid time range"})
+		// No time filter — return all-time data
+		filterByTime = false
 	}
 
 	type AverageStats struct {
 		AverageRating float64 `json:"average_product_rating"`
 	}
-
 	type TotalRevenueStats struct {
 		TotalRevenue      float64 `json:"total_revenue"`
 		TotalOrders       int     `json:"total_orders"`
@@ -48,19 +52,23 @@ func GetShopDashboardStats(c *fiber.Ctx) error {
 	var revenueStats TotalRevenueStats
 	var averageStats AverageStats
 
-	// 1. Total revenue & order count
-	err = database.DB.
+	// Build base query
+	revenueQuery := database.DB.
 		Table("order_items").
 		Select(`
-				COALESCE(SUM(order_items.actual_sub_total), 0) AS total_revenue,
-				COUNT(DISTINCT order_items.order_id) AS total_orders
-			`).
+			COALESCE(SUM(order_items.actual_sub_total), 0) AS total_revenue,
+			COUNT(DISTINCT order_items.order_id) AS total_orders
+		`).
 		Joins("JOIN products ON order_items.product_id = products.product_id").
 		Joins("JOIN orders ON order_items.order_id = orders.order_id").
-		Where("products.shop_id = ? AND orders.order_status = ? AND orders.created_at >= ?", shopID, "delivered", startTime).
-		Scan(&revenueStats).Error
+		Where("products.shop_id = ? AND orders.order_status = ?", shopID, "delivered")
 
-	if err != nil {
+	// Apply time filter if needed
+	if filterByTime {
+		revenueQuery = revenueQuery.Where("orders.created_at >= ?", startTime)
+	}
+
+	if err := revenueQuery.Scan(&revenueStats).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to calculate revenue/orders"})
 	}
 
@@ -68,16 +76,19 @@ func GetShopDashboardStats(c *fiber.Ctx) error {
 		revenueStats.AverageOrderValue = revenueStats.TotalRevenue / float64(revenueStats.TotalOrders)
 	}
 
-	// 2. Average rating for delivered products
-	err = database.DB.
+	// Average product rating
+	ratingQuery := database.DB.
 		Table("products").
 		Select("AVG(products.average_rating) AS average_rating").
 		Joins("JOIN order_items ON order_items.product_id = products.product_id").
 		Joins("JOIN orders ON order_items.order_id = orders.order_id").
-		Where("products.shop_id = ? AND orders.order_status = ? AND orders.created_at >= ?", shopID, "delivered", startTime).
-		Scan(&averageStats).Error
+		Where("products.shop_id = ? AND orders.order_status = ?", shopID, "delivered")
 
-	if err != nil {
+	if filterByTime {
+		ratingQuery = ratingQuery.Where("orders.created_at >= ?", startTime)
+	}
+
+	if err := ratingQuery.Scan(&averageStats).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch average product rating"})
 	}
 
@@ -105,16 +116,20 @@ func GetTopSellingProducts(c *fiber.Ctx) error {
 	rangeStr := c.Query("range", "week") // default to week
 	var startTime time.Time
 	now := time.Now()
+	filterByTime := false
 
 	switch rangeStr {
 	case "day":
 		startTime = now.Add(-24 * time.Hour)
+		filterByTime = true
 	case "week":
 		startTime = now.AddDate(0, 0, -7)
+		filterByTime = true
 	case "month":
 		startTime = now.AddDate(0, -1, 0)
+		filterByTime = true
 	default:
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid time range"})
+		filterByTime = false
 	}
 
 	limitStr := c.Query("limit", "10")
@@ -134,7 +149,7 @@ func GetTopSellingProducts(c *fiber.Ctx) error {
 
 	var topProducts []TopProduct
 
-	err = database.DB.
+	query := database.DB.
 		Table("order_items").
 		Select(`
 			products.product_id,
@@ -146,13 +161,19 @@ func GetTopSellingProducts(c *fiber.Ctx) error {
 		`).
 		Joins("JOIN products ON order_items.product_id = products.product_id").
 		Joins("JOIN orders ON order_items.order_id = orders.order_id").
-		Where("products.shop_id = ? AND orders.order_status = ? AND orders.created_at >= ?", shopID, "delivered", startTime).
+		Where("products.shop_id = ? AND orders.order_status = ?", shopID, "delivered")
+
+	if filterByTime {
+		query = query.Where("orders.created_at >= ?", startTime)
+	}
+
+	query.Group("products.product_id, products.product_name, products.food_price, products.selling_price, products.average_rating").
 		Group("products.product_id, products.product_name, products.food_price, products.selling_price, products.average_rating").
 		Order("quantity_sold DESC").
 		Limit(limit).
-		Scan(&topProducts).Error
+		Scan(&topProducts)
 
-	if err != nil {
+	if query.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch top selling products"})
 	}
 
@@ -171,20 +192,23 @@ func GetOrderAnalytics(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid shop_id"})
 	}
 
-	// Time range: day, week, month
-	rangeStr := c.Query("range", "week")
-	now := time.Now()
+	rangeStr := c.Query("range", "week") // default to week
 	var startTime time.Time
+	now := time.Now()
+	filterByTime := false
 
 	switch rangeStr {
 	case "day":
-		startTime = now.AddDate(0, 0, -1)
+		startTime = now.Add(-24 * time.Hour)
+		filterByTime = true
 	case "week":
 		startTime = now.AddDate(0, 0, -7)
+		filterByTime = true
 	case "month":
 		startTime = now.AddDate(0, -1, 0)
+		filterByTime = true
 	default:
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid time range"})
+		filterByTime = false
 	}
 
 	type Result struct {
@@ -198,26 +222,41 @@ func GetOrderAnalytics(c *fiber.Ctx) error {
 	var result Result
 
 	// Total Orders by shop_id (from orders)
-	if err := database.DB.
+	query := database.DB.
 		Model(&models.Order{}).
-		Where("shop_id = ? AND created_at >= ?", shopID, startTime).
-		Count(&result.TotalOrderCount).Error; err != nil {
+		Where("shop_id = ?", shopID)
+
+	if filterByTime {
+		query = query.Where("created_at >= ?", startTime)
+	}
+
+	if err := query.Count(&result.TotalOrderCount).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error fetching total orders"})
 	}
 
 	// Delivered Orders
-	if err := database.DB.
+	query = database.DB.
 		Model(&models.Order{}).
-		Where("shop_id = ? AND order_status = ? AND created_at >= ?", shopID, "delivered", startTime).
-		Count(&result.DeliveredOrderCount).Error; err != nil {
+		Where("shop_id = ? AND order_status = ?", shopID, "delivered")
+
+	if filterByTime {
+		query = query.Where("created_at >= ?", startTime)
+	}
+
+	if err := query.Count(&result.DeliveredOrderCount).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error fetching delivered orders"})
 	}
 
 	// Cancelled Orders
-	if err := database.DB.
+	query = database.DB.
 		Model(&models.Order{}).
-		Where("shop_id = ? AND order_status = ? AND created_at >= ?", shopID, "cancelled", startTime).
-		Count(&result.CancelledOrderCount).Error; err != nil {
+		Where("shop_id = ? AND order_status = ?", shopID, "cancelled")
+
+	if filterByTime {
+		query = query.Where("created_at >= ?", startTime)
+	}
+
+	if err := query.Count(&result.CancelledOrderCount).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error fetching cancelled orders"})
 	}
 
@@ -370,5 +409,59 @@ func GetRestaurantPerformanceMetrics(c *fiber.Ctx) error {
 		"average_prep_time_minutes": fmt.Sprintf("%.2f", avgPrepMinutes),
 		"customer_satisfaction":     fmt.Sprintf("%.2f", avgRating),
 		"peak_hours":                peakHours,
+	})
+}
+
+func GetRestaurantRevenueAnalytics(c *fiber.Ctx) error {
+	shopID := c.Params("shop_id")
+	rangeStr := c.Query("range", "month")
+
+	var startTime time.Time
+	now := time.Now()
+	filterByTime := false
+
+	switch rangeStr {
+	case "day":
+		startTime = now.AddDate(0, 0, -1)
+		filterByTime = true
+	case "week":
+		startTime = now.AddDate(0, 0, -7)
+		filterByTime = true
+	case "month":
+		startTime = now.AddDate(0, -1, 0)
+		filterByTime = true
+	default:
+		filterByTime = false
+	}
+
+	type RevenueAnalytics struct {
+		TotalRevenue float64 `json:"total_revenue"`
+		TotalPending float64 `json:"total_pending"`
+	}
+	var revenueAnalytics RevenueAnalytics
+
+	query := database.DB.
+		Table("orders").
+		Where("shop_id = ? AND order_status = ?", shopID, "delivered")
+
+	if filterByTime {
+		query = query.Where("created_at >= ?", startTime)
+	}
+
+	query.Select("SUM(restaurant_payable_amount) AS total_revenue").
+		Scan(&revenueAnalytics)
+
+	if err := query.Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch revenue"})
+	}
+
+	query = query.Where("shop_id = ? AND restaurant_paid_at IS NULL", shopID)
+	query.Select("SUM(restaurant_payable_amount) AS total_pending").
+		Scan(&revenueAnalytics.TotalPending)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":       "Restaurant revenue analytics",
+		"total_revenue": revenueAnalytics.TotalRevenue,
+		"total_pending": revenueAnalytics.TotalPending,
 	})
 }

@@ -315,8 +315,8 @@ func UpdateOrderById(c *fiber.Ctx) error {
 
 	if updateData.IsAcceptedByRestaurant {
 		existingOrder.IsAcceptedByRestaurant = true
-		existingOrder.RestaurantRespondedAt = time.Now()
-		existingOrder.ExpectedReadyInMins = updateData.ExpectedReadyInMins
+		existingOrder.RestaurantRespondedAt = 	time.Now()
+		existingOrder.ExpectedReadyAt = time.Now().Add(time.Duration(updateData.ExpectedReadyInMins) * time.Minute)
 		NotifyOrderAcceptedOrRejectedByRestaurant(existingOrder.OrderId, true, updateData.ExpectedReadyInMins)
 	}
 	if updateData.IsRejectedByRestaurant {
