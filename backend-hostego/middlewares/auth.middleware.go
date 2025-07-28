@@ -118,3 +118,4 @@ func VerifyUserAuthCookieMiddleware() fiber.Handler {
 		return c.Next()
 	}
 }
+

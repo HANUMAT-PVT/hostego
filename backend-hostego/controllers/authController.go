@@ -65,4 +65,5 @@ func generateJWT(user models.User) (string, error) {
 	return token.SignedString([]byte(jwtSecret))
 }
 
+
 //test commit
