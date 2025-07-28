@@ -123,7 +123,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Shop Name</label>
                         <input
                             type="text"
-                            value={formData.shop_name}
+                            value={formData?.shop_name}
                             onChange={(e) => setFormData(prev => ({ ...prev, shop_name: e.target.value }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             required
@@ -133,7 +133,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Shop Type</label>
                         <select
-                            value={formData.shop_type}
+                            value={formData?.shop_type}
                             onChange={(e) => setFormData(prev => ({ ...prev, shop_type: e.target.value }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                         >
@@ -149,7 +149,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Shop Description</label>
                     <textarea
-                        value={formData.shop_description}
+                        value={formData?.shop_description}
                         onChange={(e) => setFormData(prev => ({ ...prev, shop_description: e.target.value }))}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                         rows="3"
@@ -177,7 +177,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                             <Upload size={16} />
                             Upload Shop Image
                         </label>
-                        {formData.shop_img && (
+                        {formData?.shop_img && (
                             <span className="text-xs text-green-600 flex items-center gap-1">
                                 <Check size={12} />
                                 Uploaded
@@ -187,10 +187,10 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                     {uploadProgress.shop_img && (
                         <p className="text-xs text-blue-600 mt-1">{uploadProgress.shop_img}</p>
                     )}
-                    {formData.shop_img && (
+                    {formData?.shop_img && (
                         <div className="mt-2">
                             <img
-                                src={formData.shop_img}
+                                src={formData?.shop_img}
                                 alt="Shop preview"
                                 className="w-20 h-20 object-cover rounded-lg border"
                             />
@@ -204,7 +204,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                         <label className="block text-xs text-gray-500 mb-1">Or enter image URL directly:</label>
                         <input
                             type="url"
-                            value={formData.shop_img}
+                            value={formData?.shop_img}
                             onChange={(e) => setFormData(prev => ({ ...prev, shop_img: e.target.value }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-sm"
                             placeholder="https://example.com/shop-image.jpg"
@@ -216,7 +216,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
                     <input
                         type="text"
-                        value={formData.address}
+                        value={formData?.address}
                         onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                         required
@@ -229,7 +229,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                         <input
                             type="number"
                             step="any"
-                            value={formData.latitude}
+                            value={formData?.latitude}
                             onChange={(e) => setFormData(prev => ({ ...prev, latitude: parseFloat(e.target.value) }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                         />
@@ -240,7 +240,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                         <input
                             type="number"
                             step="any"
-                            value={formData.longitude}
+                            value={formData?.longitude}
                             onChange={(e) => setFormData(prev => ({ ...prev, longitude: parseFloat(e.target.value) }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                         />
@@ -252,7 +252,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Preparation Time</label>
                         <input
                             type="text"
-                            value={formData.preparation_time}
+                            value={formData?.preparation_time}
                             onChange={(e) => setFormData(prev => ({ ...prev, preparation_time: e.target.value }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             placeholder="e.g., 30 min"
@@ -264,7 +264,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Opening Time</label>
                         <input
                             type="time"
-                            value={formData.outlet_open_time}
+                            value={formData?.outlet_open_time}
                             onChange={(e) => setFormData(prev => ({ ...prev, outlet_open_time: e.target.value }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                         />
@@ -275,7 +275,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Closing Time</label>
                     <input
                         type="time"
-                        value={formData.outlet_close_time}
+                        value={formData?.outlet_close_time}
                         onChange={(e) => setFormData(prev => ({ ...prev, outlet_close_time: e.target.value }))}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                     />
@@ -293,7 +293,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">Owner Name</label>
                             <input
                                 type="text"
-                                value={formData.owner_name}
+                                value={formData?.owner_name}
                                 onChange={(e) => setFormData(prev => ({ ...prev, owner_name: e.target.value }))}
                                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                                 required
@@ -304,7 +304,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">Owner Phone</label>
                             <input
                                 type="tel"
-                                value={formData.owner_phone}
+                                value={formData?.owner_phone}
                                 onChange={(e) => setFormData(prev => ({ ...prev, owner_phone: e.target.value }))}
                                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                                 required
@@ -316,7 +316,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Owner Email</label>
                         <input
                             type="email"
-                            value={formData.owner_email}
+                            value={formData?.owner_email}
                             onChange={(e) => setFormData(prev => ({ ...prev, owner_email: e.target.value }))}
                             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             required
@@ -336,7 +336,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">FSSAI License Number</label>
                             <input
                                 type="text"
-                                value={formData.fssai_license_number}
+                                value={formData?.fssai_license_number}
                                 onChange={(e) => setFormData(prev => ({ ...prev, fssai_license_number: e.target.value }))}
                                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             />
@@ -346,7 +346,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">GSTIN Number</label>
                             <input
                                 type="text"
-                                value={formData.gstin_number}
+                                value={formData?.gstin_number}
                                 onChange={(e) => setFormData(prev => ({ ...prev, gstin_number: e.target.value }))}
                                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             />
@@ -370,7 +370,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">Bank Name</label>
                             <input
                                 type="text"
-                                value={formData.bank_name}
+                                value={formData?.bank_name}
                                 onChange={(e) => setFormData(prev => ({ ...prev, bank_name: e.target.value }))}
                                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             />
@@ -380,7 +380,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
                             <input
                                 type="text"
-                                value={formData.bank_account_number}
+                                value={formData?.bank_account_number}
                                 onChange={(e) => setFormData(prev => ({ ...prev, bank_account_number: e.target.value }))}
                                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             />
@@ -392,7 +392,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">IFSC Code</label>
                             <input
                                 type="text"
-                                value={formData.bank_ifsc_code}
+                                value={formData?.bank_ifsc_code}
                                 onChange={(e) => setFormData(prev => ({ ...prev, bank_ifsc_code: e.target.value }))}
                                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             />
@@ -402,7 +402,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">Account Holder Name</label>
                             <input
                                 type="text"
-                                value={formData.bank_account_holder_name}
+                                value={formData?.bank_account_holder_name}
                                 onChange={(e) => setFormData(prev => ({ ...prev, bank_account_holder_name: e.target.value }))}
                                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
                             />
@@ -759,7 +759,7 @@ const ShopsManager = () => {
     const fetchShops = async () => {
         try {
             setLoading(true);
-            const { data } = await axiosClient.get('/api/shop?admin=true');
+            const { data } = await axiosClient.get('/api/shop?admin=true&page=1&limit=100');
             setShops(Object.values(data));
         } catch (error) {
             console.error('Error fetching shops:', error);
