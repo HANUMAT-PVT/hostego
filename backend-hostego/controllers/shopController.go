@@ -50,7 +50,7 @@ func FetchShops(c *fiber.Ctx) error {
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
-	limit, _ := strconv.Atoi(c.Query("limit", "10"))
+	limit, _ := strconv.Atoi(c.Query("limit", "20"))
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 	admin := c.Query("admin", "false")
 	offset := (page - 1) * limit

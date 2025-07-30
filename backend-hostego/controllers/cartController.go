@@ -45,6 +45,19 @@ func AddProductInUserCart(c *fiber.Ctx) error {
 		})
 	}
 
+	var cartItems []models.CartItem
+
+	//check if the product is from different shop
+
+	database.DB.Where("user_id = ?", user_id).Find(&cartItems)
+	if len(cartItems) > 0 {
+		for _, cartItem := range cartItems {
+			if cartItem.ProductItem.ShopId != product.ShopId && cartItem.ProductItem.ShopId != 4 {
+				database.DB.Where("cart_item_id = ?", cartItem.CartItemId).Delete(&cartItem)
+			}
+		}
+	}
+
 	// Create new cart item if it doesn't exist
 	cartItem.UserId = user_id.(int)
 	cartItem.SubTotal = float64(cartItem.Quantity) * product.SellingPrice

@@ -315,7 +315,7 @@ func UpdateOrderById(c *fiber.Ctx) error {
 
 	if updateData.IsAcceptedByRestaurant {
 		existingOrder.IsAcceptedByRestaurant = true
-		existingOrder.RestaurantRespondedAt = 	time.Now()
+		existingOrder.RestaurantRespondedAt = time.Now()
 		existingOrder.ExpectedReadyAt = time.Now().Add(time.Duration(updateData.ExpectedReadyInMins) * time.Minute)
 		NotifyOrderAcceptedOrRejectedByRestaurant(existingOrder.OrderId, true, updateData.ExpectedReadyInMins)
 	}
@@ -692,10 +692,22 @@ func CancelOrder(c *fiber.Ctx) error {
 
 func FetchAllOrdersByShopId(c *fiber.Ctx) error {
 	shop_id := c.Params("id")
+	queryPage := c.Query("page", "1")
+	queryLimit := c.Query("limit", "20")
+	page, err := strconv.Atoi(queryPage)
+	if err != nil || page < 1 {
+		page = 1
+	}
+	limit, err := strconv.Atoi(queryLimit)
+	if err != nil || limit < 1 {
+		limit = 10
+	}
+	offset := (page - 1) * limit
 
 	var orders []models.Order
-	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("shop_id = ?", shop_id).Find(&orders).Error; err != nil {
+	if err := database.DB.Preload("User").Preload("PaymentTransaction").Preload("Address").Where("shop_id = ?", shop_id).Order("created_at desc").Limit(limit).Offset(offset).Find(&orders).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
+
 	return c.Status(fiber.StatusOK).JSON(orders)
 }
