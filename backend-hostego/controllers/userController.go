@@ -104,10 +104,16 @@ func FetchUserByMobileNumber(c *fiber.Ctx) error {
 
 func DeleteUserById(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
+
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	var user models.User
+	var userRoles []models.UserRole
+	database.DB.Where("user_id=?", user_id).Find(&userRoles)
+	if len(userRoles) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User has roles, cannot be deleted"})
+	}
 	if err := database.DB.First(&user, "user_id=?", user_id).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
@@ -120,7 +126,7 @@ func DeleteUserById(c *fiber.Ctx) error {
 	database.DB.Delete(&models.Address{}, "user_id=?", user_id)
 	database.DB.Delete(&models.DeliveryPartner{}, "user_id=?", user_id)
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User deleted successfully"})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User deleted successf~ully"})
 }
 
 //test commit

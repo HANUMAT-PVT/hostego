@@ -334,6 +334,11 @@ func UpdateOrderById(c *fiber.Ctx) error {
 		}
 
 	}
+
+	if err := NotifyOrderStatusUpdate(existingOrder.OrderId, updateData.OrderStatus); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
 	if updateData.OrderStatus == models.ReadyOrderStatus {
 		existingOrder.ActualReadyAt = time.Now()
 	}
@@ -347,10 +352,17 @@ func UpdateOrderById(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	if updateData.OrderStatus == models.DeliveredOrderStatus || updateData.OrderStatus == models.CanceledOrderStatus || updateData.OrderStatus == models.ReadyOrderStatus {
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Order status updated successfully!",
+		"order":   existingOrder,
+	})
+}
+
+func NotifyOrderStatusUpdate(orderID int, orderStatus models.OrderStatusType) error {
+	if orderStatus == models.DeliveredOrderStatus || orderStatus == models.CanceledOrderStatus || orderStatus == models.ReadyOrderStatus || orderStatus == models.ReachedOrderStatus || orderStatus == models.OnTheWayOrderStatus || orderStatus == models.PackedOrderStatus || orderStatus == models.PickedOrderStatus {
 		var orderTitle string
 		var orderBody string
-		switch updateData.OrderStatus {
+		switch orderStatus {
 		case models.DeliveredOrderStatus:
 			orderTitle = "Order Delivered"
 			orderBody = "Your order has been delivered. Please check your order details."
@@ -362,15 +374,28 @@ func UpdateOrderById(c *fiber.Ctx) error {
 		case models.ReadyOrderStatus:
 			orderTitle = "Order Ready"
 			orderBody = "Your order is ready. Please check your order details."
+		case models.ReachedOrderStatus:
+			orderTitle = "Order Reached"
+			orderBody = "Your order has been reached. Please check your order details."
 
+		case models.OnTheWayOrderStatus:
+			orderTitle = "Order On The Way"
+			orderBody = "Your order is on the way. Please check your order details."
+		case models.PackedOrderStatus:
+			orderTitle = "Order Packed"
+			orderBody = "Your order has been packed. Please check your order details."
+
+		case models.PickedOrderStatus:
+			orderTitle = "Order Picked"
+			orderBody = "Your order has been picked. Please check your order details."
+
+		case models.ReachedDoorStatus:
+			orderTitle = "Order Reached Door"
+			orderBody = "Your order has been reached at the door. Please check your order details."
 		}
-		NotifyOrderToCustomerByRestaurant(existingOrder.OrderId, orderBody, orderTitle)
+		return NotifyOrderToCustomerByRestaurant(orderID, orderBody, orderTitle)
 	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Order status updated successfully!",
-		"order":   existingOrder,
-	})
+	return nil
 }
 
 func FetchAllUserOrders(c *fiber.Ctx) error {

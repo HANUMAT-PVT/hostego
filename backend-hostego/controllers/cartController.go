@@ -51,8 +51,8 @@ func AddProductInUserCart(c *fiber.Ctx) error {
 
 	database.DB.Where("user_id = ?", user_id).Find(&cartItems)
 	if len(cartItems) > 0 {
-		for _, cartItem := range cartItems {
-			if cartItem.ProductItem.ShopId != product.ShopId && cartItem.ProductItem.ShopId != 4 {
+		for _, existingCartItem := range cartItems {
+			if existingCartItem.ProductItem.ShopId != product.ShopId && existingCartItem.ProductItem.ShopId != 4 {
 				database.DB.Where("cart_item_id = ?", cartItem.CartItemId).Delete(&cartItem)
 			}
 		}

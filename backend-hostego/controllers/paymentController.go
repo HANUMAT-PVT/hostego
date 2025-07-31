@@ -817,7 +817,7 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 		}
 
-		if order.OrderStatus != "pending" && order.OrderStatus == "placed" {
+		if order.OrderStatus != "pending" {
 			return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order is already Verifed and Placed !", "response": fiber.Map{"order_status": "PAID"}})
 		}
 

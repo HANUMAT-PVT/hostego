@@ -45,18 +45,24 @@ func NotifyOrderPlaced(orderID int) error {
 
 	var g errgroup.Group
 
+	payload := map[string]any{
+		"title": "Payment Successful",
+		"body":  "Your payment for Order #" + strconv.Itoa(order.OrderId) + " was successful 🎉",
+		"data": map[string]string{
+			"type":               "new_order",
+			"order_id":           strconv.Itoa(order.OrderId),
+			"android_channel_id": "order_updates",
+		},
+	}
 	// Notification to Customer
 	if customer.FCMToken != "" {
 		g.Go(func() error {
 			_, err := services.SendToToken(
 				context.Background(),
 				customer.FCMToken,
-				"Payment Successful",
-				"Your payment for Order #"+strconv.Itoa(order.OrderId)+" was successful 🎉",
-				map[string]string{
-					"type":     "new_order",
-					"order_id": strconv.Itoa(order.OrderId),
-				},
+				payload["title"].(string),
+				payload["body"].(string),
+				payload["data"].(map[string]string),
 			)
 			return err
 		})
@@ -80,8 +86,9 @@ func NotifyOrderPlaced(orderID int) error {
 					"New Order Received",
 					"Order #"+strconv.Itoa(order.OrderId)+" has been placed. Please confirm it.",
 					map[string]string{
-						"type":     "new_order_request",
-						"order_id": strconv.Itoa(order.OrderId),
+						"type":               "new_order_request",
+						"order_id":           strconv.Itoa(order.OrderId),
+						"android_channel_id": "order_updates",
 					},
 				)
 				return err
@@ -89,10 +96,25 @@ func NotifyOrderPlaced(orderID int) error {
 		}
 	}
 
+	payload = map[string]any{
+		"type":  "new_order_request",
+		"title": "New Order Request",
+		"body":  "Order #" + strconv.Itoa(order.OrderId) + " has been placed. Please assign it to a delivery partner.",
+		"data": map[string]string{
+			"type":               "new_order_request",
+			"order_id":           strconv.Itoa(order.OrderId),
+			"android_channel_id": "order_updates",
+		},
+	}
+
 	for _, userRole := range userRoles {
 		if userRole.User.FCMToken != "" {
 			g.Go(func() error {
-				_, err := services.SendToToken(ctx, userRole.User.FCMToken, "New Order Received", "Order #"+strconv.Itoa(order.OrderId)+" has been placed. Please assign it to a delivery partner.", map[string]string{"type": "new_order", "order_id": strconv.Itoa(order.OrderId)})
+				_, err := services.SendToToken(ctx, userRole.User.FCMToken,
+					payload["title"].(string),
+					payload["body"].(string),
+					payload["data"].(map[string]string),
+				)
 				return err
 			})
 		}
@@ -121,14 +143,13 @@ func NotifyOrderAcceptedOrRejectedByRestaurant(orderID int, isAccepted bool, exp
 
 	var g errgroup.Group
 
-	var payload map[string]any
-
-	payload = map[string]any{
+	payload := map[string]any{
 		"title": map[bool]string{true: "Order Accepted", false: "Order Rejected"}[isAccepted],
 		"body":  map[bool]string{true: "Your order #" + strconv.Itoa(order.OrderId) + " has been accepted by the restaurant. Expected ready in " + strconv.Itoa(expectedReadyInMins) + " mins.", false: "Your order #" + strconv.Itoa(order.OrderId) + " has been rejected by the restaurant."}[isAccepted],
 		"data": map[string]string{
-			"type":     "new_order",
-			"order_id": strconv.Itoa(order.OrderId),
+			"type":               "new_order",
+			"order_id":           strconv.Itoa(order.OrderId),
+			"android_channel_id": "order_updates",
 		},
 	}
 
@@ -172,8 +193,27 @@ func NotifyOrderToCustomerByRestaurant(orderID int, message string, title string
 		return err
 	}
 
+	payload := map[string]any{
+		"title": title,
+		"body":  message,
+		"data": map[string]string{
+			"type":               "new_order",
+			"order_id":           strconv.Itoa(order.OrderId),
+			"android_channel_id": "order_updates",
+			"payload":            "new_order:" + strconv.Itoa(order.OrderId),
+		},
+	}
+
 	if customer.FCMToken != "" {
-		services.SendToToken(context.Background(), customer.FCMToken, title, message, map[string]string{"order_id": strconv.Itoa(order.OrderId), "type": "new_order"})
+		_, err := services.SendToToken(context.Background(),
+			customer.FCMToken,
+			payload["title"].(string),
+			payload["body"].(string),
+			payload["data"].(map[string]string),
+		)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -194,8 +234,24 @@ func NotifyPersonByUserIdAndOrderID(orderID int, message string, title string, u
 		return err
 	}
 
+	payload := map[string]any{
+		"title": title,
+		"body":  message,
+		"data": map[string]string{
+			"type":               "new_order",
+			"order_id":           strconv.Itoa(order.OrderId),
+			"android_channel_id": "order_updates",
+		},
+	}
+
 	if user.FCMToken != "" {
-		_, err := services.SendToToken(context.Background(), user.FCMToken, title, message, map[string]string{"order_id": strconv.Itoa(order.OrderId), "type": "new_order"})
+		_, err := services.SendToToken(
+			context.Background(),
+			user.FCMToken,
+			payload["title"].(string),
+			payload["body"].(string),
+			payload["data"].(map[string]string),
+		)
 		if err != nil {
 			return err
 		}
