@@ -30,9 +30,9 @@ COPY .env .env
 # COPY /etc/hostego/firebase.json /etc/hostego/firebase.json
 
 
-# Add wait-for script for postgres readiness
-COPY wait-for.sh /wait-for.sh
-RUN chmod +x /wait-for.sh
+# # Add wait-for script for postgres readiness
+# COPY wait-for.sh /wait-for.sh
+# RUN chmod +x /wait-for.sh
 
 EXPOSE 8080
 
