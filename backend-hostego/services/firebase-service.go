@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"os"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
@@ -14,10 +15,15 @@ var Client *messaging.Client
 
 // Load once at startup
 func Init(ctx context.Context, credentialFile string) error {
-	var pathForFirebase = "/etc/hostego/firebase.json"
-	// var pathForFirebase = credentialFile
+	if credentialFile == "" {
+		credentialFile = os.Getenv("FIREBASE_CREDENTIAL_PATH")
+		if credentialFile == "" {
+			// fallback to default local path if not set
+			credentialFile = "config/firebase-service-account.json"
+		}
+	}
 
-	opt := option.WithCredentialsFile(pathForFirebase)
+	opt := option.WithCredentialsFile(credentialFile)
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
 		return err

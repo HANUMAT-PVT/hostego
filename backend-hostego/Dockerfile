@@ -1,38 +1,40 @@
-# Step 1: Build the Go binary statically
-FROM golang:latest as builder
+# ---------- Step 1: Build Go binary ----------
+FROM golang:latest AS builder
 
 WORKDIR /app
 
+# Only copy go.mod/sum first for caching layer
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Now copy the rest of the application
 COPY . .
 
-# ⛔️ No need to copy .env here — it's for runtime
-# COPY .env .env  ❌
-
-# 🔐 Build statically
+# Statically compile Go binary (no CGO, Alpine compatible)
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o backend-hostego .
 
-# Step 2: Use minimal base image
+# ---------- Step 2: Minimal runtime ----------
 FROM alpine:latest
 
 WORKDIR /root
 
-# Copy the binary
+# Copy the built Go binary
 COPY --from=builder /app/backend-hostego .
 
-
-
-# ✅ Copy .env file into runtime container
+# Copy .env for runtime config (if needed)
 COPY .env .env
 
-# Copy firebase service account file for dev
-
+# Copy Firebase service account file
 # COPY config/firebase-service-account.json config/firebase-service-account.json
 
-# Expose port
+COPY config/firebase-service-account.json /etc/hostego/firebase.json
+
+
+# Add wait-for script for postgres readiness
+COPY wait-for.sh /wait-for.sh
+RUN chmod +x /wait-for.sh
+
 EXPOSE 8080
 
-# Start app
-CMD ["./backend-hostego"]
+# Use wait-for to delay start until DB is ready
+ENTRYPOINT [ "db", "--", "./backend-hostego"]
