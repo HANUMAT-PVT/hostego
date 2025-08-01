@@ -51,12 +51,18 @@ func AddProductInUserCart(c *fiber.Ctx) error {
 
 	database.DB.Where("user_id = ?", user_id).Find(&cartItems)
 	if len(cartItems) > 0 {
-		for _, cartItem := range cartItems {
-			if cartItem.ProductItem.ShopId != product.ShopId {
-				if product.ShopId != 4 {
-					database.DB.Where("cart_item_id = ?", cartItem.CartItemId).Delete(&cartItem)
-				} else {
-					return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Product is from different shop!"})
+		var existingShopID int
+		hasNon4Shop := false
+
+		for _, item := range cartItems {
+			shopID := item.ProductItem.ShopId
+			if shopID != 4 {
+				if !hasNon4Shop {
+					hasNon4Shop = true
+					existingShopID = shopID
+				} else if existingShopID != shopID {
+					// Found a different non-4 shop, delete this item
+					database.DB.Where("cart_item_id = ?", item.CartItemId).Delete(&item)
 				}
 			}
 		}
