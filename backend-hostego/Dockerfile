@@ -32,7 +32,7 @@ COPY .env .env
 # COPY config/firebase-service-account.json config/firebase-service-account.json
 
 # Expose port
-EXPOSE 8000
+EXPOSE 8080
 
 # Start app
 CMD ["./backend-hostego"]
