@@ -3,38 +3,38 @@ FROM golang:latest AS builder
 
 WORKDIR /app
 
-# Only copy go.mod/sum first for caching layer
+# Copy go mod files and download deps first (better caching)
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Now copy the rest of the application
+# Now copy the rest of the source code
 COPY . .
 
-# Statically compile Go binary (no CGO, Alpine compatible)
+# Build the Go binary for Alpine (static)
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o backend-hostego .
 
-# ---------- Step 2: Minimal runtime ----------
+# ---------- Step 2: Minimal Alpine Runtime ----------
 FROM alpine:latest
 
 WORKDIR /root
 
-# Copy the built Go binary
+# Install certs for HTTPS (optional but usually required)
+RUN apk add --no-cache ca-certificates
+
+# Copy compiled binary from builder
 COPY --from=builder /app/backend-hostego .
 
-# Copy .env for runtime config (if needed)
+# Copy wait-for script for database readiness
+COPY wait-for.sh /wait-for.sh
+RUN chmod +x /wait-for.sh
+
+# Copy environment file if needed (optional, or handled via docker-compose)
 COPY .env .env
 
-# Copy Firebase service account file
-# COPY config/firebase-service-account.json config/firebase-service-account.json
+# Let Firebase JSON be mounted via docker-compose volume, so no need to copy here
 
-# COPY /etc/hostego/firebase.json /etc/hostego/firebase.json
-
-
-# # Add wait-for script for postgres readiness
-# COPY wait-for.sh /wait-for.sh
-# RUN chmod +x /wait-for.sh
-
+# Expose application port
 EXPOSE 8080
 
-# Use wait-for to delay start until DB is ready
-ENTRYPOINT [ "172.17.0.1:5432","--","./backend-hostego"]
+# ENTRYPOINT (uses service name like postgres, not IP)
+ENTRYPOINT [ "/wait-for.sh", "172.17.0.1:5432", "--", "./backend-hostego" ]
