@@ -27,8 +27,9 @@ COPY --from=builder /app/backend-hostego .
 # ✅ Copy .env file into runtime container
 COPY .env .env
 
-# Copy firebase service account file
-COPY /etc/hostego/firebase.json /etc/hostego/firebase.json
+# Copy firebase service account file for dev
+
+# COPY config/firebase-service-account.json config/firebase-service-account.json
 
 # Expose port
 EXPOSE 8000
