@@ -37,4 +37,4 @@ RUN chmod +x /wait-for.sh
 EXPOSE 8080
 
 # Use wait-for to delay start until DB is ready
-ENTRYPOINT [ "/wait-for.sh","172.17.0.1:5432", "./backend-hostego"]
+ENTRYPOINT [ "/wait-for.sh","host.docker.internal:5432","--","./backend-hostego"]
