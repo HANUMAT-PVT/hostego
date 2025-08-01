@@ -108,7 +108,7 @@ func main() {
 	// logs.InitLogger()
 
 	// Start the server
-	log.Fatal(app.Listen("0.0.0.0:8080"))
+	log.Fatal(app.Listen("0.0.0.0:8000"))
 	// firebase service account
 
 }
