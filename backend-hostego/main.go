@@ -1,18 +1,10 @@
 package main
 
 import (
-	"backend-hostego/cron"
-	"backend-hostego/database"
-	"backend-hostego/routes"
-
-	websocket "github.com/gofiber/websocket/v2"
-
 	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/recover"
 	"gorm.io/gorm"
 )
 
@@ -34,60 +26,60 @@ func main() {
 		ExposeHeaders:    "Authorization",
 	}))
 
-	app.Use(recover.New()) // Logs panics
-	app.Use(logger.New())  // Logs requests: method, path, status, latency
+	// app.Use(recover.New()) // Logs panics
+	// app.Use(logger.New())  // Logs requests: method, path, status, latency
 	// Connect Database
-	database.ConnectDataBase()
+	// database.ConnectDataBase()
 
-	// natsclient.ConnectNATS()
-	// natsclient.StartNATSSubscriber()
+	// // natsclient.ConnectNATS()
+	// // natsclient.StartNATSSubscriber()
 
-	// Add SSE route
+	// // Add SSE route
 
-	// WebSocket route
-	app.Get("/ws", websocket.New(func(c *websocket.Conn) {
-		defer c.Close()
+	// // WebSocket route
+	// app.Get("/ws", websocket.New(func(c *websocket.Conn) {
+	// 	defer c.Close()
 
-		for {
-			// Read message from client
-			mt, msg, err := c.ReadMessage()
-			if err != nil {
-				log.Println("read error:", err)
-				break
-			}
-			log.Printf("recv: %s", msg)
+	// 	for {
+	// 		// Read message from client
+	// 		mt, msg, err := c.ReadMessage()
+	// 		if err != nil {
+	// 			log.Println("read error:", err)
+	// 			break
+	// 		}
+	// 		log.Printf("recv: %s", msg)
 
-			// Echo the message back
-			err = c.WriteMessage(mt, msg)
-			if err != nil {
-				log.Println("write error:", err)
-				break
-			}
-		}
-	}))
+	// 		// Echo the message back
+	// 		err = c.WriteMessage(mt, msg)
+	// 		if err != nil {
+	// 			log.Println("write error:", err)
+	// 			break
+	// 		}
+	// 	}
+	// }))
 
 	// Setup All Routes
-	routes.AuthRoutes(app)
-	routes.ShopRoutes(app)
-	routes.ProductRoutes(app)
-	routes.OrderRoutes(app)
-	routes.WalletRoutes(app)
-	routes.PaymentRoutes(app)
-	routes.DeliveryPartnerRoutes(app)
-	routes.CartRoutes(app)
-	routes.AddressRoutes(app)
-	routes.UserRoutes(app)
-	routes.UserRolesRoutes(app)
-	routes.WebPushNotificationRoutes(app)
-	routes.SearchQueryRoutes(app)
-	routes.DeliveryPartnerWalletRoutes(app)
-	routes.MessMenuRoutes(app)
-	routes.OrderItemRoutes(app)
-	routes.DashboardRoutes(app)
-	routes.PaymentWebhookRoutes(app)
-	routes.ProductCategoryRoutes(app)
-	routes.RatingRoutes(app)
-	routes.ShopDashboardRoutes(app)
+	// routes.AuthRoutes(app)
+	// routes.ShopRoutes(app)
+	// routes.ProductRoutes(app)
+	// routes.OrderRoutes(app)
+	// routes.WalletRoutes(app)
+	// routes.PaymentRoutes(app)
+	// routes.DeliveryPartnerRoutes(app)
+	// routes.CartRoutes(app)
+	// routes.AddressRoutes(app)
+	// routes.UserRoutes(app)
+	// routes.UserRolesRoutes(app)
+	// routes.WebPushNotificationRoutes(app)
+	// routes.SearchQueryRoutes(app)
+	// routes.DeliveryPartnerWalletRoutes(app)
+	// routes.MessMenuRoutes(app)
+	// routes.OrderItemRoutes(app)
+	// routes.DashboardRoutes(app)
+	// routes.PaymentWebhookRoutes(app)
+	// routes.ProductCategoryRoutes(app)
+	// routes.RatingRoutes(app)
+	// routes.ShopDashboardRoutes(app)
 	// Default Route
 
 	// if err := services.Init(context.Background(), "config/firebase-service-account.json"); err != nil {
@@ -96,12 +88,13 @@ func main() {
 	// 	log.Println("FCM initialized")
 	// }
 	app.Get("/", func(c *fiber.Ctx) error {
+		
 		return c.JSON(fiber.Map{"message": "Welcome to the Hostego Backend Server!"})
 	})
 	// app.Get("/events", natsclient.PollingHandler)
 
 	// Initialize cron jobs
-	cron.InitCronJobs()
+	// cron.InitCronJobs()
 
 	// logs.InitLogger()
 
