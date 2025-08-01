@@ -4,8 +4,6 @@ import (
 	"backend-hostego/cron"
 	"backend-hostego/database"
 	"backend-hostego/routes"
-	"backend-hostego/services"
-	"context"
 
 	websocket "github.com/gofiber/websocket/v2"
 
@@ -92,11 +90,11 @@ func main() {
 	routes.ShopDashboardRoutes(app)
 	// Default Route
 
-	if err := services.Init(context.Background(), "config/firebase-service-account.json"); err != nil {
-		log.Fatal("FCM init failed:", err)
-	} else {
-		log.Println("FCM initialized")
-	}
+	// if err := services.Init(context.Background(), "config/firebase-service-account.json"); err != nil {
+	// 	log.Fatal("FCM init failed:", err)
+	// } else {
+	// 	log.Println("FCM initialized")
+	// }
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "Welcome to the Hostego Backend Server!"})
 	})
