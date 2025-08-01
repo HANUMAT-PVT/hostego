@@ -27,7 +27,7 @@ COPY .env .env
 # Copy Firebase service account file
 # COPY config/firebase-service-account.json config/firebase-service-account.json
 
-# COPY /etc/hostego/firebase.json /etc/hostego/firebase.json
+COPY /etc/hostego/firebase.json /etc/hostego/firebase.json
 
 
 # Add wait-for script for postgres readiness
@@ -37,4 +37,4 @@ RUN chmod +x /wait-for.sh
 EXPOSE 8080
 
 # Use wait-for to delay start until DB is ready
-ENTRYPOINT [ "db", "--", "./backend-hostego"]
+ENTRYPOINT [ "/wait-for.sh","172.17.0.1:5432", "./backend-hostego"]
