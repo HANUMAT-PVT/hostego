@@ -1,5 +1,5 @@
 # ---------- Step 1: Build Go binary ----------
-FROM golang:latest AS builder
+FROM golang:1.21-alpine AS builder
 
 # Install git, netcat, and other tools
 RUN apk update && apk add --no-cache git netcat-openbsd
