@@ -15,7 +15,7 @@ var Client *messaging.Client
 // Load once at startup
 func Init(ctx context.Context, credentialFile string) error {
 	var pathForFirebase = "/etc/hostego/firebase.json"
-	//var pathForFirebase = credentialFile
+	// var pathForFirebase = credentialFile
 
 	opt := option.WithCredentialsFile(pathForFirebase)
 	app, err := firebase.NewApp(ctx, nil, opt)
@@ -60,8 +60,8 @@ func SendToToken(ctx context.Context, token, title, body string, data map[string
 func SendFCMNotification() (string, error) {
 	message := &messaging.Message{
 		Notification: &messaging.Notification{
-			Title: "🚀 Hostego Update!",
-			Body:  "We are testing the notification system ios check 🎉",
+			Title: "Your First Order = Free Delivery! 🎉",
+			Body:  "New to Hostego? Enjoy your first meal with no delivery charges. Order now!",
 		},
 		Topic: "hostego_updates",
 	}
