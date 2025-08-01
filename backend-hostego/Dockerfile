@@ -1,6 +1,9 @@
 # ---------- Step 1: Build Go binary ----------
 FROM golang:latest AS builder
 
+# Install git, netcat, and other tools
+RUN apk update && apk add --no-cache git netcat-openbsd
+
 WORKDIR /app
 
 # Only copy go.mod/sum first for caching layer
