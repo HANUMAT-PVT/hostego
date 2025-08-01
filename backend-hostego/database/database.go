@@ -18,7 +18,7 @@ func ConnectDataBase() {
 	// dsn := "host=host.docker.internal user=postgres password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
 
 	// hostego_user_dev for prod
-	dsn := "host=localhost user=hostego_user_dev password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
+	dsn := "host=host.docker.internal user=hostego_user_dev password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		// DisableForeignKeyConstraintWhenMigrating: true,
