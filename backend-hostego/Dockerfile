@@ -27,7 +27,7 @@ COPY .env .env
 # Copy Firebase service account file
 # COPY config/firebase-service-account.json config/firebase-service-account.json
 
-COPY config/firebase-service-account.json /etc/hostego/firebase.json
+COPY /etc/hostego/firebase.json /etc/hostego/firebase.json
 
 
 # Add wait-for script for postgres readiness
