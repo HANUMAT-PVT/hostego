@@ -19,4 +19,4 @@ services:
       DB_NAME: ${DB_NAME}
     volumes:
       - /etc/hostego/firebase.json:/etc/hostego/firebase.json
-    entrypoint: [ "/wait-for.sh", "172.17.0.1:5432", "--", "./backend-hostego" ]
+    entrypoint: [ "172.17.0.1:5432", "--", "./backend-hostego" ]
