@@ -3,7 +3,6 @@ package main
 import (
 	"backend-hostego/cron"
 	"backend-hostego/database"
-	"backend-hostego/logs"
 	"backend-hostego/routes"
 	"backend-hostego/services"
 	"context"
@@ -106,7 +105,7 @@ func main() {
 	// Initialize cron jobs
 	cron.InitCronJobs()
 
-	logs.InitLogger()
+	// logs.InitLogger()
 
 	// Start the server
 	log.Fatal(app.Listen("0.0.0.0:8000"))
