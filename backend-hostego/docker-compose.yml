@@ -7,7 +7,7 @@ services:
     ports:
       - "8080:8080"
     extra_hosts:
-      - "host.docker.internal:host-gateway" 
+      - "host.docker.internal:host-gateway"
     env_file:
       - .env
     environment:
@@ -19,4 +19,4 @@ services:
       DB_NAME: ${DB_NAME}
     volumes:
       - /etc/hostego/firebase.json:/etc/hostego/firebase.json
-    entrypoint: [ "/wait-for.sh", "host.docker.internal:5432", "./backend-hostego" ]
+    entrypoint: [ "/wait-for.sh", "172.17.0.1:5432", "--", "./backend-hostego" ]
