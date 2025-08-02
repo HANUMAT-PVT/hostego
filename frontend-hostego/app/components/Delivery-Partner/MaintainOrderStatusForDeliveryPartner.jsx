@@ -207,7 +207,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
                 <p className="text-gray-600 mt-1">{activeOrder?.user?.mobile_number}</p>
                 <div className="mt-3 bg-white p-3 rounded-lg border border-blue-100">
                   <p className="text-sm text-gray-600">Delivery Address</p>
-                  <p className="text-gray-900 mt-1">{activeOrder?.address?.address_line_1}</p>
+                  <p className="text-gray-900 mt-1"> {activeOrder?.address?.address_type || ""} {activeOrder?.address?.address_line_1 || 'Address not available'}</p>
                 </div>
               </div>
             </div>
@@ -243,7 +243,7 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
                         {product?.quantity} × ₹{product?.product_item?.food_price}
                       </span>
                       <span className="text-sm font-medium text-[var(--primary-color)]">
-                        ₹{product?.quantity*product?.product_item?.food_price}
+                        ₹{product?.quantity * product?.product_item?.food_price}
                       </span>
                     </div>
                   </div>
@@ -269,12 +269,12 @@ const MaintainOrderStatusForDeliveryPartner = ({ order, onUpdateOrderStatus }) =
 
           title={"Total Order Amount"}
           icon={ShoppingBag}
-          count={`₹ ${findOutCorrectDeliveryPartnerCost(activeOrder?.order_items||[])}`}
+          count={`₹ ${findOutCorrectDeliveryPartnerCost(activeOrder?.order_items || [])}`}
 
           defaultOpen={false}
         >
-        
-         
+
+
         </AccordionSection>
       </div>
 

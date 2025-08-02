@@ -244,7 +244,7 @@ const OrderCard = ({ order, onRefresh }) => {
                         </div>
                         <div>
                             <p className="text-sm text-gray-600">Delivery Address</p>
-                            <p className="font-medium">{order.address.address_line_1 || 'Address not available'}</p>
+                            <p className="font-medium">{order.address?.address_type || ""} {order.address.address_line_1 || 'Address not available'}</p>
                         </div>
                     </div>
                 </div>

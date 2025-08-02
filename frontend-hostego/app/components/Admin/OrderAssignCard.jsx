@@ -1,17 +1,17 @@
-import { CheckCircle, ChevronDown, ChevronUp, IndianRupee, MapPin, User,Package } from 'lucide-react'
+import { CheckCircle, ChevronDown, ChevronUp, IndianRupee, MapPin, User, Package } from 'lucide-react'
 import { useState } from 'react'
 import { formatDate } from '@/app/utils/helper'
 import HostegoButton from '../HostegoButton'
 
-const OrderAssignCard = ({ order, selectOrderItem,selectedOrderItem }) => {
+const OrderAssignCard = ({ order, selectOrderItem, selectedOrderItem }) => {
 
     const [isExpanded, setIsExpanded] = useState(false)
-    
+
 
     return (
-        <div onClick={() => selectOrderItem(order)} className={`bg-white rounded-xl overflow-hidden shadow-sm border border-2  ${order.order_id==selectedOrderItem?.order_id
-                ? 'border-[var(--primary-color)] bg-[var(--primary-color)]/5'
-                : 'border-gray-100 bg-white hover:border-[var(--primary-color)]/30'}`}>
+        <div onClick={() => selectOrderItem(order)} className={`bg-white rounded-xl overflow-hidden shadow-sm border border-2  ${order.order_id == selectedOrderItem?.order_id
+            ? 'border-[var(--primary-color)] bg-[var(--primary-color)]/5'
+            : 'border-gray-100 bg-white hover:border-[var(--primary-color)]/30'}`}>
             {/* Order Header */}
             <div className="p-4 border-b bg-gradient-to-r from-[var(--primary-color)] to-purple-600">
                 <div className="flex items-center justify-between">
@@ -57,7 +57,7 @@ const OrderAssignCard = ({ order, selectOrderItem,selectedOrderItem }) => {
                         <p className="text-sm text-gray-600">Customer Name</p>
                         <p className="font-medium">{order?.user?.first_name} {order?.user?.last_name}</p>
                     </div>
-                  
+
                     <div>
                         <p className="text-sm text-gray-600">Mobile Number</p>
                         <p className="font-medium">{order?.user?.mobile_number}</p>
@@ -71,13 +71,13 @@ const OrderAssignCard = ({ order, selectOrderItem,selectedOrderItem }) => {
                     </div>
                     <div>
                         <p className="text-sm text-gray-600">Delivery Address</p>
-                        <p className="font-medium">{order?.address?.address_line_1 || 'Address not available'}</p>
+                        <p className="font-medium"> {order?.address?.address_type || ""} {order?.address?.address_line_1 || 'Address not available'}</p>
                     </div>
                 </div>
 
                 {/* Order Items */}
                 {isExpanded && (
-                    <div className="mt-4 pt-4 border-t space-y-3">               
+                    <div className="mt-4 pt-4 border-t space-y-3">
                         <p className="font-medium text-gray-700">Order Items</p>
                         {order?.order_items?.map((item, index) => (
                             <div key={index} className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
@@ -98,8 +98,8 @@ const OrderAssignCard = ({ order, selectOrderItem,selectedOrderItem }) => {
                     </div>
                 )}
 
-             
-               
+
+
             </div>
         </div>
     )
