@@ -57,11 +57,18 @@ func SendToToken(ctx context.Context, token, title, body string, data map[string
 	return msgID, nil
 }
 
+// Lift's Down? Let Us Lift Your Mood!
+// Don’t climb hungry — we’ll bring your food right to your floor.
+// // 🍔 Order now & chill!
+// ⏰ Just 30 minutes left!
+// Your favorite kitchen is about to close — order now before it’s too late!
+
 func SendFCMNotification() (string, error) {
 	message := &messaging.Message{
 		Notification: &messaging.Notification{
-			Title: "Your First Order = Free Delivery! 🎉",
-			Body:  "New to Hostego? Enjoy your first meal with no delivery charges. Order now!",
+
+			Title: "Weekend + Food = Perfect combo 😍",
+			Body:  "Tum movie lagao 😎, Hum drinks leke aate hai 😋",
 		},
 		Topic: "hostego_updates",
 	}

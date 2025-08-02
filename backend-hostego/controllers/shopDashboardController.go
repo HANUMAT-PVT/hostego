@@ -20,25 +20,8 @@ func GetShopDashboardStats(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid shop_id"})
 	}
 
-	timeRange := c.Query("range") // no default; "all time" if not provided
-	var startTime time.Time
-	var filterByTime bool
-
-	now := time.Now()
-	switch timeRange {
-	case "day":
-		startTime = now.Add(-24 * time.Hour)
-		filterByTime = true
-	case "week":
-		startTime = now.AddDate(0, 0, -7)
-		filterByTime = true
-	case "month":
-		startTime = now.AddDate(0, -1, 0)
-		filterByTime = true
-	default:
-		// No time filter — return all-time data
-		filterByTime = false
-	}
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
 
 	type AverageStats struct {
 		AverageRating float64 `json:"average_product_rating"`
@@ -63,9 +46,9 @@ func GetShopDashboardStats(c *fiber.Ctx) error {
 		Joins("JOIN orders ON order_items.order_id = orders.order_id").
 		Where("products.shop_id = ? AND orders.order_status = ?", shopID, "delivered")
 
-	// Apply time filter if needed
-	if filterByTime {
-		revenueQuery = revenueQuery.Where("orders.created_at >= ?", startTime)
+	// Apply date filter if provided
+	if startDate != "" && endDate != "" {
+		revenueQuery = revenueQuery.Where("orders.created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
 	}
 
 	if err := revenueQuery.Scan(&revenueStats).Error; err != nil {
@@ -84,8 +67,8 @@ func GetShopDashboardStats(c *fiber.Ctx) error {
 		Joins("JOIN orders ON order_items.order_id = orders.order_id").
 		Where("products.shop_id = ? AND orders.order_status = ?", shopID, "delivered")
 
-	if filterByTime {
-		ratingQuery = ratingQuery.Where("orders.created_at >= ?", startTime)
+	if startDate != "" && endDate != "" {
+		ratingQuery = ratingQuery.Where("orders.created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
 	}
 
 	if err := ratingQuery.Scan(&averageStats).Error; err != nil {
@@ -113,24 +96,8 @@ func GetTopSellingProducts(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid shop_id"})
 	}
 
-	rangeStr := c.Query("range", "week") // default to week
-	var startTime time.Time
-	now := time.Now()
-	filterByTime := false
-
-	switch rangeStr {
-	case "day":
-		startTime = now.Add(-24 * time.Hour)
-		filterByTime = true
-	case "week":
-		startTime = now.AddDate(0, 0, -7)
-		filterByTime = true
-	case "month":
-		startTime = now.AddDate(0, -1, 0)
-		filterByTime = true
-	default:
-		filterByTime = false
-	}
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
 
 	limitStr := c.Query("limit", "10")
 	limit, err := strconv.Atoi(limitStr)
@@ -163,8 +130,8 @@ func GetTopSellingProducts(c *fiber.Ctx) error {
 		Joins("JOIN orders ON order_items.order_id = orders.order_id").
 		Where("products.shop_id = ? AND orders.order_status = ?", shopID, "delivered")
 
-	if filterByTime {
-		query = query.Where("orders.created_at >= ?", startTime)
+	if startDate != "" && endDate != "" {
+		query = query.Where("orders.created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
 	}
 
 	query.Group("products.product_id, products.product_name, products.food_price, products.selling_price, products.average_rating").
@@ -176,6 +143,7 @@ func GetTopSellingProducts(c *fiber.Ctx) error {
 	if query.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch top selling products"})
 	}
+	
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"top_selling_products": topProducts,
@@ -192,24 +160,8 @@ func GetOrderAnalytics(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid shop_id"})
 	}
 
-	rangeStr := c.Query("range", "week") // default to week
-	var startTime time.Time
-	now := time.Now()
-	filterByTime := false
-
-	switch rangeStr {
-	case "day":
-		startTime = now.Add(-24 * time.Hour)
-		filterByTime = true
-	case "week":
-		startTime = now.AddDate(0, 0, -7)
-		filterByTime = true
-	case "month":
-		startTime = now.AddDate(0, -1, 0)
-		filterByTime = true
-	default:
-		filterByTime = false
-	}
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
 
 	type Result struct {
 		TotalOrderCount     int64   `json:"total_orders"`
@@ -226,8 +178,8 @@ func GetOrderAnalytics(c *fiber.Ctx) error {
 		Model(&models.Order{}).
 		Where("shop_id = ?", shopID)
 
-	if filterByTime {
-		query = query.Where("created_at >= ?", startTime)
+	if startDate != "" && endDate != "" {
+		query = query.Where("created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
 	}
 
 	if err := query.Count(&result.TotalOrderCount).Error; err != nil {
@@ -239,8 +191,8 @@ func GetOrderAnalytics(c *fiber.Ctx) error {
 		Model(&models.Order{}).
 		Where("shop_id = ? AND order_status = ?", shopID, "delivered")
 
-	if filterByTime {
-		query = query.Where("created_at >= ?", startTime)
+	if startDate != "" && endDate != "" {
+		query = query.Where("created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
 	}
 
 	if err := query.Count(&result.DeliveredOrderCount).Error; err != nil {
@@ -252,8 +204,8 @@ func GetOrderAnalytics(c *fiber.Ctx) error {
 		Model(&models.Order{}).
 		Where("shop_id = ? AND order_status = ?", shopID, "cancelled")
 
-	if filterByTime {
-		query = query.Where("created_at >= ?", startTime)
+	if startDate != "" && endDate != "" {
+		query = query.Where("created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
 	}
 
 	if err := query.Count(&result.CancelledOrderCount).Error; err != nil {
@@ -261,12 +213,17 @@ func GetOrderAnalytics(c *fiber.Ctx) error {
 	}
 
 	// Total Revenue from order_items for delivered orders
-	err = database.DB.
+	revenueQuery := database.DB.
 		Table("order_items").
 		Select("COALESCE(SUM(order_items.actual_sub_total), 0)").
 		Joins("JOIN orders ON orders.order_id = order_items.order_id").
-		Where("orders.shop_id = ? AND orders.order_status = ? AND orders.created_at >= ?", shopID, "delivered", startTime).
-		Scan(&result.TotalRevenue).Error
+		Where("orders.shop_id = ? AND orders.order_status = ?", shopID, "delivered")
+
+	if startDate != "" && endDate != "" {
+		revenueQuery = revenueQuery.Where("orders.created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
+	}
+
+	err = revenueQuery.Scan(&result.TotalRevenue).Error
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error fetching revenue"})
 	}
@@ -296,27 +253,39 @@ func GetCustomerInsights(c *fiber.Ctx) error {
 		shopID = id
 	}
 
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
+
 	db := database.DB // your GORM DB instance
 
 	var totalCustomers int64
-	err := db.
+	totalCustomersQuery := db.
 		Table("order_items").
 		Joins("JOIN products ON order_items.product_id = products.product_id").
 		Joins("JOIN orders ON order_items.order_id = orders.order_id").
-		Where("products.shop_id = ? AND orders.order_status = ?", shopID, "delivered").
-		Select("COUNT(DISTINCT order_items.user_id)").
-		Scan(&totalCustomers).Error
+		Where("products.shop_id = ? AND orders.order_status = ?", shopID, "delivered")
+
+	if startDate != "" && endDate != "" {
+		totalCustomersQuery = totalCustomersQuery.Where("orders.created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
+	}
+
+	err := totalCustomersQuery.Select("COUNT(DISTINCT order_items.user_id)").Scan(&totalCustomers).Error
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to count customers"})
 	}
 
 	var repeatCustomers int64
-	err = db.
+	repeatCustomersQuery := db.
 		Table("order_items").
 		Joins("JOIN products ON order_items.product_id = products.product_id").
 		Joins("JOIN orders ON order_items.order_id = orders.order_id").
-		Where("products.shop_id = ? AND orders.order_status = ?", shopID, "delivered").
-		Select("COUNT(*)").
+		Where("products.shop_id = ? AND orders.order_status = ?", shopID, "delivered")
+
+	if startDate != "" && endDate != "" {
+		repeatCustomersQuery = repeatCustomersQuery.Where("orders.created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
+	}
+
+	err = repeatCustomersQuery.Select("COUNT(*)").
 		Group("order_items.user_id").
 		Having("COUNT(DISTINCT order_items.order_id) > 1").
 		Count(&repeatCustomers).Error
@@ -332,27 +301,20 @@ func GetCustomerInsights(c *fiber.Ctx) error {
 
 func GetRestaurantPerformanceMetrics(c *fiber.Ctx) error {
 	shopID := c.Params("shop_id")
-	rangeStr := c.Query("range", "month")
-
-	var startTime time.Time
-	now := time.Now()
-
-	switch rangeStr {
-	case "day":
-		startTime = now.AddDate(0, 0, -1)
-	case "week":
-		startTime = now.AddDate(0, 0, -7)
-	case "month":
-		startTime = now.AddDate(0, -1, 0)
-	default:
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid time range"})
-	}
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
 
 	// 1. Average Preparation Time
 	var prepDurations []time.Duration
 	var orders []models.Order
-	if err := database.DB.Where("shop_id = ? AND order_status = ? AND restaurant_responded_at IS NOT NULL AND actual_ready_at IS NOT NULL AND created_at >= ?", shopID, "delivered", startTime).
-		Find(&orders).Error; err != nil {
+
+	prepQuery := database.DB.Where("shop_id = ? AND order_status = ? AND restaurant_responded_at IS NOT NULL AND actual_ready_at IS NOT NULL", shopID, "delivered")
+
+	if startDate != "" && endDate != "" {
+		prepQuery = prepQuery.Where("created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
+	}
+
+	if err := prepQuery.Find(&orders).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to fetch orders"})
 	}
 
@@ -385,10 +347,16 @@ func GetRestaurantPerformanceMetrics(c *fiber.Ctx) error {
 		TimeInterval string
 	}
 	var hourStats []HourStat
-	if err := database.DB.Table("orders").
+
+	peakHoursQuery := database.DB.Table("orders").
 		Select("EXTRACT(HOUR FROM created_at) AS hour, COUNT(*) AS order_count").
-		Where("shop_id = ? AND order_status = ? AND created_at >= ?", shopID, "delivered", startTime).
-		Group("hour").
+		Where("shop_id = ? AND order_status = ?", shopID, "delivered")
+
+	if startDate != "" && endDate != "" {
+		peakHoursQuery = peakHoursQuery.Where("created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
+	}
+
+	if err := peakHoursQuery.Group("hour").
 		Order("hour").
 		Scan(&hourStats).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to get peak hour stats"})
@@ -414,25 +382,8 @@ func GetRestaurantPerformanceMetrics(c *fiber.Ctx) error {
 
 func GetRestaurantRevenueAnalytics(c *fiber.Ctx) error {
 	shopID := c.Params("shop_id")
-	rangeStr := c.Query("range", "month")
-
-	var startTime time.Time
-	now := time.Now()
-	filterByTime := false
-
-	switch rangeStr {
-	case "day":
-		startTime = now.AddDate(0, 0, -1)
-		filterByTime = true
-	case "week":
-		startTime = now.AddDate(0, 0, -7)
-		filterByTime = true
-	case "month":
-		startTime = now.AddDate(0, -1, 0)
-		filterByTime = true
-	default:
-		filterByTime = false
-	}
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
 
 	type RevenueAnalytics struct {
 		TotalRevenue float64 `json:"total_revenue"`
@@ -444,8 +395,8 @@ func GetRestaurantRevenueAnalytics(c *fiber.Ctx) error {
 		Table("orders").
 		Where("shop_id = ? AND order_status = ?", shopID, "delivered")
 
-	if filterByTime {
-		query = query.Where("created_at >= ?", startTime)
+	if startDate != "" && endDate != "" {
+		query = query.Where("created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
 	}
 
 	query.Select("SUM(restaurant_payable_amount) AS total_revenue").
@@ -455,8 +406,16 @@ func GetRestaurantRevenueAnalytics(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch revenue"})
 	}
 
-	query = query.Where("shop_id = ? AND restaurant_paid_at IS NULL", shopID)
-	query.Select("SUM(restaurant_payable_amount) AS total_pending").
+	// Pending revenue query
+	pendingQuery := database.DB.
+		Table("orders").
+		Where("shop_id = ? AND restaurant_paid_at IS NULL", shopID)
+
+	if startDate != "" && endDate != "" {
+		pendingQuery = pendingQuery.Where("created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
+	}
+
+	pendingQuery.Select("SUM(restaurant_payable_amount) AS total_pending").
 		Scan(&revenueAnalytics.TotalPending)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
