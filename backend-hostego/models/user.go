@@ -12,7 +12,7 @@ type User struct {
 	FirstName           string    `gorm:"type:varchar(255);" json:"first_name"`
 	LastName            string    `gorm:"type:varchar(255);" json:"last_name"`
 	Email               string    `gorm:"unique;not null;" json:"email"`
-	MobileNumber        string    `gorm:"type:varchar(20);unique;not null;" json:"mobile_number"`
+	MobileNumber        string    `gorm:"type:varchar(20);" json:"mobile_number"`
 	FirebaseOTPVerified int       `gorm:"not null;default:0;" json:"firebase_otp_verified"`
 	LastLoginTimestamp  time.Time `gorm:"autoUpdateTime" json:"last_login_timestamp"`
 	CreatedAt           time.Time `gorm:"autoCreateTime" json:"created_at"`

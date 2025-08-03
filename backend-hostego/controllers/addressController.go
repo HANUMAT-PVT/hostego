@@ -32,6 +32,8 @@ func UpdateAddress(c *fiber.Ctx) error {
 	var user models.User
 	address_id := c.Params("id")
 
+	address.UserId = user_id.(int)
+
 	if err := c.BodyParser(&address); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
@@ -39,7 +41,7 @@ func UpdateAddress(c *fiber.Ctx) error {
 	if err := database.DB.Where("user_id = ?", user_id).Find(&user).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found !"})
 	}
-	if err := database.DB.Where("address_id = ?", address_id).Save(&address).Error; err != nil {
+	if err := database.DB.Where("address_id = ? AND user_id = ?", address_id, user_id).Updates(&address).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Address updated succesfully !"})
@@ -51,7 +53,7 @@ func DeleteAddress(c *fiber.Ctx) error {
 	address_id := c.Params("id")
 	var user models.User
 
-	if err := database.DB.First(&user, "where user_id = ?", user_id).Error; err != nil {
+	if err := database.DB.First(&user, "user_id = ?", user_id).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found !"})
 	}
 

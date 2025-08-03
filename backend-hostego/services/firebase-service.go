@@ -7,6 +7,7 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
+	"github.com/gofiber/fiber/v2"
 	"google.golang.org/api/option"
 )
 
@@ -63,19 +64,28 @@ func SendToToken(ctx context.Context, token, title, body string, data map[string
 // ⏰ Just 30 minutes left!
 // Your favorite kitchen is about to close — order now before it’s too late!
 
-func SendFCMNotification() (string, error) {
+func SendFCMNotification(c *fiber.Ctx) error {
+	type Notification struct {
+		Title string `json:"title"`
+		Body  string `json:"body"`
+	}
+	var notification Notification
+
+	if err := c.BodyParser(&notification); err != nil {
+		return err
+	}
+
 	message := &messaging.Message{
 		Notification: &messaging.Notification{
-
-			Title: "Weekend + Food = Perfect combo 😍",
-			Body:  "Tum movie lagao 😎, Hum drinks leke aate hai 😋",
+			Title: notification.Title,
+			Body:  notification.Body,
 		},
 		Topic: "hostego_updates",
 	}
 
-	response, err := Client.Send(context.Background(), message)
+	_, err := Client.Send(context.Background(), message)
 	if err != nil {
 		log.Fatalf("❌ error sending message: %v", err)
 	}
-	return response, nil
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Notification sent successfully !"})
 }

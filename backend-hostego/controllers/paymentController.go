@@ -840,6 +840,7 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 
 		if err := tx.Save(&paymentTransaction).Error; err != nil {
 			tx.Rollback()
+			log.Println("Error saving payment transaction:", err)
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 		}
 
@@ -847,6 +848,7 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 
 		if err := tx.Where("user_id = ?", order.UserId).Delete(&cartItem).Error; err != nil {
 			tx.Rollback()
+			log.Println("Error deleting cart items:", err)
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove cart items"})
 		}
 
@@ -854,6 +856,7 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 		var orderItems []models.CartItem
 		if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
 			tx.Rollback()
+			log.Println("Error unmarshalling order items:", err)
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse order items"})
 		}
 
@@ -871,6 +874,7 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 
 			if err := tx.Create(&orderItem).Error; err != nil {
 				tx.Rollback()
+				log.Println("Error creating order item:", err)
 				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 			}
 
@@ -879,6 +883,7 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 				Where("product_id = ?", item.ProductId).
 				Update("stock_quantity", gorm.Expr("stock_quantity - ?", item.Quantity)).Error; err != nil {
 				tx.Rollback()
+				log.Println("Error updating product stock:", err)
 				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 			}
 		}
@@ -888,11 +893,13 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 			Where("user_id = ?", order.UserId).
 			Delete(&models.CartItem{}).Error; err != nil {
 			tx.Rollback()
+			log.Println("Error deleting cart items:", err)
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete cart items"})
 		}
 
 		if err := tx.Preload("User").Where("order_id=?", paymentTransaction.OrderId).Save(&order).Error; err != nil {
 			tx.Rollback()
+			log.Println("Error saving order:", err)
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 		}
 		if err := NotifyOrderPlaced(order.OrderId); err != nil {
