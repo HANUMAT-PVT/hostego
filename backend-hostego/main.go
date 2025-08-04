@@ -6,6 +6,7 @@ import (
 	"backend-hostego/routes"
 	"backend-hostego/services"
 	"context"
+	"time"
 
 	websocket "github.com/gofiber/websocket/v2"
 
@@ -26,7 +27,11 @@ const privateKey = "W8PauXVtgDPZ8RHYulzVXEFd8uEawUwlPx8xGzMXg4w"
 
 func main() {
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 30 * time.Second,
+		IdleTimeout:  120 * time.Second,
+	})
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "http://localhost:3000, https://hostego.in,https://www.hostego.in",

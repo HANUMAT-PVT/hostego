@@ -143,7 +143,6 @@ func GetTopSellingProducts(c *fiber.Ctx) error {
 	if query.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch top selling products"})
 	}
-	
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"top_selling_products": topProducts,
@@ -388,6 +387,7 @@ func GetRestaurantRevenueAnalytics(c *fiber.Ctx) error {
 	type RevenueAnalytics struct {
 		TotalRevenue float64 `json:"total_revenue"`
 		TotalPending float64 `json:"total_pending"`
+		TotalPaid    float64 `json:"total_paid"`
 	}
 	var revenueAnalytics RevenueAnalytics
 
@@ -418,9 +418,53 @@ func GetRestaurantRevenueAnalytics(c *fiber.Ctx) error {
 	pendingQuery.Select("SUM(restaurant_payable_amount) AS total_pending").
 		Scan(&revenueAnalytics.TotalPending)
 
+	pendingQuery.Select("SUM(restaurant_payable_amount) AS total_pending").
+		Scan(&revenueAnalytics.TotalPending)
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message":       "Restaurant revenue analytics",
 		"total_revenue": revenueAnalytics.TotalRevenue,
 		"total_pending": revenueAnalytics.TotalPending,
+		"total_paid":    revenueAnalytics.TotalPaid,
+	})
+}
+
+func GetPastOrders(c *fiber.Ctx) error {
+	shopID := c.Params("shop_id")
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
+	page := c.Query("page", "1")
+	limit := c.Query("limit", "15")
+
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid page parameter"})
+	}
+
+	limitInt, err := strconv.Atoi(limit)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid limit parameter"})
+	}
+
+	offset := (pageInt - 1) * limitInt
+
+	var pastOrders []models.Order
+
+	query := database.DB.
+		Table("orders").
+		Where("shop_id = ?", shopID)
+
+	if startDate != "" && endDate != "" {
+		query = query.Where("created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
+	}
+
+	query = query.Offset(offset).Limit(limitInt)
+
+	if err := query.Find(&pastOrders).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch past orders"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"past_orders": pastOrders,
 	})
 }

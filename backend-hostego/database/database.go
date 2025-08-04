@@ -57,6 +57,7 @@ func ConnectDataBase() {
 	err = db.AutoMigrate(&models.MessMenu{})
 	err = db.AutoMigrate(&models.ExtrCharge{})
 	err = db.AutoMigrate(&models.ProductCategory{})
+
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
 	}
