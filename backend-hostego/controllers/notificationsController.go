@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -258,4 +259,30 @@ func NotifyPersonByUserIdAndOrderID(orderID int, message string, title string, u
 	}
 
 	return nil
+}
+
+func CreateNotification(c *fiber.Ctx) error {
+	db := database.DB
+	var notification models.Notification
+	if err := c.BodyParser(&notification); err != nil {
+		return err
+	}
+	if err := db.Create(&notification).Error; err != nil {
+		return err
+	}
+	return services.SendFCMNotification(c)
+}
+
+func GetNotifications(c *fiber.Ctx) error {
+	db := database.DB
+	var notifications []models.Notification
+	if err := db.Find(&notifications).Error; err != nil {
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(
+		fiber.Map{
+			"message": "Notifications fetched successfully",
+			"data":    notifications,
+		},
+	)
 }

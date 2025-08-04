@@ -9,6 +9,8 @@ import (
 
 func WebPushNotificationRoutes(app *fiber.App) {
 	webPushNotification := app.Group("/api/notifications")
-	webPushNotification.Post("/fcm", middlewares.VerifyUserAuthCookieMiddleware(), middlewares.RoleMiddleware("admin", "super_admin"), controllers.SendFCMNotification)
+	webPushNotification.Post("/fcm", controllers.SendFCMNotification)
+	webPushNotification.Post("/", middlewares.VerifyUserAuthCookieMiddleware(), middlewares.RoleMiddleware("super_admin"), controllers.CreateNotification)
 	// webPushNotification.Post("/", controllers.SendWebPushNotification)
+	webPushNotification.Get("/", middlewares.VerifyUserAuthCookieMiddleware(), middlewares.RoleMiddleware("super_admin"), controllers.GetNotifications)
 }

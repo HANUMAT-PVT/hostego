@@ -1,6 +1,7 @@
 package services
 
 import (
+	"backend-hostego/models"
 	"context"
 	"errors"
 	"log"
@@ -65,11 +66,8 @@ func SendToToken(ctx context.Context, token, title, body string, data map[string
 // Your favorite kitchen is about to close — order now before it’s too late!
 
 func SendFCMNotification(c *fiber.Ctx) error {
-	type Notification struct {
-		Title string `json:"title"`
-		Body  string `json:"body"`
-	}
-	var notification Notification
+
+	var notification models.Notification
 
 	if err := c.BodyParser(&notification); err != nil {
 		return err
@@ -77,8 +75,9 @@ func SendFCMNotification(c *fiber.Ctx) error {
 
 	message := &messaging.Message{
 		Notification: &messaging.Notification{
-			Title: notification.Title,
-			Body:  notification.Body,
+			Title:    notification.Title,
+			Body:     notification.Body,
+			ImageURL: notification.NotificationImageUrl,
 		},
 		Topic: "hostego_updates",
 	}
