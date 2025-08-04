@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Home, Package, Users, Settings, PackageOpenIcon, UserCircle, ShoppingBasket, CreditCard, Utensils } from "lucide-react";
+import { Home, Package, Users, Settings, PackageOpenIcon, UserCircle, ShoppingBasket, CreditCard, Utensils, Bell } from "lucide-react";
 import OrderAssignment from "../../components/Admin/OrderAssignment";
 import SidebarItem from "../../components/Admin/SidebarItem";
 import OrdersList from "../../components/Admin/OrdersList";
@@ -16,6 +16,7 @@ import axiosClient from "@/app/utils/axiosClient";
 import DeliveryPartnerPaymentManager from "./DeliveryPartnerPaymentManager";
 import CuMessManager from "./CuMessManager";
 import SSEHandler from '../SSEHandler'
+import NotificationManager from "./NotificationManager";
 
 export default function AdminPanel() {
     const router = useRouter();
@@ -125,6 +126,12 @@ export default function AdminPanel() {
                         isActive={currentPage === "cu_mess"}
                         onClick={() => updatePage("cu_mess")}
                     />}
+                    {(checkUserRole("super_admin")) && <SidebarItem
+                        icon={<Bell size={20} />}
+                        text="Notification Manager"
+                        isActive={currentPage === "notification_manager"}
+                        onClick={() => updatePage("notification_manager")}
+                    />}
                 </nav>
             </aside>
 
@@ -140,8 +147,9 @@ export default function AdminPanel() {
                 {currentPage === "shops" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <ShopsManager />}
                 {currentPage === "cu_mess" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <CuMessManager />}
                 {currentPage === "delivery_partner_payment" && (checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <DeliveryPartnerPaymentManager />}
+                {currentPage === "notification_manager" && (checkUserRole("super_admin")) && <NotificationManager />}
             </main>
-            <SSEHandler  userId={userAccount?.user_id || ""} />
+            <SSEHandler userId={userAccount?.user_id || ""} />
         </div>
     );
 }
