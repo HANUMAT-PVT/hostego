@@ -146,7 +146,7 @@ const Page = () => {
     const fetchDeliveryPartnerOrders = async () => {
         try {
             if (!deliveryPartner?.delivery_partner_id) return
-            let { data } = await axiosClient.get(`/api/order/delivery-partner/${deliveryPartner?.delivery_partner_id}?status=${selectedFilter}&page=1&limit=20`);
+            let { data } = await axiosClient.get(`/api/order/delivery-partner/${deliveryPartner?.delivery_partner_id}?status=${selectedFilter}&page=1&limit=30`);
             setDeliveryPartnerOrders(data?.orders);
         } catch (error) {
             console.error('Error fetching orders:', error);
@@ -421,41 +421,41 @@ const Page = () => {
             {/* Status Filter Section */}
             {deliveryPartner?.delivery_partner_id && <>
 
-            <div className="sticky top-0 z-10 bg-white border-b border-gray-100 p-4">
-                <div className="flex items-center gap-2 sticky top-0 z-20 overflow-x-auto pb-2 scrollbar-hide">
-                    {filterOptions.map((option) => (
-                        <button
-                            key={option.value}
-                            onClick={() => handleFilterChange(option?.value)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all
+                <div className="sticky top-0 z-10 bg-white border-b border-gray-100 p-4">
+                    <div className="flex items-center gap-2 sticky top-0 z-20 overflow-x-auto pb-2 scrollbar-hide">
+                        {filterOptions.map((option) => (
+                            <button
+                                key={option.value}
+                                onClick={() => handleFilterChange(option?.value)}
+                                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all
                             ${selectedFilter === option?.value
-                                    ? 'bg-[var(--primary-color)] text-white'
-                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                        >
-                            {option?.label}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            <div className="flex flex-col gap-2 px-3">
-                {deliveryPartnerOrders?.map((order) => (
-                    <MaintainOrderStatusForDeliveryPartner onUpdateOrderStatus={updateOrderStatus} key={order?.order_id} order={order} />
-                ))}
-                {!isLoading && deliveryPartnerOrders.length === 0 && (
-                    <div className="p-8 text-center">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Package className="w-8 h-8 text-gray-400" />
-                        </div>
-                        <h3 className="text-lg font-medium text-gray-900 mb-1">No orders found</h3>
-                        <p className="text-gray-500">
-                            {selectedFilter === 'all'
-                                ? "You don't have any orders yet"
-                                : `No ${filterOptions.find(opt => opt.value === selectedFilter)?.label.toLowerCase()} orders`}
-                        </p>
+                                        ? 'bg-[var(--primary-color)] text-white'
+                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                            >
+                                {option?.label}
+                            </button>
+                        ))}
                     </div>
-                )}
-            </div>
+                </div>
+
+                <div className="flex flex-col gap-2 px-3">
+                    {deliveryPartnerOrders?.map((order) => (
+                        <MaintainOrderStatusForDeliveryPartner onUpdateOrderStatus={updateOrderStatus} key={order?.order_id} order={order} />
+                    ))}
+                    {!isLoading && deliveryPartnerOrders.length === 0 && (
+                        <div className="p-8 text-center">
+                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Package className="w-8 h-8 text-gray-400" />
+                            </div>
+                            <h3 className="text-lg font-medium text-gray-900 mb-1">No orders found</h3>
+                            <p className="text-gray-500">
+                                {selectedFilter === 'all'
+                                    ? "You don't have any orders yet"
+                                    : `No ${filterOptions.find(opt => opt.value === selectedFilter)?.label.toLowerCase()} orders`}
+                            </p>
+                        </div>
+                    )}
+                </div>
             </>}
         </div>
     );
