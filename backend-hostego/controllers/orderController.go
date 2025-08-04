@@ -49,9 +49,9 @@ func CreateNewOrder(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
-	if len(order_items) < 1 {
-		freeDelivery = true
-	}
+	// if len(order_items) < 1 {
+	// 	freeDelivery = true
+	// }
 
 	if requestOrder.AddressId == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Address ID is required"})
