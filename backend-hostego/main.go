@@ -3,6 +3,8 @@ package main
 import (
 	"backend-hostego/cron"
 	"backend-hostego/database"
+	"backend-hostego/logs"
+	"backend-hostego/middlewares"
 	"backend-hostego/routes"
 	"backend-hostego/services"
 	"context"
@@ -41,7 +43,12 @@ func main() {
 		ExposeHeaders:    "Authorization",
 	}))
 
-	app.Use(recover.New()) // Logs panics
+	// Initialize enhanced logging
+	logs.InitLogger()
+
+	// Enhanced crash prevention middleware with user agent logging
+	app.Use(middlewares.CrashPreventionMiddleware())
+	app.Use(recover.New()) // Secondary panic recovery
 	app.Use(logger.New())  // Logs requests: method, path, status, latency
 	// Connect Database
 	database.ConnectDataBase()
@@ -110,7 +117,7 @@ func main() {
 	// Initialize cron jobs
 	cron.InitCronJobs()
 
-	// logs.InitLogger()
+	log.Println("🚀 Hostego Backend Server starting with enhanced crash prevention...")
 
 	// Start the server
 	log.Fatal(app.Listen("0.0.0.0:8000"))

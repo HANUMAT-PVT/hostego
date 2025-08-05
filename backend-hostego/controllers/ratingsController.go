@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"backend-hostego/database"
+	"backend-hostego/middlewares"
 	"backend-hostego/models"
 
 	"gorm.io/gorm"
@@ -14,7 +15,12 @@ func SaveRatingAndUpdateStats(c *fiber.Ctx) error {
 	if err := c.BodyParser(rating); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	user_id := c.Locals("user_id").(int)
+
+	// Safe user ID extraction
+	user_id, err := middlewares.SafeUserIDExtractor(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid user authentication: " + err.Error()})
+	}
 	rating.UserID = user_id
 	return database.DB.Transaction(func(tx *gorm.DB) error {
 		// Step 1: Save the new rating

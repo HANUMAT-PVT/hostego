@@ -2,13 +2,18 @@ package controllers
 
 import (
 	"backend-hostego/database"
+	"backend-hostego/middlewares"
 	"backend-hostego/models"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func AddProductInUserCart(c *fiber.Ctx) error {
-	user_id := c.Locals("user_id")
+	// Safe user ID extraction
+	user_id_int, err := middlewares.SafeUserIDExtractor(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid user authentication: " + err.Error()})
+	}
 
 	var cartItem models.CartItem
 	var product models.Product
@@ -29,7 +34,7 @@ func AddProductInUserCart(c *fiber.Ctx) error {
 
 	// Check if item already exists in cart
 	var existingItem models.CartItem
-	result := database.DB.Where("user_id = ? AND product_id = ?", user_id, cartItem.ProductId).First(&existingItem)
+	result := database.DB.Where("user_id = ? AND product_id = ?", user_id_int, cartItem.ProductId).First(&existingItem)
 
 	if result.Error == nil {
 		// Item exists, update quantity
@@ -48,7 +53,7 @@ func AddProductInUserCart(c *fiber.Ctx) error {
 	var cartItems []models.CartItem
 
 	//check if the product is from different shop
-	database.DB.Preload("ProductItem").Where("user_id = ?", user_id).Find(&cartItems)
+	database.DB.Preload("ProductItem").Where("user_id = ?", user_id_int).Find(&cartItems)
 
 	if len(cartItems) > 0 {
 		for _, item := range cartItems {
@@ -61,7 +66,7 @@ func AddProductInUserCart(c *fiber.Ctx) error {
 	}
 
 	// Create new cart item if it doesn't exist
-	cartItem.UserId = user_id.(int)
+	cartItem.UserId = user_id_int
 	cartItem.SubTotal = float64(cartItem.Quantity) * product.SellingPrice
 	cartItem.ActualSubTotal = float64(cartItem.Quantity) * product.FoodPrice
 

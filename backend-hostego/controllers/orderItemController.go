@@ -2,14 +2,18 @@ package controllers
 
 import (
 	"backend-hostego/database"
+	"backend-hostego/middlewares"
 	"backend-hostego/models"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func CancelOrderItemAndInitiateRefund(c *fiber.Ctx) error {
-
-	current_user_id := c.Locals("user_id").(int)
+	// Safe user ID extraction
+	current_user_id, err := middlewares.SafeUserIDExtractor(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid user authentication: " + err.Error()})
+	}
 	if current_user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}

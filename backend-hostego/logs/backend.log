@@ -36,3 +36,244 @@
 2025/07/22 18:46:50 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
 2025/07/24 11:43:33 firebase-service.go:72: ❌ error sending message: The registration token is not a valid FCM registration token
 2025/07/25 21:44:57 main.go:112: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
+2025/08/05 17:25:42 logger.go:55: ✅ Enhanced logging system initialized
+2025/08/05 17:25:42 database.go:52: ✅ Database connection established and tested successfully
+2025/08/05 17:25:42 database.go:82: ✅ Database migration completed successfully
+2025/08/05 17:25:42 database.go:83: ✅ Connected to Database with enhanced monitoring!
+2025/08/05 17:25:42 health.go:125: 🔄 Database health monitoring started
+2025/08/05 17:25:42 firebase-service.go:29: ✅  FCM initialized
+2025/08/05 17:25:42 main.go:110: FCM initialized
+2025/08/05 17:25:42 main.go:120: 🚀 Hostego Backend Server starting with enhanced crash prevention...
+2025/08/05 17:26:12 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 17:26:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:27:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:27:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:28:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:28:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:29:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:29:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:30:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:30:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:31:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:31:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:32:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:32:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:33:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:33:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:34:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:34:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:35:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:35:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:36:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:36:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:37:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:37:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:38:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:38:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:39:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:39:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:40:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:40:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:41:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:41:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:42:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:42:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:43:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:43:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:44:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:44:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:45:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:45:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:46:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:46:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:47:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:47:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:48:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:48:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:49:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:49:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:50:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:50:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:51:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:51:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:52:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:52:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:53:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:53:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:54:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:54:42 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:55:12 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/05 17:55:42 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 17:56:12 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 17:56:42 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 17:57:12 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 17:57:42 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 17:58:12 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 17:58:42 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 17:59:12 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 17:59:42 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:00:12 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:00:42 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:02:48 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:03:18 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:03:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:10:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:11:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:11:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:12:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:12:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:13:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:13:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:14:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:14:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:15:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:15:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:16:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:16:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:17:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:17:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:18:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:18:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:19:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:19:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:20:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:20:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:21:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:21:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:22:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:22:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:23:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:23:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:24:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:24:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:25:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:25:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:26:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:26:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:27:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:27:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:28:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:28:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:29:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:29:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:30:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:30:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:31:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:31:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:32:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:32:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:33:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:33:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:34:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:34:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:35:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:35:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:36:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:36:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:37:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:37:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:38:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:38:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:39:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:39:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:40:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:40:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:41:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:41:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:42:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:42:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:43:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:43:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:44:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:44:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:45:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:45:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:46:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:46:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:47:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:47:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:48:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:48:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:49:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:49:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:50:25 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 18:50:55 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 18:51:25 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 18:51:55 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 18:52:25 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 18:52:55 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 18:53:25 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 18:53:55 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 18:54:25 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 18:54:55 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 18:55:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:55:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:56:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:56:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:57:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:57:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:58:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:58:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:59:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 18:59:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:00:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:00:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:01:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:01:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:02:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:02:55 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/05 19:03:25 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/05 19:03:55 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/05 19:04:25 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/05 19:04:55 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/05 19:05:25 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/05 19:05:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:06:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:06:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:07:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:07:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:08:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:08:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:09:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:09:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:10:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:10:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:11:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:11:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:12:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:12:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:13:25 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:13:55 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:14:58 logger.go:55: ✅ Enhanced logging system initialized
+2025/08/05 19:14:58 database.go:52: ✅ Database connection established and tested successfully
+2025/08/05 19:14:58 database.go:82: ✅ Database migration completed successfully
+2025/08/05 19:14:58 database.go:83: ✅ Connected to Database with enhanced monitoring!
+2025/08/05 19:14:58 health.go:122: 🔄 Database health monitoring started
+2025/08/05 19:14:58 firebase-service.go:29: ✅  FCM initialized
+2025/08/05 19:14:58 main.go:110: FCM initialized
+2025/08/05 19:14:58 main.go:120: 🚀 Hostego Backend Server starting with enhanced crash prevention...
+2025/08/05 19:15:05 crash-prevention.middleware.go:88: ✅ POST /api/cart | Status: 201 | Duration: 4.368791ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/05 19:15:05 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.296375ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/05 19:15:13 crash-prevention.middleware.go:88: ✅ POST /api/cart | Status: 201 | Duration: 3.243167ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/05 19:15:13 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.337666ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/05 19:15:18 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 1.14775ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/05 19:15:18 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/2 | Status: 200 | Duration: 801.083µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/05 19:15:28 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:15:58 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:16:28 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/05 19:16:55 crash-prevention.middleware.go:88: ✅ GET /api/order/113 | Status: 200 | Duration: 5.051291ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/05 19:16:55 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 119.377708ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/05 19:16:55 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 120.166042ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/05 19:16:55 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 119.832125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/05 19:16:55 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 120.4575ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/05 19:16:55 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 10.341584ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/05 19:16:58 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 19:17:07 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 942.333µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/05 19:17:07 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 2.068917ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/05 19:17:07 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 2.232875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/05 19:17:07 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 2.423125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/05 19:17:07 crash-prevention.middleware.go:88: ✅ GET /api/order/113 | Status: 200 | Duration: 4.139917ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/05 19:17:07 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 5.980875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/05 19:17:28 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 19:17:58 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/05 19:18:28 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5

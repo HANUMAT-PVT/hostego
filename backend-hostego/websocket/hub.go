@@ -2,6 +2,8 @@ package websocket
 
 import (
 	"log"
+	"runtime/debug"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -19,10 +21,22 @@ type Message struct {
 }
 
 func HandleMessages() {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("🚨 CRITICAL: WebSocket handler panic: %v", r)
+			log.Printf("Stack trace: %s", debug.Stack())
+		}
+	}()
+
 	for {
 		msg := <-broadcast
-		for client := range clients {
-		
+		// Create a safe copy of clients to avoid concurrent map iteration issues
+		clientsCopy := make(map[*Client]bool)
+		for client, active := range clients {
+			clientsCopy[client] = active
+		}
+
+		for client := range clientsCopy {
 			if client.Role == msg.Role {
 				err := client.Conn.WriteJSON(msg)
 				if err != nil {

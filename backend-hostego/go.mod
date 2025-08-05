@@ -6,6 +6,7 @@ toolchain go1.23.5
 
 require (
 	firebase.google.com/go v3.13.0+incompatible
+	firebase.google.com/go/v4 v4.16.1
 	github.com/SherClockHolmes/webpush-go v1.4.0
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/gofiber/fiber/v2 v2.52.8
@@ -16,6 +17,7 @@ require (
 	github.com/nats-io/nats.go v1.41.1
 	github.com/razorpay/razorpay-go v1.3.2
 	github.com/robfig/cron/v3 v3.0.1
+	golang.org/x/sync v0.14.0
 	google.golang.org/api v0.231.0
 	gorm.io/datatypes v1.2.5
 	gorm.io/driver/postgres v1.5.11
@@ -34,7 +36,6 @@ require (
 	cloud.google.com/go/monitoring v1.24.2 // indirect
 	cloud.google.com/go/storage v1.53.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
-	firebase.google.com/go/v4 v4.16.1 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.27.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.51.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.51.0 // indirect
@@ -88,7 +89,6 @@ require (
 	golang.org/x/crypto v0.38.0 // indirect
 	golang.org/x/net v0.40.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sync v0.14.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.25.0 // indirect
 	golang.org/x/time v0.11.0 // indirect

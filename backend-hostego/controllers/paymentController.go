@@ -3,12 +3,16 @@ package controllers
 import (
 	"backend-hostego/config"
 	"backend-hostego/database"
+	"backend-hostego/logs"
 	"backend-hostego/models"
 	natsclient "backend-hostego/nats"
 	"crypto/hmac"
 	"crypto/sha256"
+	"runtime/debug"
 	"strconv"
 	"time"
+
+	"backend-hostego/middlewares"
 
 	"encoding/hex"
 	"encoding/json"
@@ -26,7 +30,10 @@ var rz_key_secret = config.GetEnv("RAZORPAY_KEY_SECRET_")
 var rz_client = razorpay.NewClient(rz_key_id, rz_key_secret)
 
 func InitiatePayment(c *fiber.Ctx) error {
-	userId := c.Locals("user_id").(int)
+	userId, err := middlewares.SafeUserIDExtractor(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid user authentication: " + err.Error()})
+	}
 	if userId == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
@@ -757,7 +764,14 @@ func VerifyRazorpaySignature(orderID, paymentID, razorpaySignature, secret strin
 }
 
 // RazorpayWebhookHandler receives Razorpay webhook and quickly responds
+// RazorpayWebhookHandler receives Razorpay webhook and quickly responds
 func RazorpayWebhookHandler(c *fiber.Ctx) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("Recovered in RazorpayWebhookHandler:", r)
+		}
+	}()
+
 	body := c.Body()
 
 	var payload map[string]interface{}
@@ -772,33 +786,72 @@ func RazorpayWebhookHandler(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
-	// ✅ Immediately respond to Razorpay
-	go ProcessPaymentCaptured(payload)
+	// ✅ Launch goroutine safely with enhanced recovery
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				additionalData := map[string]interface{}{
+					"payload":  payload,
+					"function": "ProcessPaymentCaptured",
+				}
+				logs.LogCrash(r, "Payment Processing Goroutine", additionalData)
+			}
+		}()
+		ProcessPaymentCaptured(payload)
+	}()
 
 	return c.Status(200).JSON(fiber.Map{
 		"message": "Payment captured event received",
 	})
 }
-
 func ProcessPaymentCaptured(payload map[string]interface{}) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("Recovered from panic in webhook processing:", r)
+			additionalData := map[string]interface{}{
+				"payload": payload,
+				"stack":   string(debug.Stack()),
+			}
+			logs.LogCrash(r, "ProcessPaymentCaptured", additionalData)
 		}
 	}()
 
-	payment := payload["payload"].(map[string]interface{})["payment"].(map[string]interface{})["entity"].(map[string]interface{})
-	orderID := payment["order_id"].(string)
+	// Safely extract nested fields
+	payloadData, ok := payload["payload"].(map[string]interface{})
+	if !ok {
+		log.Println("Invalid payload: missing 'payload'")
+		return
+	}
 
-	// Fetch order from Razorpay (assuming rz_client is initialized globally)
+	paymentData, ok := payloadData["payment"].(map[string]interface{})
+	if !ok {
+		log.Println("Invalid payload: missing 'payment'")
+		return
+	}
+
+	entity, ok := paymentData["entity"].(map[string]interface{})
+	if !ok {
+		log.Println("Invalid payload: missing 'entity'")
+		return
+	}
+
+	orderID, ok := entity["order_id"].(string)
+	if !ok {
+		log.Println("Missing order_id in entity")
+		return
+	}
+
+	log.Println("Processing payment for order ID:", orderID)
+
+	// Fetch order from Razorpay
 	body, err := rz_client.Order.Fetch(orderID, nil, nil)
 	if err != nil {
 		log.Println("Error fetching Razorpay order:", err)
 		return
 	}
 
-	if body["status"] != "paid" {
-		log.Println("Order not marked as paid by Razorpay")
+	status, ok := body["status"].(string)
+	if !ok || status != "paid" {
+		log.Println("Order not marked as paid by Razorpay, status:", status)
 		return
 	}
 
@@ -807,32 +860,31 @@ func ProcessPaymentCaptured(payload map[string]interface{}) {
 	var paymentTransaction models.PaymentTransaction
 	if err := tx.First(&paymentTransaction, "payment_order_id = ?", orderID).Error; err != nil {
 		tx.Rollback()
-		log.Println("PaymentTransaction fetch error:", err)
+		log.Printf("PaymentTransaction fetch error for orderID %s: %v\n", orderID, err)
 		return
 	}
 
 	if paymentTransaction.PaymentStatus == "success" {
 		tx.Rollback()
-		log.Println("Payment already completed")
+		log.Println("Payment already completed for orderID:", orderID)
 		return
 	}
 
 	var order models.Order
 	if err := tx.First(&order, "order_id = ?", paymentTransaction.OrderId).Error; err != nil {
 		tx.Rollback()
-		log.Println("Order fetch error:", err)
+		log.Println("Order fetch error for orderID:", orderID, "->", err)
 		return
 	}
 
 	if order.OrderStatus != "pending" {
 		tx.Rollback()
-		log.Println("Order already placed")
+		log.Println("Order already placed, skipping update. OrderID:", order.OrderId)
 		return
 	}
 
-	// Deduct amount
+	// Deduct wallet amount
 	totalAmountToDeduct := order.FinalOrderValue
-
 	walletTransaction := models.WalletTransaction{
 		Amount:            totalAmountToDeduct,
 		TransactionType:   "debit",
@@ -842,10 +894,11 @@ func ProcessPaymentCaptured(payload map[string]interface{}) {
 
 	if err := tx.Create(&walletTransaction).Error; err != nil {
 		tx.Rollback()
-		log.Println("WalletTransaction error:", err)
+		log.Println("WalletTransaction creation failed:", err)
 		return
 	}
 
+	// Update payment & order status
 	paymentTransaction.PaymentStatus = "success"
 	order.OrderStatus = "placed"
 	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
@@ -856,23 +909,24 @@ func ProcessPaymentCaptured(payload map[string]interface{}) {
 		return
 	}
 
-	// Remove cart items
+	// Delete cart items
 	if err := tx.Where("user_id = ?", order.UserId).Delete(&models.CartItem{}).Error; err != nil {
 		tx.Rollback()
-		log.Println("Cart item delete failed:", err)
+		log.Println("Cart item deletion failed:", err)
 		return
 	}
 
-	// Parse OrderItems (stored as JSON)
+	// Parse order items
 	var orderItems []models.CartItem
 	if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
 		tx.Rollback()
-		log.Println("Unmarshal OrderItems failed:", err)
+		log.Println("Failed to unmarshal OrderItems JSON:", err)
 		return
 	}
 
 	for _, item := range orderItems {
 		order.RestaurantPayableAmount += item.ActualSubTotal
+
 		orderItem := models.OrderItem{
 			OrderId:        order.OrderId,
 			ProductId:      item.ProductId,
@@ -884,32 +938,30 @@ func ProcessPaymentCaptured(payload map[string]interface{}) {
 
 		if err := tx.Create(&orderItem).Error; err != nil {
 			tx.Rollback()
-			log.Println("Create OrderItem failed:", err)
+			log.Println("Failed to create OrderItem:", err)
 			return
 		}
 
-		// Reduce product stock
 		if err := tx.Model(&models.Product{}).
 			Where("product_id = ?", item.ProductId).
 			Update("stock_quantity", gorm.Expr("stock_quantity - ?", item.Quantity)).Error; err != nil {
 			tx.Rollback()
-			log.Println("Update product stock failed:", err)
+			log.Println("Failed to update product stock:", err)
 			return
 		}
 	}
 
-	// Save order with updates
 	if err := tx.Preload("User").Save(&order).Error; err != nil {
 		tx.Rollback()
-		log.Println("Save order failed:", err)
+		log.Println("Failed to save updated order:", err)
 		return
 	}
 
 	if err := NotifyOrderPlaced(order.OrderId); err != nil {
-		log.Println("Notification error:", err)
+		log.Println("Notification sending failed:", err)
 	}
 
 	if err := tx.Commit().Error; err != nil {
-		log.Println("DB commit failed:", err)
+		log.Println("Transaction commit failed:", err)
 	}
 }
