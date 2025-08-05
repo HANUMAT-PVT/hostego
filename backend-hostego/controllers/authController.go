@@ -21,7 +21,7 @@ func Signup(c *fiber.Ctx) error {
 
 	var user models.User
 	// Check if user already exists
-	if err := database.DB.Where("mobile_number = ?", req.MobileNumber).First(&user).Error; err == nil {
+	if err := database.DB.Where("mobile_number = ?", req.MobileNumber).Or("email = ?", req.Email).First(&user).Error; err == nil {
 		// ✅ If user exists, generate and return a token instead of creating a new user
 		token, err := generateJWT(user)
 		if err != nil {
@@ -64,6 +64,5 @@ func generateJWT(user models.User) (string, error) {
 	jwtSecret := config.GetEnv("HOSTEGO_JWT_SECRET_")
 	return token.SignedString([]byte(jwtSecret))
 }
-
 
 //test commit

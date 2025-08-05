@@ -277,3 +277,484 @@
 2025/08/05 19:17:28 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
 2025/08/05 19:17:58 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
 2025/08/05 19:18:28 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 00:57:42 logger.go:55: ✅ Enhanced logging system initialized
+2025/08/06 00:57:42 database.go:52: ✅ Database connection established and tested successfully
+2025/08/06 00:57:42 database.go:82: ✅ Database migration completed successfully
+2025/08/06 00:57:42 database.go:83: ✅ Connected to Database with enhanced monitoring!
+2025/08/06 00:57:42 health.go:122: 🔄 Database health monitoring started
+2025/08/06 00:57:42 firebase-service.go:29: ✅  FCM initialized
+2025/08/06 00:57:42 main.go:110: FCM initialized
+2025/08/06 00:57:42 main.go:120: 🚀 Hostego Backend Server starting with enhanced crash prevention...
+2025/08/06 00:58:12 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 00:58:42 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 00:59:12 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 00:59:42 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:00:12 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:00:20 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 4.508583ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:00:22 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 3.667625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:00:22 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/2 | Status: 200 | Duration: 3.051292ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:00:24 crash-prevention.middleware.go:88: ✅ POST /api/cart | Status: 201 | Duration: 9.371584ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:00:24 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 6.066792ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:00:32 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 787.542µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:00:32 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 19.422833ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:00:32 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 891.125µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:00:42 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:01:12 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:01:42 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:02:12 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:02:42 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:02:53 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 2.813292ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:03:12 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:03:42 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:04:12 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:04:42 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:05:12 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:05:25 crash-prevention.middleware.go:88: ✅ PATCH /api/cart/129 | Status: 200 | Duration: 6.387833ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:05:25 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.938458ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:05:31 crash-prevention.middleware.go:88: ✅ POST /api/cart | Status: 201 | Duration: 6.205833ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:05:31 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 4.724625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:05:32 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 2.137ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:05:32 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 4.336875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:05:32 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 972.75µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:05:42 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:05:48 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.259875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:05:54 crash-prevention.middleware.go:88: ✅ POST /api/cart | Status: 201 | Duration: 4.720417ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:05:54 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.833541ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:05:55 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 1.24275ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:05:55 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 3.480459ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:05:55 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 972.167µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:06:05 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 829.834µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:06:12 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:09:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:10:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:10:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:11:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:11:29 crash-prevention.middleware.go:88: ✅ GET /api/products/all | Status: 200 | Duration: 4.869167ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:11:32 crash-prevention.middleware.go:88: ✅ GET /api/products/all | Status: 200 | Duration: 2.4475ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:11:33 crash-prevention.middleware.go:88: ✅ GET /api/products/all | Status: 200 | Duration: 8.276ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:11:34 crash-prevention.middleware.go:88: ✅ GET /api/products/all | Status: 200 | Duration: 3.573542ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:11:35 crash-prevention.middleware.go:88: ✅ GET /api/products/all | Status: 200 | Duration: 2.845041ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:11:35 crash-prevention.middleware.go:88: ✅ GET /api/products/all | Status: 200 | Duration: 4.567166ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:11:37 crash-prevention.middleware.go:88: ✅ GET /api/products/all | Status: 200 | Duration: 1.254584ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:11:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:12:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:12:17 crash-prevention.middleware.go:88: ✅ GET /api/shop/owner | Status: 200 | Duration: 2.407625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:12:17 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/0 | Status: 200 | Duration: 3.213417ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:12:17 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/0 | Status: 200 | Duration: 1.5115ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:12:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:12:47 crash-prevention.middleware.go:88: ✅ GET /api/shop/owner | Status: 200 | Duration: 1.398542ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:12:47 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/0 | Status: 200 | Duration: 813.5µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:12:47 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/0 | Status: 200 | Duration: 1.464417ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:13:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:13:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:14:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:14:44 crash-prevention.middleware.go:88: ✅ POST /api/auth/signup | Status: 200 | Duration: 5.941125ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:14:44 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 159.113ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:14:44 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 182.131667ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:14:44 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 174.756416ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:14:44 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 153.654166ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:14:44 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 178.018834ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:14:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:15:10 crash-prevention.middleware.go:88: ✅ GET /api/shop/owner | Status: 200 | Duration: 1.866875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:15:10 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/0 | Status: 200 | Duration: 1.773ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:15:10 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/0 | Status: 200 | Duration: 942.334µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:15:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:15:47 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:16:17 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:16:47 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:17:17 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:17:47 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:18:17 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:18:47 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 01:19:17 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 01:19:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:20:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:20:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:21:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:21:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:22:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:22:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:23:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:23:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:24:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:24:19 crash-prevention.middleware.go:88: ✅ POST /api/auth/signup | Status: 200 | Duration: 4.004333ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:20 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 187.871458ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:20 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 205.605916ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:20 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 205.74675ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:20 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 161.574875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:20 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 208.542042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:42 crash-prevention.middleware.go:88: ✅ POST /api/auth/signup | Status: 200 | Duration: 3.805291ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:42 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 5.301459ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:42 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 3.970709ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:42 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 5.216ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:42 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 7.685833ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:42 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 2.959917ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:24:56 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 2.971375ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:24:56 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/2 | Status: 200 | Duration: 1.225333ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:25:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:25:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:25:51 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 4.242209ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:25:51 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/2 | Status: 200 | Duration: 1.121417ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:26:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:26:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:27:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:27:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:28:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:28:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:29:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:29:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:30:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:30:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:30:50 crash-prevention.middleware.go:88: ✅ POST /api/auth/signup | Status: 200 | Duration: 2.719083ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:30:51 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 151.213458ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:30:51 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 177.152875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:30:51 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 177.422791ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:30:51 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 178.639166ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:30:51 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 169.735875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:31:00 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 2.836417ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:31:00 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/2 | Status: 200 | Duration: 1.845916ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:31:04 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 1.867ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:31:04 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/2 | Status: 200 | Duration: 1.218875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:31:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:31:34 crash-prevention.middleware.go:88: ✅ GET /api/wallet/transactions | Status: 200 | Duration: 5.537292ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:31:34 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 4.133625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:31:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:32:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:32:18 crash-prevention.middleware.go:88: ✅ GET /api/order | Status: 200 | Duration: 2.232083ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:32:21 crash-prevention.middleware.go:88: ✅ GET /api/order | Status: 200 | Duration: 1.771583ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:32:23 crash-prevention.middleware.go:88: ✅ GET /api/wallet/transactions | Status: 200 | Duration: 1.449542ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:32:23 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 1.95275ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:32:29 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 1.729167ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:32:29 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/2 | Status: 200 | Duration: 793.833µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:32:30 crash-prevention.middleware.go:88: ✅ POST /api/cart | Status: 201 | Duration: 5.791708ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:32:30 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 3.875041ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:32:31 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 3.457ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:32:31 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 4.668459ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:32:31 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 1.237458ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:32:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:33:02 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 2.316333ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:33:11 crash-prevention.middleware.go:88: ✅ POST /api/address | Status: 200 | Duration: 4.821167ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:33:11 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 2.130875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:33:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:33:17 crash-prevention.middleware.go:88: ✅ POST /api/order | Status: 201 | Duration: 7.352042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:33:19 crash-prevention.middleware.go:88: ✅ POST /api/payment/razorpay | Status: 201 | Duration: 1.285594375s | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:33:19 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 3.762208ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:33:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:33:59 crash-prevention.middleware.go:88: ✅ POST /api/payment/razorpay/verify-payment | Status: 200 | Duration: 1.018687333s | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:33:59 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 1.351584ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:04 crash-prevention.middleware.go:88: ✅ GET /api/order | Status: 200 | Duration: 1.914959ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:09 crash-prevention.middleware.go:88: ✅ GET /api/order/115 | Status: 200 | Duration: 2.985708ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:34:24 crash-prevention.middleware.go:88: ✅ GET /api/shop/owner | Status: 200 | Duration: 8.750584ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:24 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/0 | Status: 200 | Duration: 9.406125ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:24 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/0 | Status: 200 | Duration: 914.792µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:25 crash-prevention.middleware.go:88: ✅ GET /api/product-category/0 | Status: 200 | Duration: 2.51075ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:25 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/0 | Status: 200 | Duration: 1.112792ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:43 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 3.383959ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:43 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/2 | Status: 200 | Duration: 933.875µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:44 crash-prevention.middleware.go:88: ✅ POST /api/cart | Status: 201 | Duration: 6.830958ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:44 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.308208ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:46 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 2.499541ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:46 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 3.980375ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:46 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 1.079333ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:34:47 crash-prevention.middleware.go:88: ✅ POST /api/order | Status: 201 | Duration: 4.827875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:47 crash-prevention.middleware.go:88: ✅ POST /api/payment/razorpay | Status: 201 | Duration: 150.913166ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:34:47 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.071209ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:35:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:35:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 01:36:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:36:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:37:16 crash-prevention.middleware.go:88: ✅ POST /api/order | Status: 201 | Duration: 5.167708ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:37:16 crash-prevention.middleware.go:88: ✅ POST /api/payment/razorpay | Status: 201 | Duration: 496.692792ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:37:16 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 4.018541ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:37:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:37:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:38:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:38:25 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 3.0345ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:25 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 402µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:25 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.040125ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:25 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 34.333042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:25 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 13.252417ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:25 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 68.458042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:25 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 52.043708ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:25 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 59.145ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:27 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 1.921333ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:27 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.261708ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:27 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 1.411209ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:28 crash-prevention.middleware.go:88: ✅ POST /api/order | Status: 201 | Duration: 6.548833ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:28 crash-prevention.middleware.go:88: ✅ POST /api/payment/razorpay | Status: 201 | Duration: 184.083208ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:28 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 1.865292ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:31 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 1.238042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:31 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 901.5µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:31 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 900.292µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:32 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 3.978042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:32 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 5.437292ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:32 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 2.205042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:32 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 3.4945ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:32 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 3.837834ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:35 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 634.125µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:35 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 416.791µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:35 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 4.1305ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:35 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 1.04125ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:35 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 753.458µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:35 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 515µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:35 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 3.844708ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:35 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 1.344958ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:47 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:38:49 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 2.0105ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:49 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.376708ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:38:49 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 978.25µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:39:11 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 923.833µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:39:11 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 313.959µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:39:11 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 1.076791ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:39:12 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 6.682084ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:39:12 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.18875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:39:12 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.646916ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:39:12 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 60.950208ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:39:12 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 3.05175ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:39:13 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 577.292µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:39:13 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 1.582083ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:39:13 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 1.287875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:39:17 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:39:47 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:40:17 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:40:47 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:41:17 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:41:47 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:42:17 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:42:47 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:43:17 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4
+2025/08/06 01:43:47 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 01:44:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:44:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:45:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:45:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:46:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:46:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:47:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:47:36 crash-prevention.middleware.go:78: ⚠️  PATCH /api/user | Status: 404 | Duration: 671.125µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:47:36 logger.go:123: ⚠️ WARNING in HTTP Response: client error response | status: 404 | path: /api/user | method: PATCH | user_agent: Dart/3.7 (dart:io)
+2025/08/06 01:47:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:47:49 crash-prevention.middleware.go:78: ⚠️  PATCH /api/user | Status: 404 | Duration: 61.708µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:47:49 logger.go:123: ⚠️ WARNING in HTTP Response: client error response | user_agent: Dart/3.7 (dart:io) | status: 404 | path: /api/user | method: PATCH
+2025/08/06 01:48:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:48:25 crash-prevention.middleware.go:78: ⚠️  PATCH /api/user/me | Status: 404 | Duration: 430.334µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:48:25 logger.go:123: ⚠️ WARNING in HTTP Response: client error response | status: 404 | path: /api/user/me | method: PATCH | user_agent: Dart/3.7 (dart:io)
+2025/08/06 01:48:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:49:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:49:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:50:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:50:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:50:59 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 6.959666ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:51:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:51:41 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 3.469708ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:51:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:52:03 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 5.058125ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:52:03 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 14.762333ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:52:03 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 2.539292ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:52:09 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 3.217583ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:52:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:52:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:52:57 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 2.149875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:52:57 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 6.792916ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:52:57 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 993.417µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:53:02 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 3.58975ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:53:05 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 3.353917ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:53:05 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 736.667µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:53:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 01:53:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:54:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:54:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:55:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:55:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 01:55:58 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 4.068625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:55:58 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 5.650584ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:55:58 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 11.222375ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:55:58 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 11.387125ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:56:17 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 01:56:47 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 01:57:17 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 01:57:47 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 01:58:05 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 2.648125ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:58:05 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 9.773666ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:58:05 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 1.855375ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:58:09 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 3.138333ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:58:17 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 01:58:34 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 2.628917ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:58:34 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 4.805542ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:58:34 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 2.014625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:58:38 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 3.474583ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:58:47 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 01:59:17 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 01:59:24 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 6.189ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:59:42 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 1.706875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 01:59:47 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:00:17 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:00:47 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:00:48 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 2.612083ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:01:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 02:01:26 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 4.658833ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:01:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 02:02:03 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 5.007292ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:02:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 02:02:31 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 3.810667ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:02:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 02:03:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 02:03:21 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 5.601541ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:03:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 02:04:17 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 02:04:47 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1
+2025/08/06 02:05:11 crash-prevention.middleware.go:88: ✅ POST /api/auth/signup | Status: 200 | Duration: 12.496125ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:11 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 68.876916ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:12 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 253.323292ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:12 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 253.405ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:12 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 256.960584ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:12 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 245.825042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 02:05:21 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 6.7845ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:21 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/2 | Status: 200 | Duration: 1.953667ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:22 crash-prevention.middleware.go:88: ✅ POST /api/cart | Status: 201 | Duration: 3.382167ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:22 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.692417ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:23 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 2.75075ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:23 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 4.869375ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:23 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 1.578334ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:44 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 4.527458ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:05:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 02:05:53 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 2.389625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 02:06:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 02:06:49 crash-prevention.middleware.go:88: ✅ POST /api/auth/signup | Status: 200 | Duration: 10.790792ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:49 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 2.136708ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:49 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.106ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:49 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 5.146709ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:49 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 6.19525ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:49 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 24.553625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:50 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 1.278125ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:50 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/2 | Status: 200 | Duration: 864.416µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:52 crash-prevention.middleware.go:88: ✅ POST /api/cart | Status: 201 | Duration: 4.112041ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:52 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 3.266875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:53 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 1.055542ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:53 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.966708ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:53 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 963.5µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:06:57 crash-prevention.middleware.go:88: ✅ POST /api/auth/signup | Status: 200 | Duration: 2.155958ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:07:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 02:07:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 02:08:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 02:08:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 02:09:17 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 02:09:20 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 1.766958ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:09:20 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 4.866417ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:09:20 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 2.454833ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:09:25 crash-prevention.middleware.go:88: ✅ POST /api/auth/signup | Status: 200 | Duration: 1.330667ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:09:47 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5
+2025/08/06 02:09:55 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 4.381416ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:10:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 02:10:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 02:11:17 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 02:11:47 health.go:43: 📊 DB Pool Stats - Open: 2, InUse: 0, Idle: 2
+2025/08/06 02:11:58 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 3.701458ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:11:59 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 3.402916ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:11:59 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 19.464709ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:02 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.112833ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:02 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.603833ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:02 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.238042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:06 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 3.257334ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:06 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 3.2405ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:06 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 1.475084ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:07 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 864.208µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:15 crash-prevention.middleware.go:88: ✅ POST /api/address | Status: 200 | Duration: 5.679917ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:15 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.41425ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:17 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:12:22 crash-prevention.middleware.go:88: ✅ POST /api/order | Status: 201 | Duration: 7.646666ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:24 crash-prevention.middleware.go:88: ✅ POST /api/payment/razorpay | Status: 201 | Duration: 1.36960725s | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:24 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 4.421375ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:47 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:12:53 crash-prevention.middleware.go:88: ✅ POST /api/payment/razorpay/verify-payment | Status: 200 | Duration: 1.441304625s | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:53 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 1.949917ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:12:58 crash-prevention.middleware.go:88: ✅ GET /api/order | Status: 200 | Duration: 1.684208ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:13:02 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.201834ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:13:02 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.519459ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:13:02 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.073167ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:13:17 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:13:47 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:14:17 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:14:47 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:15:17 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:15:22 crash-prevention.middleware.go:88: ✅ POST /api/auth/signup | Status: 200 | Duration: 1.742667ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:15:22 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 1.1885ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:15:22 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 623.417µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:15:22 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.321041ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:15:22 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.590417ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:15:22 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 140.270708ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:15:47 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:16:17 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:16:34 logger.go:55: ✅ Enhanced logging system initialized
+2025/08/06 02:16:34 database.go:52: ✅ Database connection established and tested successfully
+2025/08/06 02:16:34 database.go:82: ✅ Database migration completed successfully
+2025/08/06 02:16:34 database.go:83: ✅ Connected to Database with enhanced monitoring!
+2025/08/06 02:16:34 health.go:122: 🔄 Database health monitoring started
+2025/08/06 02:16:34 firebase-service.go:29: ✅  FCM initialized
+2025/08/06 02:16:34 main.go:110: FCM initialized
+2025/08/06 02:16:34 main.go:120: 🚀 Hostego Backend Server starting with enhanced crash prevention...
+2025/08/06 02:16:37 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 3.974166ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:16:37 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/2 | Status: 200 | Duration: 1.608542ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:16:40 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 5.137875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:16:40 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 5.513ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:16:40 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 5.731167ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:04 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:17:09 crash-prevention.middleware.go:88: ✅ POST /api/auth/signup | Status: 200 | Duration: 7.039166ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:09 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 1.487708ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:09 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 683.709µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:09 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 396.167µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:09 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.669416ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:09 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 1.301583ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:12 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 817.209µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:12 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.166917ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:12 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.487917ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:15 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 3.067916ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:15 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/2 | Status: 200 | Duration: 1.639208ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:16 crash-prevention.middleware.go:88: ✅ POST /api/cart | Status: 201 | Duration: 2.609709ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:16 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 3.66775ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:18 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 2.191875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:18 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 4.622625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:18 crash-prevention.middleware.go:88: ✅ GET /api/shop/2 | Status: 200 | Duration: 1.477458ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:23 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me | Status: 200 | Duration: 2.399417ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:23 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.020916ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:23 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 407.833µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:23 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.952334ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:24 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.847334ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:29 crash-prevention.middleware.go:88: ✅ POST /api/address | Status: 200 | Duration: 5.7085ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:29 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 935.917µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:34 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:17:36 crash-prevention.middleware.go:88: ✅ POST /api/order | Status: 201 | Duration: 6.173584ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:36 crash-prevention.middleware.go:88: ✅ POST /api/payment/razorpay | Status: 201 | Duration: 425.347541ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:17:36 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.72225ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:04 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:18:08 crash-prevention.middleware.go:88: ✅ POST /api/payment/razorpay/verify-payment | Status: 200 | Duration: 834.122958ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:08 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 1.882334ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:11 crash-prevention.middleware.go:88: ✅ GET /api/order | Status: 200 | Duration: 3.232875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:12 crash-prevention.middleware.go:88: ✅ GET /api/order/120 | Status: 200 | Duration: 2.988083ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:13 crash-prevention.middleware.go:88: ✅ GET /api/order | Status: 200 | Duration: 1.717625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:18 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 983.166µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:18 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 1.482875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:18 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 2.123833ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:28 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 2.621583ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:30 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 1.192375ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:33 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 1.569208ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:34 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:18:36 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.013083ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:36 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.05275ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:36 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.037334ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:38 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.418833ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:38 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.71125ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:38 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 2.12425ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:43 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.07825ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:43 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.262583ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:43 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 1.767459ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:53 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 760.833µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:53 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 634µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:18:53 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 1.178458ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/06 02:19:04 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
+2025/08/06 02:19:34 health.go:43: 📊 DB Pool Stats - Open: 3, InUse: 0, Idle: 3
