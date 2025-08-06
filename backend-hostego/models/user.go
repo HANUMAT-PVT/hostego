@@ -8,16 +8,17 @@ import (
 
 // User model
 type User struct {
-	UserId              int       `gorm:"type:int;primaryKey;unique;not null;autoIncrement:true" json:"user_id"`
-	FirstName           string    `gorm:"type:varchar(255);" json:"first_name"`
-	LastName            string    `gorm:"type:varchar(255);" json:"last_name"`
-	Email               string    `gorm:"unique;not null;" json:"email"`
-	MobileNumber        string    `gorm:"type:varchar(20);" json:"mobile_number"`
-	FirebaseOTPVerified int       `gorm:"not null;default:0;" json:"firebase_otp_verified"`
-	LastLoginTimestamp  time.Time `gorm:"autoUpdateTime" json:"last_login_timestamp"`
-	CreatedAt           time.Time `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt           time.Time `gorm:"autoUpdateTime" json:"updated_at"`
-	FCMToken            string    `gorm:"type:varchar(255);" json:"fcm_token"`
+	UserId                int       `gorm:"type:int;primaryKey;unique;not null;autoIncrement:true" json:"user_id"`
+	FirstName             string    `gorm:"type:varchar(255);" json:"first_name"`
+	LastName              string    `gorm:"type:varchar(255);" json:"last_name"`
+	Email                 string    `gorm:"unique;not null;" json:"email"`
+	MobileNumber          string    `gorm:"type:varchar(20);" json:"mobile_number"`
+	FirebaseOTPVerified   int       `gorm:"not null;default:0;" json:"firebase_otp_verified"`
+	LastLoginTimestamp    time.Time `gorm:"autoUpdateTime" json:"last_login_timestamp"`
+	CreatedAt             time.Time `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt             time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	FCMToken              string    `gorm:"type:varchar(255);" json:"fcm_token"`
+	AppleUserIdentifierId string    `gorm:"type:varchar(255);" json:"apple_user_identifier_id"`
 }
 
 func (u *User) AfterCreate(tx *gorm.DB) (err error) {
