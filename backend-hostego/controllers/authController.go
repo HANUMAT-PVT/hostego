@@ -20,6 +20,10 @@ func Signup(c *fiber.Ctx) error {
 	}
 
 	var user models.User
+	println("req.MobileNumber", req.MobileNumber)
+	println("req.Email", req.Email)
+	println("req.FirstName", req.FirstName)
+	println("req.LastName", req.LastName)
 	// Check if user already exists
 	if err := database.DB.Where("mobile_number = ?", req.MobileNumber).Or("email = ?", req.Email).First(&user).Error; err == nil {
 		// ✅ If user exists, generate and return a token instead of creating a new user
@@ -30,11 +34,6 @@ func Signup(c *fiber.Ctx) error {
 
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User already exists", "token": token})
 	}
-
-	println("req.MobileNumber", req.MobileNumber)
-	println("req.Email", req.Email)
-	println("req.FirstName", req.FirstName)
-	println("req.LastName", req.LastName)
 
 	// 🆕 If user doesn't exist, create a new user
 	user = models.User{
