@@ -21,21 +21,15 @@ func Signup(c *fiber.Ctx) error {
 
 	var user models.User
 
-	if req.AppleUserIdentifierId != "" {
-		err := database.DB.Where("apple_user_identifier_id = ?", req.AppleUserIdentifierId).First(&user).Error
-		if err == nil {
-			// generate token and return
+	// Check if user already exists
+	if err := database.DB.Where("mobile_number = ?", req.MobileNumber).First(&user).Error; err == nil {
+		// ✅ If user exists, generate and return a token instead of creating a new user
+		token, err := generateJWT(user)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "JWT generation failed"})
 		}
-	} else if req.Email != "" {
-		err := database.DB.Where("email = ?", req.Email).First(&user).Error
-		if err == nil {
-			// generate token and return
-		}
-	} else if req.MobileNumber != "" {
-		err := database.DB.Where("mobile_number = ?", req.MobileNumber).First(&user).Error
-		if err == nil {
-			// generate token and return
-		}
+
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User already exists", "token": token})
 	}
 
 	// 🆕 If user doesn't exist, create a new user
