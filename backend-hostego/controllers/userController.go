@@ -69,9 +69,29 @@ func UpdateUserById(c *fiber.Ctx) error {
 	}
 
 	var user models.User
+	var req models.User
+	var existingUser models.User
 
 	if err := database.DB.First(&user, "user_id=?", user_id).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+	}
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+	if req.MobileNumber != "" {
+		if err := database.DB.Where("mobile_number = ?", req.MobileNumber).First(&existingUser).Error; err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+		}
+		existingUser.AppleUserIdentifierId = req.AppleUserIdentifierId
+		database.DB.Save(&existingUser)
+
+		token, err := generateJWT(existingUser)
+
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "JWT generation failed"})
+		}
+		database.DB.Delete(&user)
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User updated successfully", "user": existingUser, "token": token})
 	}
 
 	if err := c.BodyParser(&user); err != nil {

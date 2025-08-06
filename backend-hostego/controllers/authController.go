@@ -20,12 +20,9 @@ func Signup(c *fiber.Ctx) error {
 	}
 
 	var user models.User
-	println("req.MobileNumber", req.MobileNumber)
-	println("req.Email", req.Email)
-	println("req.FirstName", req.FirstName)
-	println("req.LastName", req.LastName)
+
 	// Check if user already exists
-	if err := database.DB.Where("mobile_number = ?", req.MobileNumber).Or("email = ?", req.Email).First(&user).Error; err == nil {
+	if err := database.DB.Where("mobile_number = ?", req.MobileNumber).Or("email = ?", req.Email).Or("apple_user_identifier_id = ?", req.AppleUserIdentifierId).First(&user).Error; err == nil {
 		// ✅ If user exists, generate and return a token instead of creating a new user
 		token, err := generateJWT(user)
 		if err != nil {
@@ -37,13 +34,14 @@ func Signup(c *fiber.Ctx) error {
 
 	// 🆕 If user doesn't exist, create a new user
 	user = models.User{
-		FirstName:           req.FirstName,
-		LastName:            req.LastName,
-		Email:               req.Email,
-		MobileNumber:        req.MobileNumber,
-		FirebaseOTPVerified: 1,
-		CreatedAt:           time.Now(),
-		LastLoginTimestamp:  time.Now(),
+		FirstName:             req.FirstName,
+		LastName:              req.LastName,
+		Email:                 req.Email,
+		MobileNumber:          req.MobileNumber,
+		FirebaseOTPVerified:   1,
+		CreatedAt:             time.Now(),
+		LastLoginTimestamp:    time.Now(),
+		AppleUserIdentifierId: req.AppleUserIdentifierId,
 	}
 
 	database.DB.Create(&user)
