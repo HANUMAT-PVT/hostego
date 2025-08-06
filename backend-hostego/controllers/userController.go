@@ -82,7 +82,7 @@ func UpdateUserById(c *fiber.Ctx) error {
 		if err := database.DB.Where("mobile_number = ?", req.MobileNumber).First(&existingUser).Error; err != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
 		}
-		existingUser.AppleUserIdentifierId = req.AppleUserIdentifierId
+		existingUser.AppleUserIdentifierId = user.AppleUserIdentifierId
 		database.DB.Save(&existingUser)
 
 		token, err := generateJWT(existingUser)
