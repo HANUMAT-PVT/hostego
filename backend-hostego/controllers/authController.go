@@ -22,7 +22,7 @@ func Signup(c *fiber.Ctx) error {
 	var user models.User
 
 	// Check if user already exists
-	if err := database.DB.Where("mobile_number = ?", req.MobileNumber).First(&user).Error; err == nil {
+	if err := database.DB.Where("mobile_number = ? OR email = ? OR apple_user_identifier_id = ?", req.MobileNumber, req.Email, req.AppleUserIdentifierId).First(&user).Error; err == nil {
 		// ✅ If user exists, generate and return a token instead of creating a new user
 		token, err := generateJWT(user)
 		if err != nil {
