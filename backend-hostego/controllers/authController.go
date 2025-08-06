@@ -31,6 +31,11 @@ func Signup(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User already exists", "token": token})
 	}
 
+	println("req.MobileNumber", req.MobileNumber)
+	println("req.Email", req.Email)
+	println("req.FirstName", req.FirstName)
+	println("req.LastName", req.LastName)
+
 	// 🆕 If user doesn't exist, create a new user
 	user = models.User{
 		FirstName:           req.FirstName,
