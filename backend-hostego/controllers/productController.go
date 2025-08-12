@@ -187,7 +187,7 @@ func UpdateProductById(c *fiber.Ctx) error {
 	}
 
 	type UpdateProductRequest struct {
-		Name          *string              `json:"name"`
+		ProductName   *string              `json:"product_name"`
 		FoodPrice     *float64             `json:"food_price"`
 		FoodCategory  *models.FoodCategory `json:"food_category"`
 		Tags          *datatypes.JSON      `json:"tags"`
@@ -215,8 +215,8 @@ func UpdateProductById(c *fiber.Ctx) error {
 	}
 
 	// 4. Update only the provided fields
-	if req.Name != nil {
-		product.ProductName = *req.Name
+	if req.ProductName != nil {
+		product.ProductName = *req.ProductName
 	}
 	if req.FoodPrice != nil {
 		product.FoodPrice = *req.FoodPrice
