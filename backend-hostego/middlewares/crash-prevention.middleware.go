@@ -1,6 +1,7 @@
 package middlewares
 
-import (	"backend-hostego/logs"
+import (
+	"backend-hostego/logs"
 	"fmt"
 	"log"
 	"runtime/debug"
