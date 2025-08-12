@@ -18,7 +18,7 @@ type User struct {
 	CreatedAt             time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt             time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 	FCMToken              string    `gorm:"type:varchar(255);" json:"fcm_token"`
-	AppleUserIdentifierId string    `gorm:"type:varchar(255);" json:"apple_user_identifier_id"`
+	AppleUserIdentifierId string    `gorm:"type:varchar(255); unique" json:"apple_user_identifier_id"`
 }
 
 func (u *User) AfterCreate(tx *gorm.DB) (err error) {

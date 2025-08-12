@@ -39,8 +39,8 @@ func ConnectDataBase() {
 	}
 
 	// Enhanced connection pool settings for stability
-	sqlDB.SetMaxOpenConns(50)                  // Reduced from 100 to prevent connection exhaustion
-	sqlDB.SetMaxIdleConns(25)                  // Reduced from 50 to maintain reasonable idle pool
+	sqlDB.SetMaxOpenConns(25)                  // Reduced from 100 to prevent connection exhaustion
+	sqlDB.SetMaxIdleConns(10)                  // Reduced from 50 to maintain reasonable idle pool
 	sqlDB.SetConnMaxLifetime(10 * time.Minute) // Reduced from 15 to 10 minutes
 	sqlDB.SetConnMaxIdleTime(3 * time.Minute)  // Reduced from 5 to 3 minutes for faster cleanup
 
