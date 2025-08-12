@@ -53,7 +53,7 @@ func VerifyUserAuthCookie(c *fiber.Ctx) (int, error) {
 
 func VerifyUserAuthCookieMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		
+
 		authHeader := c.Get("Authorization")
 
 		if authHeader == "" {
@@ -118,4 +118,3 @@ func VerifyUserAuthCookieMiddleware() fiber.Handler {
 		return c.Next()
 	}
 }
-

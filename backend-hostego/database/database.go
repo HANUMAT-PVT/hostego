@@ -17,7 +17,7 @@ var DB *gorm.DB
 func ConnectDataBase() {
 	//postgres for dev
 	// dsn := "host=localhost user=postgres password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
-	// hostego_user_dev for prod
+	// hostego_user_dev for prodai
 	dsn := "host=localhost user=hostego_user_dev password=hostego_hanumat dbname=hostego_db_dev port=5432 sslmode=disable"
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
@@ -39,10 +39,10 @@ func ConnectDataBase() {
 	}
 
 	// Enhanced connection pool settings for stability
-	sqlDB.SetMaxOpenConns(100)                 // Increase max connections
-	sqlDB.SetMaxIdleConns(50)                  // Increase idle connections
-	sqlDB.SetConnMaxLifetime(15 * time.Minute) // Shorter lifetime to prevent stale connections
-	sqlDB.SetConnMaxIdleTime(5 * time.Minute)  // Close idle connections faster
+	sqlDB.SetMaxOpenConns(50)                  // Reduced from 100 to prevent connection exhaustion
+	sqlDB.SetMaxIdleConns(25)                  // Reduced from 50 to maintain reasonable idle pool
+	sqlDB.SetConnMaxLifetime(10 * time.Minute) // Reduced from 15 to 10 minutes
+	sqlDB.SetConnMaxIdleTime(3 * time.Minute)  // Reduced from 5 to 3 minutes for faster cleanup
 
 	// Test the connection
 	if err := sqlDB.Ping(); err != nil {

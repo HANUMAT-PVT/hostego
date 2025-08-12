@@ -40,11 +40,22 @@ func DatabaseHealthCheck() error {
 
 	// Check connection pool stats
 	stats := sqlDB.Stats()
-	log.Printf("📊 DB Pool Stats - Open: %d, InUse: %d, Idle: %d",
-		stats.OpenConnections, stats.InUse, stats.Idle)
+	log.Printf("📊 DB Pool Stats - Open: %d, InUse: %d, Idle: %d, WaitCount: %d, WaitDuration: %v",
+		stats.OpenConnections, stats.InUse, stats.Idle, stats.WaitCount, stats.WaitDuration)
 
+	// Updated warning threshold to match new pool settings
 	if stats.OpenConnections > 20 {
-		log.Printf("⚠️  High number of open connections: %d", stats.OpenConnections)
+		log.Printf("⚠️  High number of open connections: %d (max: 25)", stats.OpenConnections)
+	}
+
+	// Check for connection wait issues
+	if stats.WaitCount > 0 {
+		log.Printf("⚠️  Connection pool wait detected: %d waits, total duration: %v", stats.WaitCount, stats.WaitDuration)
+	}
+
+	// Check idle connection health
+	if stats.Idle < 2 && stats.OpenConnections > 15 {
+		log.Printf("⚠️  Low idle connections: %d idle out of %d total", stats.Idle, stats.OpenConnections)
 	}
 
 	return nil
@@ -99,6 +110,16 @@ func SafeTransaction(operation func(tx *gorm.DB) error, context string) error {
 	return nil
 }
 
+// EnsureTransactionCleanup ensures transactions are properly closed even in error scenarios
+func EnsureTransactionCleanup(tx *gorm.DB, context string) {
+	if tx != nil {
+		if r := recover(); r != nil {
+			log.Printf("🚨 CRITICAL: Transaction panic in %s: %v", context, r)
+			tx.Rollback()
+		}
+	}
+}
+
 // StartDatabaseMonitoring starts a background goroutine to monitor database health
 func StartDatabaseMonitoring() {
 	go func() {
@@ -112,12 +133,50 @@ func StartDatabaseMonitoring() {
 		ticker := time.NewTicker(30 * time.Second)
 		defer ticker.Stop()
 
+		// Log initial stats
+		LogConnectionPoolStats()
+
 		for range ticker.C {
 			if err := DatabaseHealthCheck(); err != nil {
 				log.Printf("🚨 Scheduled database health check failed: %v", err)
 			}
+
+			// Log detailed stats every 2 minutes
+			if time.Now().Second() < 30 {
+				LogConnectionPoolStats()
+			}
 		}
 	}()
 
-	log.Println("🔄 Database health monitoring started")
+	log.Println("🔄 Database health monitoring started with enhanced connection pool tracking")
+}
+
+// LogConnectionPoolStats logs detailed connection pool statistics
+func LogConnectionPoolStats() {
+	if DB == nil {
+		return
+	}
+
+	sqlDB, err := DB.DB()
+	if err != nil {
+		log.Printf("🚨 Failed to get underlying sql.DB for stats: %v", err)
+		return
+	}
+
+	stats := sqlDB.Stats()
+	log.Printf("🔍 Connection Pool Analysis:")
+	log.Printf("   📊 Open Connections: %d", stats.OpenConnections)
+	log.Printf("   🔄 In Use: %d", stats.InUse)
+	log.Printf("   💤 Idle: %d", stats.Idle)
+	log.Printf("   ⏳ Wait Count: %d", stats.WaitCount)
+	log.Printf("   ⏱️  Wait Duration: %v", stats.WaitDuration)
+	log.Printf("   🚫 Max Open Connections: %d", stats.MaxOpenConnections)
+
+	// Calculate utilization percentage
+	utilization := float64(stats.InUse) / float64(stats.MaxOpenConnections) * 100
+	log.Printf("   📈 Utilization: %.1f%%", utilization)
+
+	if utilization > 80 {
+		log.Printf("⚠️  High connection pool utilization: %.1f%%", utilization)
+	}
 }
