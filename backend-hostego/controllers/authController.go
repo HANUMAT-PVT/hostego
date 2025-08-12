@@ -5,7 +5,6 @@ import (
 	"backend-hostego/config"
 	"backend-hostego/database"
 	"backend-hostego/models"
-	"fmt"
 
 	// "context"
 	"time"
@@ -22,10 +21,20 @@ func Signup(c *fiber.Ctx) error {
 
 	var user models.User
 
+	// Build the where condition for user existence check
+	whereCondition := "mobile_number = ? OR email = ?"
+	args := []interface{}{req.MobileNumber, req.Email}
+
+	// Add Apple ID check if it's provided in the request
+	if req.AppleUserIdentifierId != "" {
+		whereCondition += " OR apple_user_identifier_id = ?"
+		args = append(args, req.AppleUserIdentifierId)
+	}
+
 	// Check if user already exists
-	if err := database.DB.Where("mobile_number = ? OR email = ?", req.MobileNumber, req.Email).First(&user).Error; err == nil {
+	if err := database.DB.Where(whereCondition, args...).First(&user).Error; err == nil {
 		// ✅ If user exists, generate and return a token instead of creating a new user
-		fmt.Print(user)
+
 		token, err := generateJWT(user)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "JWT generation failed"})
@@ -57,9 +66,6 @@ func Signup(c *fiber.Ctx) error {
 }
 
 func generateJWT(user models.User) (string, error) {
-	print(user.UserId)
-	print(user.FirstName)
-	print(user.UserId)
 
 	claims := jwt.MapClaims{
 		"user_id":    user.UserId,
