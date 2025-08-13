@@ -4,7 +4,7 @@ import BottomNavigationBar from '../components/BottomNavigationBar'
 import ProductCard from '../components/ProductCard'
 import SearchComponent from '../components/SearchComponent'
 import CartFloatingButton from "../components/Cart/CartFloatingButton"
-import { ChevronDown, MapPin, ShoppingBagIcon, ShoppingBasket, User, UtensilsCrossed } from 'lucide-react'
+import { ChevronDown, MapPin, ShoppingBagIcon, ShoppingBasket, User, UtensilsCrossed, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import axiosClient from '../utils/axiosClient'
 import ProductCardSkeleton from '../components/ProductCardSkeleton'
@@ -26,6 +26,7 @@ const page = () => {
     const [hasMore, setHasMore] = useState(true)
     const { cartData, useraddresses } = useSelector((state) => state.user)
     const productsWrapperRef = useRef(null)
+    const [showDownloadPrompt, setShowDownloadPrompt] = useState(false)
 
     useEffect(() => {
         // Reset state when category changes
@@ -34,6 +35,15 @@ const page = () => {
         setHasMore(true)
         fetchProducts(1, true)
     }, [activeIndex])
+
+    useEffect(() => {
+        setShowDownloadPrompt(true)
+    }, [])
+
+    const dismissDownloadPrompt = () => {
+        setShowDownloadPrompt(false)
+
+    }
 
     const fetchProducts = async (pageNum, isNewCategory = false) => {
         try {
@@ -155,6 +165,56 @@ const page = () => {
 
             <BottomNavigationBar />
             {cartData?.cart_items?.length > 0 && <CartFloatingButton />}
+
+            {showDownloadPrompt && (
+                <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60">
+                    <div className="relative w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl">
+                        <button
+                            aria-label="Close"
+                            onClick={dismissDownloadPrompt}
+                            className="absolute right-3 top-3 rounded p-1 hover:bg-gray-100"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+                        <div className="mb-4 flex items-center gap-3">
+                            <img src="/hostego_logo.svg" alt="Hostego" className="h-9 w-9 rounded" />
+                            <div>
+                                <h3 className="text-lg font-semibold">Get the Hostego app</h3>
+                                <p className="text-xs text-gray-600">The best experience on mobile</p>
+                            </div>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <a
+                                href="https://apps.apple.com/app/hostego/id6748964064"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1"
+                            >
+                                <img
+                                    src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83"
+                                    alt="Download on the App Store"
+                                    className="h-12 w-auto sm:h-14 object-contain mx-auto hover:opacity-90 transition"
+                                    loading="lazy"
+                                />
+                            </a>
+                            <a
+                                href="https://play.google.com/store/apps/details?id=in.hostego.app"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1"
+                            >
+                                <img
+                                    src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+                                    alt="Get it on Google Play"
+                                    className="h-12 w-auto sm:h-14 object-contain mx-auto hover:opacity-90 transition"
+                                    loading="lazy"
+                                />
+                            </a>
+                        </div>
+                        <button onClick={dismissDownloadPrompt} className="mt-4 w-full text-xs text-gray-500 hover:text-gray-700">Continue on web</button>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
