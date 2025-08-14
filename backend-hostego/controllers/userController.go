@@ -80,7 +80,20 @@ func UpdateUserById(c *fiber.Ctx) error {
 	}
 	if req.MobileNumber != "" {
 		if err := database.DB.Where("mobile_number = ?", req.MobileNumber).First(&existingUser).Error; err != nil {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+			user.MobileNumber = req.MobileNumber
+			if err := c.BodyParser(&user); err != nil {
+				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
+			}
+
+			if err := database.DB.Save(&user).Error; err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+			}
+			token, err := generateJWT(existingUser)
+
+			if err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "JWT generation failed"})
+			}
+			return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User updated success", "token": token})
 		}
 		existingUser.AppleUserIdentifierId = user.AppleUserIdentifierId
 		database.DB.Save(&existingUser)
@@ -94,13 +107,6 @@ func UpdateUserById(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User updated successfully", "user": existingUser, "token": token})
 	}
 
-	if err := c.BodyParser(&user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
-	}
-
-	if err := database.DB.Save(&user).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User updated successfully", "user": user})
 
 }
