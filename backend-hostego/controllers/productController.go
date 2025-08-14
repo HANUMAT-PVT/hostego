@@ -4,11 +4,9 @@ import (
 	"backend-hostego/database"
 	"backend-hostego/models"
 	"encoding/json"
-	"errors"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/jinzhu/copier"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
@@ -182,7 +180,7 @@ func calculateSellingPrice(foodPrice float64) float64 {
 func UpdateProductById(c *fiber.Ctx) error {
 	productID := c.Params("id")
 
-	// Request struct with pointers to detect provided fields
+	// 1. Define request struct inline
 	type DiscountDTO struct {
 		IsAvailable *int     `json:"is_available"`
 		Percentage  *float64 `json:"percentage"`
@@ -204,50 +202,71 @@ func UpdateProductById(c *fiber.Ctx) error {
 		ProductImgUrl *string              `json:"product_img_url"`
 	}
 
-	// Parse request body
+	// 2. Parse JSON body
 	var req UpdateProductRequest
 	if err := c.BodyParser(&req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid JSON body")
 	}
 
-	// Fetch product from DB
+	// 3. Load product
 	var product models.Product
 	if err := database.DB.First(&product, "product_id = ?", productID).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return fiber.NewError(fiber.StatusNotFound, "Product not found")
-		}
-		return fiber.NewError(fiber.StatusInternalServerError, "Database error")
+		return fiber.NewError(fiber.StatusNotFound, "Product not found")
 	}
 
-	// Copy only non-nil fields from req → product
-	copier.CopyWithOption(&product, &req, copier.Option{IgnoreEmpty: true})
-
-	// Special calculated fields
+	// 4. Update only the provided fields
+	if req.ProductName != nil {
+		product.ProductName = *req.ProductName
+	}
 	if req.FoodPrice != nil {
+		product.FoodPrice = *req.FoodPrice
 		product.SellingPrice = calculateSellingPrice(*req.FoodPrice)
 	}
+	if req.FoodCategory != nil {
+		product.FoodCategory = *req.FoodCategory
+	}
+	if req.Tags != nil {
+		product.Tags = *req.Tags
+	}
 
-	// Nested fields: FoodCategory, Discount
+	if req.Description != nil {
+		product.Description = *req.Description
+	}
+	if req.StockQuantity != nil {
+		product.StockQuantity = *req.StockQuantity
+	}
+	if req.AverageRating != nil {
+		product.AverageRating = *req.AverageRating
+	}
 	if req.IsVeg != nil {
 		product.FoodCategory.IsVeg = *req.IsVeg
 	}
 	if req.IsRecommended != nil {
 		product.FoodCategory.IsCooked = *req.IsRecommended
 	}
+	if req.Availability != nil {
+		product.Availability = *req.Availability
+	}
+	if req.ShopId != nil {
+		product.ShopId = *req.ShopId
+	}
 	if req.Discount != nil {
 		if req.Discount.IsAvailable != nil {
 			product.FoodCategory.IsCooked = *req.Discount.IsAvailable
 		}
 		if req.Discount.Percentage != nil {
-			product.FoodCategory.IsCooked = int(*req.Discount.Percentage) // might want a different field for this
+			product.FoodCategory.IsCooked = int(*req.Discount.Percentage)
 		}
 	}
-
-	// Save changes
+	if req.ProductImgUrl != nil {
+		product.ProductImgUrl = *req.ProductImgUrl
+	}
+	// 5. Save updated product
 	if err := database.DB.Save(&product).Error; err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to update product")
 	}
 
+	// 6. Return response
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Product updated successfully",
 		"product": product,

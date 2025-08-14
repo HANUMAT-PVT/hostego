@@ -702,3 +702,10 @@
 2025/08/15 00:24:09 GET /api/shop | Status: 200 | Duration: 1.289083ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
 2025/08/15 00:24:12 PATCH /api/products/9 | Status: 200 | Duration: 6.9015ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
 2025/08/15 00:24:12 GET /api/products/all | Status: 200 | Duration: 2.200667ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 GET /api/wallet | Status: 200 | Duration: 2.0525ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 GET /api/users/me | Status: 200 | Duration: 8.594709ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 GET /api/address | Status: 200 | Duration: 7.758542ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 GET /api/user-roles | Status: 200 | Duration: 8.542583ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 GET /api/order/order-items | Status: 200 | Duration: 10.948292ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 GET /api/cart/ | Status: 200 | Duration: 3.122708ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 GET /api/products/all | Status: 200 | Duration: 1.424583ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15

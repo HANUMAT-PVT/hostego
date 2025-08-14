@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 )
 
@@ -65,30 +64,42 @@ func GetUserById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
+// UpdateUserDTO for partial updates
+type UpdateUserDTO struct {
+	FirstName             *string `json:"first_name"`
+	LastName              *string `json:"last_name"`
+	Email                 *string `json:"email"`
+	MobileNumber          *string `json:"mobile_number"`
+	FCMToken              *string `json:"fcm_token"`
+	AppleUserIdentifierId *string `json:"apple_user_identifier_id"`
+}
+
 func UpdateUserById(c *fiber.Ctx) error {
 	userID := c.Locals("user_id")
 	if userID == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 
+	// Find current user
 	var user models.User
 	if err := database.DB.First(&user, "user_id = ?", userID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
 
-	var req models.User
+	// Parse request into DTO
+	var req UpdateUserDTO
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
 
-	// If mobile number is provided → handle merge logic
-	if req.MobileNumber != "" {
+	// If mobile number is provided
+	if req.MobileNumber != nil && *req.MobileNumber != "" {
 		var existingUser models.User
-		err := database.DB.Where("mobile_number = ?", req.MobileNumber).First(&existingUser).Error
+		err := database.DB.Where("mobile_number = ?", *req.MobileNumber).First(&existingUser).Error
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				// Copy only non-zero fields from req → user
-				copier.CopyWithOption(&user, &req, copier.Option{IgnoreEmpty: true})
+				// Mobile number not in use → just update current user
+				user.MobileNumber = *req.MobileNumber
 				if err := database.DB.Save(&user).Error; err != nil {
 					return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update user"})
 				}
@@ -113,10 +124,28 @@ func UpdateUserById(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User merged successfully", "user": existingUser, "token": token})
 	}
 
-	// No mobile number provided → just update other fields
-	copier.CopyWithOption(&user, &req, copier.Option{IgnoreEmpty: true})
-	if err := database.DB.Save(&user).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	// Prepare map for only provided fields
+	updates := map[string]interface{}{}
+	if req.FirstName != nil {
+		updates["first_name"] = *req.FirstName
+	}
+	if req.LastName != nil {
+		updates["last_name"] = *req.LastName
+	}
+	if req.Email != nil {
+		updates["email"] = *req.Email
+	}
+	if req.FCMToken != nil {
+		updates["fcm_token"] = *req.FCMToken
+	}
+	if req.AppleUserIdentifierId != nil {
+		updates["apple_user_identifier_id"] = *req.AppleUserIdentifierId
+	}
+
+	if len(updates) > 0 {
+		if err := database.DB.Model(&user).Updates(updates).Error; err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		}
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User updated successfully", "user": user})

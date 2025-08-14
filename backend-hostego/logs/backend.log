@@ -1681,3 +1681,69 @@
 2025/08/15 00:24:14 health.go:173:    🚫 Max Open Connections: 25
 2025/08/15 00:24:14 health.go:177:    📈 Utilization: 0.0%
 2025/08/15 00:24:44 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/15 00:25:14 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/15 00:25:14 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/15 00:25:14 health.go:168:    📊 Open Connections: 4
+2025/08/15 00:25:14 health.go:169:    🔄 In Use: 0
+2025/08/15 00:25:14 health.go:170:    💤 Idle: 4
+2025/08/15 00:25:14 health.go:171:    ⏳ Wait Count: 0
+2025/08/15 00:25:14 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/15 00:25:14 health.go:173:    🚫 Max Open Connections: 25
+2025/08/15 00:25:14 health.go:177:    📈 Utilization: 0.0%
+2025/08/15 00:25:44 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/15 00:26:14 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/15 00:26:14 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/15 00:26:14 health.go:168:    📊 Open Connections: 4
+2025/08/15 00:26:14 health.go:169:    🔄 In Use: 0
+2025/08/15 00:26:14 health.go:170:    💤 Idle: 4
+2025/08/15 00:26:14 health.go:171:    ⏳ Wait Count: 0
+2025/08/15 00:26:14 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/15 00:26:14 health.go:173:    🚫 Max Open Connections: 25
+2025/08/15 00:26:14 health.go:177:    📈 Utilization: 0.0%
+2025/08/15 00:26:44 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/15 00:27:14 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/15 00:27:14 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/15 00:27:14 health.go:168:    📊 Open Connections: 1
+2025/08/15 00:27:14 health.go:169:    🔄 In Use: 0
+2025/08/15 00:27:14 health.go:170:    💤 Idle: 1
+2025/08/15 00:27:14 health.go:171:    ⏳ Wait Count: 0
+2025/08/15 00:27:14 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/15 00:27:14 health.go:173:    🚫 Max Open Connections: 25
+2025/08/15 00:27:14 health.go:177:    📈 Utilization: 0.0%
+2025/08/15 00:27:44 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/15 00:28:14 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/15 00:28:14 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/15 00:28:14 health.go:168:    📊 Open Connections: 1
+2025/08/15 00:28:14 health.go:169:    🔄 In Use: 0
+2025/08/15 00:28:14 health.go:170:    💤 Idle: 1
+2025/08/15 00:28:14 health.go:171:    ⏳ Wait Count: 0
+2025/08/15 00:28:14 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/15 00:28:14 health.go:173:    🚫 Max Open Connections: 25
+2025/08/15 00:28:14 health.go:177:    📈 Utilization: 0.0%
+2025/08/15 00:28:44 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/15 00:29:14 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/15 00:29:14 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/15 00:29:14 health.go:168:    📊 Open Connections: 1
+2025/08/15 00:29:14 health.go:169:    🔄 In Use: 0
+2025/08/15 00:29:14 health.go:170:    💤 Idle: 1
+2025/08/15 00:29:14 health.go:171:    ⏳ Wait Count: 0
+2025/08/15 00:29:14 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/15 00:29:14 health.go:173:    🚫 Max Open Connections: 25
+2025/08/15 00:29:14 health.go:177:    📈 Utilization: 0.0%
+2025/08/15 00:29:44 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/15 00:29:59 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 2.0525ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 8.594709ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 7.758542ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 8.542583ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 10.948292ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 3.122708ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:29:59 crash-prevention.middleware.go:88: ✅ GET /api/products/all | Status: 200 | Duration: 1.424583ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/15 00:30:14 health.go:43: 📊 DB Pool Stats - Open: 5, InUse: 0, Idle: 5, WaitCount: 0, WaitDuration: 0s
+2025/08/15 00:30:14 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/15 00:30:14 health.go:168:    📊 Open Connections: 5
+2025/08/15 00:30:14 health.go:169:    🔄 In Use: 0
+2025/08/15 00:30:14 health.go:170:    💤 Idle: 5
+2025/08/15 00:30:14 health.go:171:    ⏳ Wait Count: 0
+2025/08/15 00:30:14 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/15 00:30:14 health.go:173:    🚫 Max Open Connections: 25
+2025/08/15 00:30:14 health.go:177:    📈 Utilization: 0.0%
