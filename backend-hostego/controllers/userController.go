@@ -3,12 +3,10 @@ package controllers
 import (
 	"backend-hostego/database"
 	"backend-hostego/models"
-	"errors"
 	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 )
 
 func GetUsers(c *fiber.Ctx) error {
@@ -65,59 +63,46 @@ func GetUserById(c *fiber.Ctx) error {
 }
 
 func UpdateUserById(c *fiber.Ctx) error {
-	userID := c.Locals("user_id")
-	if userID == 0 {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 
 	var user models.User
-	if err := database.DB.First(&user, "user_id = ?", userID).Error; err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
-	}
-
 	var req models.User
+	var existingUser models.User
+
+	if err := database.DB.First(&user, "user_id=?", user_id).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+	}
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
-
-	// If mobile number is provided
 	if req.MobileNumber != "" {
-		var existingUser models.User
-		err := database.DB.Where("mobile_number = ?", req.MobileNumber).First(&existingUser).Error
-		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				// Mobile number not in use → just update current user
-				user.MobileNumber = req.MobileNumber
-				if err := database.DB.Save(&user).Error; err != nil {
-					return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update user"})
-				}
-				token, _ := generateJWT(user)
-				return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User updated successfully", "user": user, "token": token})
-			}
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Database error"})
+		if err := database.DB.Where("mobile_number = ?", req.MobileNumber).First(&existingUser).Error; err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
 		}
-
-		// Mobile number exists → merge accounts
 		existingUser.AppleUserIdentifierId = user.AppleUserIdentifierId
-		if err := database.DB.Save(&existingUser).Error; err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to merge accounts"})
-		}
+		database.DB.Save(&existingUser)
 
 		token, err := generateJWT(existingUser)
+
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "JWT generation failed"})
 		}
-
 		database.DB.Delete(&user)
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User merged successfully", "user": existingUser, "token": token})
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User updated successfully", "user": existingUser, "token": token})
 	}
 
-	// No mobile number provided → update other fields
-	if err := database.DB.Model(&user).Updates(req).Error; err != nil {
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+
+	if err := database.DB.Save(&user).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
-
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User updated successfully", "user": user})
+
 }
 
 func FetchUserByMobileNumber(c *fiber.Ctx) error {
