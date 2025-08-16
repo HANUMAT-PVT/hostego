@@ -409,17 +409,28 @@ func GetRestaurantRevenueAnalytics(c *fiber.Ctx) error {
 	// Pending revenue query
 	pendingQuery := database.DB.
 		Table("orders").
-		Where("shop_id = ? AND restaurant_paid_at IS NULL", shopID)
+		Where("shop_id = ? AND order_status = ? AND restaurant_paid_at IS NULL", shopID, "delivered")
 
 	if startDate != "" && endDate != "" {
 		pendingQuery = pendingQuery.Where("created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
 	}
 
-	pendingQuery.Select("SUM(restaurant_payable_amount) AS total_pending").
-		Scan(&revenueAnalytics.TotalPending)
+	if err := pendingQuery.Select("COALESCE(SUM(restaurant_payable_amount), 0) AS total_pending").Scan(&revenueAnalytics.TotalPending).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch pending revenue"})
+	}
 
-	pendingQuery.Select("SUM(restaurant_payable_amount) AS total_pending").
-		Scan(&revenueAnalytics.TotalPending)
+	// Paid revenue query
+	paidQuery := database.DB.
+		Table("orders").
+		Where("shop_id = ? AND order_status = ? AND restaurant_paid_at IS NOT NULL", shopID, "delivered")
+
+	if startDate != "" && endDate != "" {
+		paidQuery = paidQuery.Where("created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
+	}
+
+	if err := paidQuery.Select("COALESCE(SUM(restaurant_payable_amount), 0) AS total_paid").Scan(&revenueAnalytics.TotalPaid).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch paid revenue"})
+	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message":       "Restaurant revenue analytics",
@@ -467,4 +478,26 @@ func GetPastOrders(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"past_orders": pastOrders,
 	})
+}
+
+func GetRestaurantPaymentsTransactions(c *fiber.Ctx) error {
+	shopID := c.Params("shop_id")
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
+
+	query := database.DB.
+		Table("restaurant_payouts").
+		Where("shop_id = ?", shopID)
+
+	if startDate != "" && endDate != "" {
+		query = query.Where("created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
+	}
+
+	var restaurantPayouts []models.RestaurantPayout
+
+	if err := query.Find(&restaurantPayouts).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch restaurant payouts"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(restaurantPayouts)
 }

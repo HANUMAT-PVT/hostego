@@ -137,6 +137,7 @@ func CreateWalletWithdrawalRequests(c *fiber.Ctx) error {
 			TransactionType:   models.TransactionCustomType(models.TransactionDebit),
 			TransactionStatus: models.TransactionStatusType(models.TransactionPending),
 			DeliveryPartnerId: wallet.DeliveryPartnerId,
+			DeliveryPartner:   deliveryPartner,
 		}
 
 		if err := tx.Create(&transaction).Error; err != nil {
@@ -254,7 +255,7 @@ func FetchAllDeliveryPartnersTransactions(c *fiber.Ctx) error {
 	}
 
 	var deliveryParnterWalletTransactions []models.DeliveryPartnerWalletTransaction
-	err := database.DB.Where("transaction_type = ?", "debit").Order("created_at asc").Find(&deliveryParnterWalletTransactions).Error
+	err := database.DB.Where("transaction_type = ?", "debit").Order("created_at asc").Preload("DeliveryPartner.User").Find(&deliveryParnterWalletTransactions).Error
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Something went wrong",

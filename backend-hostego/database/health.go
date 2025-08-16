@@ -44,8 +44,8 @@ func DatabaseHealthCheck() error {
 		stats.OpenConnections, stats.InUse, stats.Idle, stats.WaitCount, stats.WaitDuration)
 
 	// Updated warning threshold to match new pool settings
-	if stats.OpenConnections > 20 {
-		log.Printf("⚠️  High number of open connections: %d (max: 25)", stats.OpenConnections)
+	if stats.OpenConnections > 40 {
+		log.Printf("⚠️  High number of open connections: %d (max: 50)", stats.OpenConnections)
 	}
 
 	// Check for connection wait issues

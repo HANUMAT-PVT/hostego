@@ -87,7 +87,7 @@ func FetchProducts(c *fiber.Ctx) error {
 
 	// Apply stock and availability filters for non-admin users by default
 	if !isAdmin {
-		dbQuery = dbQuery.Where("stock_quantity > 0").Where("availability = ?", 1)
+		dbQuery = dbQuery.Where("availability = ?", 1)
 	}
 
 	searchQuery := c.Query("search")
