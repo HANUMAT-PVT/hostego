@@ -287,14 +287,29 @@ const OrderCard = ({ order, onRefresh }) => {
                                 <span className="text-gray-600">Items Total</span>
                                 <span className="font-medium">₹{order?.order_items?.reduce((acc, item) => acc + item.sub_total, 0)}</span>
                             </div>
+
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Delivery Fee</span>
                                 <span className="font-medium">₹{order?.shipping_fee}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-purple-600">Items Actual Total</span>
+                                <span className="font-medium text-purple-600">₹{order?.order_items?.reduce((acc, item) => acc + item.actual_sub_total, 0)}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-green-600">Total  Profit</span>
+                                <span className="font-medium text-green-600">₹{(
+                                    (order?.order_items?.reduce((acc, item) => acc + ((item?.sub_total || 0) - (item?.actual_sub_total || 0)), 0) || 0)
+                                    + (order?.shipping_fee || 0)
+                                    - (order?.delivery_partner_fee || 0)
+                                    - 0.024 * (order?.final_order_value || 0)
+                                ).toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between font-medium pt-3 border-t">
                                 <span className="text-gray-900">Total Amount</span>
                                 <span className="text-[var(--primary-color)]">₹{order?.final_order_value}</span>
                             </div>
+
                         </div>
                     </div>
                 )}

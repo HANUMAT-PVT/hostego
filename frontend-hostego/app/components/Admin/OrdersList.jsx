@@ -125,6 +125,8 @@ const OrdersList = () => {
                         <option value="placed">Placed</option>
                         <option value="assigned">Assigned</option>
                         <option value="reached">Reached Shop</option>
+                        <option value="preparing">Preparing</option>
+                        <option value="ready">Ready for Delivery</option>
                         <option value="on_the_way">On The Way</option>
                         <option value="reached_door">Reached Door</option>
                         <option value="delivered">Delivered</option>

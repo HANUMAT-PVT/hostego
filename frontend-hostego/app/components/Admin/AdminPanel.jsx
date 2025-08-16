@@ -17,6 +17,7 @@ import DeliveryPartnerPaymentManager from "./DeliveryPartnerPaymentManager";
 import CuMessManager from "./CuMessManager";
 import SSEHandler from '../SSEHandler'
 import NotificationManager from "./NotificationManager";
+import RestaurantPayoutManger from "./RestaurantPayoutManger";
 
 export default function AdminPanel() {
     const router = useRouter();
@@ -67,70 +68,76 @@ export default function AdminPanel() {
                 </h2>
                 <nav className="flex flex-col gap-4">
                     {(checkUserRole("super_admin") || checkUserRole("admin")) && <SidebarItem
-                        icon={<Home size={20} />}
+                        icon={<Home size={15} />}
                         text="Dashboard"
                         isActive={currentPage === "dashboard"}
                         onClick={() => updatePage("dashboard")}
                     />}
                     {(checkUserRole("super_admin") || checkUserRole("order_assign_manager") || checkUserRole("admin")) && <SidebarItem
-                        icon={<Package size={20} />}
+                        icon={<Package size={15} />}
                         text="Order Assign"
                         isActive={currentPage === "order-assign"}
                         onClick={() => updatePage("order-assign")}
                     />}
                     {(checkUserRole("super_admin") || checkUserRole("delivery_partner_manager") || checkUserRole("admin")) && <SidebarItem
-                        icon={<Users size={20} />}
+                        icon={<Users size={15} />}
                         text="Delivery Partners"
                         isActive={currentPage === "partners"}
                         onClick={() => updatePage("partners")}
                     />}
                     {checkUserRole("super_admin") && <SidebarItem
-                        icon={<Settings size={20} />}
+                        icon={<Settings size={15} />}
                         text="Payment Verification"
                         isActive={currentPage === "wallet_payment_verification"}
                         onClick={() => updatePage("wallet_payment_verification")}
                     />}
                     {(checkUserRole("super_admin") || checkUserRole("order_manager")) && <SidebarItem
-                        icon={<PackageOpenIcon size={20} />}
+                        icon={<PackageOpenIcon size={15} />}
                         text="Orders"
                         isActive={currentPage === "orders"}
                         onClick={() => updatePage("orders")}
                     />}
                     {(checkUserRole("super_admin")) && <SidebarItem
-                        icon={<UserCircle size={20} />}
+                        icon={<UserCircle size={15} />}
                         text="Users"
                         isActive={currentPage === "users"}
                         onClick={() => updatePage("users")}
                     />}
                     {(checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <SidebarItem
-                        icon={<PackageOpenIcon size={20} />}
+                        icon={<PackageOpenIcon size={15} />}
                         text="Products"
                         isActive={currentPage === "products"}
                         onClick={() => updatePage("products")}
                     />}
                     {(checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <SidebarItem
-                        icon={<ShoppingBasket size={20} />}
+                        icon={<ShoppingBasket size={15} />}
                         text="Shops"
                         isActive={currentPage === "shops"}
                         onClick={() => updatePage("shops")}
                     />}
                     {(checkUserRole("super_admin")) && <SidebarItem
-                        icon={<CreditCard size={20} />}
+                        icon={<CreditCard size={15} />}
                         text="Delivery Partner Payments"
                         isActive={currentPage === "delivery_partner_payment"}
                         onClick={() => updatePage("delivery_partner_payment")}
                     />}
                     {(checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <SidebarItem
-                        icon={<Utensils size={20} />}
+                        icon={<Utensils size={15} />}
                         text="CU Mess"
                         isActive={currentPage === "cu_mess"}
                         onClick={() => updatePage("cu_mess")}
                     />}
                     {(checkUserRole("super_admin")) && <SidebarItem
-                        icon={<Bell size={20} />}
+                        icon={<Bell size={15} />}
                         text="Notification Manager"
                         isActive={currentPage === "notification_manager"}
                         onClick={() => updatePage("notification_manager")}
+                    />}
+                    {(checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("payments_manager")) && <SidebarItem
+                        icon={<CreditCard size={15} />}
+                        text="Restaurant Payout Manager"
+                        isActive={currentPage === "restaurant_payout_manager"}
+                        onClick={() => updatePage("restaurant_payout_manager")}
                     />}
                 </nav>
             </aside>
@@ -148,6 +155,7 @@ export default function AdminPanel() {
                 {currentPage === "cu_mess" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("inventory_manager")) && <CuMessManager />}
                 {currentPage === "delivery_partner_payment" && (checkUserRole("super_admin") || checkUserRole("payments_manager") || checkUserRole("admin")) && <DeliveryPartnerPaymentManager />}
                 {currentPage === "notification_manager" && (checkUserRole("super_admin")) && <NotificationManager />}
+                {currentPage === "restaurant_payout_manager" && (checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("payments_manager")) && <RestaurantPayoutManger />}
             </main>
             <SSEHandler userId={userAccount?.user_id || ""} />
         </div>
