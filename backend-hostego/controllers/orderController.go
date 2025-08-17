@@ -53,13 +53,20 @@ func CreateNewOrder(c *fiber.Ctx) error {
 	// 	freeDelivery = true
 	// }
 
-	if requestOrder.AddressId == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Address ID is required"})
-	}
-
 	if err := database.DB.Preload("ProductItem.Shop").Where("user_id=?", user_id).Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
+	shopSupportsDelivery := cartItems[0].ProductItem.Shop.SupportsDelivery
+	if requestOrder.AddressId == 0 && shopSupportsDelivery {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Address ID is required"})
+	}
+
+	if shopSupportsDelivery {
+		order.OrderType = models.DeliveryOrderType
+	} else {
+		order.OrderType = models.TakeawayOrderType
+	}
+
 	// delete the cart item if the shop is closed or not
 	for _, cartItem := range cartItems {
 		if cartItem.ProductItem.Shop.ShopStatus == 0 {
@@ -77,7 +84,7 @@ func CreateNewOrder(c *fiber.Ctx) error {
 	}
 	order.OrderItems = jsonCartItems
 	order.UserId = user_id
-	totalCharges := CalculateFinalOrderValue(cartItems, freeDelivery)
+	totalCharges := CalculateFinalOrderValue(cartItems, freeDelivery, shopSupportsDelivery)
 	order.PlatformFee = totalCharges.PlatformFee
 	order.ShippingFee = totalCharges.ShippingFee
 	order.FinalOrderValue = totalCharges.FinalOrderValue
@@ -96,7 +103,7 @@ func CreateNewOrder(c *fiber.Ctx) error {
 }
 
 // CalculateFinalOrderValue calculates the total order cost including charges
-func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) FinalOrderValueType {
+func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool, shopSupportsDelivery bool) FinalOrderValueType {
 	totalItemSubTotal := 0.0
 	var deliveryPartnerShare = 0.0
 	// Calculate the subtotal of all cart items
@@ -152,7 +159,7 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool) Fi
 	}
 	actualShippingFee := shippingFee
 
-	if freeDelivery {
+	if freeDelivery || !shopSupportsDelivery {
 		shippingFee = 0
 	}
 
@@ -368,8 +375,8 @@ func NotifyOrderStatusUpdate(orderID int, orderStatus models.OrderStatusType) er
 			orderBody = "Your order has been delivered. Please check your order details."
 
 		case models.CanceledOrderStatus:
-			orderTitle = "Order Canceled"
-			orderBody = "Your order has been canceled. Please check your order details."
+			orderTitle = "Order Cancelled"
+			orderBody = "Your order has been cancelled. Order amount will be refunded to your wallet."
 
 		case models.ReadyOrderStatus:
 			orderTitle = "Order Ready"

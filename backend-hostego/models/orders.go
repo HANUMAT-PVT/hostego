@@ -8,6 +8,13 @@ import (
 
 type OrderStatusType string
 
+type OrderType string
+
+const (
+	DeliveryOrderType = "delivery"
+	TakeawayOrderType = "takeaway"
+)
+
 const (
 	PendingOrderStatus   = "pending"
 	PlacedOrderStatus    = "placed"
@@ -61,4 +68,5 @@ type Order struct {
 	RestaurantPayableAmount float64            `gorm:"type:double precision;default:0" json:"restaurant_payable_amount"`
 	RestaurantPaidAt        *time.Time         `gorm:"type:timestamp;default:null" json:"restaurant_paid_at"`
 	RestaurantPayoutID      string             `gorm:"type:varchar(255)" json:"restaurant_payout_id"`
+	OrderType               OrderType          `gorm:"type:varchar(20);default:delivery" json:"order_type"`
 }

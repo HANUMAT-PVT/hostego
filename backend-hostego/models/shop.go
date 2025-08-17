@@ -37,5 +37,8 @@ type Shop struct {
 	TotalRatings           int          `gorm:"type:int;default:0" json:"total_ratings"`
 	OutletOpenTime         string       `gorm:"type:varchar(255);" json:"outlet_open_time"`
 	OutletCloseTime        string       `gorm:"type:varchar(255);" json:"outlet_close_time"`
+	SupportsDelivery       bool         `gorm:"type:boolean;default:false" json:"supports_delivery"`
+	SupportsTakeaway       bool         `gorm:"type:boolean;default:false" json:"supports_takeaway"`
+
 	// Owner                  User         `gorm:"foreignKey:OwnerId" json:"owner"`
 }

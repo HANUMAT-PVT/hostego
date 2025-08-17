@@ -145,6 +145,10 @@ func FetchUserCart(c *fiber.Ctx) error {
 		Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
+	var shopSupportsDelivery bool
+	if len(cartItems) > 0 {
+		shopSupportsDelivery = cartItems[0].ProductItem.Shop.SupportsDelivery
+	}
 	// delete the cart item if the shop is closed or not
 	for _, cartItem := range cartItems {
 		if cartItem.ProductItem.Shop.ShopStatus == 0 {
@@ -157,7 +161,7 @@ func FetchUserCart(c *fiber.Ctx) error {
 		Find(&cartItems).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
-	cartValue := CalculateFinalOrderValue(cartItems, freeDelivery)
+	cartValue := CalculateFinalOrderValue(cartItems, freeDelivery, shopSupportsDelivery)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"cart_items":    cartItems,

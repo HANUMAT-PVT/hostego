@@ -10,8 +10,6 @@ import (
 func PaymentRoutes(app *fiber.App) {
 	paymentRoutes := app.Group("/api/payment", middlewares.VerifyUserAuthCookieMiddleware())
 
-
-
 	paymentRoutes.Post("/", controllers.InitiatePayment)
 	paymentRoutes.Get("/transactions", controllers.FetchUserPaymentTransactions)
 
@@ -25,13 +23,14 @@ func PaymentRoutes(app *fiber.App) {
 
 	paymentRoutes.Post("/cashfree", controllers.InitateCashfreePaymentOrder)
 
-
 	paymentRoutes.Post("/cashfree/verify-payment", controllers.VerifyCashfreePayment)
+
+	paymentRoutes.Post("/wallet/topup", controllers.InitiateWalletTopup)
 }
 
-
-func PaymentWebhookRoutes(app * fiber.App){
+func PaymentWebhookRoutes(app *fiber.App) {
 	webhookRoutes := app.Group("/api/razorpay/webhook")
 	// https://backend.hostego.in/api/razorpay/webhook/payment/verify
-	webhookRoutes.Post("/payment/verify-order",controllers.RazorpayWebhookHandler);
+	webhookRoutes.Post("/payment/verify-order", controllers.RazorpayWebhookHandler)
+
 }

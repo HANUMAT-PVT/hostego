@@ -965,3 +965,34 @@ func ProcessPaymentCaptured(payload map[string]interface{}) {
 		log.Println("Transaction commit failed:", err)
 	}
 }
+
+func InitiateWalletTopup(c *fiber.Ctx) error {
+
+	type WalletTopupRequest struct {
+		Amount int `json:"amount"`
+	}
+
+	request := new(WalletTopupRequest)
+	if err := c.BodyParser(request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	var user models.User
+	if err := database.DB.First(&user, "user_id = ?", c.Locals("user_id")).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	walletTransaction := models.WalletTransaction{
+		Amount:            float64(request.Amount),
+		TransactionType:   "credit",
+		UserId:            user.UserId,
+		TransactionStatus: "success",
+		PaymentOrderId:    "wallet_topup",
+	}
+
+	if err := database.DB.Create(&walletTransaction).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Wallet topup successful", "wallet_transaction": walletTransaction})
+}
