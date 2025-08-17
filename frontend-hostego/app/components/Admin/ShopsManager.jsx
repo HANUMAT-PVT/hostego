@@ -15,6 +15,8 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
             is_veg: 1,
             is_cooked: 0
         },
+        supports_delivery: false,
+        supports_takeaway: false,
         shop_status: 1,
         shop_verification_status: 'pending',
         is_shop_verified: false,
@@ -40,11 +42,19 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
     });
 
     const [uploading, setUploading] = useState(false);
+    const [serviceOption, setServiceOption] = useState(''); // '' | 'delivery' | 'takeaway'
     const [uploadProgress, setUploadProgress] = useState({});
 
     useEffect(() => {
         if (initialData) {
             setFormData(initialData);
+            if (initialData.supports_delivery) {
+                setServiceOption('delivery');
+            } else if (initialData.supports_takeaway) {
+                setServiceOption('takeaway');
+            } else {
+                setServiceOption('');
+            }
         }
     }, [initialData]);
 
@@ -494,6 +504,37 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
                         </div>
 
                         <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Service Mode</label>
+                            <div className="flex gap-6">
+                                <label className="flex items-center gap-2">
+                                    <input
+                                        type="radio"
+                                        name="service_mode"
+                                        checked={serviceOption === 'delivery'}
+                                        onChange={() => {
+                                            setServiceOption('delivery');
+                                            setFormData(prev => ({ ...prev, supports_delivery: true, supports_takeaway: false }));
+                                        }}
+                                    />
+                                    <span>Delivery</span>
+                                </label>
+                                <label className="flex items-center gap-2">
+                                    <input
+                                        type="radio"
+                                        name="service_mode"
+                                        checked={serviceOption === 'takeaway'}
+                                        onChange={() => {
+                                            setServiceOption('takeaway');
+                                            setFormData(prev => ({ ...prev, supports_delivery: false, supports_takeaway: true }));
+                                        }}
+                                    />
+                                    <span>Takeaway</span>
+                                </label>
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">Only one can be enabled at a time.</p>
+                        </div>
+
+                        <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Shop Status</label>
                             <div className="flex gap-3">
                                 <label className="flex items-center gap-2">
@@ -751,6 +792,7 @@ const ShopsManager = () => {
     const [selectedShop, setSelectedShop] = useState(null);
     const [editingShop, setEditingShop] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [togglingId, setTogglingId] = useState(null);
 
     useEffect(() => {
         fetchShops();
@@ -801,6 +843,19 @@ const ShopsManager = () => {
     const handleCloseDetails = () => {
         setShowDetails(false);
         setSelectedShop(null);
+    };
+
+    const toggleShopStatus = async (shop) => {
+        try {
+            setTogglingId(shop.shop_id);
+            const newStatus = shop.shop_status === 1 ? 0 : 1;
+            await axiosClient.patch(`/api/shop/${shop.shop_id}`, { shop_status: newStatus });
+            await fetchShops();
+        } catch (error) {
+            console.error('Error toggling shop status:', error);
+        } finally {
+            setTogglingId(null);
+        }
     };
 
     const filteredShops = shops.filter(shop =>
@@ -985,7 +1040,7 @@ const ShopsManager = () => {
                                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 border border-blue-200 hover:border-blue-300"
                                 >
                                     <Eye size={16} />
-                                    View Details
+                                    View
                                 </button>
                                 <button
                                     onClick={() => handleEdit(shop)}
@@ -993,6 +1048,17 @@ const ShopsManager = () => {
                                 >
                                     <Edit size={16} />
                                     Edit
+                                </button>
+                                <button
+                                    onClick={() => toggleShopStatus(shop)}
+                                    disabled={togglingId === shop.shop_id}
+                                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 border 
+                                        ${shop.shop_status === 1
+                                            ? 'text-red-600 bg-red-50 border-red-200 border-red-300'
+                                            : 'text-green-600 bg-green-50 border-green-200 border-green-300'}`}
+                                >
+                                    {shop.shop_status === 1 ? <X size={16} /> : <Check size={16} />}
+                                    {togglingId === shop.shop_id ? 'Updating...' : (shop.shop_status === 1 ? 'Offline' : 'Online')}
                                 </button>
                             </div>
                         </div>

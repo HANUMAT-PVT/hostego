@@ -112,11 +112,16 @@ const OrderCard = ({ order, onRefresh }) => {
             console.log(error)
         }
     }
-
-
-
-
-
+    // Profit calculation
+    const itemsMargin = (order?.order_items || []).reduce((sum, item) => {
+        const subTotal = Number(item?.sub_total) || 0
+        const actualSubTotal = Number(item?.actual_sub_total) || 0
+        return sum + (subTotal - actualSubTotal)
+    }, 0)
+    const shippingMargin = (Number(order?.shipping_fee) || 0) - (Number(order?.delivery_partner_fee) || 0)
+    const paymentGatewayRate = 0.0236 // 2% + 18% GST on gateway fee
+    const paymentGatewayFee = paymentGatewayRate * (Number(order?.final_order_value) || 0)
+    const totalProfit = Number((itemsMargin + shippingMargin - paymentGatewayFee).toFixed(2))
     return (
         <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-200">
             {/* Order Header - Improved contrast and spacing */}
@@ -297,13 +302,8 @@ const OrderCard = ({ order, onRefresh }) => {
                                 <span className="font-medium text-purple-600">₹{order?.order_items?.reduce((acc, item) => acc + item.actual_sub_total, 0)}</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                                <span className="text-green-600">Total  Profit</span>
-                                <span className="font-medium text-green-600">₹{(
-                                    (order?.order_items?.reduce((acc, item) => acc + ((item?.sub_total || 0) - (item?.actual_sub_total || 0)), 0) || 0)
-                                    + (order?.shipping_fee || 0)
-                                    - (order?.delivery_partner_fee || 0)
-                                    - 0.024 * (order?.final_order_value || 0)
-                                ).toFixed(2)}</span>
+                                <span className="text-green-600">Total Profit</span>
+                                <span className="font-medium text-green-600">₹{totalProfit}</span>
                             </div>
                             <div className="flex justify-between font-medium pt-3 border-t">
                                 <span className="text-gray-900">Total Amount</span>
