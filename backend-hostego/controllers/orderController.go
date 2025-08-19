@@ -565,28 +565,30 @@ func FetchAllOrderItemsAccordingToProducts(c *fiber.Ctx) error {
 	// Get date range filters from query params
 	startDate := c.Query("start_date")
 	endDate := c.Query("end_date")
-
-	// Base query to get product stats
+	// base query for orders
 	query := database.DB.Model(&models.Product{}).
 		Select(`
-			products.product_id,
-			products.product_name,
-			products.product_img_url,
-			products.description,
-			products.stock_quantity,
-			products.availability,
-			shops.shop_name as shop_name,
-			products.food_price as current_price,
-			COUNT(DISTINCT order_items.order_id) as order_count,
-			COALESCE(SUM(order_items.quantity), 0) as total_quantity,
-			COALESCE(SUM(order_items.sub_total), 0) as total_revenue,
-			COALESCE(SUM(CASE WHEN orders.created_at >= NOW() - INTERVAL '1 day' THEN order_items.sub_total ELSE 0 END), 0) as last_day_revenue,
-			COALESCE(SUM(CASE WHEN orders.created_at >= NOW() - INTERVAL '7 day' THEN order_items.sub_total ELSE 0 END), 0) as last_week_revenue,
-			COALESCE(SUM(CASE WHEN orders.created_at >= NOW() - INTERVAL '30 day' THEN order_items.sub_total ELSE 0 END), 0) as last_month_revenue,
-			COUNT(DISTINCT CASE WHEN orders.created_at >= NOW() - INTERVAL '1 day' THEN order_items.order_id END) as last_day_orders,
-			COUNT(DISTINCT CASE WHEN orders.created_at >= NOW() - INTERVAL '7 day' THEN order_items.order_id END) as last_week_orders,
-			COUNT(DISTINCT CASE WHEN orders.created_at >= NOW() - INTERVAL '30 day' THEN order_items.order_id END) as last_month_orders
-		`).
+        products.product_id,
+        products.product_name,
+        products.product_img_url,
+        products.description,
+        products.stock_quantity,
+        products.availability,
+        shops.shop_name as shop_name,
+        products.food_price as current_price,
+
+        COUNT(DISTINCT CASE WHEN orders.order_status = 'delivered' THEN order_items.order_id END) as order_count,
+        COALESCE(SUM(CASE WHEN orders.order_status = 'delivered' THEN order_items.quantity ELSE 0 END), 0) as total_quantity,
+        COALESCE(SUM(CASE WHEN orders.order_status = 'delivered' THEN order_items.sub_total ELSE 0 END), 0) as total_revenue,
+
+        COALESCE(SUM(CASE WHEN orders.order_status = 'delivered' AND orders.created_at >= NOW() - INTERVAL '1 day' THEN order_items.sub_total ELSE 0 END), 0) as last_day_revenue,
+        COALESCE(SUM(CASE WHEN orders.order_status = 'delivered' AND orders.created_at >= NOW() - INTERVAL '7 day' THEN order_items.sub_total ELSE 0 END), 0) as last_week_revenue,
+        COALESCE(SUM(CASE WHEN orders.order_status = 'delivered' AND orders.created_at >= NOW() - INTERVAL '30 day' THEN order_items.sub_total ELSE 0 END), 0) as last_month_revenue,
+
+        COUNT(DISTINCT CASE WHEN orders.order_status = 'delivered' AND orders.created_at >= NOW() - INTERVAL '1 day' THEN order_items.order_id END) as last_day_orders,
+        COUNT(DISTINCT CASE WHEN orders.order_status = 'delivered' AND orders.created_at >= NOW() - INTERVAL '7 day' THEN order_items.order_id END) as last_week_orders,
+        COUNT(DISTINCT CASE WHEN orders.order_status = 'delivered' AND orders.created_at >= NOW() - INTERVAL '30 day' THEN order_items.order_id END) as last_month_orders
+    `).
 		Joins("LEFT JOIN shops ON shops.shop_id = products.shop_id").
 		Joins("LEFT JOIN order_items ON order_items.product_id = products.product_id").
 		Joins("LEFT JOIN orders ON orders.order_id = order_items.order_id")

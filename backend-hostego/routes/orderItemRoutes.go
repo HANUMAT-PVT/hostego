@@ -15,11 +15,11 @@ func OrderItemRoutes(app *fiber.App) {
 		middlewares.RoleMiddleware("super_admin", "payments_manager"),
 		controllers.CancelOrderItemAndInitiateRefund)
 
-		orderItemRoute.Get("/all",
+	orderItemRoute.Get("/all",
 		middlewares.VerifyUserAuthCookieMiddleware(),
-		middlewares.RoleMiddleware("super_admin", "payments_manager","admin"),
+		middlewares.RoleMiddleware("super_admin", "payments_manager", "admin"),
 		controllers.FetchOrderItems)
-	
+
 }
 
 // SELECT
