@@ -577,7 +577,7 @@ func FetchAllOrderItemsAccordingToProducts(c *fiber.Ctx) error {
 			products.availability,
 			shops.shop_name as shop_name,
 			products.food_price as current_price,
-			COUNT(DISTINCT order_items.order_id) as order_count,
+			COUNT(order_items.order_item_id) as order_count,
 			COALESCE(SUM(order_items.quantity), 0) as total_quantity,
 			COALESCE(SUM(order_items.sub_total), 0) as total_revenue,
 			COALESCE(SUM(CASE WHEN orders.created_at >= NOW() - INTERVAL '1 day' THEN order_items.sub_total ELSE 0 END), 0) as last_day_revenue,
@@ -589,8 +589,7 @@ func FetchAllOrderItemsAccordingToProducts(c *fiber.Ctx) error {
 		`).
 		Joins("LEFT JOIN shops ON shops.shop_id = products.shop_id").
 		Joins("LEFT JOIN order_items ON order_items.product_id = products.product_id").
-		Joins("LEFT JOIN orders ON orders.order_id = order_items.order_id").
-		Group("products.product_id, shops.shop_name")
+		Joins("LEFT JOIN orders ON orders.order_id = order_items.order_id")
 
 	if startDate != "" && endDate != "" {
 		query = query.Where("orders.created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
