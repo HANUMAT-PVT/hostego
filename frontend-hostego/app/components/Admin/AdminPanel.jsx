@@ -115,7 +115,7 @@ export default function AdminPanel() {
                         isActive={currentPage === "shops"}
                         onClick={() => updatePage("shops")}
                     />}
-                    {(checkUserRole("super_admin")) && <SidebarItem
+                    {(checkUserRole("super_admin") || checkUserRole("admin") || checkUserRole("payments_manager")) && <SidebarItem
                         icon={<CreditCard size={15} />}
                         text="Delivery Partner Payments"
                         isActive={currentPage === "delivery_partner_payment"}
