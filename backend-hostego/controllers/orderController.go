@@ -589,7 +589,8 @@ func FetchAllOrderItemsAccordingToProducts(c *fiber.Ctx) error {
 		`).
 		Joins("LEFT JOIN shops ON shops.shop_id = products.shop_id").
 		Joins("LEFT JOIN order_items ON order_items.product_id = products.product_id").
-		Joins("LEFT JOIN orders ON orders.order_id = order_items.order_id")
+		Joins("LEFT JOIN orders ON orders.order_id = order_items.order_id").
+		Group("products.product_id, shops.shop_name")
 
 	if startDate != "" && endDate != "" {
 		query = query.Where("orders.created_at BETWEEN ? AND ?", startDate+" 00:00:00", endDate+" 23:59:59")
