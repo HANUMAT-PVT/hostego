@@ -577,7 +577,7 @@ func FetchAllOrderItemsAccordingToProducts(c *fiber.Ctx) error {
 			products.availability,
 			shops.shop_name as shop_name,
 			products.food_price as current_price,
-			COUNT(order_items.order_item_id) as order_count,
+			COUNT(DISTINCT order_items.order_id) as order_count,
 			COALESCE(SUM(order_items.quantity), 0) as total_quantity,
 			COALESCE(SUM(order_items.sub_total), 0) as total_revenue,
 			COALESCE(SUM(CASE WHEN orders.created_at >= NOW() - INTERVAL '1 day' THEN order_items.sub_total ELSE 0 END), 0) as last_day_revenue,
