@@ -128,7 +128,7 @@ const WithdrawalRequestCard = ({ request, onUpdate }) => {
                 <div className="grid grid-cols-2 gap-6">
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-500 mb-1">Amount</p>
-                        <p className="font-semibold text-xl">₹{request.amount}</p>
+                        <p className="font-semibold text-xl">₹{(request.amount).toFixed(1)}</p>
                     </div>
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-500 mb-1">Status</p>
