@@ -173,6 +173,8 @@ const UserManager = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
     const [filterVerified, setFilterVerified] = useState('all'); // 'all', 'verified', 'unverified'
+    const [startDate, setStartDate] = useState(''); // YYYY-MM-DD
+    const [endDate, setEndDate] = useState(''); // YYYY-MM-DD
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
@@ -191,12 +193,12 @@ const UserManager = () => {
         return () => clearTimeout(timer);
     }, [searchTerm]);
 
-    // Reset pagination when search changes
+    // Reset pagination when search/filter/date changes
     useEffect(() => {
         setCurrentPage(1);
         setUsers([]);
         fetchUsers(1, true);
-    }, [debouncedSearchTerm, filterVerified]);
+    }, [debouncedSearchTerm, filterVerified, startDate, endDate]);
 
     useEffect(() => {
         fetchUsers(1, true);
@@ -216,7 +218,8 @@ const UserManager = () => {
             const searchQuery = debouncedSearchTerm ? `&search=${encodeURIComponent(debouncedSearchTerm)}` : '';
             const filterQuery = filterVerified !== 'all' ? `&verified=${filterVerified === 'verified' ? '1' : '0'}` : '';
 
-            const { data } = await axiosClient.get(`/api/users?page=${page}&limit=${ITEMS_PER_PAGE}${searchQuery}${filterQuery}`);
+            const dateQuery = `${startDate ? `&start_date=${encodeURIComponent(startDate)}` : ''}${endDate ? `&end_date=${encodeURIComponent(endDate)}` : ''}`;
+            const { data } = await axiosClient.get(`/api/users?page=${page}&limit=${ITEMS_PER_PAGE}${searchQuery}${filterQuery}${dateQuery}`);
 
             setNewUsers(data.new_users);
 
@@ -304,16 +307,40 @@ const UserManager = () => {
                     <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
                     <p className="text-gray-600">Manage and monitor user accounts</p>
                 </div>
-                <button
-                    onClick={handleRefresh}
-                    disabled={isRefreshing}
-                    className={`p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all ${isRefreshing ? 'opacity-50' : ''}`}
-                >
-                    <RefreshCw
-                        size={20}
-                        className={`text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`}
-                    />
-                </button>
+                <div className="flex items-end gap-3">
+                    <div className="hidden sm:flex items-center gap-3">
+                        <div className="flex flex-col">
+                            <label className="text-xs text-gray-500 mb-1">Start Date</label>
+                            <input
+                                type="date"
+                                value={startDate}
+                                max={endDate || undefined}
+                                onChange={(e) => setStartDate(e.target.value)}
+                                className="px-3 py-2 border rounded-lg focus:outline-none focus:border-[var(--primary-color)] focus:ring-1 focus:ring-[var(--primary-color)]"
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <label className="text-xs text-gray-500 mb-1">End Date</label>
+                            <input
+                                type="date"
+                                value={endDate}
+                                min={startDate || undefined}
+                                onChange={(e) => setEndDate(e.target.value)}
+                                className="px-3 py-2 border rounded-lg focus:outline-none focus:border-[var(--primary-color)] focus:ring-1 focus:ring-[var(--primary-color)]"
+                            />
+                        </div>
+                    </div>
+                    <button
+                        onClick={handleRefresh}
+                        disabled={isRefreshing}
+                        className={`p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all ${isRefreshing ? 'opacity-50' : ''}`}
+                    >
+                        <RefreshCw
+                            size={20}
+                            className={`text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`}
+                        />
+                    </button>
+                </div>
             </div>
 
             {/* Stats Summary */}
@@ -344,7 +371,7 @@ const UserManager = () => {
 
             {/* Search and Filter Bar */}
             <div className="bg-white rounded-xl p-4 shadow-sm mb-6 border border-gray-100">
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col lg:flex-row gap-4">
                     {/* Search Input */}
                     <div className="flex-1 relative">
                         <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${searchLoading ? 'text-[var(--primary-color)]' : 'text-gray-400'}`} />

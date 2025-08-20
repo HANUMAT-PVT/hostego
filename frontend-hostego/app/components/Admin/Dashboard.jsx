@@ -136,7 +136,7 @@ const Dashboard = ({ dashboardStats }) => {
         fetchDashboardData()
         fetchUserWalletBalances()
         fetchDashboardStatsData()
-    }, [])
+    }, [dateRange])
 
 
     const fetchDashboardData = async (filters = {}) => {
@@ -189,9 +189,10 @@ const Dashboard = ({ dashboardStats }) => {
 
     const fetchDashboardStatsData = async (filters = {}) => {
         try {
+            console.log(filters)
             const { startDate, endDate } = filters
             let url = '/api/dashboard/stats'
-
+            console.log(startDate, endDate)
             if (startDate && endDate) {
                 url += `?start_date=${startDate}&end_date=${endDate}`
             }
@@ -230,47 +231,47 @@ const Dashboard = ({ dashboardStats }) => {
         }
     }
 
-        const handleOrderItemListDownload=async()=>{
-            try {
-                setIsDownloading(true)
-    
-                // Fetch search queries
-                const response = await axiosClient.get('/api/order-item/all', {
-                    params: {
-                        start_date: startDate,
-                        end_date: endDate
-                    }
-                })
-    
-                // Convert the data to CSV format
-                const csvData = convertToCSV(response.data)
-    
-                // Create and download the CSV file
-                downloadCSV(csvData, `order-items-results-${formatDate(new Date(), 'yyyy-MM-dd')}.csv`)
-            } catch (error) {
-    
-            } finally {
-                setIsDownloading(false)
-            }
+    const handleOrderItemListDownload = async () => {
+        try {
+            setIsDownloading(true)
+
+            // Fetch search queries
+            const response = await axiosClient.get('/api/order-item/all', {
+                params: {
+                    start_date: startDate,
+                    end_date: endDate
+                }
+            })
+
+            // Convert the data to CSV format
+            const csvData = convertToCSV(response.data)
+
+            // Create and download the CSV file
+            downloadCSV(csvData, `order-items-results-${formatDate(new Date(), 'yyyy-MM-dd')}.csv`)
+        } catch (error) {
+
+        } finally {
+            setIsDownloading(false)
         }
-        const handleTotalItemsSoldListDownload=async()=>{
-            try {
-                setIsDownloading(true)
-    
-                // Fetch search queries
-                
-    
-                // Convert the data to CSV format
-                const csvData = convertToCSV(product_stats)
-    
-                // Create and download the CSV file
-                downloadCSV(csvData, `products-items-stats-${formatDate(new Date(), 'yyyy-MM-dd')}.csv`)
-            } catch (error) {
-    
-            } finally {
-                setIsDownloading(false)
-            }
+    }
+    const handleTotalItemsSoldListDownload = async () => {
+        try {
+            setIsDownloading(true)
+
+            // Fetch search queries
+
+
+            // Convert the data to CSV format
+            const csvData = convertToCSV(product_stats)
+
+            // Create and download the CSV file
+            downloadCSV(csvData, `products-items-stats-${formatDate(new Date(), 'yyyy-MM-dd')}.csv`)
+        } catch (error) {
+
+        } finally {
+            setIsDownloading(false)
         }
+    }
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
