@@ -20,15 +20,77 @@ func GetUsers(c *fiber.Ctx) error {
 	limit, _ := strconv.Atoi(c.Query("limit", "50"))
 	search := c.Query("search", "")
 	offset := (page - 1) * limit
+
+	// Get query parameters for date filtering
+	startDateStr := c.Query("start_date")
+	endDateStr := c.Query("end_date")
+
+	var startDate, endDate time.Time
+	var err error
+
+	// Parse start date
+	if startDateStr != "" {
+		startDate, err = time.Parse("2006-01-02", startDateStr)
+		if err != nil {
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid start_date format. Use YYYY-MM-DD"})
+		}
+	}
+
+	// Parse end date
+	if endDateStr != "" {
+		endDate, err = time.Parse("2006-01-02", endDateStr)
+		if err != nil {
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid end_date format. Use YYYY-MM-DD"})
+		}
+		// Set end date to end of day
+		endDate = endDate.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+	}
 	var total int64
 	var newUsersTotal int64
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 	var users []models.User
-	database.DB.Limit(limit).Offset(offset).Where("first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR mobile_number LIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%").Order("created_at DESC").Find(&users)
-	database.DB.Model(&models.User{}).Count(&total)
-	database.DB.Model(&models.User{}).Where("created_at > ?", time.Now().AddDate(0, 0, -30)).Count(&newUsersTotal)
+	userQuery := database.DB.Limit(limit).Offset(offset).Where("first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR mobile_number LIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+
+	// Apply date filters if provided
+	if startDateStr != "" {
+		userQuery = userQuery.Where("created_at >= ?", startDate)
+	}
+	if endDateStr != "" {
+		userQuery = userQuery.Where("created_at <= ?", endDate)
+	}
+
+	userQuery.Order("created_at DESC").Find(&users)
+
+	// Count total users with same filters (excluding pagination)
+	totalQuery := database.DB.Model(&models.User{}).Where("first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR mobile_number LIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+
+	// Apply date filters if provided
+	if startDateStr != "" {
+		totalQuery = totalQuery.Where("created_at >= ?", startDate)
+	}
+	if endDateStr != "" {
+		totalQuery = totalQuery.Where("created_at <= ?", endDate)
+	}
+
+	totalQuery.Count(&total)
+
+	// Count new users - if date filters are provided, use them; otherwise use last 30 days
+	newUsersQuery := database.DB.Model(&models.User{})
+	if startDateStr != "" || endDateStr != "" {
+		// If date filters are provided, use the same date range
+		if startDateStr != "" {
+			newUsersQuery = newUsersQuery.Where("created_at >= ?", startDate)
+		}
+		if endDateStr != "" {
+			newUsersQuery = newUsersQuery.Where("created_at <= ?", endDate)
+		}
+	} else {
+		// Default: users from last 30 days
+		newUsersQuery = newUsersQuery.Where("created_at > ?", time.Now().AddDate(0, 0, -30))
+	}
+	newUsersQuery.Count(&newUsersTotal)
 
 	type UserWithRoles struct {
 		User  models.User       `json:"user"`

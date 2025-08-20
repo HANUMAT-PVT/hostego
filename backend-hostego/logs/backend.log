@@ -19118,3 +19118,423 @@
 2025/08/18 01:50:14 health.go:172:    ⏱️  Wait Duration: 0s
 2025/08/18 01:50:14 health.go:173:    🚫 Max Open Connections: 50
 2025/08/18 01:50:14 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:02:32 logger.go:55: ✅ Enhanced logging system initialized
+2025/08/20 15:02:32 database.go:54: ✅ Database connection established and tested successfully
+2025/08/20 15:02:33 database.go:85: ✅ Database migration completed successfully
+2025/08/20 15:02:33 database.go:86: ✅ Connected to Database with enhanced monitoring!
+2025/08/20 15:02:33 health.go:151: 🔄 Database health monitoring started with enhanced connection pool tracking
+2025/08/20 15:02:33 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:02:33 health.go:168:    📊 Open Connections: 1
+2025/08/20 15:02:33 health.go:169:    🔄 In Use: 0
+2025/08/20 15:02:33 health.go:170:    💤 Idle: 1
+2025/08/20 15:02:33 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:02:33 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:02:33 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:02:33 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:02:33 firebase-service.go:29: ✅  FCM initialized
+2025/08/20 15:02:33 main.go:111: FCM initialized
+2025/08/20 15:02:33 main.go:121: 🚀 Hostego Backend Server starting with enhanced crash prevention...
+2025/08/20 15:03:03 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:03:03 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:03:03 health.go:168:    📊 Open Connections: 1
+2025/08/20 15:03:03 health.go:169:    🔄 In Use: 0
+2025/08/20 15:03:03 health.go:170:    💤 Idle: 1
+2025/08/20 15:03:03 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:03:03 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:03:03 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:03:03 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:03:06 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.337875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:06 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 4.435125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:06 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 5.476959ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:06 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 5.80875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:06 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 2.560959ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:06 crash-prevention.middleware.go:88: ✅ GET /api/order/all | Status: 200 | Duration: 7.129167ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:06 crash-prevention.middleware.go:88: ✅ GET /api/delivery-partner/all | Status: 200 | Duration: 10.876333ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:06 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 16.116417ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:08 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 3.226291ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:08 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 3.648833ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:08 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 9.794792ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:13 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.112166ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:13 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 973.875µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:13 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.021458ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:13 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 1.834666ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:13 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 1.060792ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:13 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.089875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:13 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.049417ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:13 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.79075ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:33 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:03:58 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.640042ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:58 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 565.542µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:58 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 1.521459ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:58 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 1.306459ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:58 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 2.481875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:58 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.399084ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:58 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.433042ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:03:58 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.702791ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:01 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 5.356167ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:03 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:04:03 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:04:03 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:04:03 health.go:169:    🔄 In Use: 0
+2025/08/20 15:04:03 health.go:170:    💤 Idle: 4
+2025/08/20 15:04:03 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:04:03 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:04:03 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:04:03 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:04:03 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.103375ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:04 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 3.341459ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:07 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.657916ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:09 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.912834ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:10 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.815333ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:10 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.3515ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:12 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.854375ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:13 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 704.75µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:13 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.711459ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:14 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.248959ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:14 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.329625ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:15 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.144125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:15 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.023167ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:15 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.524042ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:16 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.291375ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:16 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 824.791µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:17 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.107042ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:17 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.218625ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:17 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.11125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:18 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.068458ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:26 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.315084ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:27 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.237ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:28 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.081042ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:29 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.197375ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:33 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:04:40 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.331375ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:04:42 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.632ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:03 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:05:03 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:05:03 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:05:03 health.go:169:    🔄 In Use: 0
+2025/08/20 15:05:03 health.go:170:    💤 Idle: 4
+2025/08/20 15:05:03 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:05:03 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:05:03 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:05:03 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:05:12 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.208458ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:12 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 595.292µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:12 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 609.25µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:12 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 1.804583ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:12 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 2.485917ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:12 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.649917ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:12 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.460709ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:12 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.481125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:18 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 968.917µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:18 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 692.75µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:18 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 853.333µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:18 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 345.25µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:18 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 1.421291ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:18 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 903.458µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:18 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.965125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:18 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.464833ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:28 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 876.5µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:28 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 887µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:28 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 932.125µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:28 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.400708ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:28 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 2.093708ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:28 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 625.208µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:28 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.672084ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:28 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 3.454125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:32 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.05125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:32 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 881.625µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:32 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 854.875µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:32 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.416083ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:32 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 1.3865ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:32 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 489.208µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:32 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.107541ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:32 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.871084ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:33 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:05:57 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 790.042µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:57 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.538708ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:05:57 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 2.099042ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:06:03 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:06:03 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:06:03 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:06:03 health.go:169:    🔄 In Use: 0
+2025/08/20 15:06:03 health.go:170:    💤 Idle: 4
+2025/08/20 15:06:03 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:06:03 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:06:03 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:06:03 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:06:33 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:07:03 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:07:03 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:07:03 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:07:03 health.go:169:    🔄 In Use: 0
+2025/08/20 15:07:03 health.go:170:    💤 Idle: 4
+2025/08/20 15:07:03 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:07:03 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:07:03 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:07:03 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:07:19 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 980.292µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:19 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 556.125µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:19 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 730.833µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:19 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 507.875µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:19 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 1.4055ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:19 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.798333ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:19 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.651375ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:19 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 2.269458ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:23 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.079042ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:23 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.768334ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:23 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 2.820167ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:28 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.107791ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:28 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.896292ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:28 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.962083ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:29 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 751.208µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:29 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.617542ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:29 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.998917ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:33 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:07:37 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.857292ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:37 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.713875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:37 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 4.717125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:39 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.194042ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:39 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.243833ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:39 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.954833ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:39 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.10125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:45 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 3ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:45 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.415125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:45 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 2.135541ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:45 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 2.214292ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:48 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.454375ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:48 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.441042ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:48 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 2.262875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:48 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 3.3935ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:52 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 954.834µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:52 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.959792ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:52 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.056083ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:52 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.027167ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:56 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.214ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:56 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.491375ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:56 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 958.5µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:07:56 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.768708ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:03 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:08:03 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:08:03 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:08:03 health.go:169:    🔄 In Use: 0
+2025/08/20 15:08:03 health.go:170:    💤 Idle: 4
+2025/08/20 15:08:03 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:08:03 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:08:03 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:08:03 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:08:05 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.138125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:05 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 930.25µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:05 crash-prevention.middleware.go:69: 🚨 GET /api/dashboard/stats | Status: 500 | Duration: 1.394042ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:05 logger.go:112: ❌ ERROR in HTTP Response: server error response | status: 500 | path: /api/dashboard/stats | method: GET | user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:06 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.161292ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:06 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 4.035792ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:06 crash-prevention.middleware.go:69: 🚨 GET /api/dashboard/stats | Status: 500 | Duration: 1.918ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:06 logger.go:112: ❌ ERROR in HTTP Response: server error response | status: 500 | path: /api/dashboard/stats | method: GET | user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:11 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 602.459µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:11 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 813.125µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:11 crash-prevention.middleware.go:69: 🚨 GET /api/dashboard/stats | Status: 500 | Duration: 539.958µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:11 logger.go:112: ❌ ERROR in HTTP Response: server error response | method: GET | user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15 | status: 500 | path: /api/dashboard/stats
+2025/08/20 15:08:33 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:08:53 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.117458ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:53 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 844.667µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:53 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.4095ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:08:53 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.012542ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:09:03 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:09:03 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:09:03 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:09:03 health.go:169:    🔄 In Use: 0
+2025/08/20 15:09:03 health.go:170:    💤 Idle: 4
+2025/08/20 15:09:03 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:09:03 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:09:03 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:09:03 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:09:33 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:10:08 logger.go:55: ✅ Enhanced logging system initialized
+2025/08/20 15:10:08 database.go:54: ✅ Database connection established and tested successfully
+2025/08/20 15:10:08 database.go:85: ✅ Database migration completed successfully
+2025/08/20 15:10:08 database.go:86: ✅ Connected to Database with enhanced monitoring!
+2025/08/20 15:10:08 health.go:151: 🔄 Database health monitoring started with enhanced connection pool tracking
+2025/08/20 15:10:08 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:10:08 health.go:168:    📊 Open Connections: 1
+2025/08/20 15:10:08 health.go:169:    🔄 In Use: 0
+2025/08/20 15:10:08 health.go:170:    💤 Idle: 1
+2025/08/20 15:10:08 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:10:08 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:10:08 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:10:08 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:10:08 firebase-service.go:29: ✅  FCM initialized
+2025/08/20 15:10:08 main.go:111: FCM initialized
+2025/08/20 15:10:08 main.go:121: 🚀 Hostego Backend Server starting with enhanced crash prevention...
+2025/08/20 15:10:10 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 3.738667ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:10 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 9.415208ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:10 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 11.238583ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:18 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.21575ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:18 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 2.685125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:18 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 4.26175ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:18 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 8.228041ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:19 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.568875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:19 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.763625ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:19 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.307709ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:19 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 3.926167ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:20 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.337833ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:20 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.7ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:20 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.350875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:20 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 2.802792ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:20 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.5125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:20 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.176792ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:20 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.039334ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:20 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 3.410375ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:22 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 805.208µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:22 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.158166ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:22 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.708167ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:22 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.094458ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:22 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 857.333µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:22 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.711083ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:22 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.657917ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:22 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.560167ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:23 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.915875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:23 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.666875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:23 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 1.956458ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:23 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 3.172625ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:24 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 752.667µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:24 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.620875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:24 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 2.675375ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:24 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.000541ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:27 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 795.417µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:27 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 802.208µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:27 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 428.292µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:27 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 761.292µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:27 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 1.623167ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:27 crash-prevention.middleware.go:88: ✅ GET /api/wallet/users-wallet-balances | Status: 200 | Duration: 1.040084ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:27 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 1.895ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:27 crash-prevention.middleware.go:88: ✅ GET /api/dashboard/stats | Status: 200 | Duration: 2.102125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:29 crash-prevention.middleware.go:88: ✅ GET /api/users | Status: 200 | Duration: 3.283458ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:10:38 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:11:08 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:11:08 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:11:08 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:11:08 health.go:169:    🔄 In Use: 0
+2025/08/20 15:11:08 health.go:170:    💤 Idle: 4
+2025/08/20 15:11:08 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:11:08 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:11:08 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:11:08 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:11:38 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:12:08 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:12:08 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:12:08 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:12:08 health.go:169:    🔄 In Use: 0
+2025/08/20 15:12:08 health.go:170:    💤 Idle: 4
+2025/08/20 15:12:08 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:12:08 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:12:08 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:12:08 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:12:30 crash-prevention.middleware.go:88: ✅ GET /api/users | Status: 200 | Duration: 3.673208ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:12:38 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:13:08 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:13:08 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:13:08 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:13:08 health.go:169:    🔄 In Use: 0
+2025/08/20 15:13:08 health.go:170:    💤 Idle: 4
+2025/08/20 15:13:08 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:13:08 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:13:08 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:13:08 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:13:37 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.24325ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:13:37 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 1.179333ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:13:37 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 1.584917ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:13:37 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.597959ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:13:37 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 1.8145ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:13:37 crash-prevention.middleware.go:88: ✅ GET /api/users | Status: 200 | Duration: 2.080166ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:13:37 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 2.331833ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:13:38 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:14:08 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:14:08 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:14:08 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:14:08 health.go:169:    🔄 In Use: 0
+2025/08/20 15:14:08 health.go:170:    💤 Idle: 4
+2025/08/20 15:14:08 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:14:08 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:14:08 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:14:08 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:14:38 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:15:08 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:15:08 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:15:08 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:15:08 health.go:169:    🔄 In Use: 0
+2025/08/20 15:15:08 health.go:170:    💤 Idle: 4
+2025/08/20 15:15:08 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:15:08 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:15:08 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:15:08 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:15:38 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:16:08 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:16:08 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:16:08 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:16:08 health.go:169:    🔄 In Use: 0
+2025/08/20 15:16:08 health.go:170:    💤 Idle: 4
+2025/08/20 15:16:08 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:16:08 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:16:08 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:16:08 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:16:38 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:17:08 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:17:08 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:17:08 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:17:08 health.go:169:    🔄 In Use: 0
+2025/08/20 15:17:08 health.go:170:    💤 Idle: 4
+2025/08/20 15:17:08 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:17:08 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:17:08 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:17:08 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:17:33 crash-prevention.middleware.go:88: ✅ GET /api/users | Status: 200 | Duration: 3.70875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:17:36 crash-prevention.middleware.go:88: ✅ GET /api/users | Status: 200 | Duration: 3.782125ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:17:38 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:18:08 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:18:08 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:18:08 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:18:08 health.go:169:    🔄 In Use: 0
+2025/08/20 15:18:08 health.go:170:    💤 Idle: 4
+2025/08/20 15:18:08 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:18:08 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:18:08 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:18:08 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:18:38 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:19:08 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:19:08 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:19:08 health.go:168:    📊 Open Connections: 4
+2025/08/20 15:19:08 health.go:169:    🔄 In Use: 0
+2025/08/20 15:19:08 health.go:170:    💤 Idle: 4
+2025/08/20 15:19:08 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:19:08 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:19:08 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:19:08 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:19:38 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/20 15:20:16 logger.go:55: ✅ Enhanced logging system initialized
+2025/08/20 15:20:16 database.go:54: ✅ Database connection established and tested successfully
+2025/08/20 15:20:16 database.go:85: ✅ Database migration completed successfully
+2025/08/20 15:20:16 database.go:86: ✅ Connected to Database with enhanced monitoring!
+2025/08/20 15:20:16 health.go:151: 🔄 Database health monitoring started with enhanced connection pool tracking
+2025/08/20 15:20:16 health.go:167: 🔍 Connection Pool Analysis:
+2025/08/20 15:20:16 health.go:168:    📊 Open Connections: 1
+2025/08/20 15:20:16 health.go:169:    🔄 In Use: 0
+2025/08/20 15:20:16 health.go:170:    💤 Idle: 1
+2025/08/20 15:20:16 health.go:171:    ⏳ Wait Count: 0
+2025/08/20 15:20:16 health.go:172:    ⏱️  Wait Duration: 0s
+2025/08/20 15:20:16 health.go:173:    🚫 Max Open Connections: 50
+2025/08/20 15:20:16 health.go:177:    📈 Utilization: 0.0%
+2025/08/20 15:20:16 firebase-service.go:29: ✅  FCM initialized
+2025/08/20 15:20:16 main.go:111: FCM initialized
+2025/08/20 15:20:16 main.go:121: 🚀 Hostego Backend Server starting with enhanced crash prevention...
+2025/08/20 15:20:19 crash-prevention.middleware.go:88: ✅ GET /api/users | Status: 200 | Duration: 3.310875ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:20:20 crash-prevention.middleware.go:88: ✅ GET /api/users | Status: 200 | Duration: 2.316041ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:20:21 crash-prevention.middleware.go:88: ✅ GET /api/users | Status: 200 | Duration: 2.86475ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:20:24 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.159208ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:20:24 crash-prevention.middleware.go:88: ✅ GET /api/user-roles | Status: 200 | Duration: 551.708µs | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:20:24 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 6.380916ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:20:24 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 7.47925ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:20:24 crash-prevention.middleware.go:88: ✅ GET /api/cart/ | Status: 200 | Duration: 2.891041ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:20:24 crash-prevention.middleware.go:88: ✅ GET /api/users | Status: 200 | Duration: 6.911333ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:20:24 crash-prevention.middleware.go:88: ✅ GET /api/order/order-items | Status: 200 | Duration: 7.533667ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:20:26 crash-prevention.middleware.go:88: ✅ GET /api/users | Status: 200 | Duration: 3.241792ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+2025/08/20 15:20:29 crash-prevention.middleware.go:88: ✅ GET /api/users | Status: 200 | Duration: 3.379458ms | IP: 127.0.0.1 | UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
