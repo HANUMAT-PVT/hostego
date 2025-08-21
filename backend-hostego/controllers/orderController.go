@@ -342,9 +342,7 @@ func UpdateOrderById(c *fiber.Ctx) error {
 
 	}
 
-	// if err := NotifyOrderStatusUpdate(existingOrder.OrderId, updateData.OrderStatus); err != nil {
-	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	// }
+	go NotifyOrderStatusUpdate(existingOrder.OrderId, updateData.OrderStatus)
 
 	if updateData.OrderStatus == models.ReadyOrderStatus {
 		existingOrder.ActualReadyAt = time.Now()
