@@ -41,7 +41,7 @@ const page = () => {
     }, [])
 
     const dismissDownloadPrompt = () => {
-        // setShowDownloadPrompt(false)
+        setShowDownloadPrompt(false)
 
     }
 
@@ -169,13 +169,13 @@ const page = () => {
             {showDownloadPrompt && (
                 <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60">
                     <div className="relative w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl">
-                        {/* <button
+                        <button
                             aria-label="Close"
                             onClick={dismissDownloadPrompt}
                             className="absolute right-3 top-3 rounded p-1 hover:bg-gray-100"
                         >
                             <X className="h-5 w-5" />
-                        </button> */}
+                        </button>
                         <div className="mb-4 flex items-center gap-3">
                             <img src="/hostego_logo.svg" alt="Hostego" className="h-9 w-9 rounded" />
                             <div>
@@ -211,7 +211,7 @@ const page = () => {
                                 />
                             </a>
                         </div>
-                        {/* <button onClick={dismissDownloadPrompt} className="mt-4 w-full text-xs text-gray-500 hover:text-gray-700">Continue on web</button> */}
+                        <button onClick={dismissDownloadPrompt} className="mt-4 w-full text-xs text-gray-500 hover:text-gray-700">Continue on web</button>
                     </div>
                 </div>
             )}
