@@ -1,22 +1,16 @@
-version: '3.8'
+version: "3.9"
 
 services:
-
   backend:
     build: .
+    container_name: ${BACKEND_CONTAINER_NAME}
     ports:
-      - "8080:8080"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    env_file:
-      - .env
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     environment:
-      FIREBASE_CREDENTIAL_PATH: /etc/hostego/firebase.json
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
-    volumes:
-      - /etc/hostego/firebase.json:/etc/hostego/firebase.json
-    entrypoint: [ "/wait-for.sh", "172.17.0.1:5432", "--", "./backend-hostego" ]
+      HOSTEGO_JWT_SECRET_DEV: ${HOSTEGO_JWT_SECRET_DEV}
+    restart: unless-stopped

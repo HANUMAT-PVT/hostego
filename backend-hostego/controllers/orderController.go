@@ -342,8 +342,6 @@ func UpdateOrderById(c *fiber.Ctx) error {
 
 	}
 
-	go NotifyOrderStatusUpdate(existingOrder.OrderId, updateData.OrderStatus)
-
 	if updateData.OrderStatus == models.ReadyOrderStatus {
 		existingOrder.ActualReadyAt = time.Now()
 	}
