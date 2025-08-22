@@ -1,6 +1,7 @@
 package main
 
 import (
+	"backend-hostego/config"
 	"backend-hostego/cron"
 	"backend-hostego/database"
 	"backend-hostego/logs"
@@ -44,6 +45,7 @@ func main() {
 	}))
 
 	// Initialize enhanced logging
+	config.LoadEnv() // Load environment variables
 	logs.InitLogger()
 
 	// Enhanced crash prevention middleware with user agent logging
