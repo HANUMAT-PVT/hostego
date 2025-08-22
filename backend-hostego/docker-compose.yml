@@ -17,4 +17,5 @@ services:
       HOSTEGO_JWT_SECRET_DEV: ${HOSTEGO_JWT_SECRET_DEV}
     volumes:
       - /etc/hostego/firebase.json:/etc/hostego/firebase.json
+      - ./.env:/app/.env
     restart: unless-stopped
