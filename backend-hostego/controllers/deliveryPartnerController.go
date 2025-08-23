@@ -130,7 +130,7 @@ func FetchDeliveryPartnerEarnings(c *fiber.Ctx) error {
 	}
 
 	var orders []models.Order
-	if err := dbQuery.Order("delivered_at desc").Find(&orders).Error; err != nil {
+	if err := dbQuery.Order("created_at desc").Find(&orders).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
