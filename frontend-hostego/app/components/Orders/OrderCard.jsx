@@ -299,6 +299,7 @@ const OrderCard = ({ order, onRefresh }) => {
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-purple-600">Items Actual Total</span>
+                                {console.log(order?.order_items, "hello order items", order?.order_id, order?.order_items?.reduce((acc, item) => acc + item?.sub_total, 0))}
                                 <span className="font-medium text-purple-600">₹{order?.order_items?.reduce((acc, item) => acc + item.actual_sub_total, 0)}</span>
                             </div>
                             <div className="flex justify-between text-sm">
