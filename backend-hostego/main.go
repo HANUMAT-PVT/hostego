@@ -30,9 +30,13 @@ const privateKey = "W8PauXVtgDPZ8RHYulzVXEFd8uEawUwlPx8xGzMXg4w"
 func main() {
 
 	app := fiber.New(fiber.Config{
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 30 * time.Second,
-		IdleTimeout:  120 * time.Second,
+		ReadTimeout:     15 * time.Second, // Reduced from 30s for faster response
+		WriteTimeout:    15 * time.Second, // Reduced from 30s for faster response
+		IdleTimeout:     60 * time.Second, // Reduced from 120s for better resource management
+		BodyLimit:       10 * 1024 * 1024, // 10MB body limit
+		Concurrency:     256 * 1024,       // Handle 256K concurrent connections
+		ReadBufferSize:  8192,             // Optimized buffer size
+		WriteBufferSize: 8192,             // Optimized buffer size
 	})
 
 	app.Use(cors.New(cors.Config{

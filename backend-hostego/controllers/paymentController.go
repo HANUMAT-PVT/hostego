@@ -41,129 +41,126 @@ func InitiatePayment(c *fiber.Ctx) error {
 	type OrderRequest struct {
 		OrderID int `json:"order_id"` //Only accept Order ID, not amount
 	}
-	var order models.Order
-
 	var request OrderRequest
-
-	var cartItem models.CartItem
 
 	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
-	var wallet models.Wallet
 
-	tx := database.DB.Begin()
-
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
-	if err := tx.First(&order, "order_id=?", request.OrderID).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
-	if err := tx.First(&wallet, "user_id=?", userId).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
-	if wallet.Balance < order.FinalOrderValue {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Wallet balance insufficent to complete payment"})
-	}
-	totalAmountToDeduct := order.FinalOrderValue
-	wallet.Balance -= totalAmountToDeduct
-	var walletTransaction models.WalletTransaction
-
-	walletTransaction.Amount = totalAmountToDeduct
-	walletTransaction.TransactionType = "debit"
-	walletTransaction.UserId = userId
-	walletTransaction.TransactionStatus = "success"
-
-	var paymentTransaction models.PaymentTransaction
-
-	if err := tx.Create(&walletTransaction).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	var result struct {
+		Order              models.Order
+		Wallet             models.Wallet
+		WalletTransaction  models.WalletTransaction
+		PaymentTransaction models.PaymentTransaction
+		OrderItems         []models.CartItem
 	}
 
-	paymentTransaction.OrderId = request.OrderID
-	paymentTransaction.UserId = userId
-	paymentTransaction.Amount = totalAmountToDeduct
-	paymentTransaction.PaymentStatus = "success"
-	paymentTransaction.PaymentMethod = "wallet"
-	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
-	order.OrderStatus = "placed"
-
-	if err := tx.Create(&paymentTransaction).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
-
-	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
-	if err := tx.Where("user_id=?", userId).Save(&wallet).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
-
-	if err := tx.Where("user_id = ?", userId).Delete(&cartItem).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove cart items"})
-	}
-
-	// Create order items from cart items
-	var orderItems []models.CartItem
-	if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse order items"})
-	}
-
-	// Store each cart item as an order item
-	for _, item := range orderItems {
-		order.RestaurantPayableAmount += item.ActualSubTotal
-		orderItem := models.OrderItem{
-			OrderId:        order.OrderId,
-			ProductId:      item.ProductId,
-			Quantity:       item.Quantity,
-			SubTotal:       item.SubTotal,
-			UserId:         order.UserId,
-			ActualSubTotal: item.ActualSubTotal * float64(item.Quantity),
-		}
-		if err := tx.Preload("User").Where("order_id=?", request.OrderID).Save(&order).Error; err != nil {
-			tx.Rollback()
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-		}
-		if err := tx.Create(&orderItem).Error; err != nil {
-			tx.Rollback()
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	err = database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		// Fetch order
+		if err := tx.First(&result.Order, "order_id=?", request.OrderID).Error; err != nil {
+			return err
 		}
 
-		// Update product stock
-		if err := tx.Model(&models.Product{}).
-			Where("product_id = ?", item.ProductId).
-			Update("stock_quantity", gorm.Expr("stock_quantity - ?", item.Quantity)).Error; err != nil {
-			tx.Rollback()
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		// Fetch wallet
+		if err := tx.First(&result.Wallet, "user_id=?", userId).Error; err != nil {
+			return err
 		}
+
+		// Check wallet balance
+		if result.Wallet.Balance < result.Order.FinalOrderValue {
+			return fmt.Errorf("wallet balance insufficient to complete payment")
+		}
+
+		// Deduct amount from wallet
+		totalAmountToDeduct := result.Order.FinalOrderValue
+		result.Wallet.Balance -= totalAmountToDeduct
+
+		// Create wallet transaction
+		result.WalletTransaction.Amount = totalAmountToDeduct
+		result.WalletTransaction.TransactionType = "debit"
+		result.WalletTransaction.UserId = userId
+		result.WalletTransaction.TransactionStatus = "success"
+
+		if err := tx.Create(&result.WalletTransaction).Error; err != nil {
+			return err
+		}
+
+		// Create payment transaction
+		result.PaymentTransaction.OrderId = request.OrderID
+		result.PaymentTransaction.UserId = userId
+		result.PaymentTransaction.Amount = totalAmountToDeduct
+		result.PaymentTransaction.PaymentStatus = "success"
+		result.PaymentTransaction.PaymentMethod = "wallet"
+
+		if err := tx.Create(&result.PaymentTransaction).Error; err != nil {
+			return err
+		}
+
+		// Update order
+		result.Order.PaymentTransactionId = result.PaymentTransaction.PaymentTransactionId
+		result.Order.OrderStatus = "placed"
+
+		// Update wallet
+		if err := tx.Where("user_id=?", userId).Save(&result.Wallet).Error; err != nil {
+			return err
+		}
+
+		// Parse order items
+		if err := json.Unmarshal(result.Order.OrderItems, &result.OrderItems); err != nil {
+			return fmt.Errorf("failed to parse order items: %v", err)
+		}
+
+		// Process each order item
+		for _, item := range result.OrderItems {
+			result.Order.RestaurantPayableAmount += item.ActualSubTotal
+
+			orderItem := models.OrderItem{
+				OrderId:        result.Order.OrderId,
+				ProductId:      item.ProductId,
+				Quantity:       item.Quantity,
+				SubTotal:       item.SubTotal,
+				UserId:         result.Order.UserId,
+				ActualSubTotal: item.ActualSubTotal * float64(item.Quantity),
+			}
+
+			if err := tx.Create(&orderItem).Error; err != nil {
+				return err
+			}
+
+			// Update product stock
+			if err := tx.Model(&models.Product{}).
+				Where("product_id = ?", item.ProductId).
+				Update("stock_quantity", gorm.Expr("stock_quantity - ?", item.Quantity)).Error; err != nil {
+				return err
+			}
+		}
+
+		// Save updated order
+		if err := tx.Preload("User").Where("order_id=?", request.OrderID).Save(&result.Order).Error; err != nil {
+			return err
+		}
+
+		// Delete cart items
+		if err := tx.Where("user_id = ?", userId).Delete(&models.CartItem{}).Error; err != nil {
+			return fmt.Errorf("failed to delete cart items: %v", err)
+		}
+
+		return nil
+	}, "InitiatePayment")
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	// Mark cart items as deleted
-	if err := tx.
-		Where("user_id = ?", userId).
-		Delete(&models.CartItem{}).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete cart items"})
-	}
+	// Send notification outside transaction
+	NotifyOrderPlaced(result.Order.OrderId)
 
-	if err := tx.Commit().Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
-	}
-	// send notification to the user
-	NotifyOrderPlaced(order.OrderId)
-	// natsclient.SendMessageToUsersByRole(orderManagerRoles, "New Order Placed", "Please check the details and take the necessary action.")
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Payment Completed", "payment_transaction": paymentTransaction, "order": order, "wallet_transaction": walletTransaction})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":             "Payment Completed",
+		"payment_transaction": result.PaymentTransaction,
+		"order":               result.Order,
+		"wallet_transaction":  result.WalletTransaction,
+	})
 }
 
 func FetchUserPaymentTransactions(c *fiber.Ctx) error {
@@ -181,10 +178,14 @@ func FetchUserPaymentTransactions(c *fiber.Ctx) error {
 }
 
 func InitiateRefundPayment(c *fiber.Ctx) error {
-	current_user_id := c.Locals("user_id").(int)
+	current_user_id, err := middlewares.SafeUserIDExtractor(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid user authentication: " + err.Error()})
+	}
 	if current_user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
+
 	type OrderRequest struct {
 		OrderID int `json:"order_id"`
 	}
@@ -194,95 +195,85 @@ func InitiateRefundPayment(c *fiber.Ctx) error {
 	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
-	if current_user_id == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+
+	var result struct {
+		Order             models.Order
+		Wallet            models.Wallet
+		WalletTransaction models.WalletTransaction
+		OrderItems        []models.CartItem
 	}
 
-	var order models.Order
-	var wallet models.Wallet
-	var walletTransaction models.WalletTransaction
-	var delivery_partner models.DeliveryPartner
-
-	tx := database.DB.Begin()
-
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
+	err = database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		// Fetch order
+		if err := tx.Where("order_id = ?", request.OrderID).First(&result.Order).Error; err != nil {
+			return err
 		}
-	}()
 
-	if err := database.DB.Where("order_id = ?", request.OrderID).First(&order).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	if err := tx.Where("user_id=?", order.UserId).First(&wallet).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	if order.DeliveryPartnerId != 0 {
-		if err := tx.Where("delivery_partner_id = ?", order.DeliveryPartnerId).First(&delivery_partner).Error; err != nil {
-			tx.Rollback()
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		// Fetch wallet
+		if err := tx.Where("user_id=?", result.Order.UserId).First(&result.Wallet).Error; err != nil {
+			return err
 		}
-	}
 
-	order.OrderStatus = models.OrderStatusType(models.CanceledOrderStatus)
-	order.Refunded = true
-	order.RefundedAt = time.Now()
-	order.RefundInitiator = current_user_id
-	order.DeliveryPartnerId = 0
-	order.DeliveryPartner = nil
+		// Update order status
+		result.Order.OrderStatus = models.OrderStatusType(models.CanceledOrderStatus)
+		result.Order.Refunded = true
+		result.Order.RefundedAt = time.Now()
+		result.Order.RefundInitiator = current_user_id
+		result.Order.DeliveryPartnerId = 0
+		result.Order.DeliveryPartner = nil
 
-	if err := tx.Save(&order).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	if err := tx.Where("user_id=?", order.UserId).First(&wallet).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	// Create a wallet transaction for the refund
-	walletTransaction.Amount = order.FinalOrderValue
-	walletTransaction.TransactionType = models.TransactionCustomType(models.TransactionRefund)
-	walletTransaction.TransactionStatus = models.TransactionStatusType(models.TransactionSuccess)
-	walletTransaction.UserId = order.UserId
-	wallet.Balance += order.FinalOrderValue
-
-	var orderItems []models.CartItem
-	if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse order items"})
-	}
-
-	// create a wallet transaction for the refund
-	if err := tx.Create(&walletTransaction).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	// Update the wallet balance
-	if err := tx.Where("user_id=?", order.UserId).Save(&wallet).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	for _, item := range orderItems {
-		if err := tx.Model(&models.Product{}).Where("product_id = ?", item.ProductId).
-			Update("stock_quantity", gorm.Expr("stock_quantity + ?", item.Quantity)).Error; err != nil {
-			tx.Rollback()
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		if err := tx.Save(&result.Order).Error; err != nil {
+			return err
 		}
-		if err := tx.Where("order_id = ?", order.OrderId).
-			Delete(&models.OrderItem{}).Error; err != nil {
-			tx.Rollback()
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+
+		// Create wallet transaction for refund
+		result.WalletTransaction.Amount = result.Order.FinalOrderValue
+		result.WalletTransaction.TransactionType = models.TransactionCustomType(models.TransactionRefund)
+		result.WalletTransaction.TransactionStatus = models.TransactionStatusType(models.TransactionSuccess)
+		result.WalletTransaction.UserId = result.Order.UserId
+
+		if err := tx.Create(&result.WalletTransaction).Error; err != nil {
+			return err
 		}
+
+		// Update wallet balance
+		result.Wallet.Balance += result.Order.FinalOrderValue
+		if err := tx.Where("user_id=?", result.Order.UserId).Save(&result.Wallet).Error; err != nil {
+			return err
+		}
+
+		// Parse order items
+		if err := json.Unmarshal(result.Order.OrderItems, &result.OrderItems); err != nil {
+			return fmt.Errorf("failed to parse order items: %v", err)
+		}
+
+		// Process refund for each item
+		for _, item := range result.OrderItems {
+			// Restore product stock
+			if err := tx.Model(&models.Product{}).Where("product_id = ?", item.ProductId).
+				Update("stock_quantity", gorm.Expr("stock_quantity + ?", item.Quantity)).Error; err != nil {
+				return err
+			}
+
+			// Delete order item
+			if err := tx.Where("order_id = ? AND product_id = ?", result.Order.OrderId, item.ProductId).
+				Delete(&models.OrderItem{}).Error; err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}, "InitiateRefundPayment")
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	// Commit the transaction
-	if err := tx.Commit().Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
-	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Refund Completed", "wallet_transaction": walletTransaction, "wallet": wallet})
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":            "Refund Completed",
+		"wallet_transaction": result.WalletTransaction,
+		"wallet":             result.Wallet,
+	})
 }
 
 func InitateCashfreePaymentOrder(c *fiber.Ctx) error {
@@ -855,115 +846,107 @@ func ProcessPaymentCaptured(payload map[string]interface{}) {
 		return
 	}
 
-	tx := database.DB.Begin()
-
-	var paymentTransaction models.PaymentTransaction
-	if err := tx.First(&paymentTransaction, "payment_order_id = ?", orderID).Error; err != nil {
-		tx.Rollback()
-		log.Printf("PaymentTransaction fetch error for orderID %s: %v\n", orderID, err)
-		return
+	var result struct {
+		PaymentTransaction models.PaymentTransaction
+		Order              models.Order
+		WalletTransaction  models.WalletTransaction
+		OrderItems         []models.CartItem
 	}
 
-	if paymentTransaction.PaymentStatus == "success" {
-		tx.Rollback()
-		log.Println("Payment already completed for orderID:", orderID)
-		return
-	}
-
-	var order models.Order
-	if err := tx.First(&order, "order_id = ?", paymentTransaction.OrderId).Error; err != nil {
-		tx.Rollback()
-		log.Println("Order fetch error for orderID:", orderID, "->", err)
-		return
-	}
-
-	if order.OrderStatus != "pending" {
-		tx.Rollback()
-		log.Println("Order already placed, skipping update. OrderID:", order.OrderId)
-		return
-	}
-
-	// Deduct wallet amount
-	totalAmountToDeduct := order.FinalOrderValue
-	walletTransaction := models.WalletTransaction{
-		Amount:            totalAmountToDeduct,
-		TransactionType:   "debit",
-		UserId:            order.UserId,
-		TransactionStatus: "success",
-	}
-
-	if err := tx.Create(&walletTransaction).Error; err != nil {
-		tx.Rollback()
-		log.Println("WalletTransaction creation failed:", err)
-		return
-	}
-
-	// Update payment & order status
-	paymentTransaction.PaymentStatus = "success"
-	order.OrderStatus = "placed"
-	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
-
-	if err := tx.Save(&paymentTransaction).Error; err != nil {
-		tx.Rollback()
-		log.Println("Saving payment transaction failed:", err)
-		return
-	}
-
-	// Delete cart items
-	if err := tx.Where("user_id = ?", order.UserId).Delete(&models.CartItem{}).Error; err != nil {
-		tx.Rollback()
-		log.Println("Cart item deletion failed:", err)
-		return
-	}
-
-	// Parse order items
-	var orderItems []models.CartItem
-	if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
-		tx.Rollback()
-		log.Println("Failed to unmarshal OrderItems JSON:", err)
-		return
-	}
-
-	for _, item := range orderItems {
-		order.RestaurantPayableAmount += item.ActualSubTotal
-
-		orderItem := models.OrderItem{
-			OrderId:        order.OrderId,
-			ProductId:      item.ProductId,
-			Quantity:       item.Quantity,
-			SubTotal:       item.SubTotal,
-			UserId:         order.UserId,
-			ActualSubTotal: item.ActualSubTotal * float64(item.Quantity),
+	err = database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		// Fetch payment transaction
+		if err := tx.First(&result.PaymentTransaction, "payment_order_id = ?", orderID).Error; err != nil {
+			return fmt.Errorf("payment transaction fetch error: %v", err)
 		}
 
-		if err := tx.Create(&orderItem).Error; err != nil {
-			tx.Rollback()
-			log.Println("Failed to create OrderItem:", err)
-			return
+		if result.PaymentTransaction.PaymentStatus == "success" {
+			return fmt.Errorf("payment already completed for orderID: %s", orderID)
 		}
 
-		if err := tx.Model(&models.Product{}).
-			Where("product_id = ?", item.ProductId).
-			Update("stock_quantity", gorm.Expr("stock_quantity - ?", item.Quantity)).Error; err != nil {
-			tx.Rollback()
-			log.Println("Failed to update product stock:", err)
-			return
+		// Fetch order
+		if err := tx.First(&result.Order, "order_id = ?", result.PaymentTransaction.OrderId).Error; err != nil {
+			return fmt.Errorf("order fetch error: %v", err)
 		}
-	}
 
-	if err := tx.Preload("User").Save(&order).Error; err != nil {
-		tx.Rollback()
-		log.Println("Failed to save updated order:", err)
+		if result.Order.OrderStatus != "pending" {
+			return fmt.Errorf("order already placed, skipping update. OrderID: %d", result.Order.OrderId)
+		}
+
+		// Create wallet transaction
+		totalAmountToDeduct := result.Order.FinalOrderValue
+		result.WalletTransaction = models.WalletTransaction{
+			Amount:            totalAmountToDeduct,
+			TransactionType:   "debit",
+			UserId:            result.Order.UserId,
+			TransactionStatus: "success",
+		}
+
+		if err := tx.Create(&result.WalletTransaction).Error; err != nil {
+			return fmt.Errorf("wallet transaction creation failed: %v", err)
+		}
+
+		// Update payment & order status
+		result.PaymentTransaction.PaymentStatus = "success"
+		result.Order.OrderStatus = "placed"
+		result.Order.PaymentTransactionId = result.PaymentTransaction.PaymentTransactionId
+
+		if err := tx.Save(&result.PaymentTransaction).Error; err != nil {
+			return fmt.Errorf("saving payment transaction failed: %v", err)
+		}
+
+		// Delete cart items
+		if err := tx.Where("user_id = ?", result.Order.UserId).Delete(&models.CartItem{}).Error; err != nil {
+			return fmt.Errorf("cart item deletion failed: %v", err)
+		}
+
+		// Parse order items
+		if err := json.Unmarshal(result.Order.OrderItems, &result.OrderItems); err != nil {
+			return fmt.Errorf("failed to unmarshal OrderItems JSON: %v", err)
+		}
+
+		// Process each order item
+		for _, item := range result.OrderItems {
+			result.Order.RestaurantPayableAmount += item.ActualSubTotal
+
+			orderItem := models.OrderItem{
+				OrderId:        result.Order.OrderId,
+				ProductId:      item.ProductId,
+				Quantity:       item.Quantity,
+				SubTotal:       item.SubTotal,
+				UserId:         result.Order.UserId,
+				ActualSubTotal: item.ActualSubTotal * float64(item.Quantity),
+			}
+
+			if err := tx.Create(&orderItem).Error; err != nil {
+				return fmt.Errorf("failed to create OrderItem: %v", err)
+			}
+
+			if err := tx.Model(&models.Product{}).
+				Where("product_id = ?", item.ProductId).
+				Update("stock_quantity", gorm.Expr("stock_quantity - ?", item.Quantity)).Error; err != nil {
+				return fmt.Errorf("failed to update product stock: %v", err)
+			}
+		}
+
+		// Save updated order
+		if err := tx.Preload("User").Save(&result.Order).Error; err != nil {
+			return fmt.Errorf("failed to save updated order: %v", err)
+		}
+
+		return nil
+	}, "ProcessPaymentCaptured")
+
+	if err != nil {
+		log.Printf("❌ ProcessPaymentCaptured failed for orderID %s: %v", orderID, err)
 		return
 	}
 
-	if err := NotifyOrderPlaced(order.OrderId); err != nil {
-		log.Println("Notification sending failed:", err)
+	// Send notification outside transaction
+	if err := NotifyOrderPlaced(result.Order.OrderId); err != nil {
+		log.Printf("⚠️ Notification sending failed for order %d: %v", result.Order.OrderId, err)
 	}
 
-	if err := tx.Commit().Error; err != nil {
-		log.Println("Transaction commit failed:", err)
-	}
+	log.Printf("✅ Payment processing completed successfully for orderID: %s", orderID)
 }
 
 func InitiateWalletTopup(c *fiber.Ctx) error {
