@@ -47,8 +47,8 @@ func CreditWalletTransaction(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Wallet Transaction Created"})
 }
 
-func VerifyWalletTransaction(c *fiber.Ctx) error {
-	walletTransactionID := c.Params("transaction_id")
+func VerifyWalletTransactionById(c *fiber.Ctx) error {
+	walletTransactionID := c.Params("id")
 	userID := c.Locals("user_id").(int)
 
 	if userID == 0 {
