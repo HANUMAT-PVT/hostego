@@ -47,9 +47,9 @@ func ConnectDataBase() {
 	}
 
 	// Enhanced connection pool settings for stability
-	sqlDB.SetMaxOpenConns(1000)                // Increased to handle 5000 concurrent users
-	sqlDB.SetMaxIdleConns(500)                 // Increased to maintain larger idle pool
-	sqlDB.SetConnMaxLifetime(15 * time.Minute) // Increased from 10 to 15 minutes for better reuse
+	sqlDB.SetMaxOpenConns(200)                 // Increased to handle 5000 concurrent users
+	sqlDB.SetMaxIdleConns(100)                 // Increased to maintain larger idle pool
+	sqlDB.SetConnMaxLifetime(10 * time.Minute) // Increased from 10 to 15 minutes for better reuse
 	sqlDB.SetConnMaxIdleTime(5 * time.Minute)  // Increased from 3 to 5 minutes for better performance
 	// Reduced from 5 to 3 minutes for faster cleanup
 
