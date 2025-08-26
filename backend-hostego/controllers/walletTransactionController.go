@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 func CreditWalletTransaction(c *fiber.Ctx) error {
@@ -46,63 +47,62 @@ func CreditWalletTransaction(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Wallet Transaction Created"})
 }
 
-func VerifyWalletTransactionById(c *fiber.Ctx) error {
+func VerifyWalletTransaction(c *fiber.Ctx) error {
+	walletTransactionID := c.Params("transaction_id")
 	userID := c.Locals("user_id").(int)
 
-	type verifyWalletTransactionRequest struct {
+	if userID == 0 {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+
+	var requestData struct {
 		TransactionStatus string `json:"transaction_status"`
 	}
-	var requestData verifyWalletTransactionRequest
 	if err := c.BodyParser(&requestData); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
-	walletTransactionID := c.Params("id")
 
 	if requestData.TransactionStatus == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Transaction status is required"})
 	}
 
-	// Start a transaction
-	tx := database.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
+	var result struct {
+		WalletTransaction models.WalletTransaction
+		Wallet            models.Wallet
+	}
+
+	err := database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		// Fetch wallet transaction
+		if err := tx.First(&result.WalletTransaction, "transaction_id = ?", walletTransactionID).Error; err != nil {
+			return err
 		}
-	}()
 
-	var walletTransaction models.WalletTransaction
-	if err := tx.First(&walletTransaction, "transaction_id = ?", walletTransactionID).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Transaction not found"})
-	}
-
-	var wallet models.Wallet
-	if err := tx.First(&wallet, "user_id = ?", walletTransaction.UserId).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Wallet not found"})
-	}
-
-	// Update wallet balance
-	if requestData.TransactionStatus == string(models.TransactionSuccess) {
-		wallet.Balance += walletTransaction.Amount
-		if err := tx.Save(&wallet).Error; err != nil {
-			tx.Rollback()
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update wallet balance"})
+		// Fetch wallet
+		if err := tx.First(&result.Wallet, "user_id = ?", result.WalletTransaction.UserId).Error; err != nil {
+			return err
 		}
-	}
 
-	// Update transaction status
-	walletTransaction.TransactionStatus = models.TransactionStatusType(requestData.TransactionStatus)
-	walletTransaction.PaymentMethod.PaymentVerifiedByAdmin = userID
+		// Update wallet balance if transaction is successful
+		if requestData.TransactionStatus == string(models.TransactionSuccess) {
+			result.Wallet.Balance += result.WalletTransaction.Amount
+			if err := tx.Save(&result.Wallet).Error; err != nil {
+				return err
+			}
+		}
 
-	if err := tx.Save(&walletTransaction).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update transaction status"})
-	}
+		// Update transaction status
+		result.WalletTransaction.TransactionStatus = models.TransactionStatusType(requestData.TransactionStatus)
+		result.WalletTransaction.PaymentMethod.PaymentVerifiedByAdmin = userID
 
-	// Commit the transaction if everything is successful
-	if err := tx.Commit().Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
+		if err := tx.Save(&result.WalletTransaction).Error; err != nil {
+			return err
+		}
+
+		return nil
+	}, "VerifyWalletTransaction")
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Wallet transaction verified successfully"})

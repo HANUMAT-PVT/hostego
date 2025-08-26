@@ -44,8 +44,8 @@ func DatabaseHealthCheck() error {
 		stats.OpenConnections, stats.InUse, stats.Idle, stats.WaitCount, stats.WaitDuration)
 
 	// Updated warning threshold to match new pool settings
-	if stats.OpenConnections > 160 {
-		log.Printf("⚠️  High number of open connections: %d (max: 200)", stats.OpenConnections)
+	if stats.OpenConnections > 800 {
+		log.Printf("⚠️  High number of open connections: %d (max: 1000)", stats.OpenConnections)
 	}
 
 	// Check for connection wait issues
@@ -54,7 +54,7 @@ func DatabaseHealthCheck() error {
 	}
 
 	// Check idle connection health
-	if stats.Idle < 10 && stats.OpenConnections > 50 {
+	if stats.Idle < 50 && stats.OpenConnections > 200 {
 		log.Printf("⚠️  Low idle connections: %d idle out of %d total", stats.Idle, stats.OpenConnections)
 	}
 
@@ -272,7 +272,7 @@ func ForceConnectionCleanup() {
 	time.Sleep(100 * time.Millisecond)
 
 	// Restore original setting
-	sqlDB.SetMaxIdleConns(100)
+	sqlDB.SetMaxIdleConns(500)
 
 	// Log stats after cleanup
 	afterStats := sqlDB.Stats()

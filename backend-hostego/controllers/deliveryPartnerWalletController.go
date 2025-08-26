@@ -5,6 +5,7 @@ import (
 	"backend-hostego/models"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 func FetchDeliveryPartnerWallet(c *fiber.Ctx) error {
@@ -55,44 +56,33 @@ func FetchDeliveryPartnerWalletTransactions(c *fiber.Ctx) error {
 }
 
 func AddEarningsToDeliveryPartnerWallet(currentOrder models.Order) error {
+	return database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		var deliveryPartnerWallet models.DeliveryPartnerWallet
+		var deliveryPartnerWalletTransaction models.DeliveryPartnerWalletTransaction
 
-	tx := database.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
+		// Fetch delivery partner wallet
+		if err := tx.Where("delivery_partner_id = ?", currentOrder.DeliveryPartnerId).First(&deliveryPartnerWallet).Error; err != nil {
+			return err
 		}
-	}()
 
-	var deliveryPartnerWallet models.DeliveryPartnerWallet
-	var deliveryPartnerWalletTransaction models.DeliveryPartnerWalletTransaction
+		// Update wallet balance
+		deliveryPartnerWallet.Balance += currentOrder.DeliveryPartnerFee
+		if err := tx.Save(&deliveryPartnerWallet).Error; err != nil {
+			return err
+		}
 
-	err := tx.Where("delivery_partner_id = ?", currentOrder.DeliveryPartnerId).First(&deliveryPartnerWallet).Error
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
+		// Create wallet transaction record
+		deliveryPartnerWalletTransaction.Amount = currentOrder.DeliveryPartnerFee
+		deliveryPartnerWalletTransaction.TransactionType = models.TransactionCustomType(models.TransactionCredit)
+		deliveryPartnerWalletTransaction.TransactionStatus = models.TransactionStatusType(models.TransactionSuccess)
+		deliveryPartnerWalletTransaction.DeliveryPartnerId = currentOrder.DeliveryPartnerId
 
-	deliveryPartnerWallet.Balance += currentOrder.DeliveryPartnerFee
-	err = tx.Save(&deliveryPartnerWallet).Error
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-	deliveryPartnerWalletTransaction.Amount = currentOrder.DeliveryPartnerFee
-	deliveryPartnerWalletTransaction.TransactionType = models.TransactionCustomType(models.TransactionCredit)
-	deliveryPartnerWalletTransaction.TransactionStatus = models.TransactionStatusType(models.TransactionSuccess)
-	deliveryPartnerWalletTransaction.DeliveryPartnerId = currentOrder.DeliveryPartnerId
-	err = tx.Create(&deliveryPartnerWalletTransaction).Error
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
+		if err := tx.Create(&deliveryPartnerWalletTransaction).Error; err != nil {
+			return err
+		}
 
-	err = tx.Commit().Error
-	if err != nil {
-		return err
-	}
-	return nil
+		return nil
+	}, "AddEarningsToDeliveryPartnerWallet")
 }
 
 func CreateWalletWithdrawalRequests(c *fiber.Ctx) error {
@@ -102,54 +92,50 @@ func CreateWalletWithdrawalRequests(c *fiber.Ctx) error {
 			"message": "Unauthorized",
 		})
 	}
-	tx := database.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
-	// Find all delivery partners with wallet balance > 0
-	var deliveryPartnerWallets []models.DeliveryPartnerWallet
-	err := tx.Where("balance > ?", 0).Find(&deliveryPartnerWallets).Error
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	if len(deliveryPartnerWallets) == 0 {
-		return err
-	}
 
 	var createdTransactions []models.DeliveryPartnerWalletTransaction
 
-	// Create withdrawal requests for each eligible delivery partner
-	for _, wallet := range deliveryPartnerWallets {
-		var deliveryPartner models.DeliveryPartner
-		err := tx.Where("delivery_partner_id = ?", wallet.DeliveryPartnerId).First(&deliveryPartner).Error
-		if err != nil {
-			continue // Skip if delivery partner not found
-		}
-
-		transaction := models.DeliveryPartnerWalletTransaction{
-
-			Amount:            wallet.Balance,
-			TransactionType:   models.TransactionCustomType(models.TransactionDebit),
-			TransactionStatus: models.TransactionStatusType(models.TransactionPending),
-			DeliveryPartnerId: wallet.DeliveryPartnerId,
-			DeliveryPartner:   deliveryPartner,
-		}
-
-		if err := tx.Create(&transaction).Error; err != nil {
-			tx.Rollback()
+	err := database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		// Find all delivery partners with wallet balance > 0
+		var deliveryPartnerWallets []models.DeliveryPartnerWallet
+		if err := tx.Where("balance > ?", 0).Find(&deliveryPartnerWallets).Error; err != nil {
 			return err
 		}
 
-		createdTransactions = append(createdTransactions, transaction)
-	}
+		if len(deliveryPartnerWallets) == 0 {
+			return nil // No wallets with balance to process
+		}
 
-	if err := tx.Commit().Error; err != nil {
-		return err
+		// Create withdrawal requests for each eligible delivery partner
+		for _, wallet := range deliveryPartnerWallets {
+			var deliveryPartner models.DeliveryPartner
+			if err := tx.Where("delivery_partner_id = ?", wallet.DeliveryPartnerId).First(&deliveryPartner).Error; err != nil {
+				continue // Skip if delivery partner not found
+			}
+
+			transaction := models.DeliveryPartnerWalletTransaction{
+				Amount:            wallet.Balance,
+				TransactionType:   models.TransactionCustomType(models.TransactionDebit),
+				TransactionStatus: models.TransactionStatusType(models.TransactionPending),
+				DeliveryPartnerId: wallet.DeliveryPartnerId,
+				DeliveryPartner:   deliveryPartner,
+			}
+
+			if err := tx.Create(&transaction).Error; err != nil {
+				return err
+			}
+
+			createdTransactions = append(createdTransactions, transaction)
+		}
+
+		return nil
+	}, "CreateWalletWithdrawalRequests")
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to create withdrawal requests",
+			"error":   err.Error(),
+		})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
@@ -167,81 +153,65 @@ func VerifyDeliveryPartnerWithdrawalRequest(c *fiber.Ctx) error {
 		})
 	}
 
-	tx := database.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
-	// First load the existing transaction
-	var deliveryPartnerWalletTransaction models.DeliveryPartnerWalletTransaction
-	if err := tx.Where("transaction_id = ?", transactionId).First(&deliveryPartnerWalletTransaction).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "Transaction not found",
-			"error":   err.Error(),
-		})
-	}
-
-	var deliveryPartnerWallet models.DeliveryPartnerWallet
-	if err := tx.Where("delivery_partner_id = ?", deliveryPartnerWalletTransaction.DeliveryPartnerId).First(&deliveryPartnerWallet).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Wallet not found",
-			"error":   err.Error(),
-		})
-	}
-
 	var requestData struct {
 		UniqueTransactionID          string `json:"unique_transaction_id"`
 		TransactionStatusTypePayment string `json:"transaction_status"`
 	}
 	if err := c.BodyParser(&requestData); err != nil {
-		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request body",
 			"error":   err.Error(),
 		})
 	}
 
-	// Update transaction
-	deliveryPartnerWalletTransaction.PaymentMethod.PaymentVerifiedByAdmin = user_id
-	deliveryPartnerWalletTransaction.TransactionStatus = models.TransactionStatusType(requestData.TransactionStatusTypePayment)
-
-	// Update wallet balance
-	if models.TransactionStatusType(requestData.TransactionStatusTypePayment) == models.TransactionSuccess {
-		deliveryPartnerWallet.Balance -= deliveryPartnerWalletTransaction.Amount
-		deliveryPartnerWalletTransaction.PaymentMethod.UniqueTransactionID = requestData.UniqueTransactionID
+	var result struct {
+		Transaction models.DeliveryPartnerWalletTransaction
+		Wallet      models.DeliveryPartnerWallet
 	}
 
-	// Save both updates
-	if err := tx.Save(&deliveryPartnerWalletTransaction).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Failed to update transaction",
-			"error":   err.Error(),
-		})
-	}
+	err := database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		// First load the existing transaction
+		if err := tx.Where("transaction_id = ?", transactionId).First(&result.Transaction).Error; err != nil {
+			return err
+		}
 
-	if err := tx.Save(&deliveryPartnerWallet).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Failed to update wallet",
-			"error":   err.Error(),
-		})
-	}
+		// Load the wallet
+		if err := tx.Where("delivery_partner_id = ?", result.Transaction.DeliveryPartnerId).First(&result.Wallet).Error; err != nil {
+			return err
+		}
 
-	if err := tx.Commit().Error; err != nil {
+		// Update transaction
+		result.Transaction.PaymentMethod.PaymentVerifiedByAdmin = user_id
+		result.Transaction.TransactionStatus = models.TransactionStatusType(requestData.TransactionStatusTypePayment)
+
+		// Update wallet balance if transaction is successful
+		if models.TransactionStatusType(requestData.TransactionStatusTypePayment) == models.TransactionSuccess {
+			result.Wallet.Balance -= result.Transaction.Amount
+			result.Transaction.PaymentMethod.UniqueTransactionID = requestData.UniqueTransactionID
+		}
+
+		// Save both updates
+		if err := tx.Save(&result.Transaction).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Save(&result.Wallet).Error; err != nil {
+			return err
+		}
+
+		return nil
+	}, "VerifyDeliveryPartnerWithdrawalRequest")
+
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Failed to commit transaction",
+			"message": "Failed to verify withdrawal request",
 			"error":   err.Error(),
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Withdrawal request verified successfully",
-		"data":    deliveryPartnerWalletTransaction,
+		"data":    result.Transaction,
 	})
 }
 

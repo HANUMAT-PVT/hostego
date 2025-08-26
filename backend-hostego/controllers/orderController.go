@@ -11,6 +11,11 @@ import (
 
 	"time"
 
+	"fmt"
+
+	"log"
+	"strings"
+
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
@@ -191,22 +196,56 @@ func CalculateFinalOrderValue(cartItems []models.CartItem, freeDelivery bool, sh
 func MarkOrderAsDelivered(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
 	if user_id == 0 {
-
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
+
 	orderId := c.Params("id")
-	var order models.Order
-	if err := database.DB.First(&order, "order_id = ?", orderId).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+
+	var result struct {
+		Order models.Order
 	}
 
-	// Set delivered time to current time
-	order.DeliveredAt = time.Now()
+	err := database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		// Fetch order within transaction
+		if err := tx.First(&result.Order, "order_id = ?", orderId).Error; err != nil {
+			return fmt.Errorf("order not found: %v", err)
+		}
 
-	// Save changes
-	if err := database.DB.Save(&order).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		// Set delivered time to current time
+		result.Order.DeliveredAt = time.Now()
+		result.Order.OrderStatus = models.DeliveredOrderStatus
+
+		// Save changes atomically
+		if err := tx.Save(&result.Order).Error; err != nil {
+			return fmt.Errorf("failed to save order: %v", err)
+		}
+
+		return nil
+	}, "MarkOrderAsDelivered")
+
+	if err != nil {
+		if strings.Contains(err.Error(), "order not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Order not found"})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"order": order, "message": "Order is delivered succesfully!"})
+
+	// Execute delivery partner earnings outside of transaction
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("🚨 CRITICAL: Delivery earnings panic in MarkOrderAsDelivered: %v", r)
+			}
+		}()
+
+		// Add earnings to delivery partner wallet
+		AddEarningsToDeliveryPartnerWallet(result.Order)
+	}()
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"order":   result.Order,
+		"message": "Order is delivered successfully!",
+	})
 }
 
 func FetchOrderById(c *fiber.Ctx) error {
@@ -227,6 +266,9 @@ func FetchOrderById(c *fiber.Ctx) error {
 
 func AssignOrderToDeliveryPartner(c *fiber.Ctx) error {
 	user_id := c.Locals("user_id")
+	if user_id == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
+	}
 
 	type requestAssignOrder struct {
 		DeliveryPartnerId int `json:"delivery_partner_id"`
@@ -234,49 +276,83 @@ func AssignOrderToDeliveryPartner(c *fiber.Ctx) error {
 	}
 	var request_assign requestAssignOrder
 
-	var order models.Order
-
-	var delivery_partner models.DeliveryPartner
-
-	if user_id == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
-	}
 	if err := c.BodyParser(&request_assign); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	if err := database.DB.Where("order_id=?", request_assign.OrderId).Find(&order).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
-	if err := database.DB.Preload("User").Where("delivery_partner_id=?", request_assign.DeliveryPartnerId).Find(&delivery_partner).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
-	if delivery_partner.AvailabilityStatus == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Delivery partner is not available"})
+	var result struct {
+		Order           models.Order
+		DeliveryPartner models.DeliveryPartner
 	}
 
-	jsonDeliveryPartner, err := json.Marshal(delivery_partner)
+	err := database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		// Fetch order within transaction
+		if err := tx.Where("order_id=?", request_assign.OrderId).First(&result.Order).Error; err != nil {
+			return fmt.Errorf("order not found: %v", err)
+		}
+
+		// Fetch delivery partner within transaction
+		if err := tx.Preload("User").Where("delivery_partner_id=?", request_assign.DeliveryPartnerId).First(&result.DeliveryPartner).Error; err != nil {
+			return fmt.Errorf("delivery partner not found: %v", err)
+		}
+
+		// Validate delivery partner availability
+		if result.DeliveryPartner.AvailabilityStatus == 0 {
+			return fmt.Errorf("delivery partner is not available")
+		}
+
+		// Marshal delivery partner data
+		jsonDeliveryPartner, err := json.Marshal(result.DeliveryPartner)
+		if err != nil {
+			return fmt.Errorf("failed to marshal delivery partner data: %v", err)
+		}
+
+		// Update order with delivery partner assignment
+		result.Order.DeliveryPartner = jsonDeliveryPartner
+		result.Order.DeliveryPartnerId = request_assign.DeliveryPartnerId
+		result.Order.OrderStatus = models.AssignedOrderStatus
+
+		// Save changes atomically
+		if err := tx.Where("order_id=?", request_assign.OrderId).Save(&result.Order).Error; err != nil {
+			return fmt.Errorf("failed to save order: %v", err)
+		}
+
+		return nil
+	}, "AssignOrderToDeliveryPartner")
+
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	order.DeliveryPartner = jsonDeliveryPartner
-
-	order.DeliveryPartnerId = request_assign.DeliveryPartnerId
-	order.OrderStatus = models.AssignedOrderStatus
-
-	if err := database.DB.Where("order_id=?", request_assign.OrderId).Save(&order).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
-	}
-	//notifiy delivery partner that new order has been assigned to them
-
-	if err := NotifyPersonByUserIdAndOrderID(request_assign.OrderId, "Order #"+strconv.Itoa(request_assign.OrderId)+" is assigned to you!", "Order Assigned", delivery_partner.UserId); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		if strings.Contains(err.Error(), "order not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Order not found"})
+		}
+		if strings.Contains(err.Error(), "delivery partner not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Delivery partner not found"})
+		}
+		if strings.Contains(err.Error(), "not available") {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Delivery partner is not available"})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	// natsclient.SendMessageToUser(user_id.(string), message, "", orderManagerRoles)
+	// Execute notification outside of transaction to avoid blocking
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("🚨 CRITICAL: Notification panic in AssignOrderToDeliveryPartner: %v", r)
+			}
+		}()
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order assigned succefully to" + " " + delivery_partner.User.FirstName})
+		// Notify delivery partner that new order has been assigned
+		NotifyPersonByUserIdAndOrderID(
+			request_assign.OrderId,
+			"Order #"+strconv.Itoa(request_assign.OrderId)+" is assigned to you!",
+			"Order Assigned",
+			result.DeliveryPartner.UserId,
+		)
+	}()
 
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Order assigned successfully to " + result.DeliveryPartner.User.FirstName,
+	})
 }
 
 func UpdateOrderById(c *fiber.Ctx) error {
@@ -285,16 +361,6 @@ func UpdateOrderById(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	order_id := c.Params("id")
-
-	var existingOrder models.Order
-	if err := database.DB.Where("order_id = ?", order_id).First(&existingOrder).Error; err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Order not found"})
-	}
-
-	// var delivery_partner models.DeliveryPartner
-	// if err := database.DB.Where("delivery_partner_id = ?", existingOrder.DeliveryPartnerId).First(&delivery_partner).Error; err != nil {
-	// 	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Delivery partner not found"})
-	// }
 
 	var updateData struct {
 		OrderStatus            models.OrderStatusType `json:"order_status"`
@@ -310,54 +376,105 @@ func UpdateOrderById(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	// Update only the status
-	if updateData.OrderStatus == models.CanceledOrderStatus {
-		if existingOrder.OrderStatus == models.DeliveredOrderStatus {
-			return c.Status(fiber.StatusOK).JSON(fiber.Map{
+	var result struct {
+		Order models.Order
+	}
+
+	err := database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		// Fetch existing order within transaction
+		if err := tx.Where("order_id = ?", order_id).First(&result.Order).Error; err != nil {
+			return fmt.Errorf("order not found: %v", err)
+		}
+
+		// Validate order status transitions
+		if updateData.OrderStatus == models.CanceledOrderStatus {
+			if result.Order.OrderStatus == models.DeliveredOrderStatus {
+				return fmt.Errorf("order cannot be cancelled as it's already delivered")
+			}
+		}
+
+		// Handle restaurant acceptance
+		if updateData.IsAcceptedByRestaurant {
+			result.Order.IsAcceptedByRestaurant = true
+			result.Order.RestaurantRespondedAt = time.Now()
+			result.Order.ExpectedReadyAt = time.Now().Add(time.Duration(updateData.ExpectedReadyInMins) * time.Minute)
+		}
+
+		// Handle restaurant rejection
+		if updateData.IsRejectedByRestaurant {
+			result.Order.IsAcceptedByRestaurant = false
+			result.Order.RestaurantRespondedAt = time.Now()
+		}
+
+		// Handle delivered status
+		if updateData.OrderStatus == models.DeliveredOrderStatus {
+			// Only update if not already delivered
+			if result.Order.OrderStatus != models.DeliveredOrderStatus {
+				result.Order.DeliveredAt = time.Now()
+			}
+		}
+
+		// Handle ready status
+		if updateData.OrderStatus == models.ReadyOrderStatus {
+			result.Order.ActualReadyAt = time.Now()
+		}
+
+		// Update order status
+		result.Order.OrderStatus = updateData.OrderStatus
+
+		// Update delivery partner if provided
+		if updateData.DeliveryPartnerId != 0 {
+			result.Order.DeliveryPartnerId = updateData.DeliveryPartnerId
+		}
+
+		// Save all changes atomically
+		if err := tx.Save(&result.Order).Error; err != nil {
+			return fmt.Errorf("failed to save order: %v", err)
+		}
+
+		return nil
+	}, "UpdateOrderById")
+
+	if err != nil {
+		// Handle specific error cases
+		if strings.Contains(err.Error(), "order not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Order not found"})
+		}
+		if strings.Contains(err.Error(), "cannot be cancelled") {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"message": "Order can't be cancelled its delivered already !",
-				"order":   existingOrder,
+				"order":   result.Order,
 			})
 		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	if updateData.IsAcceptedByRestaurant {
-		existingOrder.IsAcceptedByRestaurant = true
-		existingOrder.RestaurantRespondedAt = time.Now()
-		existingOrder.ExpectedReadyAt = time.Now().Add(time.Duration(updateData.ExpectedReadyInMins) * time.Minute)
-		NotifyOrderAcceptedOrRejectedByRestaurant(existingOrder.OrderId, true, updateData.ExpectedReadyInMins)
-	}
-	if updateData.IsRejectedByRestaurant {
-		existingOrder.IsAcceptedByRestaurant = false
-		existingOrder.RestaurantRespondedAt = time.Now()
-		NotifyOrderAcceptedOrRejectedByRestaurant(existingOrder.OrderId, false, 0)
-	}
+	// Execute notifications outside of transaction to avoid blocking
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("🚨 CRITICAL: Notification panic in UpdateOrderById: %v", r)
+			}
+		}()
 
-	if updateData.OrderStatus == models.DeliveredOrderStatus {
-		// delivered status only when order is not delivered yet
-		if existingOrder.OrderStatus != models.DeliveredOrderStatus {
-
-			existingOrder.DeliveredAt = time.Now()
-			AddEarningsToDeliveryPartnerWallet(existingOrder)
+		// Send notifications based on order status changes
+		if updateData.IsAcceptedByRestaurant {
+			NotifyOrderAcceptedOrRejectedByRestaurant(result.Order.OrderId, true, updateData.ExpectedReadyInMins)
 		}
-
-	}
-
-	if updateData.OrderStatus == models.ReadyOrderStatus {
-		existingOrder.ActualReadyAt = time.Now()
-	}
-	existingOrder.OrderStatus = updateData.OrderStatus
-	if updateData.DeliveryPartnerId != 0 {
-		existingOrder.DeliveryPartnerId = updateData.DeliveryPartnerId
-	}
-
-	// Save the changes
-	if err := database.DB.Save(&existingOrder).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
+		if updateData.IsRejectedByRestaurant {
+			NotifyOrderAcceptedOrRejectedByRestaurant(result.Order.OrderId, false, 0)
+		}
+		if updateData.OrderStatus == models.DeliveredOrderStatus {
+			// Only add earnings if not already delivered
+			if result.Order.OrderStatus != models.DeliveredOrderStatus {
+				AddEarningsToDeliveryPartnerWallet(result.Order)
+			}
+		}
+	}()
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Order status updated successfully!",
-		"order":   existingOrder,
+		"order":   result.Order,
 	})
 }
 
@@ -642,80 +759,70 @@ func FetchAllOrderItemsAccordingToProducts(c *fiber.Ctx) error {
 }
 
 func CancelOrder(c *fiber.Ctx) error {
-
 	current_user_id := c.Locals("user_id").(int)
 	if current_user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
+
 	type OrderRequest struct {
 		OrderID int `json:"order_id"`
 	}
 
 	var request OrderRequest
-
 	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
-	if current_user_id == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
-	}
 
-	var order models.Order
-
-	var delivery_partner models.DeliveryPartner
-
-	tx := database.DB.Begin()
-
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
+	err := database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		var order models.Order
+		if err := tx.Where("order_id = ?", request.OrderID).First(&order).Error; err != nil {
+			return err
 		}
-	}()
 
-	if err := database.DB.Where("order_id = ?", request.OrderID).First(&order).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	if order.DeliveryPartnerId != 0 {
-		if err := tx.Where("delivery_partner_id = ?", order.DeliveryPartnerId).First(&delivery_partner).Error; err != nil {
-			tx.Rollback()
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		// Check if order has delivery partner
+		if order.DeliveryPartnerId != 0 {
+			var delivery_partner models.DeliveryPartner
+			if err := tx.Where("delivery_partner_id = ?", order.DeliveryPartnerId).First(&delivery_partner).Error; err != nil {
+				return err
+			}
 		}
-	}
 
-	order.OrderStatus = models.OrderStatusType(models.CanceledOrderStatus)
-	order.DeliveryPartnerId = 0
-	order.DeliveryPartner = nil
+		// Update order status
+		order.OrderStatus = models.OrderStatusType(models.CanceledOrderStatus)
+		order.DeliveryPartnerId = 0
+		order.DeliveryPartner = nil
 
-	if err := tx.Save(&order).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	var orderItems []models.CartItem
-	if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse order items"})
-	}
-
-	for _, item := range orderItems {
-		if err := tx.Model(&models.Product{}).Where("product_id = ?", item.ProductId).
-			Update("stock_quantity", gorm.Expr("stock_quantity + ?", item.Quantity)).Error; err != nil {
-			tx.Rollback()
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		if err := tx.Save(&order).Error; err != nil {
+			return err
 		}
-		if err := tx.Where("order_id = ?", order.OrderId).
-			Delete(&models.OrderItem{}).Error; err != nil {
-			tx.Rollback()
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-		}
-	}
-	// Commit the transaction
-	if err := tx.Commit().Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
-	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order  Cancelled/without refund"})
 
+		// Parse order items
+		var orderItems []models.CartItem
+		if err := json.Unmarshal(order.OrderItems, &orderItems); err != nil {
+			return fmt.Errorf("failed to parse order items: %v", err)
+		}
+
+		// Restore product stock and delete order items
+		for _, item := range orderItems {
+			if err := tx.Model(&models.Product{}).Where("product_id = ?", item.ProductId).
+				Update("stock_quantity", gorm.Expr("stock_quantity + ?", item.Quantity)).Error; err != nil {
+				return err
+			}
+
+			if err := tx.Where("order_id = ?", order.OrderId).
+				Delete(&models.OrderItem{}).Error; err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}, "CancelOrder")
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order Cancelled/without refund"})
 }
 
 func FetchAllOrdersByShopId(c *fiber.Ctx) error {

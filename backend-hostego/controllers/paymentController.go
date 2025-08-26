@@ -277,98 +277,97 @@ func InitiateRefundPayment(c *fiber.Ctx) error {
 }
 
 func InitateCashfreePaymentOrder(c *fiber.Ctx) error {
-
 	user_id := c.Locals("user_id").(int)
 	if user_id == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Unauthorized"})
 	}
-	tx := database.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
 
 	var orderRequest struct {
 		OrderId int `json:"order_id"`
 	}
-	var paymentTransaction models.PaymentTransaction
+	if err := c.BodyParser(&orderRequest); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
 
-	err := c.BodyParser(&orderRequest)
+	var result struct {
+		User               models.User
+		Order              models.Order
+		PaymentTransaction models.PaymentTransaction
+		CashfreeResponse   map[string]interface{}
+	}
+
+	err := database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		// Fetch user
+		if err := tx.First(&result.User, "user_id = ?", user_id).Error; err != nil {
+			return err
+		}
+
+		// Fetch order
+		if err := tx.First(&result.Order, "order_id = ?", orderRequest.OrderId).Error; err != nil {
+			return err
+		}
+
+		// Prepare Cashfree request body
+		body := map[string]interface{}{
+			"order_amount":   result.Order.FinalOrderValue,
+			"order_currency": "INR",
+			"customer_details": map[string]interface{}{
+				"customer_id":    strconv.Itoa(result.User.UserId),
+				"customer_phone": result.User.MobileNumber,
+				"customer_email": result.User.Email,
+				"customer_name":  result.User.FirstName,
+			},
+		}
+
+		// Make Cashfree API call
+		restyClient := resty.New()
+		clientId := config.GetEnv("CASHFREE_CLIENT_ID_")
+		clientSecret := config.GetEnv("CASHFREE_CLIENT_SECRET_")
+		cashFreeApiUrl := config.GetEnv("CASHFREE_API_URL_")
+
+		resp, err := restyClient.R().
+			SetHeader("Content-Type", "application/json").
+			SetHeader("x-api-version", "2023-08-01").
+			SetHeader("x-client-id", clientId).
+			SetHeader("x-client-secret", clientSecret).
+			SetBody(body).
+			Post(cashFreeApiUrl)
+
+		if err != nil {
+			return err
+		}
+
+		// Parse Cashfree response
+		if err := json.Unmarshal(resp.Body(), &result.CashfreeResponse); err != nil {
+			return fmt.Errorf("invalid response from Cashfree: %v", err)
+		}
+
+		// Create payment transaction
+		result.PaymentTransaction.OrderId = orderRequest.OrderId
+		result.PaymentTransaction.UserId = user_id
+		result.PaymentTransaction.Amount = result.Order.FinalOrderValue
+		result.PaymentTransaction.PaymentStatus = "pending"
+		result.PaymentTransaction.PaymentMethod = "UPI"
+		result.PaymentTransaction.PaymentOrderId = result.CashfreeResponse["order_id"].(string)
+
+		if err := tx.Create(&result.PaymentTransaction).Error; err != nil {
+			return err
+		}
+
+		// Update order with payment transaction ID
+		result.Order.PaymentTransactionId = result.PaymentTransaction.PaymentTransactionId
+		if err := tx.Save(&result.Order).Error; err != nil {
+			return err
+		}
+
+		return nil
+	}, "InitateCashfreePaymentOrder")
+
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	fmt.Println(orderRequest, "orderRequest", user_id)
-	var user models.User
-	if err := tx.First(&user, "user_id = ?", user_id).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	var order models.Order
-	if err := tx.First(&order, "order_id = ?", orderRequest.OrderId).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	body := map[string]interface{}{
-		"order_amount":   order.FinalOrderValue,
-		"order_currency": "INR",
-		"customer_details": map[string]interface{}{
-			"customer_id":    strconv.Itoa(user.UserId),
-			"customer_phone": user.MobileNumber,
-			"customer_email": user.Email,
-			"customer_name":  user.FirstName,
-		},
-	}
-
-	restyClient := resty.New()
-	// Cashfree credentials from env
-	clientId := config.GetEnv("CASHFREE_CLIENT_ID_")
-	clientSecret := config.GetEnv("CASHFREE_CLIENT_SECRET_")
-	cashFreeApiUrl := config.GetEnv("CASHFREE_API_URL_")
-
-	resp, err := restyClient.R().
-		SetHeader("Content-Type", "application/json").
-		SetHeader("x-api-version", "2023-08-01").
-		SetHeader("x-client-id", clientId).
-		SetHeader("x-client-secret", clientSecret).
-		SetBody(body).
-		Post(cashFreeApiUrl)
-
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	// Return response from Cashfree
-	var cashfreeResp map[string]interface{}
-	if err := json.Unmarshal(resp.Body(), &cashfreeResp); err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "Invalid response from Cashfree"})
-	}
-	paymentTransaction.OrderId = orderRequest.OrderId
-	paymentTransaction.UserId = user_id
-	paymentTransaction.Amount = order.FinalOrderValue
-	paymentTransaction.PaymentStatus = "pending"
-	paymentTransaction.PaymentMethod = "UPI"
-	paymentTransaction.PaymentOrderId = cashfreeResp["order_id"].(string)
-
-	if err := tx.Create(&paymentTransaction).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	order.PaymentTransactionId = paymentTransaction.PaymentTransactionId
-
-	if err := tx.Save(&order).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	if err := tx.Commit().Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(cashfreeResp)
-
+	return c.Status(fiber.StatusOK).JSON(result.CashfreeResponse)
 }
 
 func VerifyCashfreePayment(c *fiber.Ctx) error {

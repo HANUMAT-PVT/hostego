@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 func CreateRestaurantPayout(shopID int) (*models.RestaurantPayout, error) {
@@ -80,15 +81,7 @@ func InitiateRestaurantPayout(c *fiber.Ctx) error {
 }
 
 func VerifyRestaurantPayout(c *fiber.Ctx) error {
-
 	payoutID := c.Params("payout_id")
-
-	tx := database.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
 
 	var request struct {
 		PayoutID      string `json:"payout_id"`
@@ -100,43 +93,47 @@ func VerifyRestaurantPayout(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
-	var payout models.RestaurantPayout
-	if err := database.DB.First(&payout, "payout_id = ?", payoutID).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Payout not found"})
-	}
+	err := database.SafeTransactionWithCleanup(func(tx *gorm.DB) error {
+		var payout models.RestaurantPayout
+		if err := tx.First(&payout, "payout_id = ?", payoutID).Error; err != nil {
+			return err
+		}
 
-	if payout.Status != "pending" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Payout is not pending"})
-	}
+		if payout.Status != "pending" {
+			return fmt.Errorf("payout is not pending")
+		}
 
-	now := time.Now()
-	payout.PaidAt = &now
-	payout.PaymentRefID = request.PaymentRefID
-	payout.PaymentMethod = request.PaymentMethod
-	payout.Status = "paid"
+		now := time.Now()
+		payout.PaidAt = &now
+		payout.PaymentRefID = request.PaymentRefID
+		payout.PaymentMethod = request.PaymentMethod
+		payout.Status = "paid"
 
-	// update the orders with the payout id
-	if err := tx.Model(&models.Order{}).
-		Where("restaurant_payout_id = ?", payoutID).
-		Update("restaurant_payout_id", payoutID).
-		Update("restaurant_paid_at", now).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update orders"})
-	}
+		// Update the orders with the payout id
+		if err := tx.Model(&models.Order{}).
+			Where("restaurant_payout_id = ?", payoutID).
+			Update("restaurant_payout_id", payoutID).
+			Update("restaurant_paid_at", now).Error; err != nil {
+			return err
+		}
 
-	if err := tx.Save(&payout).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update payout status"})
-	}
+		if err := tx.Save(&payout).Error; err != nil {
+			return err
+		}
 
-	// Mark all associated orders as paid
-	payoutIDStr := strconv.Itoa(payout.PayoutID)
-	if err := tx.Model(&models.Order{}).
-		Where("restaurant_payout_id = ?", payoutIDStr).
-		Update("restaurant_paid_at", now).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to mark orders as paid"})
-	}
+		// Mark all associated orders as paid
+		payoutIDStr := strconv.Itoa(payout.PayoutID)
+		if err := tx.Model(&models.Order{}).
+			Where("restaurant_payout_id = ?", payoutIDStr).
+			Update("restaurant_paid_at", now).Error; err != nil {
+			return err
+		}
 
-	if err := tx.Commit().Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to commit transaction"})
+		return nil
+	}, "VerifyRestaurantPayout")
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Payout verified successfully"})
