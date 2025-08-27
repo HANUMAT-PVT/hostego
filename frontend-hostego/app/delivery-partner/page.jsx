@@ -146,45 +146,21 @@ const Page = () => {
         }
     }
 
-    const fetchDeliveryPartnerOrders = async (page = 1, reset = false) => {
+    const fetchDeliveryPartnerOrders = async () => {
         try {
             if (!deliveryPartner?.delivery_partner_id) return
-            if (reset) {
-                setCurrentPage(1);
-                setDeliveryPartnerOrders([]);
-            } else {
-                setLoadingMore(true);
-            }
-            
-            let { data } = await axiosClient.get(`/api/order/delivery-partner/${deliveryPartner?.delivery_partner_id}?status=${selectedFilter}&page=${page}&limit=20`);
-            
-            if (reset) {
-                setDeliveryPartnerOrders(data?.orders || []);
-            } else {
-                setDeliveryPartnerOrders(prev => [...prev, ...(data?.orders || [])]);
-            }
-            
-            // Check if there are more orders to load
-            const totalFetched = reset ? (data?.orders || []).length : deliveryPartnerOrders.length + (data?.orders || []).length;
-            setHasMore(totalFetched < (data?.total || 0));
+            let { data } = await axiosClient.get(`/api/order/delivery-partner/${deliveryPartner?.delivery_partner_id}?status=${selectedFilter}&page=1&limit=40`);
+            setDeliveryPartnerOrders(data?.orders);
         } catch (error) {
             console.error('Error fetching orders:', error);
         } finally {
-            setLoadingMore(false);
+
         }
     };
 
     useEffect(() => {
-        fetchDeliveryPartnerOrders(1, true);
+        fetchDeliveryPartnerOrders();
     }, [selectedFilter]);
-
-    const loadMore = async () => {
-        if (loadingMore || !hasMore) return;
-        
-        const nextPage = currentPage + 1;
-        setCurrentPage(nextPage);
-        await fetchDeliveryPartnerOrders(nextPage, false);
-    };
 
     const handleFilterChange = (value) => {
         setSelectedFilter(value);
@@ -469,37 +445,6 @@ const Page = () => {
                     {deliveryPartnerOrders?.map((order) => (
                         <MaintainOrderStatusForDeliveryPartner onUpdateOrderStatus={updateOrderStatus} key={order?.order_id} order={order} />
                     ))}
-                    
-                    {/* Load More Button */}
-                    {hasMore && deliveryPartnerOrders.length > 0 && (
-                        <div className="flex justify-center py-4">
-                            <button
-                                onClick={loadMore}
-                                disabled={loadingMore}
-                                className={`px-6 py-3 rounded-lg font-medium transition-all ${loadingMore
-                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                    : 'bg-[var(--primary-color)] text-white hover:bg-[var(--primary-color)]/90 shadow-sm hover:shadow-md'
-                                    }`}
-                            >
-                                {loadingMore ? (
-                                    <div className="flex items-center gap-2">
-                                        <RefreshCw className="w-4 h-4 animate-spin" />
-                                        Loading...
-                                    </div>
-                                ) : (
-                                    'Load More Orders'
-                                )}
-                            </button>
-                        </div>
-                    )}
-                    
-                    {/* End of Results */}
-                    {!hasMore && deliveryPartnerOrders.length > 0 && (
-                        <div className="text-center py-4 text-gray-500">
-                            <p className="text-sm">You've reached the end of the results</p>
-                        </div>
-                    )}
-                    
                     {!isLoading && deliveryPartnerOrders.length === 0 && (
                         <div className="p-8 text-center">
                             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
