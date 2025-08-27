@@ -14,7 +14,7 @@ import (
 
 var Client *messaging.Client
 
-// Load once at startup
+// Load once at startupx
 func Init(ctx context.Context, credentialFile string) error {
 	var pathForFirebase = "/etc/hostego/firebase.json"
 	// var pathForFirebase = credentialFile
