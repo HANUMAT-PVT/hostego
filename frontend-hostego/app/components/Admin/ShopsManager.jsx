@@ -64,6 +64,7 @@ const ShopForm = ({ onSubmit, onCancel, initialData = null }) => {
             setUploadProgress(prev => ({ ...prev, [fieldName]: 'Uploading...' }));
 
             const uploadedUrl = await uploadToS3Bucket(file);
+            console.log(uploadedUrl, "uploadedUrl")
             setFormData(prev => ({ ...prev, [fieldName]: uploadedUrl }));
             setUploadProgress(prev => ({ ...prev, [fieldName]: 'Uploaded!' }));
 

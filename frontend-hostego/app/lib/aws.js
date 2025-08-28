@@ -1,6 +1,6 @@
 "use client";
 import AWS from "aws-sdk";
-import imageCompression from 'browser-image-compression';
+// import imageCompression from 'browser-image-compression';
 // Only log in development log
 if (process.env.NODE_ENV !== "production") {
   console.log("AWS Environment Variables:", {
@@ -27,16 +27,16 @@ AWS.config.update(awsConfig);
 const s3 = new AWS.S3();
 
 // Image compression options
-const compressionOptions = {
-  maxSizeMB: 0.2,          // Max file size in MB
-  maxWidthOrHeight: 1024,  // Max width/height in pixels
-  useWebWorker: true,      // Use web worker for better performance
-  fileType: 'image/webp'   // Convert to WebP for better compression
-};
+// const compressionOptions = {
+//   maxSizeMB: 1,          // Max file size in MB
+//   maxWidthOrHeight: 1024,  // Max width/height in pixels
+//   useWebWorker: true,      // Use web worker for better performance
+//   fileType: 'image/webp'   // Convert to WebP for better compression
+// };
 
 export const uploadToS3Bucket = async (file) => {
   try {
-    let compressedFile = file;
+    // let compressedFile = file;
 
     // Only compress if it's an image
     if (file.type.startsWith('image/')) {
@@ -46,10 +46,10 @@ export const uploadToS3Bucket = async (file) => {
       }
 
       // Compress the image
-      compressedFile = await imageCompression(file, compressionOptions);
+      // compressedFile = await imageCompression(file, compressionOptions);
 
       if (process.env.NODE_ENV !== "production") {
-        console.log('Compressed file size:', compressedFile.size / 1024 / 1024, 'MB');
+        console.log('Compressed file size:', file.size / 1024 / 1024, 'MB');
       }
     }
 
@@ -60,14 +60,14 @@ export const uploadToS3Bucket = async (file) => {
     const params = {
       Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
       Key: uniqueFileName,
-      Body: compressedFile,
+      Body: file,
       ContentType: 'image/webp',
       CacheControl: 'max-age=31536000', // Cache for 1 year
     };
 
     // Upload to S3
-    const { Location } = await s3.upload(params).promise();
-    return Location;
+    await s3.upload(params).promise();
+    return `https://d2kxp8nwthzd6m.cloudfront.net/${uniqueFileName}`;
   } catch (error) {
     // More detailed error logging in development
     if (process.env.NODE_ENV !== "production") {
