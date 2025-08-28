@@ -120,7 +120,7 @@ func InitiatePayment(c *fiber.Ctx) error {
 				Quantity:       item.Quantity,
 				SubTotal:       item.SubTotal,
 				UserId:         result.Order.UserId,
-				ActualSubTotal: item.ActualSubTotal * float64(item.Quantity),
+				ActualSubTotal: item.ActualSubTotal,
 			}
 
 			if err := tx.Create(&orderItem).Error; err != nil {
@@ -491,7 +491,7 @@ func VerifyCashfreePayment(c *fiber.Ctx) error {
 			Quantity:       item.Quantity,
 			SubTotal:       item.SubTotal,
 			UserId:         order.UserId,
-			ActualSubTotal: item.ActualSubTotal * float64(item.Quantity),
+			ActualSubTotal: item.ActualSubTotal,
 		}
 
 		if err := tx.Create(&orderItem).Error; err != nil {
@@ -696,7 +696,7 @@ func VerifyRazorpayPayment(c *fiber.Ctx) error {
 			ProductId:      item.ProductId,
 			Quantity:       item.Quantity,
 			SubTotal:       item.SubTotal,
-			ActualSubTotal: item.ActualSubTotal * float64(item.Quantity),
+			ActualSubTotal: item.ActualSubTotal,
 			UserId:         order.UserId,
 		}
 
@@ -913,7 +913,7 @@ func ProcessPaymentCaptured(payload map[string]interface{}) {
 				Quantity:       item.Quantity,
 				SubTotal:       item.SubTotal,
 				UserId:         result.Order.UserId,
-				ActualSubTotal: item.ActualSubTotal * float64(item.Quantity),
+				ActualSubTotal: item.ActualSubTotal,
 			}
 
 			if err := tx.Create(&orderItem).Error; err != nil {

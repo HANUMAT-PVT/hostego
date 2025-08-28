@@ -20,7 +20,7 @@
 2025/07/12 00:41:52 main.go:100: FCM initialized
 2025/07/12 00:44:43 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
 2025/07/12 00:46:45 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
-2025/07/21 19:27:05 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
+=2025/07/21 19:27:05 main.go:111: failed to listen: listen tcp4 0.0.0.0:8000: bind: address already in use
 2025/07/22 13:33:10 firebase-service.go:73: ❌ error sending message: exactly one of token, topic or condition must be specified
 2025/07/22 13:33:34 firebase-service.go:73: ❌ error sending message: Auth error from APNS or Web Push Service
 2025/07/22 13:34:47 firebase-service.go:77: ❌ error sending message: Auth error from APNS or Web Push Service
@@ -27572,3 +27572,301 @@
 2025/08/26 19:19:12 health.go:183:    🚫 Max Open Connections: 200
 2025/08/26 19:19:12 health.go:187:    📈 Utilization: 0.0%
 2025/08/26 19:19:42 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:48:59 logger.go:55: ✅ Enhanced logging system initialized
+2025/08/28 11:48:59 database.go:41: 🚨 CRITICAL: Failed to connect databasefailed to connect to `host=localhost user=hostego_user_dev database=hostego_db_dev`: server error (FATAL: role "hostego_user_dev" does not exist (SQLSTATE 28000))
+2025/08/28 11:49:10 logger.go:55: ✅ Enhanced logging system initialized
+2025/08/28 11:49:10 database.go:61: ✅ Database connection established and tested successfully
+2025/08/28 11:49:10 database.go:92: ✅ Database migration completed successfully
+2025/08/28 11:49:10 database.go:93: ✅ Connected to Database with enhanced monitoring!
+2025/08/28 11:49:10 health.go:161: 🔄 Database health monitoring started with enhanced connection pool tracking and periodic cleanup
+2025/08/28 11:49:10 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 11:49:10 health.go:178:    📊 Open Connections: 1
+2025/08/28 11:49:10 health.go:179:    🔄 In Use: 0
+2025/08/28 11:49:10 health.go:180:    💤 Idle: 1
+2025/08/28 11:49:10 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 11:49:10 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 11:49:10 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 11:49:10 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 11:49:10 firebase-service.go:29: ✅  FCM initialized
+2025/08/28 11:49:10 main.go:115: FCM initialized
+2025/08/28 11:49:10 main.go:125: 🚀 Hostego Backend Server starting with enhanced crash prevention...
+2025/08/28 11:49:40 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:50:10 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:50:10 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 11:50:10 health.go:178:    📊 Open Connections: 1
+2025/08/28 11:50:10 health.go:179:    🔄 In Use: 0
+2025/08/28 11:50:10 health.go:180:    💤 Idle: 1
+2025/08/28 11:50:10 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 11:50:10 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 11:50:10 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 11:50:10 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 11:50:40 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:51:48 logger.go:55: ✅ Enhanced logging system initialized
+2025/08/28 11:51:48 database.go:61: ✅ Database connection established and tested successfully
+2025/08/28 11:51:51 database.go:92: ✅ Database migration completed successfully
+2025/08/28 11:51:51 database.go:93: ✅ Connected to Database with enhanced monitoring!
+2025/08/28 11:51:51 health.go:161: 🔄 Database health monitoring started with enhanced connection pool tracking and periodic cleanup
+2025/08/28 11:51:51 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 11:51:51 health.go:178:    📊 Open Connections: 1
+2025/08/28 11:51:51 health.go:179:    🔄 In Use: 0
+2025/08/28 11:51:51 health.go:180:    💤 Idle: 1
+2025/08/28 11:51:51 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 11:51:51 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 11:51:51 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 11:51:51 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 11:51:51 firebase-service.go:29: ✅  FCM initialized
+2025/08/28 11:51:51 main.go:115: FCM initialized
+2025/08/28 11:51:51 main.go:125: 🚀 Hostego Backend Server starting with enhanced crash prevention...
+2025/08/28 11:52:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:52:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 11:52:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 11:52:21 health.go:179:    🔄 In Use: 0
+2025/08/28 11:52:21 health.go:180:    💤 Idle: 1
+2025/08/28 11:52:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 11:52:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 11:52:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 11:52:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 11:52:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:53:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:53:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 11:53:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 11:53:21 health.go:179:    🔄 In Use: 0
+2025/08/28 11:53:21 health.go:180:    💤 Idle: 1
+2025/08/28 11:53:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 11:53:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 11:53:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 11:53:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 11:53:37 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 46.669916ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:53:37 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 50.995625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:53:37 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 70.975542ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:53:38 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 6.00425ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:53:38 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.123375ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:53:38 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 1.546833ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:53:38 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 8.577042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:53:51 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:53:52 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 22.799583ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:03 crash-prevention.middleware.go:88: ✅ GET /api/shop/4 | Status: 200 | Duration: 3.732875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:03 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/4 | Status: 200 | Duration: 76.663042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:05 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 4.677333ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:05 crash-prevention.middleware.go:88: ✅ GET /api/shop/4 | Status: 200 | Duration: 1.333291ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:05 crash-prevention.middleware.go:88: ✅ GET /api/wallet | Status: 200 | Duration: 23.498375ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:17 crash-prevention.middleware.go:88: ✅ PATCH /api/cart/202 | Status: 200 | Duration: 17.316625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:17 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 4.758167ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:21 health.go:43: 📊 DB Pool Stats - Open: 4, InUse: 0, Idle: 4, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:54:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 11:54:21 health.go:178:    📊 Open Connections: 4
+2025/08/28 11:54:21 health.go:179:    🔄 In Use: 0
+2025/08/28 11:54:21 health.go:180:    💤 Idle: 4
+2025/08/28 11:54:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 11:54:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 11:54:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 11:54:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 11:54:25 crash-prevention.middleware.go:88: ✅ GET /api/shop/owner | Status: 200 | Duration: 1.780584ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:25 crash-prevention.middleware.go:88: ✅ GET /api/shop/owner | Status: 200 | Duration: 591.625µs | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:25 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/0 | Status: 200 | Duration: 2.08575ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:25 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/0 | Status: 200 | Duration: 1.432ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:25 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 1.867416ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:25 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 2.906334ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:25 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 11.985709ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:25 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/4 | Status: 200 | Duration: 7.318292ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:25 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/4 | Status: 200 | Duration: 11.510541ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:27 crash-prevention.middleware.go:88: ✅ GET /api/product-category/4 | Status: 200 | Duration: 1.621125ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:27 crash-prevention.middleware.go:88: ✅ GET /api/products/shop/4 | Status: 200 | Duration: 2.293875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:28 crash-prevention.middleware.go:88: ✅ GET /api/shop-dashboard/order-analytics/4 | Status: 200 | Duration: 8.842792ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:28 crash-prevention.middleware.go:88: ✅ GET /api/shop-dashboard/delivery-stats/4 | Status: 200 | Duration: 10.389125ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:28 crash-prevention.middleware.go:88: ✅ GET /api/shop-dashboard/top-selling-products/4 | Status: 200 | Duration: 11.321625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:28 crash-prevention.middleware.go:88: ✅ GET /api/shop-dashboard/performance-metrics/4 | Status: 200 | Duration: 14.028417ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:28 crash-prevention.middleware.go:88: ✅ GET /api/shop-dashboard/customer-insights/4 | Status: 200 | Duration: 12.316417ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:28 crash-prevention.middleware.go:88: ✅ GET /api/shop-dashboard/customer-insights/4 | Status: 200 | Duration: 19.823625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:28 crash-prevention.middleware.go:88: ✅ GET /api/shop-dashboard/revenue-analytics/4 | Status: 200 | Duration: 1.851042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:28 crash-prevention.middleware.go:88: ✅ GET /api/restaurant-payout/4 | Status: 200 | Duration: 2.595083ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:30 crash-prevention.middleware.go:88: ✅ GET /api/order/shop/4 | Status: 200 | Duration: 26.66625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:33 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 17.755834ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:33 crash-prevention.middleware.go:88: ✅ GET /api/users/me | Status: 200 | Duration: 23.635042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:33 crash-prevention.middleware.go:88: ✅ GET /api/address | Status: 200 | Duration: 90.866583ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:33 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 11.991583ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:33 crash-prevention.middleware.go:88: ✅ PATCH /api/users/me/ | Status: 200 | Duration: 11.919042ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:33 crash-prevention.middleware.go:88: ✅ GET /api/cart | Status: 200 | Duration: 95.643583ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:33 crash-prevention.middleware.go:88: ✅ GET /api/shop | Status: 200 | Duration: 97.13025ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:39 crash-prevention.middleware.go:88: ✅ GET /api/order | Status: 200 | Duration: 6.861375ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:40 crash-prevention.middleware.go:88: ✅ GET /api/order/168 | Status: 200 | Duration: 3.528958ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:54:51 health.go:43: 📊 DB Pool Stats - Open: 6, InUse: 0, Idle: 6, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:54:59 crash-prevention.middleware.go:88: ✅ GET /api/order/167 | Status: 200 | Duration: 4.072458ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:55:21 health.go:43: 📊 DB Pool Stats - Open: 6, InUse: 0, Idle: 6, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:55:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 11:55:21 health.go:178:    📊 Open Connections: 6
+2025/08/28 11:55:21 health.go:179:    🔄 In Use: 0
+2025/08/28 11:55:21 health.go:180:    💤 Idle: 6
+2025/08/28 11:55:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 11:55:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 11:55:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 11:55:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 11:55:51 health.go:43: 📊 DB Pool Stats - Open: 6, InUse: 0, Idle: 6, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:56:21 health.go:43: 📊 DB Pool Stats - Open: 6, InUse: 0, Idle: 6, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:56:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 11:56:21 health.go:178:    📊 Open Connections: 6
+2025/08/28 11:56:21 health.go:179:    🔄 In Use: 0
+2025/08/28 11:56:21 health.go:180:    💤 Idle: 6
+2025/08/28 11:56:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 11:56:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 11:56:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 11:56:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 11:56:25 crash-prevention.middleware.go:88: ✅ GET /api/order/167 | Status: 200 | Duration: 5.656083ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:56:44 crash-prevention.middleware.go:88: ✅ GET /api/order/167 | Status: 200 | Duration: 2.078917ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 11:56:51 health.go:43: 📊 DB Pool Stats - Open: 6, InUse: 0, Idle: 6, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:56:51 health.go:155: 🔄 Performing scheduled connection pool cleanup...
+2025/08/28 11:56:51 health.go:265: 🔄 Before cleanup - Open: 6, InUse: 0, Idle: 6
+2025/08/28 11:56:51 health.go:279: 🔄 After cleanup - Open: 0, InUse: 0, Idle: 0
+2025/08/28 11:56:51 health.go:285: ✅ Successfully closed 6 stuck connections
+2025/08/28 11:57:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:57:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 11:57:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 11:57:21 health.go:179:    🔄 In Use: 0
+2025/08/28 11:57:21 health.go:180:    💤 Idle: 1
+2025/08/28 11:57:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 11:57:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 11:57:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 11:57:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 11:57:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:58:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:58:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 11:58:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 11:58:21 health.go:179:    🔄 In Use: 0
+2025/08/28 11:58:21 health.go:180:    💤 Idle: 1
+2025/08/28 11:58:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 11:58:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 11:58:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 11:58:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 11:58:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:59:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:59:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 11:59:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 11:59:21 health.go:179:    🔄 In Use: 0
+2025/08/28 11:59:21 health.go:180:    💤 Idle: 1
+2025/08/28 11:59:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 11:59:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 11:59:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 11:59:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 11:59:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 11:59:56 crash-prevention.middleware.go:88: ✅ GET /api/order/168 | Status: 200 | Duration: 56.666167ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 12:00:01 crash-prevention.middleware.go:88: ✅ GET /api/order/167 | Status: 200 | Duration: 3.996458ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 12:00:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:00:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 12:00:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 12:00:21 health.go:179:    🔄 In Use: 0
+2025/08/28 12:00:21 health.go:180:    💤 Idle: 1
+2025/08/28 12:00:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 12:00:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 12:00:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 12:00:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 12:00:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:01:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:01:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 12:01:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 12:01:21 health.go:179:    🔄 In Use: 0
+2025/08/28 12:01:21 health.go:180:    💤 Idle: 1
+2025/08/28 12:01:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 12:01:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 12:01:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 12:01:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 12:01:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:01:51 health.go:155: 🔄 Performing scheduled connection pool cleanup...
+2025/08/28 12:01:51 health.go:265: 🔄 Before cleanup - Open: 1, InUse: 0, Idle: 1
+2025/08/28 12:01:51 health.go:279: 🔄 After cleanup - Open: 0, InUse: 0, Idle: 0
+2025/08/28 12:01:51 health.go:285: ✅ Successfully closed 1 stuck connections
+2025/08/28 12:02:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:02:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 12:02:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 12:02:21 health.go:179:    🔄 In Use: 0
+2025/08/28 12:02:21 health.go:180:    💤 Idle: 1
+2025/08/28 12:02:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 12:02:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 12:02:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 12:02:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 12:02:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:03:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:03:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 12:03:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 12:03:21 health.go:179:    🔄 In Use: 0
+2025/08/28 12:03:21 health.go:180:    💤 Idle: 1
+2025/08/28 12:03:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 12:03:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 12:03:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 12:03:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 12:03:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:04:03 crash-prevention.middleware.go:88: ✅ GET /api/order/167 | Status: 200 | Duration: 30.053875ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 12:04:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:04:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 12:04:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 12:04:21 health.go:179:    🔄 In Use: 0
+2025/08/28 12:04:21 health.go:180:    💤 Idle: 1
+2025/08/28 12:04:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 12:04:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 12:04:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 12:04:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 12:04:43 crash-prevention.middleware.go:88: ✅ GET /api/order/167 | Status: 200 | Duration: 5.836625ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 12:04:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:05:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:05:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 12:05:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 12:05:21 health.go:179:    🔄 In Use: 0
+2025/08/28 12:05:21 health.go:180:    💤 Idle: 1
+2025/08/28 12:05:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 12:05:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 12:05:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 12:05:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 12:05:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:06:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:06:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 12:06:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 12:06:21 health.go:179:    🔄 In Use: 0
+2025/08/28 12:06:21 health.go:180:    💤 Idle: 1
+2025/08/28 12:06:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 12:06:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 12:06:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 12:06:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 12:06:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:06:51 health.go:155: 🔄 Performing scheduled connection pool cleanup...
+2025/08/28 12:06:51 health.go:265: 🔄 Before cleanup - Open: 1, InUse: 0, Idle: 1
+2025/08/28 12:06:51 health.go:279: 🔄 After cleanup - Open: 0, InUse: 0, Idle: 0
+2025/08/28 12:06:51 health.go:285: ✅ Successfully closed 1 stuck connections
+2025/08/28 12:07:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:07:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 12:07:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 12:07:21 health.go:179:    🔄 In Use: 0
+2025/08/28 12:07:21 health.go:180:    💤 Idle: 1
+2025/08/28 12:07:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 12:07:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 12:07:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 12:07:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 12:07:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:07:52 crash-prevention.middleware.go:88: ✅ GET /api/order/168 | Status: 200 | Duration: 6.21075ms | IP: 127.0.0.1 | UA: Dart/3.7 (dart:io)
+2025/08/28 12:08:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:08:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 12:08:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 12:08:21 health.go:179:    🔄 In Use: 0
+2025/08/28 12:08:21 health.go:180:    💤 Idle: 1
+2025/08/28 12:08:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 12:08:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 12:08:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 12:08:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 12:08:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:09:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:09:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 12:09:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 12:09:21 health.go:179:    🔄 In Use: 0
+2025/08/28 12:09:21 health.go:180:    💤 Idle: 1
+2025/08/28 12:09:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 12:09:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 12:09:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 12:09:21 health.go:187:    📈 Utilization: 0.0%
+2025/08/28 12:09:51 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:10:21 health.go:43: 📊 DB Pool Stats - Open: 1, InUse: 0, Idle: 1, WaitCount: 0, WaitDuration: 0s
+2025/08/28 12:10:21 health.go:177: 🔍 Connection Pool Analysis:
+2025/08/28 12:10:21 health.go:178:    📊 Open Connections: 1
+2025/08/28 12:10:21 health.go:179:    🔄 In Use: 0
+2025/08/28 12:10:21 health.go:180:    💤 Idle: 1
+2025/08/28 12:10:21 health.go:181:    ⏳ Wait Count: 0
+2025/08/28 12:10:21 health.go:182:    ⏱️  Wait Duration: 0s
+2025/08/28 12:10:21 health.go:183:    🚫 Max Open Connections: 200
+2025/08/28 12:10:21 health.go:187:    📈 Utilization: 0.0%
